@@ -40,9 +40,9 @@
         "image_height": "large",
         "desktop_content_position": "bottom-center",
         "show_text_box": false,
-        "image_behavior": "none",
         "desktop_content_alignment": "center",
         "color_scheme": "scheme-3",
+        "image_behavior": "none",
         "mobile_content_alignment": "center",
         "stack_images_on_mobile": false,
         "show_text_below": false
@@ -59,12 +59,11 @@
         "collection": "all",
         "products_to_show": 8,
         "columns_desktop": 4,
-        "color_scheme": "scheme-1",
         "full_width": false,
         "show_view_all": true,
         "view_all_style": "solid",
         "enable_desktop_slider": false,
-        "swipe_on_mobile": false,
+        "color_scheme": "scheme-1",
         "image_ratio": "adapt",
         "image_shape": "default",
         "show_secondary_image": true,
@@ -72,13 +71,69 @@
         "show_rating": false,
         "quick_add": "none",
         "columns_mobile": "2",
+        "swipe_on_mobile": false,
         "padding_top": 44,
+        "padding_bottom": 36
+      }
+    },
+    "collection_list_tgDQXk": {
+      "type": "collection-list",
+      "blocks": {
+        "featured_collection_BrxqJQ": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "акции-недели"
+          }
+        },
+        "featured_collection_xqcbin": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "newest-products"
+          }
+        },
+        "featured_collection_rVJAdt": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "для-студий"
+          }
+        },
+        "featured_collection_XmLCcY": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": ""
+          }
+        },
+        "featured_collection_yAUMxP": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": ""
+          }
+        }
+      },
+      "block_order": [
+        "featured_collection_BrxqJQ",
+        "featured_collection_xqcbin",
+        "featured_collection_rVJAdt",
+        "featured_collection_XmLCcY",
+        "featured_collection_yAUMxP"
+      ],
+      "settings": {
+        "title": "Collections",
+        "heading_size": "h1",
+        "image_ratio": "square",
+        "columns_desktop": 5,
+        "color_scheme": "scheme-3fcb8f86-232e-48d7-989d-b4c599c8d9b3",
+        "show_view_all": false,
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
         "padding_bottom": 36
       }
     }
   },
   "order": [
     "image_banner",
-    "featured_collection"
+    "featured_collection",
+    "collection_list_tgDQXk"
   ]
 }
