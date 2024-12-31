@@ -655,6 +655,43 @@
       "unit": "px",
       "label": "t:sections.all.padding.padding_bottom",
       "default": 20
+    },
+    {
+      "type": "text",
+      "id": "header_column_1_text",
+      "label": "Column 1 Text",
+      "default": "Welcome!"
+    },
+    {
+      "type": "image_picker",
+      "id": "header_column_2_image",
+      "label": "Column 2 Image"
+    },
+    {
+      "type": "select",
+      "id": "header_columns_layout",
+      "label": "Columns Layout",
+      "options": [
+        {
+          "value": "flex",
+          "label": "Flexbox"
+        },
+        {
+          "value": "grid",
+          "label": "Grid"
+        }
+      ],
+      "default": "flex"
+    },
+    {
+      "type": "range",
+      "id": "header_columns_gap",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Columns Gap",
+      "default": 20
     }
   ],
   "blocks": [
@@ -664,3 +701,6 @@
   ]
 }
 {% endschema %}
+
+{% section 'header' %}
+{% render 'header-columns' %}

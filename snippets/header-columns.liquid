@@ -1,0 +1,18 @@
+<div class="header-columns">
+  <div class="header-column">
+    {{ section.settings.header_column_1_text }}
+  </div>
+  <div class="header-column">
+    <img src="{{ section.settings.header_column_2_image | image_url: 'master' }}" alt="" width="600" height="400">
+  </div>
+</div>
+
+<style>
+  .header-columns {
+    display: flex; /* Or grid if you need more complex layout */
+    justify-content: space-between; /* Example */
+  }
+  .header-column {
+    width: 48%; /* Example */
+  }
+</style>
