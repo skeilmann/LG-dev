@@ -1,6 +1,61 @@
 {% schema %}
-  {
-    "name": "Block name",
-    "settings": []
-  }
+{
+  "name": "Wrapper",
+  "settings": [
+    {
+      "type": "number",
+      "id": "number_of_elements",
+      "label": "Number of Elements",
+      "default": 1
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alignment",
+      "default": "center",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Wrapper"
+    }
+  ]
+}
 {% endschema %}
+
+<div class="wrapper" style="text-align: {{ settings.alignment }};">
+  {% for i in (1..settings.number_of_elements) %}
+    <div class="element">Element {{ i }}</div>
+  {% endfor %}
+</div>
+
+<style>
+  .wrapper {
+      display: flex;
+      flex-direction: column;
+      {% if settings.alignment == 'center' %}
+        align-items: center;
+      {% elsif settings.alignment == 'right' %}
+        align-items: flex-end;
+      {% else %}
+        align-items: flex-start;
+      {% endif %}
+  }
+  .element {
+      margin: 10px 0;
+  }
+</style>
