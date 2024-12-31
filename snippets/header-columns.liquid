@@ -1,18 +1,54 @@
-<div class="header-columns">
-  <div class="header-column">
-    {{ section.settings.header_column_1_text }}
+{% if section.settings.header_column_1_text != blank or section.settings.header_column_2_image != blank %}
+  <div
+    class="header-columns layout-{{ section.settings.header_columns_layout }}"
+    style="gap: {{ section.settings.header_columns_gap }}px;"
+  >
+    {% if section.settings.header_column_1_text != blank %}
+      <div class="header-column">
+        {{ section.settings.header_column_1_text }}
+      </div>
+    {% endif %}
+    {% if section.settings.header_column_2_image != blank %}
+      <div class="header-column">
+        <img
+          src="{{ section.settings.header_column_2_image | img_url: 'master' }}"
+          alt="{{ section.settings.header_column_2_image.alt | default: 'Header Image' }}"
+          width="{{ section.settings.header_column_2_image.width }}"
+          height="{{ section.settings.header_column_2_image.height }}"
+        >
+      </div>
+    {% endif %}
   </div>
-  <div class="header-column">
-    <img src="{{ section.settings.header_column_2_image | image_url: 'master' }}" alt="" width="600" height="400">
-  </div>
-</div>
 
-<style>
-  .header-columns {
-    display: flex; /* Or grid if you need more complex layout */
-    justify-content: space-between; /* Example */
-  }
-  .header-column {
-    width: 48%; /* Example */
-  }
-</style>
+  <style>
+    .header-columns {
+      display: flex;
+      justify-content: space-between;
+      align-items: center; /* Vertically center content */
+      width: 100%; /* Ensure it takes full width */
+    }
+
+    .layout-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); /* Two equal columns by default */
+    }
+
+    .header-column {
+      flex: 1; /* Distribute available space equally in flexbox layout */
+    }
+    /* Responsive adjustments (example) */
+    @media screen and (max-width: 767px) {
+      .header-columns {
+        flex-direction: column; /* Stack columns on mobile */
+        align-items: flex-start; /* Align items to the start on mobile */
+      }
+      .layout-grid {
+        grid-template-columns: 1fr;
+      }
+      .header-column {
+        width: 100%;
+        margin-bottom: 1rem; /* Add some spacing between stacked columns */
+      }
+    }
+  </style>
+{% endif %}
