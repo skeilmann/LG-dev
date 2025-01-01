@@ -273,10 +273,7 @@
       {%- endif -%}
 
       {%- for block in section.blocks -%}
-        {%- case block.type -%}
-          {%- when '@app' -%}
-            {% render block %}
-        {%- endcase -%}
+        {% render block %}
       {%- endfor -%}
 
       <a href="{{ routes.cart_url }}" class="header__icon header__icon--cart link focus-inset" id="cart-icon-bubble">
@@ -701,5 +698,3 @@
   ]
 }
 {% endschema %}
-
-{% render 'header-columns' %}
