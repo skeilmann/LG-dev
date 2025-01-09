@@ -1,3 +1,14 @@
+<div class="wrapper">
+  {% for block in section.blocks %}
+    {% case block.type %}
+      {% when 'theme' %}
+        <div class="element">
+          {{ block.settings.theme_content }}
+        </div>
+    {% endcase %}
+  {% endfor %}
+</div>
+
 {% schema %}
 {
   "name": "LG Section",
