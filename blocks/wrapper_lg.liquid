@@ -1,3 +1,26 @@
+<div class="wrapper" style="text-align: {{ settings.alignment }};">
+  {% for i in (1..settings.number_of_elements) %}
+    <div class="element">Element {{ i }}</div>
+  {% endfor %}
+</div>
+
+<style>
+  .wrapper {
+      display: flex;
+      flex-direction: column;
+      {% if settings.alignment == 'center' %}
+        align-items: center;
+      {% elsif settings.alignment == 'right' %}
+        align-items: flex-end;
+      {% else %}
+        align-items: flex-start;
+      {% endif %}
+  }
+  .element {
+      margin: 10px 0;
+  }
+</style>
+
 {% schema %}
 {
   "name": "Wrapper",
@@ -36,26 +59,3 @@
   ]
 }
 {% endschema %}
-
-<div class="wrapper" style="text-align: {{ settings.alignment }};">
-  {% for i in (1..settings.number_of_elements) %}
-    <div class="element">Element {{ i }}</div>
-  {% endfor %}
-</div>
-
-<style>
-  .wrapper {
-      display: flex;
-      flex-direction: column;
-      {% if settings.alignment == 'center' %}
-        align-items: center;
-      {% elsif settings.alignment == 'right' %}
-        align-items: flex-end;
-      {% else %}
-        align-items: flex-start;
-      {% endif %}
-  }
-  .element {
-      margin: 10px 0;
-  }
-</style>

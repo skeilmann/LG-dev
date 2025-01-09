@@ -1,0 +1,15 @@
+<div class="custom-section color-{{ section.settings.color_scheme }}">
+  {% content_for 'blocks' %}
+</div>
+
+{% schema %}
+{
+  "name": "LG Custom",
+  "blocks": [{ "type": "@theme" }, { "type": "@app" }],
+  "presets": [
+    {
+      "name": "LG Custom"
+    }
+  ]
+}
+{% endschema %}
