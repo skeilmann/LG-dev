@@ -11,28 +11,33 @@
   "name": "t:sections.header.name",
   "type": "header",
   "sections": {
-    "announcement-bar": {
-      "type": "announcement-bar",
+    "costum_section_iMeke7": {
+      "type": "costum-section",
       "blocks": {
-        "announcement-bar-0": {
-          "type": "announcement",
+        "group_mnkKmV": {
+          "type": "group",
           "settings": {
-            "text": "Welcome to our store",
-            "link": ""
-          }
+            "color_scheme": "scheme-3"
+          },
+          "blocks": {
+            "text_yN9XBY": {
+              "type": "text",
+              "settings": {
+                "text": "<h3>Hello, world!</h3>",
+                "alignment": "center"
+              }
+            }
+          },
+          "block_order": [
+            "text_yN9XBY"
+          ]
         }
       },
       "block_order": [
-        "announcement-bar-0"
+        "group_mnkKmV"
       ],
       "settings": {
-        "color_scheme": "scheme-1",
-        "show_line_separator": true,
-        "show_social": false,
-        "auto_rotate": false,
-        "change_slides_speed": 5,
-        "enable_country_selector": false,
-        "enable_language_selector": false
+        "color_scheme": ""
       }
     },
     "header": {
@@ -51,12 +56,15 @@
         "mobile_logo_position": "center",
         "margin_bottom": 0,
         "padding_top": 20,
-        "padding_bottom": 20
+        "padding_bottom": 20,
+        "header_column_1_text": "Welcome!",
+        "header_columns_layout": "flex",
+        "header_columns_gap": 20
       }
     }
   },
   "order": [
-    "announcement-bar",
+    "costum_section_iMeke7",
     "header"
   ]
 }
