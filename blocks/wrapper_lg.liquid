@@ -1,4 +1,4 @@
-<div class="wrapper" style="text-align: {{ settings.alignment }};">
+<div class="wrapper">
   {% for i in (1..settings.number_of_elements) %}
     <div class="element">Element {{ i }}</div>
   {% endfor %}
@@ -23,7 +23,7 @@
 
 {% schema %}
 {
-  "name": "Wrapper",
+  "name": "LG Wrapper",
   "settings": [
     {
       "type": "number",
@@ -50,6 +50,31 @@
           "label": "Right"
         }
       ]
+    },
+    {
+      "type": "range",
+      "id": "padding_range",
+      "label": "Padding",
+      "default": 5,
+      "min": 0,
+      "max": 50
+    },
+    {
+      "type": "text",
+      "id": "lg_text",
+      "label": "Text",
+      "default": "hello world"
+    },
+    {
+      "type": "image_picker",
+      "id": "lg_image",
+      "label": "Image"
+    },
+    {
+      "type": "color",
+      "id": "lg_color",
+      "label": "Color",
+      "default": "#000000"
     }
   ],
   "presets": [
