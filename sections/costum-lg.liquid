@@ -1,18 +1,11 @@
 <div class="wrapper">
-  {% for block in section.blocks %}
-    {% case block.type %}
-      {% when 'theme' %}
-        <div class="element">
-          {{ block.settings.theme_content }}
-        </div>
-    {% endcase %}
-  {% endfor %}
+  {% content_for 'blocks' %}
 </div>
 
 {% schema %}
 {
   "name": "LG Section",
-  "blocks": [{ "type": "@theme" }],
+  "blocks": [{ "type": "@theme" }, { "type": "@app" }],
   "presets": [
     {
       "name": "LG costum section"
