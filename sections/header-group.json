@@ -25,6 +25,9 @@
       "block_order": [
         "text_8j7Chh"
       ],
+      "custom_css": [
+        ".text-block p {margin: 0}"
+      ],
       "settings": {}
     },
     "header": {
