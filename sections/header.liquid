@@ -242,6 +242,9 @@
         {%- endif -%}
       </div>
       {% render 'header-search', input_id: 'Search-In-Modal' %}
+      {%- for block in section.blocks -%}
+        {% render block %}
+      {%- endfor -%}
 
       {%- if shop.customer_accounts_enabled -%}
         <a
@@ -271,10 +274,6 @@
           </span>
         </a>
       {%- endif -%}
-
-      {%- for block in section.blocks -%}
-        {% render block %}
-      {%- endfor -%}
 
       <a href="{{ routes.cart_url }}" class="header__icon header__icon--cart link focus-inset" id="cart-icon-bubble">
         {% if cart == empty %}
