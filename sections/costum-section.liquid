@@ -6,7 +6,26 @@
 {
   "name": "Custom section",
   "blocks": [{ "type": "@theme" }, { "type": "@app" }],
-  "settings": [],
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_country_selector",
+      "default": false,
+      "label": "t:sections.header.settings.enable_country_selector.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_language_selector",
+      "default": false,
+      "label": "t:sections.header.settings.enable_language_selector.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_currency_selector",
+      "default": false,
+      "label": "t:sections.header.settings.enable_currency_selector.label"
+    }
+  ],
   "presets": [
     {
       "name": "Custom section"
