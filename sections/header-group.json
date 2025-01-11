@@ -26,9 +26,12 @@
         "text_8j7Chh"
       ],
       "custom_css": [
-        ".text-block p {margin: 0}"
+        ".text-block p {margin: 0;}"
       ],
-      "settings": {}
+      "settings": {
+        "enable_country_selector": true,
+        "enable_language_selector": true
+      }
     },
     "header": {
       "type": "header",
