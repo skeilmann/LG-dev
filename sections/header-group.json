@@ -18,7 +18,7 @@
           "type": "text",
           "settings": {
             "text": "<p>Bună ziua</p>",
-            "alignment": "center"
+            "alignment": "right"
           }
         }
       },
