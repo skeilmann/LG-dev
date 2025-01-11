@@ -20,25 +20,23 @@
             "color_scheme": "scheme-3"
           },
           "blocks": {
-            "text_yN9XBY": {
+            "text_pzA9V3": {
               "type": "text",
               "settings": {
-                "text": "<h3>Hello, world!</h3>",
+                "text": "<p>HelloWorld</p>",
                 "alignment": "center"
               }
             }
           },
           "block_order": [
-            "text_yN9XBY"
+            "text_pzA9V3"
           ]
         }
       },
       "block_order": [
         "group_mnkKmV"
       ],
-      "settings": {
-        "color_scheme": ""
-      }
+      "settings": {}
     },
     "header": {
       "type": "header",
