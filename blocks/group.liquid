@@ -4,6 +4,12 @@
   {% content_for 'blocks' %}
 </div>
 
+<style> 
+#text_block {
+  margin: 0;
+}
+</style>
+
 {% schema %}
 {
   "name": "Group",
@@ -32,6 +38,8 @@
       "blocks": [
         {
           "type": "text",
+          "id": "text_block",
+          "static": true,
           "settings": {
             "text": "<p>Hello, world!</p>"
           }
