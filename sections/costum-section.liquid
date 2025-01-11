@@ -1,4 +1,4 @@
-<div class="custom-section header">
+<div class="custom-section header color-{{ section.settings.color_scheme }}">
   {% content_for 'blocks' %}
 
   <div class="header__icons{% if section.settings.enable_country_selector or section.settings.enable_language_selector %} header__icons--localization header-localization{% endif %}">
@@ -44,6 +44,16 @@
       "id": "enable_language_selector",
       "default": false,
       "label": "t:sections.header.settings.enable_language_selector.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.header.settings.header__1.content"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
     }
   ],
   "presets": [
