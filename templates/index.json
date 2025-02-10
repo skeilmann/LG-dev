@@ -9,62 +9,117 @@
  */
 {
   "sections": {
-    "image_banner": {
-      "type": "image-banner",
+    "slideshow_kHzFpH": {
+      "type": "slideshow",
       "blocks": {
-        "heading": {
-          "type": "heading",
+        "slide_eNVRdw": {
+          "type": "slide",
           "settings": {
-            "heading": "Browse our latest products",
-            "heading_size": "h0"
+            "image": "shopify://shop_images/Group_76_1.jpg",
+            "heading": "HEYLOVE 💛  Cuti-Cocktail",
+            "heading_size": "h1",
+            "subheading": "уникальная коллекция масел для кутикулы с отдушкой",
+            "button_label": "смотреть каталог",
+            "link": "shopify://collections/hello",
+            "button_style_secondary": false,
+            "box_align": "middle-right",
+            "show_text_box": false,
+            "text_alignment": "left",
+            "image_overlay_opacity": 0,
+            "color_scheme": "scheme-5",
+            "text_alignment_mobile": "center"
           }
         },
-        "button": {
-          "type": "buttons",
+        "slide_VR38xH": {
+          "type": "slide",
           "settings": {
-            "button_label_1": "Shop all",
-            "button_link_1": "shopify://collections/all",
-            "button_style_secondary_1": true,
-            "button_label_2": "",
-            "button_link_2": "",
-            "button_style_secondary_2": false
+            "image": "shopify://shop_images/Group_83.jpg",
+            "heading": "GA&MA Gel Polish Autumn",
+            "heading_size": "h1",
+            "subheading": "осенняя коллекция гель-лаков",
+            "button_label": "смотреть каталог",
+            "link": "shopify://collections/ga-ma",
+            "button_style_secondary": false,
+            "box_align": "middle-right",
+            "show_text_box": false,
+            "text_alignment": "left",
+            "image_overlay_opacity": 0,
+            "color_scheme": "scheme-4",
+            "text_alignment_mobile": "center"
+          }
+        },
+        "slide_XcCMrR": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/Group_78.jpg",
+            "heading": "Вытяжка CYCLONE X II",
+            "heading_size": "h1",
+            "subheading": "больше мощности, меньше шума",
+            "button_label": "узнать цену",
+            "link": "shopify://collections",
+            "button_style_secondary": false,
+            "box_align": "middle-right",
+            "show_text_box": false,
+            "text_alignment": "left",
+            "image_overlay_opacity": 0,
+            "color_scheme": "scheme-4",
+            "text_alignment_mobile": "center"
+          }
+        },
+        "slide_mtV8Mg": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/Group_9.jpg",
+            "heading": "Luna Light Acrygel",
+            "heading_size": "h1",
+            "subheading": "Sweety Pie Collection",
+            "button_label": "смотреть коллекцию",
+            "link": "shopify://collections/luna",
+            "button_style_secondary": false,
+            "box_align": "middle-right",
+            "show_text_box": false,
+            "text_alignment": "left",
+            "image_overlay_opacity": 0,
+            "color_scheme": "scheme-1",
+            "text_alignment_mobile": "center"
           }
         }
       },
       "block_order": [
-        "heading",
-        "button"
+        "slide_eNVRdw",
+        "slide_VR38xH",
+        "slide_XcCMrR",
+        "slide_mtV8Mg"
       ],
       "settings": {
-        "image_overlay_opacity": 40,
-        "image_height": "large",
-        "desktop_content_position": "bottom-center",
-        "show_text_box": false,
-        "desktop_content_alignment": "center",
-        "color_scheme": "scheme-3",
+        "layout": "full_bleed",
+        "slide_height": "medium",
+        "slider_visual": "counter",
+        "auto_rotate": false,
+        "change_slides_speed": 5,
         "image_behavior": "none",
-        "mobile_content_alignment": "center",
-        "stack_images_on_mobile": false,
-        "show_text_below": false
+        "show_text_below": true,
+        "accessibility_info": "Slideshow about our brand"
       }
     },
     "featured_collection": {
       "type": "featured-collection",
+      "disabled": true,
       "settings": {
-        "title": "Featured products",
-        "heading_size": "h2",
+        "title": "КАТАЛОГ",
+        "heading_size": "h1",
         "description": "",
         "show_description": false,
-        "description_style": "body",
+        "description_style": "uppercase",
         "collection": "all",
         "products_to_show": 10,
         "columns_desktop": 5,
         "full_width": false,
         "show_view_all": true,
         "view_all_style": "solid",
-        "enable_desktop_slider": true,
+        "enable_desktop_slider": false,
         "color_scheme": "scheme-3fcb8f86-232e-48d7-989d-b4c599c8d9b3",
-        "image_ratio": "portrait",
+        "image_ratio": "square",
         "image_shape": "default",
         "show_secondary_image": false,
         "show_vendor": true,
@@ -76,54 +131,152 @@
         "padding_bottom": 36
       }
     },
-    "collection_list_tgDQXk": {
+    "collection_list_EmXY8a": {
       "type": "collection-list",
       "blocks": {
-        "featured_collection_BrxqJQ": {
+        "featured_collection_bbFbV3": {
           "type": "featured_collection",
           "settings": {
-            "collection": "акции-недели"
+            "collection": "базы"
           }
         },
-        "featured_collection_xqcbin": {
+        "featured_collection_yNeABx": {
           "type": "featured_collection",
           "settings": {
-            "collection": "newest-products"
+            "collection": "гель-лаки"
           }
         },
-        "featured_collection_rVJAdt": {
+        "featured_collection_R8J4CG": {
           "type": "featured_collection",
           "settings": {
-            "collection": "для-студий"
+            "collection": "наращивание"
           }
         },
-        "featured_collection_XmLCcY": {
+        "featured_collection_PEEL7L": {
           "type": "featured_collection",
           "settings": {
-            "collection": ""
+            "collection": "топы"
           }
         },
-        "featured_collection_yAUMxP": {
+        "featured_collection_cQNCJi": {
           "type": "featured_collection",
           "settings": {
-            "collection": ""
+            "collection": "жидкости"
+          }
+        },
+        "featured_collection_F8BCMD": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "праймеры"
+          }
+        },
+        "featured_collection_tfwMUD": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "инструменты-для-маникюра-и-педикюра"
+          }
+        },
+        "featured_collection_riweb9": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "фрезы"
+          }
+        },
+        "featured_collection_9zATqp": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "дизайн"
+          }
+        },
+        "featured_collection_wxiwNm": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "аксессуары-для-мастера"
+          }
+        },
+        "featured_collection_YHdBG8": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "стерилизация-и-дезинфекция"
+          }
+        },
+        "featured_collection_RWJ8JA": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "оборудование-для-маникюра"
+          }
+        },
+        "featured_collection_C4KTyF": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "всё-для-педикюра"
+          }
+        },
+        "featured_collection_RLcdnQ": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "уход"
+          }
+        },
+        "featured_collection_FWWPgT": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "расходные-материалы"
           }
         }
       },
       "block_order": [
-        "featured_collection_BrxqJQ",
-        "featured_collection_xqcbin",
-        "featured_collection_rVJAdt",
-        "featured_collection_XmLCcY",
-        "featured_collection_yAUMxP"
+        "featured_collection_bbFbV3",
+        "featured_collection_yNeABx",
+        "featured_collection_R8J4CG",
+        "featured_collection_PEEL7L",
+        "featured_collection_cQNCJi",
+        "featured_collection_F8BCMD",
+        "featured_collection_tfwMUD",
+        "featured_collection_riweb9",
+        "featured_collection_9zATqp",
+        "featured_collection_wxiwNm",
+        "featured_collection_YHdBG8",
+        "featured_collection_RWJ8JA",
+        "featured_collection_C4KTyF",
+        "featured_collection_RLcdnQ",
+        "featured_collection_FWWPgT"
       ],
       "settings": {
         "title": "Collections",
         "heading_size": "h1",
         "image_ratio": "square",
-        "columns_desktop": 5,
-        "color_scheme": "scheme-3fcb8f86-232e-48d7-989d-b4c599c8d9b3",
+        "columns_desktop": 3,
+        "color_scheme": "",
         "show_view_all": false,
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "featured_collection_FKK34Y": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "НОВИНКИ",
+        "heading_size": "h1",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "collection": "новинки",
+        "products_to_show": 15,
+        "columns_desktop": 5,
+        "full_width": true,
+        "show_view_all": true,
+        "view_all_style": "solid",
+        "enable_desktop_slider": true,
+        "color_scheme": "scheme-1",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": true,
+        "show_rating": false,
+        "quick_add": "standard",
         "columns_mobile": "2",
         "swipe_on_mobile": false,
         "padding_top": 36,
@@ -132,8 +285,9 @@
     }
   },
   "order": [
-    "image_banner",
+    "slideshow_kHzFpH",
     "featured_collection",
-    "collection_list_tgDQXk"
+    "collection_list_EmXY8a",
+    "featured_collection_FKK34Y"
   ]
 }

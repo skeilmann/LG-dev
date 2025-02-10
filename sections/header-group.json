@@ -58,8 +58,8 @@
         "enable_customer_avatar": true,
         "mobile_logo_position": "center",
         "margin_bottom": 0,
-        "padding_top": 20,
-        "padding_bottom": 20,
+        "padding_top": 16,
+        "padding_bottom": 16,
         "header_column_1_text": "Welcome!",
         "header_columns_layout": "flex",
         "header_columns_gap": 20
