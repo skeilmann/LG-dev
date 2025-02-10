@@ -18,13 +18,13 @@
     "body_scale": 100,
     "page_width": 1600,
     "spacing_sections": 0,
-    "spacing_grid_horizontal": 8,
+    "spacing_grid_horizontal": 28,
     "spacing_grid_vertical": 8,
     "animations_reveal_on_scroll": true,
     "animations_hover_elements": "vertical-lift",
-    "buttons_border_thickness": 1,
+    "buttons_border_thickness": 0,
     "buttons_border_opacity": 100,
-    "buttons_radius": 0,
+    "buttons_radius": 10,
     "buttons_shadow_opacity": 0,
     "buttons_shadow_horizontal_offset": 0,
     "buttons_shadow_vertical_offset": 4,
@@ -46,7 +46,7 @@
     "card_style": "card",
     "card_image_padding": 20,
     "card_text_alignment": "center",
-    "card_color_scheme": "scheme-2",
+    "card_color_scheme": "scheme-3fcb8f86-232e-48d7-989d-b4c599c8d9b3",
     "card_border_thickness": 0,
     "card_border_opacity": 10,
     "card_corner_radius": 16,
@@ -234,11 +234,11 @@
         "settings": {
           "background": "#ffffff",
           "background_gradient": "",
-          "text": "#121212",
-          "button": "#f4b8dd",
+          "text": "#000000",
+          "button": "#334fb4",
           "button_label": "#ffffff",
-          "secondary_button_label": "#121212",
-          "shadow": "#121212"
+          "secondary_button_label": "#f4b8dd",
+          "shadow": "#000000"
         }
       }
     }
