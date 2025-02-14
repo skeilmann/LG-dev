@@ -11,7 +11,7 @@
     {% if section.settings.header_column_2_image != blank %}
       <div class="header-column">
         <img
-          src="{{ section.settings.header_column_2_image | img_url: 'master' }}"
+          src="{{ section.settings.header_column_2_image | image_url: 'master' }}"
           alt="{{ section.settings.header_column_2_image.alt | default: 'Header Image' }}"
           width="{{ section.settings.header_column_2_image.width }}"
           height="{{ section.settings.header_column_2_image.height }}"
