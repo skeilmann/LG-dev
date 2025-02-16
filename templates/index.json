@@ -16,7 +16,7 @@
           "type": "slide",
           "settings": {
             "image": "shopify://shop_images/Group_76_1.jpg",
-            "heading": "HEYLOVE 💛  <br/>Cuti-Cocktail",
+            "heading": "HEYLOVE 💛 Cuti-Cocktail",
             "heading_size": "h2",
             "subheading": "уникальная коллекция масел для кутикулы с отдушкой",
             "button_label": "смотреть каталог",
@@ -315,7 +315,7 @@
       "type": "featured-collection",
       "settings": {
         "title": "Товары со скидкой",
-        "heading_size": "h2",
+        "heading_size": "h",
         "description": "",
         "show_description": false,
         "description_style": "body",
