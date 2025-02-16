@@ -16,7 +16,7 @@
           "type": "slide",
           "settings": {
             "image": "shopify://shop_images/Group_76_1.jpg",
-            "heading": "HEYLOVE 💛  <br/>Cuti-Cocktail",
+            "heading": "<h2>HEYLOVE Cuti-Cocktail</h2>",
             "heading_size": "h2",
             "subheading": "уникальная коллекция масел для кутикулы с отдушкой",
             "button_label": "смотреть каталог",
@@ -34,7 +34,7 @@
           "type": "slide",
           "settings": {
             "image": "shopify://shop_images/Group_83.jpg",
-            "heading": "GA&MA Gel Polish Autumn",
+            "heading": "<h2>GA&MA Gel Polish Autumn</h2>",
             "heading_size": "h2",
             "subheading": "осенняя коллекция гель-лаков",
             "button_label": "смотреть каталог",
@@ -52,7 +52,7 @@
           "type": "slide",
           "settings": {
             "image": "shopify://shop_images/Group_78.jpg",
-            "heading": "Вытяжка CYCLONE X II",
+            "heading": "<h2>Вытяжка CYCLONE X II</h2>",
             "heading_size": "h2",
             "subheading": "больше мощности, меньше шума",
             "button_label": "узнать цену",
@@ -70,7 +70,7 @@
           "type": "slide",
           "settings": {
             "image": "shopify://shop_images/Group_9.jpg",
-            "heading": "Luna Light Acrygel",
+            "heading": "<h2>Luna Light Acrygel</h2>",
             "heading_size": "h2",
             "subheading": "Sweety Pie Collection",
             "button_label": "смотреть коллекцию",
@@ -107,7 +107,7 @@
       "disabled": true,
       "settings": {
         "title": "КАТАЛОГ",
-        "heading_size": "h1",
+        "heading_size": "h2",
         "description": "",
         "show_description": false,
         "description_style": "uppercase",
