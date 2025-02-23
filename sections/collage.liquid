@@ -21,12 +21,12 @@
 <div class="color-{{ section.settings.color_scheme }} gradient isolate">
   <div class="page-width section-{{ section.id }}-padding">
     {%- if section.settings.heading != blank -%}
-      <h2 class="collage-wrapper-title inline-richtext {{ section.settings.heading_size }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+      <h2 class="collage-wrapper-title rte {{ section.settings.heading_size }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
         {{ section.settings.heading }}
       </h2>
     {%- endif -%}
     {%- if section.settings.subheading != blank -%}
-      <h3 class="collage-wrapper-subtitle inline-richtext{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+      <h3 class="collage-wrapper-subtitle rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
         {{ section.settings.subheading }}
       </h3>
     {%- endif -%}
@@ -230,15 +230,15 @@
   },
   "settings": [
     {
-      "type": "inline_richtext",
+      "type": "richtext",
       "id": "heading",
-      "default": "t:sections.collage.settings.heading.default",
+      "default": "<p>Multimedia collage</p>",
       "label": "t:sections.collage.settings.heading.label"
     },
     {
-      "type": "inline_richtext",
+      "type": "richtext",
       "id": "subheading",
-      "default": "Add a subtitle",
+      "default": "<p>Add a subtitle</p>",
       "label": "Subtitle"
     },
     {
