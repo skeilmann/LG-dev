@@ -22,7 +22,7 @@
 
   .section-{{ section.id }} .collage {
     display: grid;
-    grid-template-columns: 50% 25% 25%;
+    grid-template-columns: 50% 50%;
     gap: {{ settings.spacing_grid_horizontal }}px;
   }
 
@@ -39,7 +39,6 @@
   }
 
   #shopify-section-{{ section.id }} .collection-image {
-    grid-row: span 2;
     height: 100%;
   }
 
@@ -49,9 +48,29 @@
     object-fit: cover;
   }
 
+  #shopify-section-{{ section.id }} .products-container {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: {{ settings.spacing_grid_horizontal }}px;
+  }
+
+  #shopify-section-{{ section.id }} .collection-product {
+    height: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .collection-product .card {
+    height: 100%;
+    margin: 0;
+  }
+
   @media screen and (max-width: 749px) {
     .section-{{ section.id }} .collage {
       grid-template-columns: 1fr;
+    }
+
+    #shopify-section-{{ section.id }} .products-container {
+      grid-template-rows: auto;
+      grid-template-columns: 1fr 1fr;
     }
   }
 
@@ -94,17 +113,19 @@
           {%- endif -%}
         </div>
 
-        {%- assign products = section.settings.collection.products -%}
-        {%- for product in products limit: 2 -%}
-          <div class="collection-product">
-            {% render 'card-product',
-              card_product: product,
-              media_aspect_ratio: 'adapt',
-              show_secondary_image: true,
-              extend_height: true
-            %}
-          </div>
-        {%- endfor -%}
+        <div class="products-container">
+          {%- assign products = section.settings.collection.products -%}
+          {%- for product in products limit: 2 -%}
+            <div class="collection-product">
+              {% render 'card-product',
+                card_product: product,
+                media_aspect_ratio: 'adapt',
+                show_secondary_image: true,
+                extend_height: true
+              %}
+            </div>
+          {%- endfor -%}
+        </div>
       {%- endif -%}
     </div>
   </div>
