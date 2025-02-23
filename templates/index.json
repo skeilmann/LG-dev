@@ -91,6 +91,9 @@
         "slide_XcCMrR",
         "slide_mtV8Mg"
       ],
+      "custom_css": [
+        ".slideshow {border-radius: var(--product-card-corner-radius);}"
+      ],
       "settings": {
         "layout": "grid",
         "slide_height": "medium",
@@ -242,6 +245,7 @@
         "featured_collection_RLcdnQ",
         "featured_collection_FWWPgT"
       ],
+      "custom_css": [],
       "settings": {
         "title": "КАТАЛОГ",
         "heading_size": "h2",
