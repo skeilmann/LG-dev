@@ -4,7 +4,24 @@
 {{ 'component-modal-video.css' | asset_url | stylesheet_tag }}
 {{ 'component-deferred-media.css' | asset_url | stylesheet_tag }}
 {{ 'component-slider.css' | asset_url | stylesheet_tag }}
-{{ 'component-quick-add.css' | asset_url | stylesheet_tag }}
+{{ 'quick-add.css' | asset_url | stylesheet_tag }}
+{{ 'quick-add.css' | asset_url | stylesheet_tag }}
+
+{%- unless section.settings.quick_add == 'none' -%}
+  {{ 'quick-add.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+{%- endunless -%}
+
+{%- if section.settings.quick_add == 'standard' -%}
+  <script src="{{ 'quick-add.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+
+{%- if section.settings.quick_add == 'bulk' -%}
+  <script src="{{ 'quick-add-bulk.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'quantity-popover.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'price-per-item.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'quick-order-list.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
 
 {%- style -%}
   .section-{{ section.id }}-padding {
@@ -97,6 +114,21 @@
     text-align: center;
   }
 
+  #shopify-section-{{ section.id }} .card__content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #shopify-section-{{ section.id }} .quick-add {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  #shopify-section-{{ section.id }} .quick-add__submit {
+    width: 100%;
+    padding: 10px;
+  }
+
   @media screen and (max-width: 749px) {
     .section-{{ section.id }} .collage {
       grid-template-columns: 1fr;
@@ -164,8 +196,10 @@
                   card_product: product,
                   media_aspect_ratio: 'adapt',
                   show_secondary_image: true,
-                  show_quick_add: true,
-                  extend_height: true
+                  show_vendor: section.settings.show_vendor,
+                  show_rating: section.settings.show_rating,
+                  quick_add: section.settings.quick_add,
+                  section_id: section.id
                 %}
               </div>
             {%- endfor -%}
@@ -412,6 +446,39 @@
       "id": "show_quick_add",
       "default": true,
       "label": "Show quick add button"
+    },
+    {
+      "type": "select",
+      "id": "quick_add",
+      "default": "standard",
+      "label": "Quick add",
+      "info": "Choose type of quick add button",
+      "options": [
+        {
+          "value": "none",
+          "label": "Disable"
+        },
+        {
+          "value": "standard",
+          "label": "Standard"
+        },
+        {
+          "value": "bulk",
+          "label": "Bulk"
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "default": false,
+      "label": "Show vendor"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "default": false,
+      "label": "Show product rating"
     }
   ],
   "presets": [
@@ -456,29 +523,5 @@
         updateSlider();
       });
     }
-
-    // Add quick add button functionality
-    document.querySelectorAll('.quick-add__submit').forEach((button) => {
-      button.addEventListener('click', function (event) {
-        event.preventDefault();
-        const form = this.closest('form');
-        const formData = new FormData(form);
-
-        fetch(window.Shopify.routes.root + 'cart/add.js', {
-          method: 'POST',
-          body: formData,
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            // Refresh mini cart or show confirmation
-            if (window.updateCartCount) {
-              window.updateCartCount();
-            }
-          })
-          .catch((error) => {
-            console.error('Error:', error);
-          });
-      });
-    });
   });
 </script>
