@@ -51,17 +51,18 @@
 
   #shopify-section-{{ section.id }} .products-container {
     display: flex;
-    /* grid-template-rows: 1fr 1fr; */
+    flex-direction: column;
     gap: {{ settings.spacing_grid_horizontal }}px;
   }
 
-  #shopify-section-{{ section.id }} .collection-product {
-    height: 100%;
+  #shopify-section-{{ section.id }} .products-grid {
+    display: flex;
+    gap: {{ settings.spacing_grid_horizontal }}px;
   }
 
-  #shopify-section-{{ section.id }} .collection-product .card {
-    height: 100%;
-    margin: 0;
+  #shopify-section-{{ section.id }} .view-all-button {
+    margin-top: 20px;
+    text-align: center;
   }
 
   #shopify-section-{{ section.id }} .collage__button {
@@ -125,16 +126,28 @@
 
         <div class="products-container">
           {%- paginate section.settings.collection.products by section.settings.products_per_page -%}
-            {%- for product in section.settings.collection.products limit: section.settings.products_per_page -%}
-              <div class="collection-product">
-                {% render 'card-product',
-                  card_product: product,
-                  media_aspect_ratio: 'adapt',
-                  show_secondary_image: true,
-                  extend_height: true
-                %}
+            <div class="products-grid">
+              {%- for product in section.settings.collection.products limit: section.settings.products_per_page -%}
+                <div class="collection-product">
+                  {% render 'card-product',
+                    card_product: product,
+                    media_aspect_ratio: 'adapt',
+                    show_secondary_image: true,
+                    extend_height: true
+                  %}
+                </div>
+              {%- endfor -%}
+            </div>
+
+            {%- if section.settings.show_view_all
+              and section.settings.collection.all_products_count > section.settings.products_per_page
+            -%}
+              <div class="view-all-button">
+                <a href="{{ section.settings.collection.url }}" class="button">
+                  {{ 'sections.collection_list.view_all' | t }}
+                </a>
               </div>
-            {%- endfor -%}
+            {%- endif -%}
 
             {%- if paginate.pages > 1 and section.settings.enable_pagination -%}
               <div class="pagination-wrapper">
@@ -403,6 +416,16 @@
       "step": 2,
       "default": 2,
       "label": "Products per page"
+    },
+    {
+      "type": "header",
+      "content": "View All Button"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "default": true,
+      "label": "Show 'View All' button"
     }
   ],
   "presets": [
