@@ -375,12 +375,17 @@
         "product_cqfQeW"
       ],
       "settings": {
-        "heading": "ГОРЯЧЕЕ ПРЕДЛОЖЕНИЕ",
-        "heading_size": "h1",
+        "heading": "<p>ГОРЯЧЕЕ ПРЕДЛОЖЕНИЕ</p>",
+        "subheading": "<p><strong>DARK SMART BUILDER GEL </strong>🔥</p>",
+        "heading_size": "h2",
         "desktop_layout": "left",
         "mobile_layout": "collage",
         "card_styles": "none",
         "color_scheme": "",
+        "heading_color": "#f4b8dd",
+        "heading_font_size": 20,
+        "subheading_color": "#000000",
+        "subheading_font_size": 32,
         "padding_top": 36,
         "padding_bottom": 36
       }
