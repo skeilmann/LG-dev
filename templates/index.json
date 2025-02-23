@@ -350,7 +350,9 @@
       "blocks": {
         "image_QMnpT3": {
           "type": "image",
-          "settings": {}
+          "settings": {
+            "image": "shopify://shop_images/green-and-white-marbled-coloring.jpg"
+          }
         },
         "product_DUXnmm": {
           "type": "product",
