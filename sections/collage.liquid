@@ -25,6 +25,11 @@
         {{ section.settings.heading }}
       </h2>
     {%- endif -%}
+    {%- if section.settings.subheading != blank -%}
+      <h3 class="collage-wrapper-subtitle inline-richtext{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+        {{ section.settings.subheading }}
+      </h3>
+    {%- endif -%}
     <div class="collage{% if section.settings.mobile_layout == 'collage' %} collage--mobile{% endif %}">
       {% assign skip_card_product_styles = false %}
       {%- for block in section.blocks -%}
@@ -229,6 +234,12 @@
       "id": "heading",
       "default": "t:sections.collage.settings.heading.default",
       "label": "t:sections.collage.settings.heading.label"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subheading",
+      "default": "Add a subtitle",
+      "label": "Subtitle"
     },
     {
       "type": "select",
