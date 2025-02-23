@@ -10,14 +10,14 @@
     padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
   }
 
-  .section-{{ section.id }} .collage-wrapper-title {
-    color: {{ section.settings.heading_color }};
-    font-size: {{ section.settings.heading_font_size }}px;
+  #shopify-section-{{ section.id }} .collage-wrapper-title {
+    color: {{ section.settings.heading_color }} !important;
+    font-size: {{ section.settings.heading_font_size }}px !important;
   }
 
-  .section-{{ section.id }} .collage-wrapper-subtitle {
-    color: {{ section.settings.subheading_color }};
-    font-size: {{ section.settings.subheading_font_size }}px;
+  #shopify-section-{{ section.id }} .collage-wrapper-subtitle {
+    color: {{ section.settings.subheading_color }} !important;
+    font-size: {{ section.settings.subheading_font_size }}px !important;
   }
 
   @media screen and (min-width: 750px) {
@@ -28,15 +28,15 @@
   }
 {%- endstyle -%}
 
-<div class="color-{{ section.settings.color_scheme }} gradient isolate">
+<div class="color-{{ section.settings.color_scheme }} gradient isolate section-{{ section.id }}">
   <div class="page-width section-{{ section.id }}-padding">
     {%- if section.settings.heading != blank -%}
-      <h2 class="collage-wrapper-title rte {{ section.settings.heading_size }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+      <h2 class="collage-wrapper-title {{ section.settings.heading_size }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
         {{ section.settings.heading }}
       </h2>
     {%- endif -%}
     {%- if section.settings.subheading != blank -%}
-      <h3 class="collage-wrapper-subtitle rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+      <h3 class="collage-wrapper-subtitle{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
         {{ section.settings.subheading }}
       </h3>
     {%- endif -%}
