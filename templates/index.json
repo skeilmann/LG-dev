@@ -344,6 +344,43 @@
         "padding_top": 36,
         "padding_bottom": 36
       }
+    },
+    "collage_3VGjEW": {
+      "type": "collage",
+      "blocks": {
+        "image_QMnpT3": {
+          "type": "image",
+          "settings": {}
+        },
+        "product_DUXnmm": {
+          "type": "product",
+          "settings": {
+            "product": "акварельные-краски-набор-для-дизайна-ногтей-с-шиммером-6-шт",
+            "second_image": false
+          }
+        },
+        "collection_gAtEgq": {
+          "type": "collection",
+          "settings": {
+            "collection": ""
+          }
+        }
+      },
+      "block_order": [
+        "image_QMnpT3",
+        "product_DUXnmm",
+        "collection_gAtEgq"
+      ],
+      "settings": {
+        "heading": "Multimedia collage",
+        "heading_size": "h1",
+        "desktop_layout": "left",
+        "mobile_layout": "column",
+        "card_styles": "product-card-wrapper",
+        "color_scheme": "",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
     }
   },
   "order": [
@@ -352,6 +389,7 @@
     "collection_list_EmXY8a",
     "featured_collection_FKK34Y",
     "featured_collection_bBPBV4",
-    "featured_collection_9zRDWp"
+    "featured_collection_9zRDWp",
+    "collage_3VGjEW"
   ]
 }
