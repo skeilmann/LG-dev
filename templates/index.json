@@ -374,9 +374,14 @@
         "product_DUXnmm",
         "product_cqfQeW"
       ],
+      "custom_css": [
+        "h3 {margin: 0;}",
+        "p {margin: 0}"
+      ],
       "settings": {
         "heading": "<p>ГОРЯЧЕЕ ПРЕДЛОЖЕНИЕ</p>",
         "subheading": "<p><strong>DARK SMART BUILDER GEL </strong>🔥</p>",
+        "text_content": "<p>коллекция моделирующих гелей с шиммером</p>",
         "heading_size": "h2",
         "desktop_layout": "left",
         "mobile_layout": "collage",
