@@ -3,6 +3,7 @@
 {{ 'component-price.css' | asset_url | stylesheet_tag }}
 {{ 'component-modal-video.css' | asset_url | stylesheet_tag }}
 {{ 'component-deferred-media.css' | asset_url | stylesheet_tag }}
+{{ 'component-pagination.css' | asset_url | stylesheet_tag }}
 
 {%- style -%}
   .section-{{ section.id }}-padding {
@@ -49,8 +50,8 @@
   }
 
   #shopify-section-{{ section.id }} .products-container {
-    display: grid;
-    grid-template-rows: 1fr 1fr;
+    display: flex;
+    /* grid-template-rows: 1fr 1fr; */
     gap: {{ settings.spacing_grid_horizontal }}px;
   }
 
@@ -123,17 +124,39 @@
         </div>
 
         <div class="products-container">
-          {%- assign products = section.settings.collection.products -%}
-          {%- for product in products limit: 2 -%}
-            <div class="collection-product">
-              {% render 'card-product',
-                card_product: product,
-                media_aspect_ratio: 'adapt',
-                show_secondary_image: true,
-                extend_height: true
-              %}
-            </div>
-          {%- endfor -%}
+          {%- paginate section.settings.collection.products by section.settings.products_per_page -%}
+            {%- for product in section.settings.collection.products limit: section.settings.products_per_page -%}
+              <div class="collection-product">
+                {% render 'card-product',
+                  card_product: product,
+                  media_aspect_ratio: 'adapt',
+                  show_secondary_image: true,
+                  extend_height: true
+                %}
+              </div>
+            {%- endfor -%}
+
+            {%- if paginate.pages > 1 and section.settings.enable_pagination -%}
+              <div class="pagination-wrapper">
+                {%- if section.settings.pagination_style == 'numbers' -%}
+                  {% render 'pagination', paginate: paginate %}
+                {%- else -%}
+                  <div class="button-pagination">
+                    {%- if paginate.previous -%}
+                      <a href="{{ paginate.previous.url }}" class="button button--secondary">
+                        {{ 'general.pagination.previous' | t }}
+                      </a>
+                    {%- endif -%}
+                    {%- if paginate.next -%}
+                      <a href="{{ paginate.next.url }}" class="button button--secondary">
+                        {{ 'general.pagination.next' | t }}
+                      </a>
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          {%- endpaginate -%}
         </div>
 
         {%- if section.settings.show_view_all and section.settings.collection != blank -%}
@@ -345,6 +368,41 @@
       "unit": "px",
       "label": "t:sections.all.padding.padding_bottom",
       "default": 36
+    },
+    {
+      "type": "header",
+      "content": "Pagination settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_pagination",
+      "label": "Enable pagination",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "pagination_style",
+      "options": [
+        {
+          "value": "numbers",
+          "label": "Numbers"
+        },
+        {
+          "value": "next_prev",
+          "label": "Next/Previous buttons"
+        }
+      ],
+      "default": "numbers",
+      "label": "Pagination style"
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 2,
+      "max": 24,
+      "step": 2,
+      "default": 2,
+      "label": "Products per page"
     }
   ],
   "presets": [
