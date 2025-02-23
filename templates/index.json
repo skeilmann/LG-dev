@@ -298,7 +298,7 @@
         "show_description": false,
         "description_style": "body",
         "collection": "хиты-продаж",
-        "products_to_show": 15,
+        "products_to_show": 25,
         "columns_desktop": 5,
         "full_width": false,
         "show_view_all": true,
