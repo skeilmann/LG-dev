@@ -347,36 +347,9 @@
     },
     "collage_3VGjEW": {
       "type": "collage",
-      "blocks": {
-        "image_QMnpT3": {
-          "type": "image",
-          "settings": {
-            "image": "shopify://shop_images/green-and-white-marbled-coloring.jpg"
-          }
-        },
-        "product_DUXnmm": {
-          "type": "product",
-          "settings": {
-            "product": "акварельные-краски-набор-для-дизайна-ногтей-с-шиммером-6-шт",
-            "second_image": false
-          }
-        },
-        "product_cqfQeW": {
-          "type": "product",
-          "settings": {
-            "product": "",
-            "second_image": false
-          }
-        }
-      },
-      "block_order": [
-        "image_QMnpT3",
-        "product_DUXnmm",
-        "product_cqfQeW"
-      ],
       "custom_css": [
         "h3 {margin: 0;}",
-        "p {margin: 0}"
+        "p {margin: 0;}"
       ],
       "settings": {
         "heading": "<p>ГОРЯЧЕЕ ПРЕДЛОЖЕНИЕ</p>",
@@ -391,6 +364,7 @@
         "heading_font_size": 20,
         "subheading_color": "#000000",
         "subheading_font_size": 32,
+        "collection": "горячее-предложение",
         "padding_top": 36,
         "padding_bottom": 36
       }
