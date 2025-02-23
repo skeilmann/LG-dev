@@ -359,17 +359,18 @@
             "second_image": false
           }
         },
-        "collection_gAtEgq": {
-          "type": "collection",
+        "product_cqfQeW": {
+          "type": "product",
           "settings": {
-            "collection": ""
+            "product": "",
+            "second_image": false
           }
         }
       },
       "block_order": [
         "image_QMnpT3",
         "product_DUXnmm",
-        "collection_gAtEgq"
+        "product_cqfQeW"
       ],
       "settings": {
         "heading": "Multimedia collage",
