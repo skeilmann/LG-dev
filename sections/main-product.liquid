@@ -72,6 +72,22 @@
     >
   {%- endif -%}
 
+  {% if section.settings.wishlist %}
+    <div id="js-wish-list" class="js-wish-list text-center" style="margin-bottom: 30px;">
+      <input hidden="" type="text" id="productHandle" value="{{ product.handle }}" name="{{ product.handle }}">
+      <a
+        onclick="upDateStorage()"
+        class="btn flexx flex-center"
+        style="background-color: transparent;color: #3a3a3a;width: 100%;font-weight: 600;"
+      >
+        <img src="{{ 'icon-plus.svg' | asset_url }}" alt="Add to wishlist icon" width="16" height="16">
+        <span>&ensp;{{ 'Add to wishlist' | upcase }}</span></a
+      >
+    </div>
+  {% endif %}
+
+  { "type": "checkbox", "id": "wishlist", "label": "Wishlist", "default": true }
+
   {% assign variant_images = product.images | where: 'attached_to_variant?', true | map: 'src' %}
   <div class="page-width">
     <div class="product product--{{ section.settings.media_size }} product--{{ section.settings.media_position }} product--{{ section.settings.gallery_layout }} product--mobile-{{ section.settings.mobile_thumbnails }} grid grid--1-col {% if product.media.size > 0 %}grid--2-col-tablet{% else %}product--no-media{% endif %}">

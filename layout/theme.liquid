@@ -300,6 +300,8 @@
         document.documentElement.classList.add('shopify-design-mode');
       }
     </script>
+    <script defer src="{{ 'jquery.min.js' | asset_url }}"></script>
+    <script defer src="{{ 'shopify-wishlist.js' | asset_url }}"></script>
   </head>
 
   <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">
