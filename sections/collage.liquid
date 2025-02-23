@@ -40,6 +40,11 @@
         {{ section.settings.subheading }}
       </h3>
     {%- endif -%}
+    {%- if section.settings.text_content != blank -%}
+      <div class="collage-text-content rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+        {{ section.settings.text_content }}
+      </div>
+    {%- endif -%}
     <div class="collage{% if section.settings.mobile_layout == 'collage' %} collage--mobile{% endif %}">
       {% assign skip_card_product_styles = false %}
       {%- for block in section.blocks -%}
@@ -250,6 +255,12 @@
       "id": "subheading",
       "default": "<p>Add a subtitle</p>",
       "label": "Subtitle"
+    },
+    {
+      "type": "richtext",
+      "id": "text_content",
+      "default": "<p>Add your text here</p>",
+      "label": "Text Content"
     },
     {
       "type": "select",
