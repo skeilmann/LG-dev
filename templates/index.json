@@ -92,11 +92,11 @@
         "slide_mtV8Mg"
       ],
       "settings": {
-        "layout": "full_bleed",
+        "layout": "grid",
         "slide_height": "medium",
-        "slider_visual": "counter",
+        "slider_visual": "dots",
         "auto_rotate": true,
-        "change_slides_speed": 3,
+        "change_slides_speed": 5,
         "image_behavior": "none",
         "show_text_below": true,
         "accessibility_info": "Slideshow about our brand"
@@ -243,13 +243,13 @@
         "featured_collection_FWWPgT"
       ],
       "settings": {
-        "title": "Collections",
+        "title": "КАТАЛОГ",
         "heading_size": "h2",
         "image_ratio": "square",
-        "columns_desktop": 3,
+        "columns_desktop": 5,
         "color_scheme": "",
-        "show_view_all": false,
-        "columns_mobile": "1",
+        "show_view_all": true,
+        "columns_mobile": "2",
         "swipe_on_mobile": false,
         "padding_top": 36,
         "padding_bottom": 36
