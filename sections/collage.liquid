@@ -63,6 +63,15 @@
     margin: 0;
   }
 
+  #shopify-section-{{ section.id }} .collage__button {
+    margin-top: 2rem;
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .button {
+    min-width: 15rem;
+  }
+
   @media screen and (max-width: 749px) {
     .section-{{ section.id }} .collage {
       grid-template-columns: 1fr;
@@ -126,6 +135,17 @@
             </div>
           {%- endfor -%}
         </div>
+
+        {%- if section.settings.show_view_all and section.settings.collection != blank -%}
+          <div class="collage__button">
+            <a
+              href="{{ section.settings.collection.url }}"
+              class="button{% if section.settings.button_style_secondary %} button--secondary{% else %} button--primary{% endif %}"
+            >
+              {{ section.settings.button_label | default: 'View all' }}
+            </a>
+          </div>
+        {%- endif -%}
       {%- endif -%}
     </div>
   </div>
@@ -279,6 +299,28 @@
       "id": "collection",
       "label": "Collection",
       "info": "Featured collection to display image and products"
+    },
+    {
+      "type": "header",
+      "content": "Button settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "default": false,
+      "label": "Show 'View all' button"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "default": "View all",
+      "label": "Button label"
+    },
+    {
+      "type": "checkbox",
+      "id": "button_style_secondary",
+      "default": false,
+      "label": "Use secondary button style"
     },
     {
       "type": "header",
