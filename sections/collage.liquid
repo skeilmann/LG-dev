@@ -3,25 +3,6 @@
 {{ 'component-price.css' | asset_url | stylesheet_tag }}
 {{ 'component-modal-video.css' | asset_url | stylesheet_tag }}
 {{ 'component-deferred-media.css' | asset_url | stylesheet_tag }}
-{{ 'component-slider.css' | asset_url | stylesheet_tag }}
-{{ 'quick-add.css' | asset_url | stylesheet_tag }}
-{{ 'quick-add.css' | asset_url | stylesheet_tag }}
-
-{%- unless section.settings.quick_add == 'none' -%}
-  {{ 'quick-add.css' | asset_url | stylesheet_tag }}
-  <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
-{%- endunless -%}
-
-{%- if section.settings.quick_add == 'standard' -%}
-  <script src="{{ 'quick-add.js' | asset_url }}" defer="defer"></script>
-{%- endif -%}
-
-{%- if section.settings.quick_add == 'bulk' -%}
-  <script src="{{ 'quick-add-bulk.js' | asset_url }}" defer="defer"></script>
-  <script src="{{ 'quantity-popover.js' | asset_url }}" defer="defer"></script>
-  <script src="{{ 'price-per-item.js' | asset_url }}" defer="defer"></script>
-  <script src="{{ 'quick-order-list.js' | asset_url }}" defer="defer"></script>
-{%- endif -%}
 
 {%- style -%}
   .section-{{ section.id }}-padding {
@@ -58,11 +39,7 @@
   }
 
   #shopify-section-{{ section.id }} .collection-image {
-    align-self: start;
-    position: sticky;
-    top: 20px;
-    height: auto;
-    max-height: 100vh;
+    height: 100%;
   }
 
   #shopify-section-{{ section.id }} .collection-image img {
@@ -72,68 +49,27 @@
   }
 
   #shopify-section-{{ section.id }} .products-container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-  }
-
-  #shopify-section-{{ section.id }} .products-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 1fr 1fr;
     gap: {{ settings.spacing_grid_horizontal }}px;
-    width: 100%;
-    overflow: hidden;
   }
 
   #shopify-section-{{ section.id }} .collection-product {
-    opacity: 0;
-    transform: translateX(20px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    height: 100%;
   }
 
-  #shopify-section-{{ section.id }} .collection-product.active {
-    opacity: 1;
-    transform: translateX(0);
+  #shopify-section-{{ section.id }} .collection-product .card {
+    height: 100%;
+    margin: 0;
   }
 
-  #shopify-section-{{ section.id }} .quick-add {
-    width: 100%;
-    margin-top: 10px;
-  }
-
-  #shopify-section-{{ section.id }} .slider {
-    scrollbar-width: none;
-  }
-
-  #shopify-section-{{ section.id }} .slider::-webkit-scrollbar {
-    display: none;
-  }
-
-  #shopify-section-{{ section.id }} .slider-buttons {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 20px;
-  }
-
-  #shopify-section-{{ section.id }} .view-all-button {
-    margin-top: 10px;
+  #shopify-section-{{ section.id }} .collage__button {
+    margin-top: 2rem;
     text-align: center;
   }
 
-  #shopify-section-{{ section.id }} .card__content {
-    display: flex;
-    flex-direction: column;
-  }
-
-  #shopify-section-{{ section.id }} .quick-add {
-    width: 100%;
-    margin-top: 10px;
-  }
-
-  #shopify-section-{{ section.id }} .quick-add__submit {
-    width: 100%;
-    padding: 10px;
+  #shopify-section-{{ section.id }} .button {
+    min-width: 15rem;
   }
 
   @media screen and (max-width: 749px) {
@@ -141,18 +77,9 @@
       grid-template-columns: 1fr;
     }
 
-    #shopify-section-{{ section.id }} .collection-image {
-      position: relative;
-      top: 0;
-    }
-
     #shopify-section-{{ section.id }} .products-container {
       grid-template-rows: auto;
       grid-template-columns: 1fr 1fr;
-    }
-
-    #shopify-section-{{ section.id }} .products-grid {
-      grid-template-columns: 1fr;
     }
   }
 
@@ -196,60 +123,29 @@
         </div>
 
         <div class="products-container">
-          <div class="products-grid slider slider--tablet">
-            {%- for product in section.settings.collection.products -%}
-              <div class="collection-product{% if forloop.index <= 2 %} active{% endif %}">
-                {% render 'card-product',
-                  card_product: product,
-                  media_aspect_ratio: 'adapt',
-                  show_secondary_image: true,
-                  show_vendor: section.settings.show_vendor,
-                  show_rating: section.settings.show_rating,
-                  quick_add: section.settings.quick_add,
-                  section_id: section.id
-                %}
-              </div>
-            {%- endfor -%}
-          </div>
-
-          {%- if section.settings.show_slider_buttons -%}
-            <div class="slider-buttons no-js-hidden">
-              <button
-                type="button"
-                class="slider-button slider-button--prev"
-                name="previous"
-                aria-label="{{ 'general.slider.previous_slide' | t }}"
-              >
-                <span class="svg-wrapper">
-                  {{- 'icon-caret.svg' | inline_asset_content -}}
-                </span>
-              </button>
-              <div class="slider-counter caption">
-                <span class="slider-counter--current">1</span>
-                <span aria-hidden="true"> / </span>
-                <span class="slider-counter--total">{{ section.settings.collection.products.size }}</span>
-              </div>
-              <button
-                type="button"
-                class="slider-button slider-button--next"
-                name="next"
-                aria-label="{{ 'general.slider.next_slide' | t }}"
-              >
-                <span class="svg-wrapper">
-                  {{- 'icon-caret.svg' | inline_asset_content -}}
-                </span>
-              </button>
+          {%- assign products = section.settings.collection.products -%}
+          {%- for product in products limit: 2 -%}
+            <div class="collection-product">
+              {% render 'card-product',
+                card_product: product,
+                media_aspect_ratio: 'adapt',
+                show_secondary_image: true,
+                extend_height: true
+              %}
             </div>
-          {%- endif -%}
-
-          {%- if section.settings.show_view_all -%}
-            <div class="view-all-button">
-              <a href="{{ section.settings.collection.url }}" class="button">
-                {{ 'sections.collection_list.view_all' | t }}
-              </a>
-            </div>
-          {%- endif -%}
+          {%- endfor -%}
         </div>
+
+        {%- if section.settings.show_view_all and section.settings.collection != blank -%}
+          <div class="collage__button">
+            <a
+              href="{{ section.settings.collection.url }}"
+              class="button{% if section.settings.button_style_secondary %} button--secondary{% else %} button--primary{% endif %}"
+            >
+              {{ section.settings.button_label | default: 'View all' }}
+            </a>
+          </div>
+        {%- endif -%}
       {%- endif -%}
     </div>
   </div>
@@ -406,6 +302,28 @@
     },
     {
       "type": "header",
+      "content": "Button settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "default": false,
+      "label": "Show 'View all' button"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "default": "View all",
+      "label": "Button label"
+    },
+    {
+      "type": "checkbox",
+      "id": "button_style_secondary",
+      "default": false,
+      "label": "Use secondary button style"
+    },
+    {
+      "type": "header",
       "content": "t:sections.all.padding.section_padding_heading"
     },
     {
@@ -427,59 +345,6 @@
       "unit": "px",
       "label": "t:sections.all.padding.padding_bottom",
       "default": 36
-    },
-    {
-      "type": "header",
-      "content": "Slider Settings"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_slider_buttons",
-      "default": true,
-      "label": "Show slider navigation buttons"
-    },
-    {
-      "type": "header",
-      "content": "View All Button"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_view_all",
-      "default": true,
-      "label": "Show 'View All' button"
-    },
-    {
-      "type": "select",
-      "id": "quick_add",
-      "default": "standard",
-      "label": "Quick add",
-      "info": "Choose type of quick add button",
-      "options": [
-        {
-          "value": "none",
-          "label": "Disable"
-        },
-        {
-          "value": "standard",
-          "label": "Standard"
-        },
-        {
-          "value": "bulk",
-          "label": "Bulk"
-        }
-      ]
-    },
-    {
-      "type": "checkbox",
-      "id": "show_vendor",
-      "default": false,
-      "label": "Show vendor"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_rating",
-      "default": false,
-      "label": "Show product rating"
     }
   ],
   "presets": [
@@ -492,43 +357,3 @@
   ]
 }
 {% endschema %}
-
-<script>
-  window.addEventListener('DOMContentLoaded', (event) => {
-    const slider = document.querySelector('#shopify-section-{{ section.id }} .slider');
-    const sliderPrev = document.querySelector('#shopify-section-{{ section.id }} .slider-button--prev');
-    const sliderNext = document.querySelector('#shopify-section-{{ section.id }} .slider-button--next');
-    const products = document.querySelectorAll('#shopify-section-{{ section.id }} .collection-product');
-    const counterCurrent = document.querySelector('#shopify-section-{{ section.id }} .slider-counter--current');
-
-    let currentIndex = 0;
-    const productsPerPage = 2;
-    const totalProducts = products.length;
-
-    function showProducts(index) {
-      products.forEach((product, i) => {
-        product.classList.remove('active');
-        if (i >= index && i < index + productsPerPage) {
-          product.classList.add('active');
-        }
-      });
-      counterCurrent.textContent = Math.floor(index / productsPerPage) + 1;
-    }
-
-    if (sliderPrev && sliderNext) {
-      sliderPrev.addEventListener('click', () => {
-        if (currentIndex > 0) {
-          currentIndex = Math.max(0, currentIndex - productsPerPage);
-          showProducts(currentIndex);
-        }
-      });
-
-      sliderNext.addEventListener('click', () => {
-        if (currentIndex + productsPerPage < totalProducts) {
-          currentIndex = Math.min(totalProducts - productsPerPage, currentIndex + productsPerPage);
-          showProducts(currentIndex);
-        }
-      });
-    }
-  });
-</script>
