@@ -82,11 +82,18 @@
     grid-template-columns: repeat(2, 1fr);
     gap: {{ settings.spacing_grid_horizontal }}px;
     width: 100%;
+    overflow: hidden;
   }
 
   #shopify-section-{{ section.id }} .collection-product {
-    width: 100%;
-    flex: 0 0 calc(50% - {{ settings.spacing_grid_horizontal | divided_by: 2 }}px);
+    opacity: 0;
+    transform: translateX(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  #shopify-section-{{ section.id }} .collection-product.active {
+    opacity: 1;
+    transform: translateX(0);
   }
 
   #shopify-section-{{ section.id }} .quick-add {
@@ -191,7 +198,7 @@
         <div class="products-container">
           <div class="products-grid slider slider--tablet">
             {%- for product in section.settings.collection.products -%}
-              <div class="collection-product">
+              <div class="collection-product{% if forloop.index <= 2 %} active{% endif %}">
                 {% render 'card-product',
                   card_product: product,
                   media_aspect_ratio: 'adapt',
@@ -442,12 +449,6 @@
       "label": "Show 'View All' button"
     },
     {
-      "type": "checkbox",
-      "id": "show_quick_add",
-      "default": true,
-      "label": "Show quick add button"
-    },
-    {
       "type": "select",
       "id": "quick_add",
       "default": "standard",
@@ -497,30 +498,36 @@
     const slider = document.querySelector('#shopify-section-{{ section.id }} .slider');
     const sliderPrev = document.querySelector('#shopify-section-{{ section.id }} .slider-button--prev');
     const sliderNext = document.querySelector('#shopify-section-{{ section.id }} .slider-button--next');
-    const slides = document.querySelectorAll('#shopify-section-{{ section.id }} .slider__slide');
+    const products = document.querySelectorAll('#shopify-section-{{ section.id }} .collection-product');
     const counterCurrent = document.querySelector('#shopify-section-{{ section.id }} .slider-counter--current');
 
-    let currentSlide = 0;
-    const slidesPerView = 2;
+    let currentIndex = 0;
+    const productsPerPage = 2;
+    const totalProducts = products.length;
 
-    function updateSlider() {
-      const slideWidth = slides[0].offsetWidth;
-      slider.scrollTo({
-        left: currentSlide * slideWidth,
-        behavior: 'smooth',
+    function showProducts(index) {
+      products.forEach((product, i) => {
+        product.classList.remove('active');
+        if (i >= index && i < index + productsPerPage) {
+          product.classList.add('active');
+        }
       });
-      counterCurrent.textContent = currentSlide + 1;
+      counterCurrent.textContent = Math.floor(index / productsPerPage) + 1;
     }
 
     if (sliderPrev && sliderNext) {
       sliderPrev.addEventListener('click', () => {
-        currentSlide = Math.max(currentSlide - slidesPerView, 0);
-        updateSlider();
+        if (currentIndex > 0) {
+          currentIndex = Math.max(0, currentIndex - productsPerPage);
+          showProducts(currentIndex);
+        }
       });
 
       sliderNext.addEventListener('click', () => {
-        currentSlide = Math.min(currentSlide + slidesPerView, slides.length - slidesPerView);
-        updateSlider();
+        if (currentIndex + productsPerPage < totalProducts) {
+          currentIndex = Math.min(totalProducts - productsPerPage, currentIndex + productsPerPage);
+          showProducts(currentIndex);
+        }
       });
     }
   });
