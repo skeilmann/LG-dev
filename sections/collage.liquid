@@ -102,12 +102,28 @@
   }
 
   #shopify-section-{{ section.id }} .countdown-box {
+    position: absolute;
+    bottom: 50%;
+    right: 20px;
     background: #f4f4f4;
     padding: 10px 20px;
-    border-radius: 4px;
+    border-radius: 10px;
     display: inline-block;
-    margin-bottom: 20px;
+    width: 85px;
+    text-align: center;
+    transform: translateY(50%); /* Center vertically */
+
+  }
+
+  .countdown-box .number {
+    font-size: 30px;
     font-weight: bold;
+    line-height: 1;
+  }
+
+  .countdown-box .text {
+    font-size: 10px;
+    line-height: 1;
   }
 
   @media screen and (max-width: 749px) {
@@ -178,7 +194,10 @@
             {%- assign days_left = time_diff | divided_by: 86400 -%}
 
             {%- if days_left > 0 -%}
-              <div class="countdown-box">{{ days_left }} days left</div>
+              <div class="countdown-box">
+                <p class="number">{{ days_left }}</p>
+                <p class="text">дней до конца акции</p>
+              </div>
             {%- endif -%}
             {{
               section.settings.collection.image
@@ -245,21 +264,21 @@
               </button>
             </div>
           {%- endif -%}
-
-          {%- if section.settings.show_view_all -%}
-            <div class="center collection__view-all">
-              <a
-                href="{{ section.settings.collection.url }}"
-                class="button"
-                aria-label="{{ 'sections.featured_collection.view_all_label' | t: collection_name: section.settings.collection.title }}"
-              >
-                {{ 'sections.featured_collection.view_all' | t }}
-              </a>
-            </div>
-          {%- endif -%}
         </slider-component>
       {%- endif -%}
     </div>
+
+    {%- if section.settings.collection != blank and section.settings.show_view_all -%}
+      <div class="center collection__view-all" style="margin-top: 2rem;">
+        <a
+          href="{{ section.settings.collection.url }}"
+          class="button"
+          aria-label="{{ 'sections.featured_collection.view_all_label' | t: collection_name: section.settings.collection.title }}"
+        >
+          {{ 'sections.featured_collection.view_all' | t }}
+        </a>
+      </div>
+    {%- endif -%}
   </div>
 </div>
 
