@@ -91,6 +91,7 @@
         "slide_XcCMrR",
         "slide_mtV8Mg"
       ],
+      "disabled": true,
       "custom_css": [
         ".slideshow {border-radius: var(--product-card-corner-radius);}"
       ],
@@ -245,6 +246,7 @@
         "featured_collection_RLcdnQ",
         "featured_collection_FWWPgT"
       ],
+      "disabled": true,
       "custom_css": [
         ".card__media {border-radius: 10px;}"
       ],
@@ -263,6 +265,7 @@
     },
     "featured_collection_FKK34Y": {
       "type": "featured-collection",
+      "disabled": true,
       "settings": {
         "title": "НОВИНКИ",
         "heading_size": "h2",
@@ -272,7 +275,7 @@
         "collection": "новинки",
         "products_to_show": 15,
         "columns_desktop": 5,
-        "full_width": true,
+        "full_width": false,
         "show_view_all": true,
         "view_all_style": "solid",
         "enable_desktop_slider": true,
@@ -291,6 +294,7 @@
     },
     "featured_collection_bBPBV4": {
       "type": "featured-collection",
+      "disabled": true,
       "settings": {
         "title": "ХИТЫ ПРОДАЖ — БЕСТСЕЛЛЕРЫ",
         "heading_size": "h2",
@@ -319,6 +323,7 @@
     },
     "featured_collection_9zRDWp": {
       "type": "featured-collection",
+      "disabled": true,
       "settings": {
         "title": "Товары со скидкой",
         "heading_size": "h2",
@@ -375,6 +380,34 @@
         "enable_mobile_slider": true,
         "enable_desktop_slider": true
       }
+    },
+    "featured_collection_HWdCEJ": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "УХАЖИВАЙ ЗА КОЖЕЙ ВМЕСТЕ С GA&MA PROFESSIONAL",
+        "heading_size": "h2",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "collection": "gama-acrygel",
+        "products_to_show": 5,
+        "columns_desktop": 5,
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "solid",
+        "enable_desktop_slider": false,
+        "color_scheme": "",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": true,
+        "show_rating": false,
+        "quick_add": "standard",
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
     }
   },
   "order": [
@@ -384,6 +417,7 @@
     "featured_collection_FKK34Y",
     "featured_collection_bBPBV4",
     "featured_collection_9zRDWp",
-    "collage_3VGjEW"
+    "collage_3VGjEW",
+    "featured_collection_HWdCEJ"
   ]
 }
