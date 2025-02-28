@@ -52,16 +52,19 @@
   }
 
   #shopify-section-{{ section.id }} .collection-image {
-    position: sticky;
-    top: 20px;
+    position: relative;
     width: 100%;
-    aspect-ratio: 1;
+    height: 100%;
+    aspect-ratio: auto;
   }
 
   #shopify-section-{{ section.id }} .collection-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
   }
 
   #shopify-section-{{ section.id }} .product-grid {
@@ -111,7 +114,8 @@
     display: inline-block;
     width: 85px;
     text-align: center;
-    transform: translateY(50%); /* Center vertically */
+    transform: translateY(50%);
+    z-index: 1;
 
   }
 
@@ -147,6 +151,49 @@
 
     #shopify-section-{{ section.id }} .slider .grid__item {
       width: 100%;
+    }
+  }
+
+  @media screen and (max-width: 989px) {
+    .section-{{ section.id }} .collage {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    #shopify-section-{{ section.id }} .collection-image {
+      width: 100%;
+      height: 400px;
+      position: relative;
+    }
+
+    #shopify-section-{{ section.id }} .product-grid {
+      {% if section.settings.enable_mobile_product_slider %}
+        display: flex !important;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 20px;
+        margin-bottom: 0;
+        gap: 15px;
+      {% else %}
+      display: flex;
+      gap: 15px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 20px;
+    }
+    {%- endif -%}
+
+    #shopify-section-{{ section.id }} .slider .grid__item {
+      flex: 0 0 auto;
+      width: 200px;
+      margin-right: 15px;
+      scroll-snap-align: start;
+    }
+
+    #shopify-section-{{ section.id }} .slider .grid__item:last-child {
+      margin-right: 0;
     }
   }
 
@@ -215,10 +262,11 @@
             class="grid product-grid contains-card contains-card--product{% if show_mobile_slider %} slider slider--mobile{% endif %}{% if show_desktop_slider %} slider--desktop{% endif %}"
             role="list"
           >
-            {%- for product in section.settings.collection.products limit: 4 -%}
+            {%- for product in section.settings.collection.products limit: 6 -%}
               <li
                 id="Slide-{{ section.id }}-{{ forloop.index }}"
                 class="grid__item slider__slide"
+                style="max-width: 300px"
               >
                 {% render 'card-product',
                   card_product: product,
