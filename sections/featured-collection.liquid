@@ -519,6 +519,16 @@
         },
         {
           "type": "range",
+          "id": "container_height",
+          "min": 100,
+          "max": 1000,
+          "step": 10,
+          "unit": "px",
+          "label": "Container Height",
+          "default": 400
+        },
+        {
+          "type": "range",
           "id": "corner_radius",
           "min": 0,
           "max": 50,
@@ -529,23 +539,60 @@
         },
         {
           "type": "range",
-          "id": "image_width",
-          "min": 100,
-          "max": 1200,
-          "step": 50,
+          "id": "max_width",
+          "min": 400,
+          "max": 2000,
+          "step": 100,
           "unit": "px",
-          "label": "Image Width",
-          "default": 600
+          "label": "Maximum Width",
+          "info": "Leave empty for full width",
+          "default": 1000
         },
         {
-          "type": "range",
-          "id": "image_height",
-          "min": 100,
-          "max": 800,
-          "step": 50,
-          "unit": "px",
-          "label": "Image Height",
-          "default": 400
+          "type": "checkbox",
+          "id": "margin_center",
+          "label": "Center Container",
+          "default": true
+        },
+        {
+          "type": "select",
+          "id": "image_position_x",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "default": "center",
+          "label": "Image Horizontal Position"
+        },
+        {
+          "type": "select",
+          "id": "image_position_y",
+          "options": [
+            {
+              "value": "top",
+              "label": "Top"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "bottom",
+              "label": "Bottom"
+            }
+          ],
+          "default": "center",
+          "label": "Image Vertical Position"
         }
       ]
     }

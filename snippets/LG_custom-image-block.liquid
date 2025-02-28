@@ -1,25 +1,22 @@
+{{ 'LG_costum-image-block.css' | asset_url | stylesheet_tag }}
+
 {%- style -%}
-  .custom-image-{{ block.id }} {
+  .LG-{{ block.id }} {
+    --container-height: {{ block.settings.container_height }}px;
+    --image-position-x: {{ block.settings.image_position_x }};
+    --image-position-y: {{ block.settings.image_position_y }};
     border-radius: {{ block.settings.corner_radius }}px;
-    overflow: hidden;
-    max-width: {{ block.settings.image_width }}px;
-    margin: 0 auto;
+    {% if block.settings.max_width != blank %}max-width: {{ block.settings.max_width }}px;{% endif %}
+    {% if block.settings.margin_center %}margin: 0 auto;{% endif %}
   }
 {%- endstyle -%}
 
-<div
-  class="custom-image-{{ block.id }}{% if block.settings.add_shadow %} shadow{% endif %}"
-  {{ block.shopify_attributes | escape }}
->
+<div class="LG-{{ block.id }} LG-costum-image" {{ block.shopify_attributes }}>
   {%- if block.settings.image != blank -%}
     {{
       block.settings.image
-      | image_url: width: block.settings.image_width
-      | image_tag:
-        loading: 'lazy',
-        width: block.settings.image_width,
-        height: block.settings.image_height,
-        alt: block.settings.image.alt
+      | image_url: width: 2000
+      | image_tag: loading: 'lazy', alt: block.settings.image.alt
       | escape
     }}
   {%- else -%}

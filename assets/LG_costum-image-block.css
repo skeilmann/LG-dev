@@ -1,0 +1,17 @@
+.custom-blocks-wrapper {
+    overflow: hidden;
+}
+
+.LG-costum-image {
+    position: relative;
+    width: 100%;
+    height: var(--container-height, 400px);
+    overflow: hidden;
+}
+
+.LG-costum-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--image-position-x, center) var(--image-position-y, center);
+}
