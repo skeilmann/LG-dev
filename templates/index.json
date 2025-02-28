@@ -108,8 +108,10 @@
     },
     "featured_collection": {
       "type": "featured-collection",
+      "disabled": true,
       "settings": {
         "title": "<p>КАТАЛОГ</p>",
+        "title_alignment": "center",
         "heading_size": "h2",
         "description": "",
         "show_description": false,
@@ -267,6 +269,7 @@
       "disabled": true,
       "settings": {
         "title": "<p>НОВИНКИ</p>",
+        "title_alignment": "left",
         "heading_size": "h2",
         "description": "",
         "show_description": false,
@@ -296,6 +299,7 @@
       "disabled": true,
       "settings": {
         "title": "<p>ХИТЫ ПРОДАЖ — БЕСТСЕЛЛЕРЫ</p>",
+        "title_alignment": "left",
         "heading_size": "h2",
         "description": "",
         "show_description": false,
@@ -325,6 +329,7 @@
       "disabled": true,
       "settings": {
         "title": "<p>Товары со скидкой</p>",
+        "title_alignment": "left",
         "heading_size": "h2",
         "description": "",
         "show_description": false,
@@ -351,6 +356,7 @@
     },
     "collage_3VGjEW": {
       "type": "collage",
+      "disabled": true,
       "custom_css": [
         "h3 {margin: 0;}",
         "p {margin: 0;}"
@@ -380,6 +386,23 @@
         "enable_desktop_slider": true
       }
     },
+    "featured_blog_UhBKqY": {
+      "type": "featured-blog",
+      "settings": {
+        "heading": "СОВЕТЫ ДЛЯ МАСТЕРОВ МАНИКЮРА 💫",
+        "heading_size": "h2",
+        "blog": "news",
+        "post_limit": 4,
+        "columns_desktop": 4,
+        "color_scheme": "",
+        "show_image": true,
+        "show_date": true,
+        "show_author": false,
+        "show_view_all": true,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
     "featured_collection_HWdCEJ": {
       "type": "featured-collection",
       "blocks": {
@@ -400,7 +423,8 @@
         "custom_image_8f6Wih"
       ],
       "settings": {
-        "title": "<p>УХАЖИВАЙ ЗА КОЖЕЙ ВМЕСТЕ С GA[color:#ff0000]&[/color]MA PROFESSIONAL</p>",
+        "title": "<p><strong>УХАЖИВАЙ ЗА КОЖЕЙ </strong></p><p><strong>ВМЕСТЕ С GA[color:#ff0000]&[/color]MA PROFESSIONAL</strong></p>",
+        "title_alignment": "center",
         "heading_size": "h2",
         "description": "",
         "show_description": false,
@@ -434,6 +458,7 @@
     "featured_collection_bBPBV4",
     "featured_collection_9zRDWp",
     "collage_3VGjEW",
+    "featured_blog_UhBKqY",
     "featured_collection_HWdCEJ"
   ]
 }
