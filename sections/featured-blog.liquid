@@ -36,7 +36,7 @@
             data-cascade
           {% endif %}
         >
-          {{ section.settings.heading }}
+          {% render 'color-text', content: section.settings.heading %}
         </h2>
 
         {%- if section.settings.blog != blank
