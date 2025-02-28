@@ -389,7 +389,8 @@
     "featured_blog_UhBKqY": {
       "type": "featured-blog",
       "settings": {
-        "heading": "СОВЕТЫ ДЛЯ МАСТЕРОВ МАНИКЮРА 💫",
+        "heading": "<p>СОВЕТЫ ДЛЯ МАСТЕРОВ МАНИКЮРА 💫</p>",
+        "title_alignment": "center",
         "heading_size": "h2",
         "blog": "news",
         "post_limit": 4,
