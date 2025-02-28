@@ -409,7 +409,7 @@
         "products_to_show": 5,
         "columns_desktop": 5,
         "full_width": false,
-        "show_view_all": true,
+        "show_view_all": false,
         "view_all_style": "outline",
         "enable_desktop_slider": false,
         "color_scheme": "",
