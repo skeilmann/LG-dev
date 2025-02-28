@@ -4,19 +4,19 @@
 {%- endcomment -%}
 
 {%- assign text = text | default: content -%}
-{%- assign colored_text = text | split: '[color:' -%}
+{%- assign parts = text | split: '[color:' -%}
 
-{%- for part in colored_text -%}
+{%- for part in parts -%}
   {%- if forloop.first and forloop.length == 1 -%}
     {{ part }}
   {%- else -%}
     {%- if forloop.first -%}
       {{ part }}
     {%- else -%}
-      {%- assign color_parts = part | split: ']' -%}
-      {%- assign color = color_parts[0] -%}
-      {%- assign remaining = color_parts[1] | split: '[/color]' -%}
-      <span style="color: {{ color }}">{{ remaining[0] }}</span>{{ remaining[1] }}
+      {%- assign color_split = part | split: ']' -%}
+      {%- assign color = color_split.first -%}
+      {%- assign content_split = color_split.last | split: '[/color]' -%}
+      <span style="color: {{ color }}">{{ content_split.first }}</span>{{ content_split.last }}
     {%- endif -%}
   {%- endif -%}
 {%- endfor -%}
