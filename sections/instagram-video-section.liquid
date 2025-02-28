@@ -18,18 +18,21 @@
   </div>
 
   <slider-component class="slider-mobile-gutter">
-    <div class="instagram-slider">
+    <div class="slider-buttons instagram-slider">
       <button
         type="button"
         class="slider-button slider-button--prev"
         name="previous"
         aria-label="{{ 'general.slider.previous_slide' | t }}"
+        aria-controls="Slider-{{ section.id }}"
       >
-        {% render 'icon-caret' %}
+        <span class="svg-wrapper">
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </span>
       </button>
 
       <div
-        class="video-slider slider slider--mobile"
+        class="slider-counter caption video-slider slider slider--mobile"
         data-slides-to-show="{{ section.settings.slides_to_show }}"
         data-slider
         id="Slider-{{ section.id }}"
@@ -42,8 +45,11 @@
         class="slider-button slider-button--next"
         name="next"
         aria-label="{{ 'general.slider.next_slide' | t }}"
+        aria-controls="Slider-{{ section.id }}"
       >
-        {% render 'icon-caret' %}
+        <span class="svg-wrapper">
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </span>
       </button>
     </div>
 
@@ -54,7 +60,9 @@
         name="previous"
         aria-label="{{ 'general.slider.previous_slide' | t }}"
       >
-        {% render 'icon-caret' %}
+        <span class="svg-wrapper">
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </span>
       </button>
       <div class="slider-counter caption">
         <span class="slider-counter--current">1</span>
@@ -68,7 +76,9 @@
         name="next"
         aria-label="{{ 'general.slider.next_slide' | t }}"
       >
-        {% render 'icon-caret' %}
+        <span class="svg-wrapper">
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </span>
       </button>
     </div>
   </slider-component>
