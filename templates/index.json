@@ -357,7 +357,7 @@
         "text_content": "<p>коллекция моделирующих гелей с шиммером</p>",
         "heading_size": "h2",
         "desktop_layout": "left",
-        "mobile_layout": "collage",
+        "mobile_layout": "column",
         "card_styles": "none",
         "color_scheme": "",
         "heading_color": "#f4b8dd",
@@ -366,7 +366,14 @@
         "subheading_font_size": 32,
         "collection": "горячее-предложение",
         "padding_top": 36,
-        "padding_bottom": 36
+        "padding_bottom": 36,
+        "show_slider_buttons": true,
+        "show_view_all": true,
+        "quick_add": "standard",
+        "show_vendor": true,
+        "show_rating": false,
+        "enable_mobile_slider": true,
+        "enable_desktop_slider": true
       }
     }
   },
