@@ -383,6 +383,20 @@
     },
     "featured_collection_HWdCEJ": {
       "type": "featured-collection",
+      "blocks": {
+        "custom_image_8f6Wih": {
+          "type": "custom_image",
+          "settings": {
+            "image": "shopify://shop_images/IMG_7239_3_1_be6f91ec-9626-42c6-97f4-b6b66bfe5d0c.jpg",
+            "corner_radius": 11,
+            "image_width": 1200,
+            "image_height": 350
+          }
+        }
+      },
+      "block_order": [
+        "custom_image_8f6Wih"
+      ],
       "settings": {
         "title": "УХАЖИВАЙ ЗА КОЖЕЙ ВМЕСТЕ С GA&MA PROFESSIONAL",
         "heading_size": "h2",
