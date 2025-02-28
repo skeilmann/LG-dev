@@ -199,11 +199,33 @@
   },
   "settings": [
     {
-      "type": "inline_richtext",
+      "type": "richtext",
       "id": "heading",
       "default": "t:sections.featured-blog.settings.heading.default",
       "label": "t:sections.featured-blog.settings.heading.label"
     },
+
+    {
+      "type": "select",
+      "id": "title_alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left",
+      "label": "Title Alignment"
+    },
+
     {
       "type": "select",
       "id": "heading_size",
