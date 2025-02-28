@@ -1,0 +1,49 @@
+.instagram-video-section {
+    padding: 60px 0;
+}
+
+.instagram-video-section .section-title {
+    margin-bottom: 30px;
+}
+
+.instagram-video-section .subtitle-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.instagram-video-section .section-subtitle {
+    margin: 0;
+}
+
+.video-slider {
+    display: flex;
+    gap: 20px;
+    overflow-x: hidden;
+}
+
+.video-item {
+    flex: 0 0 calc(100% / var(--slides-to-show));
+    max-width: calc(100% / var(--slides-to-show));
+}
+
+.video-item img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    aspect-ratio: 1;
+}
+
+@media screen and (max-width: 768px) {
+    .video-item {
+        flex: 0 0 calc(100% / 2);
+        max-width: calc(100% / 2);
+    }
+
+    .instagram-video-section .subtitle-container {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+}
