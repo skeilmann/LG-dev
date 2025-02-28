@@ -86,6 +86,17 @@
       {%- endif -%}
     </div>
 
+    {%- if section.blocks.size > 0 -%}
+      <div class="custom-blocks-wrapper page-width">
+        {%- for block in section.blocks -%}
+          {% case block.type %}
+            {% when 'custom_image' %}
+              {% render 'LG_custom-image-block', block: block %}
+          {% endcase %}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
     <slider-component class="slider-mobile-gutter{% if section.settings.full_width %} slider-component-full-width{% endif %}{% if show_mobile_slider == false %} page-width{% endif %}{% if show_desktop_slider == false and section.settings.full_width == false %} page-width-desktop{% endif %}{% if show_desktop_slider %} slider-component-desktop{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
       <ul
         id="Slider-{{ section.id }}"
@@ -494,6 +505,49 @@
       "unit": "px",
       "label": "t:sections.all.padding.padding_bottom",
       "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "custom_image",
+      "name": "Custom Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "range",
+          "id": "corner_radius",
+          "min": 0,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner Radius",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "image_width",
+          "min": 100,
+          "max": 1200,
+          "step": 50,
+          "unit": "px",
+          "label": "Image Width",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "image_height",
+          "min": 100,
+          "max": 800,
+          "step": 50,
+          "unit": "px",
+          "label": "Image Height",
+          "default": 400
+        }
+      ]
     }
   ],
   "presets": [
