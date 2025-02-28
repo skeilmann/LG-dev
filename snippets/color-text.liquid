@@ -4,19 +4,32 @@
 {%- endcomment -%}
 
 {%- assign text = text | default: content -%}
-{%- assign parts = text | split: '[color:' -%}
+{%- assign current_text = text -%}
+{%- assign processed_text = '' -%}
 
-{%- for part in parts -%}
-  {%- if forloop.first and forloop.length == 1 -%}
-    {{ part }}
+{%- for i in (1..2) -%}
+  {%- if current_text contains '[color:' and current_text contains '[/color]' -%}
+    {%- assign parts = current_text | split: '[color:' -%}
+    {%- assign before_color = parts | first -%}
+    {%- assign color_content = parts[1] | split: '[/color]' -%}
+    {%- assign color_parts = color_content[0] | split: ']' -%}
+    {%- assign color = color_parts[0] -%}
+    {%- assign text_content = color_parts[1] -%}
+
+    {%- assign processed_text = processed_text | append: before_color -%}
+    {%- assign processed_text = processed_text
+      | append: '<span style="color: '
+      | append: color
+      | append: '">'
+      | append: text_content
+      | append: '</span>'
+    -%}
+
+    {%- assign current_text = color_content[1] -%}
   {%- else -%}
-    {%- if forloop.first -%}
-      {{ part }}
-    {%- else -%}
-      {%- assign color_split = part | split: ']' -%}
-      {%- assign color = color_split.first -%}
-      {%- assign content_split = color_split.last | split: '[/color]' -%}
-      <span style="color: {{ color }}">{{ content_split.first }}</span>{{ content_split.last }}
-    {%- endif -%}
+    {%- assign processed_text = processed_text | append: current_text -%}
+    {%- break -%}
   {%- endif -%}
 {%- endfor -%}
+
+{{ processed_text }}
