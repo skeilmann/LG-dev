@@ -388,9 +388,7 @@
           "type": "custom_image",
           "settings": {
             "image": "shopify://shop_images/IMG_7239_3_1_be6f91ec-9626-42c6-97f4-b6b66bfe5d0c.jpg",
-            "corner_radius": 16,
-            "image_width": 450,
-            "image_height": 400
+            "corner_radius": 27
           }
         }
       },
@@ -408,7 +406,7 @@
         "columns_desktop": 5,
         "full_width": false,
         "show_view_all": true,
-        "view_all_style": "solid",
+        "view_all_style": "outline",
         "enable_desktop_slider": false,
         "color_scheme": "",
         "image_ratio": "square",
