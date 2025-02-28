@@ -413,7 +413,7 @@
             "image": "shopify://shop_images/IMG_7239_3_1_be6f91ec-9626-42c6-97f4-b6b66bfe5d0c.jpg",
             "container_height": 390,
             "corner_radius": 10,
-            "max_width": 1200,
+            "max_width": 1600,
             "margin_center": true,
             "image_position_x": "center",
             "image_position_y": "center"
