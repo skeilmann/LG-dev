@@ -1,0 +1,72 @@
+{%- style -%}
+  .custom-image-{{ block.id }} {
+    border-radius: {{ block.settings.corner_radius }}px;
+    overflow: hidden;
+    max-width: {{ block.settings.image_width }}px;
+    margin: 0 auto;
+  }
+{%- endstyle -%}
+
+<div
+  class="custom-image-{{ block.id }}{% if block.settings.add_shadow %} shadow{% endif %}"
+  {{ block.shopify_attributes | escape }}
+>
+  {%- if block.settings.image != blank -%}
+    {{
+      block.settings.image
+      | image_url: width: block.settings.image_width
+      | image_tag:
+        loading: 'lazy',
+        width: block.settings.image_width,
+        height: block.settings.image_height,
+        alt: block.settings.image.alt
+      | escape
+    }}
+  {%- else -%}
+    {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "type": "custom_image",
+  "name": "Custom Image",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "range",
+      "id": "corner_radius",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "label": "Corner Radius",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "image_width",
+      "min": 100,
+      "max": 1200,
+      "step": 50,
+      "unit": "px",
+      "label": "Image Width",
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "image_height",
+      "min": 100,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "label": "Image Height",
+      "default": 400
+    }
+  ]
+}
+{% endschema %}
