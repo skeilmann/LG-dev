@@ -294,6 +294,11 @@
       >
     {%- endif -%}
 
+    <!-- Add these lines -->
+    <link rel="stylesheet" href="{{ 'instagram-section.css' | asset_url }}" media="print" onload="this.media='all'">
+    <script src="{{ 'instagram-section.js' | asset_url }}" defer="defer"></script>
+    <!-- End of new additions -->
+
     <script>
       if (Shopify.designMode) {
         document.documentElement.classList.add('shopify-design-mode');
