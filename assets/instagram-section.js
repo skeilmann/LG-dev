@@ -1,19 +1,65 @@
-class InstagramSlider {
+class InstagramFeed {
     constructor() {
         this.init();
     }
 
     init() {
-        const sliders = document.querySelectorAll('.video-slider');
+        const sections = document.querySelectorAll('[data-instagram-feed]');
+        if (!sections.length) return;
 
-        sliders.forEach(slider => {
-            const slidesToShow = slider.dataset.slidesToShow || 4;
-            slider.style.setProperty('--slides-to-show', slidesToShow);
+        sections.forEach(section => {
+            this.loadInstagramFeed(section);
         });
+    }
+
+    async loadInstagramFeed(section) {
+        const slider = section.querySelector('.video-slider');
+        const token = section.getAttribute('data-instagram-token');
+        const count = parseInt(section.getAttribute('data-video-count')) || 4;
+
+        if (!token) {
+            console.warn('Instagram access token is required');
+            return;
+        }
+
+        try {
+            const response = await fetch(`https://graph.instagram.com/me/media?fields=media_type,thumbnail_url,media_url,permalink&access_token=${token}&limit=${count}`);
+            const data = await response.json();
+
+            if (data.data) {
+                const videos = data.data.filter(item => item.media_type === 'VIDEO');
+                this.renderVideos(videos, slider);
+            }
+        } catch (error) {
+            console.error('Error loading Instagram feed:', error);
+            slider.innerHTML = '<p>Error loading Instagram feed</p>';
+        }
+    }
+
+    renderVideos(videos, slider) {
+        slider.innerHTML = videos.map((video, index) => `
+            <div class="video-item slider__slide"
+                 id="Slide-${index}"
+                 role="group"
+                 aria-roledescription="slide"
+                 aria-label="${index + 1} of ${videos.length}">
+                <a href="${video.permalink}" target="_blank">
+                    <img src="${video.thumbnail_url}" alt="Instagram video thumbnail">
+                </a>
+            </div>
+        `).join('');
+
+        const slidesToShow = slider.dataset.slidesToShow || 4;
+        slider.style.setProperty('--slides-to-show', slidesToShow);
+
+        // Initialize slider after content is loaded
+        if (typeof Slider === 'function') {
+            new Slider(slider.closest('slider-component'));
+        }
     }
 }
 
-// Initialize slider when DOM is loaded
+// Initialize Instagram feed when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new InstagramSlider();
+    new InstagramFeed();
 });

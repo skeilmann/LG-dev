@@ -1,4 +1,4 @@
-<div class="instagram-video-section">
+<div class="instagram-video-section" data-instagram-feed>
   {% if section.settings.title != blank %}
     <h2 class="section-title {{ section.settings.title_alignment }}">
       {{ section.settings.title | escape }}
@@ -17,23 +17,61 @@
     {% endif %}
   </div>
 
-  <div class="instagram-slider">
-    {% if section.blocks.size > 0 %}
-      <div class="video-slider" data-slides-to-show="{{ section.settings.slides_to_show }}">
-        {% for block in section.blocks %}
-          <div class="video-item" {{ block.shopify_attributes }}>
-            {% if block.settings.video_url != blank %}
-              <a href="{{ block.settings.video_url }}" target="_blank">
-                {% if block.settings.video_thumbnail != blank %}
-                  {{ block.settings.video_thumbnail | image_url: width: 400 | image_tag: block.settings.video_title }}
-                {% endif %}
-              </a>
-            {% endif %}
-          </div>
-        {% endfor %}
+  <slider-component class="slider-mobile-gutter">
+    <div class="instagram-slider">
+      <button
+        type="button"
+        class="slider-button slider-button--prev"
+        name="previous"
+        aria-label="{{ 'general.slider.previous_slide' | t }}"
+      >
+        {% render 'icon-caret' %}
+      </button>
+
+      <div
+        class="video-slider slider slider--mobile"
+        data-slides-to-show="{{ section.settings.slides_to_show }}"
+        data-slider
+        id="Slider-{{ section.id }}"
+      >
+        <div class="loading-spinner">Loading...</div>
       </div>
-    {% endif %}
-  </div>
+
+      <button
+        type="button"
+        class="slider-button slider-button--next"
+        name="next"
+        aria-label="{{ 'general.slider.next_slide' | t }}"
+      >
+        {% render 'icon-caret' %}
+      </button>
+    </div>
+
+    <div class="slider-buttons no-js-hidden">
+      <button
+        type="button"
+        class="slider-button slider-button--prev"
+        name="previous"
+        aria-label="{{ 'general.slider.previous_slide' | t }}"
+      >
+        {% render 'icon-caret' %}
+      </button>
+      <div class="slider-counter caption">
+        <span class="slider-counter--current">1</span>
+        <span aria-hidden="true"> / </span>
+        <span class="visually-hidden">{{ 'general.slider.of' | t }}</span>
+        <span class="slider-counter--total">1</span>
+      </div>
+      <button
+        type="button"
+        class="slider-button slider-button--next"
+        name="next"
+        aria-label="{{ 'general.slider.next_slide' | t }}"
+      >
+        {% render 'icon-caret' %}
+      </button>
+    </div>
+  </slider-component>
 </div>
 
 {% schema %}
@@ -89,45 +127,31 @@
       "step": 1,
       "label": "Videos to show",
       "default": 4
-    }
-  ],
-  "blocks": [
+    },
     {
-      "type": "video",
-      "name": "Instagram Video",
-      "settings": [
-        {
-          "type": "text",
-          "id": "video_title",
-          "label": "Video Title"
-        },
-        {
-          "type": "url",
-          "id": "video_url",
-          "label": "Instagram Video URL"
-        },
-        {
-          "type": "image_picker",
-          "id": "video_thumbnail",
-          "label": "Video Thumbnail"
-        }
-      ]
+      "type": "text",
+      "id": "instagram_token",
+      "label": "Instagram Access Token",
+      "info": "Enter your Instagram Access Token"
+    },
+    {
+      "type": "range",
+      "id": "video_count",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "label": "Number of videos to load",
+      "default": 4
     }
   ],
   "presets": [
     {
       "name": "Instagram Videos",
-      "blocks": [
-        {
-          "type": "video"
-        },
-        {
-          "type": "video"
-        },
-        {
-          "type": "video"
-        }
-      ]
+      "settings": {
+        "title": "Instagram Videos",
+        "video_count": 4,
+        "slides_to_show": 4
+      }
     }
   ]
 }
