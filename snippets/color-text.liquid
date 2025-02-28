@@ -1,0 +1,22 @@
+{%- comment -%}
+  Usage: Include text between [color:#HEX]text[/color] tags
+  Example: Hello [color:#ff0000]World[/color]
+{%- endcomment -%}
+
+{%- assign text = text | default: content -%}
+{%- assign colored_text = text | split: '[color:' -%}
+
+{%- for part in colored_text -%}
+  {%- if forloop.first and forloop.length == 1 -%}
+    {{ part }}
+  {%- else -%}
+    {%- if forloop.first -%}
+      {{ part }}
+    {%- else -%}
+      {%- assign color_parts = part | split: ']' -%}
+      {%- assign color = color_parts[0] -%}
+      {%- assign remaining = color_parts[1] | split: '[/color]' -%}
+      <span style="color: {{ color }}">{{ remaining[0] }}</span>{{ remaining[1] }}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
