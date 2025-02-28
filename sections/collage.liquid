@@ -49,12 +49,21 @@
     grid-template-columns: minmax(300px, 1fr) minmax(300px, 1fr);
     gap: var(--grid-desktop-horizontal-spacing);
     align-items: start;
+    height: 100%;
+  }
+
+  .section-{{ section.id }} .collage--mobile {
+  margin: 0;
   }
 
   #shopify-section-{{ section.id }} .collection-image {
     position: relative;
-    aspect-ratio: auto;
+    display: flex;
+    justify-content: top;
+    width: 100%;
+    height: 500px;
     overflow: hidden;
+    padding-top: 10px;
   }
 
   #shopify-section-{{ section.id }} .collection-image img {
@@ -67,7 +76,7 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr) !important;
     gap: var(--grid-desktop-horizontal-spacing);
-    margin-bottom: 2rem;
+    margin: 0;
   }
 
   #shopify-section-{{ section.id }} .card .media {
@@ -94,7 +103,6 @@
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x mandatory;
     gap: 15px;
-    padding-bottom: 20px;
   }
 
   #shopify-section-{{ section.id }} .countdown-box {
