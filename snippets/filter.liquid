@@ -119,140 +119,129 @@
 </style>
 
 <script>
-  class ProductFilter {
-    constructor(container) {
-      this.container = container;
+  if (typeof ProductFilter === 'undefined') {
+    class ProductFilter {
+      constructor(container) {
+        this.container = container;
 
-      // Debug logging
-      console.group('ProductFilter Initialization');
-      console.log('Container:', this.container);
-
-      // Get section ID with fallback
-      this.sectionId = this.container.dataset.sectionId;
-      if (!this.sectionId) {
-        console.warn('No section ID found on container. Looking for nested section ID...');
-        const sectionElement = this.container.closest('[data-section-id]');
-        this.sectionId = sectionElement ? sectionElement.dataset.sectionId : null;
-      }
-      console.log('Section ID:', this.sectionId);
-
-      if (!this.sectionId) {
-        console.error('No section ID found. Filter functionality may not work correctly.');
-      }
-
-      // Rest of your constructor code...
-      this.buttons = this.container.querySelectorAll('.filter-button');
-      console.log('Filter buttons found:', this.buttons.length);
-
-      this.products = document.querySelectorAll(`[data-section-id="${this.sectionId}"]`);
-      console.log('Products found:', this.products.length);
-
-      console.groupEnd();
-
-      this.activeFilters = new Set();
-      this.countElement = document.createElement('div');
-      this.countElement.className = 'filter-status';
-      this.container.appendChild(this.countElement);
-
-      this.init();
-    }
-
-    init() {
-      this.buttons.forEach((button) => {
-        button.addEventListener('click', this.handleFilterClick.bind(this));
-      });
-
-      if (this.clearButton) {
-        this.clearButton.addEventListener('click', this.clearFilters.bind(this));
-      }
-
-      // Show all products initially
-      this.updateProductVisibility();
-      this.updateFilterCount();
-    }
-
-    handleFilterClick(event) {
-      const button = event.currentTarget;
-      const filter = button.dataset.filter;
-
-      if (button.classList.contains('active')) {
-        this.activeFilters.delete(filter);
-      } else {
-        this.activeFilters.add(filter);
-      }
-
-      button.classList.toggle('active');
-      button.setAttribute('aria-pressed', button.classList.contains('active'));
-
-      this.updateProductVisibility();
-      this.updateFilterCount();
-    }
-
-    updateProductVisibility() {
-      let visibleCount = 0;
-
-      this.products.forEach((product) => {
-        // Get product collections and log for debugging
-        const productCollections = (product.dataset.collections || '').split(',').filter(Boolean);
-
-        // Determine visibility
-        const isVisible =
-          this.activeFilters.size === 0 || // Show all if no filters active
-          [...this.activeFilters].some((filter) => productCollections.includes(filter));
-
-        // Update product visibility
-        if (isVisible) {
-          product.classList.remove('filtered-out');
-          visibleCount++;
-        } else {
-          product.classList.add('filtered-out');
+        // Get section ID with fallback
+        this.sectionId = this.container.dataset.sectionId;
+        if (!this.sectionId) {
+          const sectionElement = this.container.closest('[data-section-id]');
+          this.sectionId = sectionElement ? sectionElement.dataset.sectionId : null;
         }
-      });
+        this.buttons = this.container.querySelectorAll('.filter-button');
+        this.products = document.querySelectorAll(`[data-section-id="${this.sectionId}"]`);
+        this.activeFilters = new Set();
+        this.countElement = document.createElement('div');
+        this.countElement.className = 'filter-status';
+        this.container.appendChild(this.countElement);
 
-      console.log('Visible products count:', visibleCount);
-      console.groupEnd();
+        this.init();
+      }
 
-      // If no products are visible after filtering, hide all
-      if (visibleCount === 0 && this.activeFilters.size > 0) {
-        this.products.forEach((product) => {
-          product.classList.add('filtered-out');
+      init() {
+        this.buttons.forEach((button) => {
+          button.addEventListener('click', this.handleFilterClick.bind(this));
         });
+
+        if (this.clearButton) {
+          this.clearButton.addEventListener('click', this.clearFilters.bind(this));
+        }
+
+        // Show all products initially
+        this.updateProductVisibility();
+        this.updateFilterCount();
       }
 
-      return visibleCount;
-    }
+      handleFilterClick(event) {
+        const button = event.currentTarget;
+        const filter = button.dataset.filter;
 
-    updateFilterCount() {
-      if (!this.countElement) return;
+        if (button.classList.contains('active')) {
+          this.activeFilters.delete(filter);
+        } else {
+          this.activeFilters.add(filter);
+        }
 
-      const totalCount = this.products.length;
-      const visibleCount = this.updateProductVisibility();
+        button.classList.toggle('active');
+        button.setAttribute('aria-pressed', button.classList.contains('active'));
 
-      if (this.activeFilters.size === 0) {
-        this.countElement.textContent = '';
-      } else {
-        this.countElement.textContent = `${visibleCount} of ${totalCount} products`;
+        this.updateProductVisibility();
+        this.updateFilterCount();
+      }
+
+      updateProductVisibility() {
+        let visibleCount = 0;
+
+        this.products.forEach((product) => {
+          // Get product collections and log for debugging
+          const productCollections = (product.dataset.collections || '').split(',').filter(Boolean);
+
+          // Determine visibility
+          const isVisible =
+            this.activeFilters.size === 0 || // Show all if no filters active
+            [...this.activeFilters].some((filter) => productCollections.includes(filter));
+
+          // Update product visibility
+          if (isVisible) {
+            product.classList.remove('filtered-out');
+            visibleCount++;
+          } else {
+            product.classList.add('filtered-out');
+          }
+        });
+
+        // If no products are visible after filtering, hide all
+        if (visibleCount === 0 && this.activeFilters.size > 0) {
+          this.products.forEach((product) => {
+            product.classList.add('filtered-out');
+          });
+        }
+
+        return visibleCount;
+      }
+
+      updateFilterCount() {
+        if (!this.countElement) return;
+
+        const totalCount = this.products.length;
+        const visibleCount = this.updateProductVisibility();
+
+        if (this.activeFilters.size === 0) {
+          this.countElement.textContent = '';
+        } else {
+          this.countElement.textContent = `${visibleCount} of ${totalCount} products`;
+        }
+      }
+
+      clearFilters() {
+        this.activeFilters.clear();
+
+        this.buttons.forEach((button) => {
+          button.classList.remove('active');
+          button.setAttribute('aria-pressed', 'false');
+        });
+
+        this.updateProductVisibility();
+        this.updateFilterCount();
       }
     }
 
-    clearFilters() {
-      this.activeFilters.clear();
-
-      this.buttons.forEach((button) => {
-        button.classList.remove('active');
-        button.setAttribute('aria-pressed', 'false');
+    // Initialize filters
+    document.addEventListener('DOMContentLoaded', () => {
+      const filterContainers = document.querySelectorAll('[data-filter-container]');
+      filterContainers.forEach((container) => {
+        new ProductFilter(container);
       });
-
-      this.updateProductVisibility();
-      this.updateFilterCount();
-    }
-  }
-
-  // Initialize filters
-  document.addEventListener('DOMContentLoaded', () => {
-    const filterContainers = document.querySelectorAll('[data-filter-container]');
-    filterContainers.forEach((container) => {
-      new ProductFilter(container);
     });
-  });
+  } else {
+    // If class already exists, just initialize new instances
+    document.addEventListener('DOMContentLoaded', () => {
+      const filterContainers = document.querySelectorAll('[data-filter-container]');
+      filterContainers.forEach((container) => {
+        new ProductFilter(container);
+      });
+    });
+  }
 </script>
