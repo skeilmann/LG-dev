@@ -108,12 +108,10 @@
     },
     "featured_collection": {
       "type": "featured-collection",
+      "disabled": true,
       "settings": {
-        "show_filter": true,
-        "filter_collections": [
-          "топы-swanky-stamping",
-          "best-selling-products"
-        ],
+        "show_filter": false,
+        "filter_collections": [],
         "title": "<p>КАТАЛОГ</p>",
         "title_alignment": "center",
         "heading_size": "h2",
