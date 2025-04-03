@@ -80,9 +80,9 @@
         </h2>
       {%- endif -%}
 
-      {% if section.settings.show_filter %}
+      {%- if section.settings.show_filter -%}
         {% render 'filter', section: section %}
-      {% endif %}
+      {%- endif -%}
 
       {%- if section.settings.description != blank
         or section.settings.show_description

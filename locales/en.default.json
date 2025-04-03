@@ -333,9 +333,10 @@
       "view_all": "View all",
       "view_all_label": "View all products in the {{ collection_name }} collection",
       "clear_filters": "Clear filters",
+      "all": "All collections",
     },
     "collection_list": {
-      "view_all": "View all"
+      "view_all": "View all",
     },
     "collection_template": {
       "empty": "No products found",
