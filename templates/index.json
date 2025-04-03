@@ -111,7 +111,8 @@
       "settings": {
         "show_filter": true,
         "filter_collections": [
-          "топы-swanky-stamping"
+          "топы-swanky-stamping",
+          "dark"
         ],
         "title": "<p>КАТАЛОГ</p>",
         "title_alignment": "center",
