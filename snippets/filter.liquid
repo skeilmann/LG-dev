@@ -1,15 +1,5 @@
 <div class="filter-wrapper" data-filter-container>
   <div class="filter-buttons">
-    <button
-      class="filter-button active"
-      data-filter="all"
-      data-section-id="{{ section.id }}"
-      aria-pressed="true"
-      role="switch"
-    >
-      <span class="filter-title">{{ 'sections.featured_collection.all' | t | default: 'All' }}</span>
-    </button>
-
     {%- for collection in section.settings.filter_collections -%}
       <button
         class="filter-button"
@@ -19,27 +9,17 @@
         role="switch"
       >
         <div class="filter-item-content">
-          {%- if collection.image -%}
-            <img
-              loading="lazy"
-              src="{{ collection.image | asset_url | image_url: '100x100', crop: 'center' }}"
-              alt=""
-              class="filter-image"
-              width="50"
-              height="50"
-            >
-          {%- endif -%}
+          <img
+            src="{{ collection.image | image_url: width: 50 }}"
+            alt="{{ collection.title }}"
+            class="filter-image"
+            width="50"
+            height="50"
+          >
           <span class="filter-title">{{ collection.title }}</span>
         </div>
       </button>
     {%- endfor -%}
-  </div>
-
-  <div class="filter-status">
-    <span class="filter-count" data-filter-count></span>
-    <button type="button" class="filter-clear" data-filter-clear hidden>
-      {{ 'sections.featured_collection.clear_filters' | t | default: 'Clear filters' }}
-    </button>
   </div>
 </div>
 
@@ -112,12 +92,15 @@
   }
 
   .grid__item {
-    transition: opacity 0.3s ease-in-out;
+    transition: opacity 0.3s ease-in-out, height 0.3s ease-in-out, margin 0.3s ease-in-out, padding 0.3s ease-in-out;
   }
 
   .grid__item.filtered-out {
     opacity: 0;
-    pointer-events: none;
+    height: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
   }
 
   @media screen and (max-width: 749px) {
@@ -140,9 +123,7 @@
       this.sectionId = this.container.dataset.id;
       this.buttons = this.container.querySelectorAll('.filter-button');
       this.products = this.container.querySelectorAll('.grid__item[data-section-id]');
-      this.clearButton = this.container.querySelector('[data-filter-clear]');
-      this.countElement = this.container.querySelector('[data-filter-count]');
-      this.activeFilters = new Set(['all']);
+      this.activeFilters = new Set();
 
       this.init();
     }
@@ -156,6 +137,7 @@
         this.clearButton.addEventListener('click', this.clearFilters.bind(this));
       }
 
+      // Show all products initially
       this.updateProductVisibility();
       this.updateFilterCount();
     }
@@ -163,30 +145,15 @@
     handleFilterClick(event) {
       const button = event.currentTarget;
       const filter = button.dataset.filter;
-      const isAllFilter = filter === 'all';
 
-      if (isAllFilter) {
-        this.activeFilters.clear();
-        this.activeFilters.add('all');
+      if (button.classList.contains('active')) {
+        this.activeFilters.delete(filter);
       } else {
-        this.activeFilters.delete('all');
-        if (button.classList.contains('active')) {
-          this.activeFilters.delete(filter);
-        } else {
-          this.activeFilters.add(filter);
-        }
-
-        if (this.activeFilters.size === 0) {
-          this.activeFilters.add('all');
-          isAllFilter = true;
-        }
+        this.activeFilters.add(filter);
       }
 
-      this.buttons.forEach((btn) => {
-        const isActive = (btn.dataset.filter === 'all' && isAllFilter) || this.activeFilters.has(btn.dataset.filter);
-        btn.classList.toggle('active', isActive);
-        btn.setAttribute('aria-pressed', isActive);
-      });
+      button.classList.toggle('active');
+      button.setAttribute('aria-pressed', button.classList.contains('active'));
 
       this.updateProductVisibility();
       this.updateFilterCount();
@@ -197,18 +164,25 @@
 
       if (!this.products.length) return;
 
-      this.products.forEach((product) => {
-        const productCollections = (product.dataset.collections || '').split(',').filter(Boolean);
-        const isVisible =
-          this.activeFilters.has('all') ||
-          [...this.activeFilters].some((filter) => productCollections.includes(filter));
-        product.classList.toggle('filtered-out', !isVisible);
-        if (isVisible) visibleCount++;
-      });
+      requestAnimationFrame(() => {
+        this.products.forEach((product) => {
+          const productCollections = (product.dataset.collections || '').split(',').filter(Boolean);
+          const isVisible =
+            this.activeFilters.size === 0 ||
+            [...this.activeFilters].some((filter) => productCollections.includes(filter));
 
-      if (this.clearButton) {
-        this.clearButton.hidden = this.activeFilters.has('all');
-      }
+          if (!isVisible) {
+            product.classList.add('filtered-out');
+          } else {
+            product.classList.remove('filtered-out');
+            visibleCount++;
+          }
+        });
+
+        if (this.clearButton) {
+          this.clearButton.hidden = this.activeFilters.size === 0;
+        }
+      });
 
       return visibleCount;
     }
@@ -217,27 +191,21 @@
       if (!this.countElement) return;
 
       const totalCount = this.products.length;
+      const visibleCount = this.updateProductVisibility();
 
-      if (this.activeFilters.has('all') && totalCount === 0) {
+      if (this.activeFilters.size === 0) {
         this.countElement.textContent = '';
       } else {
-        const visibleCount = this.updateProductVisibility();
-        if (visibleCount === totalCount) {
-          this.countElement.textContent = '';
-        } else {
-          this.countElement.textContent = `${visibleCount} of ${totalCount} products`;
-        }
+        this.countElement.textContent = `${visibleCount} of ${totalCount} products`;
       }
     }
 
     clearFilters() {
       this.activeFilters.clear();
-      this.activeFilters.add('all');
 
       this.buttons.forEach((button) => {
-        const isAll = button.dataset.filter === 'all';
-        button.classList.toggle('active', isAll);
-        button.setAttribute('aria-pressed', isAll);
+        button.classList.remove('active');
+        button.setAttribute('aria-pressed', 'false');
       });
 
       this.updateProductVisibility();
