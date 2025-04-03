@@ -108,6 +108,7 @@
     },
     "featured_collection": {
       "type": "featured-collection",
+      "disabled": true,
       "settings": {
         "show_filter": true,
         "filter_collections": [
@@ -303,10 +304,12 @@
     },
     "featured_collection_bBPBV4": {
       "type": "featured-collection",
-      "disabled": true,
       "settings": {
-        "show_filter": false,
-        "filter_collections": [],
+        "show_filter": true,
+        "filter_collections": [
+          "da23",
+          "dark"
+        ],
         "title": "<p>ХИТЫ ПРОДАЖ — БЕСТСЕЛЛЕРЫ</p>",
         "title_alignment": "left",
         "heading_size": "h2",
