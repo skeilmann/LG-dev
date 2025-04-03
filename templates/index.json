@@ -112,8 +112,7 @@
         "show_filter": true,
         "filter_collections": [
           "топы-swanky-stamping",
-          "dark",
-          "cyclone"
+          "best-selling-products"
         ],
         "title": "<p>КАТАЛОГ</p>",
         "title_alignment": "center",
