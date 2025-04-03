@@ -1,8 +1,22 @@
+/**
+ * InstagramFeed Class
+ * Handles fetching and displaying Instagram videos in a slider
+ * 
+ * Features:
+ * - Fetches videos from Instagram Graph API
+ * - Filters for video content only
+ * - Creates responsive slider interface
+ * - Handles loading states and errors
+ */
 class InstagramFeed {
     constructor() {
         this.init();
     }
 
+    /**
+     * Initialize the Instagram feed
+     * Finds all Instagram feed sections on the page and initializes them
+     */
     init() {
         const sections = document.querySelectorAll('[data-instagram-feed]');
         if (!sections.length) return;
@@ -12,6 +26,11 @@ class InstagramFeed {
         });
     }
 
+    /**
+     * Fetch Instagram feed data
+     * @param {HTMLElement} section - The section element containing the feed
+     * Uses Instagram Graph API to fetch media items
+     */
     async loadInstagramFeed(section) {
         const slider = section.querySelector('.video-slider');
         const token = section.getAttribute('data-instagram-token');
@@ -36,6 +55,16 @@ class InstagramFeed {
         }
     }
 
+    /**
+     * Render videos in the slider
+     * @param {Array} videos - Array of video data from Instagram
+     * @param {HTMLElement} slider - The slider container element
+     * 
+     * Creates slider items with:
+     * - Thumbnail images
+     * - Links to original posts
+     * - Proper ARIA labels for accessibility
+     */
     renderVideos(videos, slider) {
         slider.innerHTML = videos.map((video, index) => `
             <div class="video-item slider__slide"
@@ -59,7 +88,7 @@ class InstagramFeed {
     }
 }
 
-// Initialize Instagram feed when DOM is loaded
+// Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     new InstagramFeed();
 });

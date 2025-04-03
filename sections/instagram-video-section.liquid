@@ -1,3 +1,14 @@
+{%- comment -%}
+  Instagram Video Section
+  ----------------------
+  This section displays Instagram videos in a slider format.
+  Features:
+  - Customizable title and subtitle
+  - Optional "View More" button
+  - Responsive slider with navigation
+  - Dynamic video loading from Instagram
+{%- endcomment -%}
+
 <div class="instagram-video-section" data-instagram-feed>
   {% if section.settings.title != blank %}
     <h2 class="section-title {{ section.settings.title_alignment }}">
@@ -88,12 +99,14 @@
 {
   "name": "Instagram Videos",
   "settings": [
+    // Title settings - controls the main heading of the section
     {
       "type": "text",
       "id": "title",
       "label": "Heading",
       "default": "Instagram Videos"
     },
+    // Title alignment - allows merchants to position the heading
     {
       "type": "select",
       "id": "title_alignment",
@@ -138,12 +151,14 @@
       "label": "Videos to show",
       "default": 4
     },
+    // Instagram API configuration
     {
       "type": "text",
       "id": "instagram_token",
       "label": "Instagram Access Token",
-      "info": "Enter your Instagram Access Token"
+      "info": "Enter your Instagram Access Token from the Meta Developer Console"
     },
+    // Controls how many videos to fetch from Instagram
     {
       "type": "range",
       "id": "video_count",

@@ -79,6 +79,11 @@
           {% render 'color-text', content: section.settings.title %}
         </h2>
       {%- endif -%}
+
+      {% if section.settings.show_filter %}
+        {% render 'filter', section: section %}
+      {% endif %}
+
       {%- if section.settings.description != blank
         or section.settings.show_description
         and section.settings.collection.description != empty
@@ -108,7 +113,10 @@
       <ul
         id="Slider-{{ section.id }}"
         data-id="{{ section.id }}"
-        class="grid product-grid contains-card contains-card--product{% if settings.card_style == 'standard' %} contains-card--standard{% endif %} grid--{{ section.settings.columns_desktop }}-col-desktop{% if section.settings.collection == blank %} grid--2-col-tablet-down{% else %} grid--{{ section.settings.columns_mobile }}-col-tablet-down{% endif %}{% if show_mobile_slider or show_desktop_slider %} slider{% if show_desktop_slider %} slider--desktop{% endif %}{% if show_mobile_slider %} slider--tablet grid--peek{% endif %}{% endif %}"
+        class="
+          grid product-grid contains-card contains-card--product{% if settings.card_style == 'standard' %} contains-card--standard{% endif %} grid--{{ section.settings.columns_desktop }}-col-desktop{% if section.settings.collection == blank %} grid--2-col-tablet-down{% else %} grid--{{ section.settings.columns_mobile }}-col-tablet-down{% endif %}
+          {% if show_mobile_slider or show_desktop_slider %} slider{% if show_desktop_slider %} slider--desktop{% endif %}{% if show_mobile_slider %} slider--tablet grid--peek{% endif %}{% endif %}
+        "
         role="list"
         aria-label="{{ 'general.slider.name' | t }}"
       >
@@ -121,6 +129,8 @@
               data-cascade
               style="--animation-order: {{ forloop.index }};"
             {% endif %}
+            data-section-id="{{ section.id }}"
+            data-collections="{{ product.collections | map: 'handle' | join: ',' }}"
           >
             {% render 'card-product',
               card_product: product,
@@ -225,6 +235,19 @@
     "groups": ["header", "footer"]
   },
   "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_filter",
+      "label": "Show collection filter",
+      "default": false
+    },
+    {
+      "type": "collection_list",
+      "id": "filter_collections",
+      "label": "Filter collections",
+      "info": "Select collections to use as filters",
+      "limit": 10
+    },
     {
       "type": "richtext",
       "id": "title",

@@ -1,0 +1,264 @@
+{%- if section.settings.filter_collections.size > 0 -%}
+  <div class="filter-wrapper" data-filter-container>
+    <div class="filter-buttons">
+      <button
+        class="filter-button active"
+        data-filter="all"
+        data-section-id="{{ section.id }}"
+        aria-pressed="true"
+        role="switch"
+      >
+        <span class="filter-title">{{ 'sections.featured_collection.all' | t | default: 'All' }}</span>
+      </button>
+
+      {% for filter_collection in section.settings.filter_collections %}
+        {%- if filter_collection.image and filter_collection.title -%}
+          <button
+            class="filter-button"
+            data-filter="{{ filter_collection.handle }}"
+            data-section-id="{{ section.id }}"
+            aria-pressed="false"
+            role="switch"
+          >
+            <div class="filter-item-content">
+              <img
+                loading="lazy"
+                src="{{ filter_collection.image | img_url: '100x100', crop: 'center' }}"
+                alt=""
+                class="filter-image"
+                width="50"
+                height="50"
+              >
+              <span class="filter-title">{{ filter_collection.title }}</span>
+            </div>
+          </button>
+        {%- endif -%}
+      {% endfor %}
+    </div>
+
+    <div class="filter-status">
+      <span class="filter-count" data-filter-count></span>
+      <button type="button" class="filter-clear" data-filter-clear hidden>
+        {{ 'sections.featured_collection.clear_filters' | t | default: 'Clear filters' }}
+      </button>
+    </div>
+  </div>
+
+  <style>
+    .filter-wrapper {
+      margin-bottom: 3rem;
+    }
+
+    .filter-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .filter-button {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.8rem 1.5rem;
+      background-color: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 10rem;
+      cursor: pointer;
+      font-size: 1.4rem;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: inherit;
+      text-transform: lowercase;
+    }
+
+    .filter-button:hover {
+      box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.1);
+    }
+
+    .filter-button.active {
+      background-color: #000;
+      color: #fff;
+      border-color: #000;
+    }
+
+    .filter-item-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .filter-image {
+      width: 5rem;
+      height: 5rem;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .filter-status {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 1.4rem;
+    }
+
+    .filter-clear {
+      background: none;
+      border: none;
+      color: #666;
+      text-decoration: underline;
+      cursor: pointer;
+      padding: 0.5rem;
+      margin-left: 1rem;
+    }
+
+    .grid__item {
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .grid__item.filtered-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    @media screen and (max-width: 749px) {
+      .filter-button {
+        font-size: 1.2rem;
+        padding: 0.6rem 1.2rem;
+      }
+
+      .filter-image {
+        width: 4rem;
+        height: 4rem;
+      }
+    }
+  </style>
+
+  <script>
+    class ProductFilter {
+      constructor(container) {
+        this.container = container;
+        this.sectionId = this.container.dataset.id;
+        this.buttons = this.container.querySelectorAll('.filter-button');
+        this.products = this.container.querySelectorAll('.grid__item[data-section-id]');
+        this.clearButton = this.container.querySelector('[data-filter-clear]');
+        this.countElement = this.container.querySelector('[data-filter-count]');
+        this.activeFilters = new Set(['all']);
+
+        this.init();
+      }
+
+      init() {
+        this.buttons.forEach((button) => {
+          button.addEventListener('click', this.handleFilterClick.bind(this));
+        });
+
+        if (this.clearButton) {
+          this.clearButton.addEventListener('click', this.clearFilters.bind(this));
+        }
+
+        this.updateProductVisibility();
+        this.updateFilterCount();
+      }
+
+      handleFilterClick(event) {
+        const button = event.currentTarget;
+        const filter = button.dataset.filter;
+
+        if (filter === 'all') {
+          this.activeFilters.clear();
+          this.activeFilters.add('all');
+          this.buttons.forEach((btn) => {
+            btn.classList.toggle('active', btn === button);
+            btn.setAttribute('aria-pressed', btn === button);
+          });
+        } else {
+          this.activeFilters.delete('all');
+          this.buttons.forEach((btn) => {
+            if (btn.dataset.filter === 'all') {
+              btn.classList.remove('active');
+              btn.setAttribute('aria-pressed', 'false');
+            }
+          });
+          button.classList.toggle('active');
+          button.setAttribute('aria-pressed', button.classList.contains('active'));
+
+          if (button.classList.contains('active')) {
+            this.activeFilters.add(filter);
+          } else {
+            this.activeFilters.delete(filter);
+          }
+
+          if (this.activeFilters.size === 0) {
+            const allButton = this.container.querySelector('[data-filter="all"]');
+            if (allButton) {
+              allButton.classList.add('active');
+              allButton.setAttribute('aria-pressed', 'true');
+              this.activeFilters.add('all');
+            }
+          }
+        }
+
+        this.updateProductVisibility();
+        this.updateFilterCount();
+      }
+
+      updateProductVisibility() {
+        let visibleCount = 0;
+
+        this.products.forEach((product) => {
+          if (this.activeFilters.has('all')) {
+            product.classList.remove('filtered-out');
+            visibleCount++;
+          } else {
+            const productCollections = (product.dataset.collections || '').split(',');
+            const isVisible = [...this.activeFilters].some((filter) => productCollections.includes(filter));
+            product.classList.toggle('filtered-out', !isVisible);
+            if (isVisible) visibleCount++;
+          }
+        });
+
+        if (this.clearButton) {
+          this.clearButton.hidden = this.activeFilters.has('all');
+        }
+
+        return visibleCount;
+      }
+
+      updateFilterCount() {
+        if (!this.countElement) return;
+
+        const visibleCount = this.updateProductVisibility();
+        const totalCount = this.products.length;
+
+        if (visibleCount === totalCount) {
+          this.countElement.textContent = '';
+        } else {
+          this.countElement.textContent = `${visibleCount} of ${totalCount} products`;
+        }
+      }
+
+      clearFilters() {
+        this.activeFilters.clear();
+        this.activeFilters.add('all');
+
+        this.buttons.forEach((button) => {
+          const isAll = button.dataset.filter === 'all';
+          button.classList.toggle('active', isAll);
+          button.setAttribute('aria-pressed', isAll);
+        });
+
+        this.updateProductVisibility();
+        this.updateFilterCount();
+      }
+    }
+
+    // Initialize filters
+    document.addEventListener('DOMContentLoaded', () => {
+      const filterContainers = document.querySelectorAll('[data-filter-container]');
+      filterContainers.forEach((container) => {
+        new ProductFilter(container.closest('.collection'));
+      });
+    });
+  </script>
+{%- endif -%}

@@ -1,8 +1,11 @@
+/* Main section styling */
 .instagram-video-section {
     padding: 60px 0;
 }
 
-.instagram-video-section .section-title {
+/* Title and subtitle container layout */
+.instagram-video-section .section-title,
+.instagram-video-section .subtitle-container {
     margin-bottom: 30px;
 }
 
@@ -17,12 +20,14 @@
     margin: 0;
 }
 
+/* Slider layout and functionality */
 .instagram-slider {
     position: relative;
     display: flex;
     align-items: center;
 }
 
+/* Video grid configuration */
 .video-slider {
     display: flex;
     gap: 20px;
@@ -33,6 +38,7 @@
     -webkit-overflow-scrolling: touch;
 }
 
+/* Individual video item styling */
 .video-item {
     flex: 0 0 calc(100% / var(--slides-to-show));
     max-width: calc(100% / var(--slides-to-show));
@@ -46,6 +52,7 @@
     aspect-ratio: 1;
 }
 
+/* Loading state indicator */
 .loading-spinner {
     text-align: center;
     padding: 40px;
@@ -53,6 +60,7 @@
     color: #666;
 }
 
+/* Mobile-specific adjustments */
 @media screen and (max-width: 768px) {
     .video-item {
         flex: 0 0 calc(100% / 2);
@@ -66,6 +74,7 @@
     }
 }
 
+/* Tablet and smaller desktop adjustments */
 @media screen and (max-width: 749px) {
     .slider--mobile {
         scroll-padding-left: 1.5rem;
