@@ -119,19 +119,19 @@
 </style>
 
 <script>
-  if (typeof ProductFilter === 'undefined') {
-    class ProductFilter {
+  window.ProductFilter =
+    window.ProductFilter ||
+    class {
       constructor(container) {
         this.container = container;
-
-        // Get section ID with fallback
         this.sectionId = this.container.dataset.sectionId;
         if (!this.sectionId) {
           const sectionElement = this.container.closest('[data-section-id]');
           this.sectionId = sectionElement ? sectionElement.dataset.sectionId : null;
         }
         this.buttons = this.container.querySelectorAll('.filter-button');
-        this.products = document.querySelectorAll(`[data-section-id="${this.sectionId}"]`);
+        // Changed product selector to find items within the section
+        this.products = document.querySelectorAll(`#Slider-${this.sectionId} .grid__item`);
         this.activeFilters = new Set();
         this.countElement = document.createElement('div');
         this.countElement.className = 'filter-status';
@@ -149,7 +149,6 @@
           this.clearButton.addEventListener('click', this.clearFilters.bind(this));
         }
 
-        // Show all products initially
         this.updateProductVisibility();
         this.updateFilterCount();
       }
@@ -175,15 +174,12 @@
         let visibleCount = 0;
 
         this.products.forEach((product) => {
-          // Get product collections and log for debugging
           const productCollections = (product.dataset.collections || '').split(',').filter(Boolean);
 
-          // Determine visibility
           const isVisible =
-            this.activeFilters.size === 0 || // Show all if no filters active
+            this.activeFilters.size === 0 ||
             [...this.activeFilters].some((filter) => productCollections.includes(filter));
 
-          // Update product visibility
           if (isVisible) {
             product.classList.remove('filtered-out');
             visibleCount++;
@@ -192,7 +188,6 @@
           }
         });
 
-        // If no products are visible after filtering, hide all
         if (visibleCount === 0 && this.activeFilters.size > 0) {
           this.products.forEach((product) => {
             product.classList.add('filtered-out');
@@ -226,22 +221,24 @@
         this.updateProductVisibility();
         this.updateFilterCount();
       }
-    }
+    };
 
-    // Initialize filters
-    document.addEventListener('DOMContentLoaded', () => {
-      const filterContainers = document.querySelectorAll('[data-filter-container]');
-      filterContainers.forEach((container) => {
-        new ProductFilter(container);
-      });
+  // Section-specific initialization
+  document.addEventListener('DOMContentLoaded', function () {
+    const initializeFilters = (sectionId) => {
+      const container = document.querySelector(`[data-filter-container][data-section-id="${sectionId}"]`);
+      if (container && !container.hasAttribute('data-filter-initialized')) {
+        new window.ProductFilter(container);
+        container.setAttribute('data-filter-initialized', 'true');
+      }
+    };
+
+    // Initialize filters for all sections
+    document.querySelectorAll('[data-filter-container]').forEach((container) => {
+      const sectionId = container.dataset.sectionId;
+      if (sectionId) {
+        initializeFilters(sectionId);
+      }
     });
-  } else {
-    // If class already exists, just initialize new instances
-    document.addEventListener('DOMContentLoaded', () => {
-      const filterContainers = document.querySelectorAll('[data-filter-container]');
-      filterContainers.forEach((container) => {
-        new ProductFilter(container);
-      });
-    });
-  }
+  });
 </script>
