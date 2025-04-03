@@ -108,7 +108,6 @@
     },
     "featured_collection": {
       "type": "featured-collection",
-      "disabled": true,
       "settings": {
         "show_filter": true,
         "filter_collections": [
@@ -272,10 +271,12 @@
     },
     "featured_collection_FKK34Y": {
       "type": "featured-collection",
-      "disabled": true,
       "settings": {
-        "show_filter": false,
-        "filter_collections": [],
+        "show_filter": true,
+        "filter_collections": [
+          "monami",
+          "dark"
+        ],
         "title": "<p>НОВИНКИ</p>",
         "title_alignment": "left",
         "heading_size": "h2",
