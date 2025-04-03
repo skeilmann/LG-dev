@@ -1,4 +1,4 @@
-<div class="filter-wrapper" data-filter-container>
+<div class="filter-wrapper" data-filter-container data-section-id="{{ section.id }}">
   <div class="filter-buttons">
     {%- for collection in section.settings.filter_collections -%}
       <button
@@ -101,6 +101,8 @@
     margin: 0 !important;
     padding: 0 !important;
     overflow: hidden;
+    position: absolute;
+    pointer-events: none;
   }
 
   @media screen and (max-width: 749px) {
@@ -120,10 +122,37 @@
   class ProductFilter {
     constructor(container) {
       this.container = container;
-      this.sectionId = this.container.dataset.id;
+
+      // Debug logging
+      console.group('ProductFilter Initialization');
+      console.log('Container:', this.container);
+
+      // Get section ID with fallback
+      this.sectionId = this.container.dataset.sectionId;
+      if (!this.sectionId) {
+        console.warn('No section ID found on container. Looking for nested section ID...');
+        const sectionElement = this.container.closest('[data-section-id]');
+        this.sectionId = sectionElement ? sectionElement.dataset.sectionId : null;
+      }
+      console.log('Section ID:', this.sectionId);
+
+      if (!this.sectionId) {
+        console.error('No section ID found. Filter functionality may not work correctly.');
+      }
+
+      // Rest of your constructor code...
       this.buttons = this.container.querySelectorAll('.filter-button');
-      this.products = this.container.querySelectorAll('.grid__item[data-section-id]');
+      console.log('Filter buttons found:', this.buttons.length);
+
+      this.products = document.querySelectorAll(`[data-section-id="${this.sectionId}"]`);
+      console.log('Products found:', this.products.length);
+
+      console.groupEnd();
+
       this.activeFilters = new Set();
+      this.countElement = document.createElement('div');
+      this.countElement.className = 'filter-status';
+      this.container.appendChild(this.countElement);
 
       this.init();
     }
@@ -162,27 +191,33 @@
     updateProductVisibility() {
       let visibleCount = 0;
 
-      if (!this.products.length) return;
+      this.products.forEach((product) => {
+        // Get product collections and log for debugging
+        const productCollections = (product.dataset.collections || '').split(',').filter(Boolean);
 
-      requestAnimationFrame(() => {
-        this.products.forEach((product) => {
-          const productCollections = (product.dataset.collections || '').split(',').filter(Boolean);
-          const isVisible =
-            this.activeFilters.size === 0 ||
-            [...this.activeFilters].some((filter) => productCollections.includes(filter));
+        // Determine visibility
+        const isVisible =
+          this.activeFilters.size === 0 || // Show all if no filters active
+          [...this.activeFilters].some((filter) => productCollections.includes(filter));
 
-          if (!isVisible) {
-            product.classList.add('filtered-out');
-          } else {
-            product.classList.remove('filtered-out');
-            visibleCount++;
-          }
-        });
-
-        if (this.clearButton) {
-          this.clearButton.hidden = this.activeFilters.size === 0;
+        // Update product visibility
+        if (isVisible) {
+          product.classList.remove('filtered-out');
+          visibleCount++;
+        } else {
+          product.classList.add('filtered-out');
         }
       });
+
+      console.log('Visible products count:', visibleCount);
+      console.groupEnd();
+
+      // If no products are visible after filtering, hide all
+      if (visibleCount === 0 && this.activeFilters.size > 0) {
+        this.products.forEach((product) => {
+          product.classList.add('filtered-out');
+        });
+      }
 
       return visibleCount;
     }
