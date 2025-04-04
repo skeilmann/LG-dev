@@ -91,7 +91,6 @@
         "slide_XcCMrR",
         "slide_mtV8Mg"
       ],
-      "disabled": true,
       "custom_css": [
         ".slideshow {border-radius: var(--product-card-corner-radius);}"
       ],
@@ -108,7 +107,6 @@
     },
     "featured_collection": {
       "type": "featured-collection",
-      "disabled": true,
       "settings": {
         "show_filter": false,
         "filter_collections": [],
@@ -249,7 +247,6 @@
         "featured_collection_RLcdnQ",
         "featured_collection_FWWPgT"
       ],
-      "disabled": true,
       "custom_css": [
         ".card__media {border-radius: 10px;}"
       ],
@@ -336,7 +333,6 @@
     },
     "featured_collection_9zRDWp": {
       "type": "featured-collection",
-      "disabled": true,
       "settings": {
         "show_filter": false,
         "filter_collections": [],
@@ -368,7 +364,6 @@
     },
     "collage_3VGjEW": {
       "type": "collage",
-      "disabled": true,
       "custom_css": [
         "h3 {margin: 0;}",
         "p {margin: 0;}"
