@@ -30,4 +30,15 @@ document.addEventListener('DOMContentLoaded', function () {
             localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
         });
     });
+
+    fetch('/apps/favorites/update', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            customerId: Shopify.customerId,
+            favorites: updatedFavoritesArray,
+        }),
+    });
 });
