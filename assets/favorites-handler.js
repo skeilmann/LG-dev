@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
     const FAVORITES_KEY = 'favorites';
-    let favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
+    const customerId = window.Shopify?.customerId;
+    const metafieldFavorites = window.Shopify?.favorites || [];
+
+    let favorites = customerId ? metafieldFavorites : JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
 
     // Initial setup of icons based on localStorage
     document.querySelectorAll('.favorite-icon').forEach(icon => {

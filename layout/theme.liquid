@@ -35,7 +35,7 @@
     <script src="{{ 'details-disclosure.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'details-modal.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'search-form.js' | asset_url }}" defer="defer"></script>
-    <script src="{{ 'favorites-handler.js' | asset_url }}" defer="defer"></script>
+    {% comment %} <script src="{{ 'favorites-handler.js' | asset_url }}" defer="defer"></script> {% endcomment %}
 
     {%- if settings.animations_reveal_on_scroll -%}
       <script src="{{ 'animations.js' | asset_url }}" defer="defer"></script>
@@ -382,5 +382,15 @@
       <script src="{{ 'cart-drawer.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
     {%- render 'ecom_footer' -%}
+
+    {% comment %}
+      {% if customer %}
+        <script>
+          window.Shopify = window.Shopify || {};
+          Shopify.customerId = {{ customer.id }};
+          Shopify.favorites = {{ customer.metafields.custom.favorites | json }};
+        </script>
+      {% endif %}
+    {% endcomment %}
   </body>
 </html>
