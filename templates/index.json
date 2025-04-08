@@ -221,7 +221,7 @@
         "description": "",
         "show_description": false,
         "description_style": "body",
-        "collection": "новинки",
+        "collection": "new-arrival",
         "products_to_show": 15,
         "columns_desktop": 5,
         "full_width": false,
