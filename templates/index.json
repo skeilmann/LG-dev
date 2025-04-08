@@ -12,24 +12,6 @@
     "slideshow_kHzFpH": {
       "type": "slideshow",
       "blocks": {
-        "slide_eNVRdw": {
-          "type": "slide",
-          "settings": {
-            "image": "shopify://shop_images/Group_76_1.jpg",
-            "heading": "<h2>HEYLOVE Cuti-Cocktail</h2>",
-            "heading_size": "h2",
-            "subheading": "уникальная коллекция масел для кутикулы с отдушкой",
-            "button_label": "смотреть каталог",
-            "link": "shopify://collections/hello",
-            "button_style_secondary": false,
-            "box_align": "middle-right",
-            "show_text_box": false,
-            "text_alignment": "left",
-            "image_overlay_opacity": 0,
-            "color_scheme": "scheme-5",
-            "text_alignment_mobile": "center"
-          }
-        },
         "slide_VR38xH": {
           "type": "slide",
           "settings": {
@@ -47,49 +29,10 @@
             "color_scheme": "scheme-4",
             "text_alignment_mobile": "center"
           }
-        },
-        "slide_XcCMrR": {
-          "type": "slide",
-          "settings": {
-            "image": "shopify://shop_images/Group_78.jpg",
-            "heading": "<h2>Вытяжка CYCLONE X II</h2>",
-            "heading_size": "h2",
-            "subheading": "больше мощности, меньше шума",
-            "button_label": "узнать цену",
-            "link": "shopify://collections",
-            "button_style_secondary": false,
-            "box_align": "middle-right",
-            "show_text_box": false,
-            "text_alignment": "left",
-            "image_overlay_opacity": 0,
-            "color_scheme": "scheme-4",
-            "text_alignment_mobile": "center"
-          }
-        },
-        "slide_mtV8Mg": {
-          "type": "slide",
-          "settings": {
-            "image": "shopify://shop_images/Group_9.jpg",
-            "heading": "<h2>Luna Light Acrygel</h2>",
-            "heading_size": "h2",
-            "subheading": "Sweety Pie Collection",
-            "button_label": "смотреть коллекцию",
-            "link": "shopify://collections/luna",
-            "button_style_secondary": false,
-            "box_align": "middle-right",
-            "show_text_box": false,
-            "text_alignment": "left",
-            "image_overlay_opacity": 0,
-            "color_scheme": "scheme-1",
-            "text_alignment_mobile": "center"
-          }
         }
       },
       "block_order": [
-        "slide_eNVRdw",
-        "slide_VR38xH",
-        "slide_XcCMrR",
-        "slide_mtV8Mg"
+        "slide_VR38xH"
       ],
       "custom_css": [
         ".slideshow {border-radius: var(--product-card-corner-radius);}"
@@ -107,6 +50,7 @@
     },
     "featured_collection": {
       "type": "featured-collection",
+      "disabled": true,
       "settings": {
         "show_filter": false,
         "filter_collections": [],
