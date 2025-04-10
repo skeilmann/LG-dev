@@ -14,7 +14,6 @@
       "blocks": {
         "slide_VR38xH": {
           "type": "slide",
-          "disabled": true,
           "settings": {
             "image": "shopify://shop_images/Group_83.jpg",
             "heading": "<h2>GA&MA Gel Polish Autumn</h2>",
@@ -192,7 +191,6 @@
         "featured_collection_RLcdnQ",
         "featured_collection_FWWPgT"
       ],
-      "disabled": true,
       "custom_css": [
         ".card__media {border-radius: 10px;}"
       ],
@@ -263,7 +261,7 @@
         "full_width": false,
         "show_view_all": true,
         "view_all_style": "solid",
-        "enable_desktop_slider": false,
+        "enable_desktop_slider": true,
         "color_scheme": "scheme-1",
         "image_ratio": "square",
         "image_shape": "default",
@@ -280,8 +278,15 @@
     "featured_collection_9zRDWp": {
       "type": "featured-collection",
       "settings": {
-        "show_filter": false,
-        "filter_collections": [],
+        "show_filter": true,
+        "filter_collections": [
+          "gama-autumn-collection",
+          "gama-art-collection",
+          "dark-potal-base",
+          "dark-polygel",
+          "dark-pink-potal-base",
+          "dark-opal-base"
+        ],
         "title": "<p>Товары со скидкой</p>",
         "title_alignment": "left",
         "heading_size": "h2",
@@ -315,7 +320,7 @@
         "p {margin: 0;}"
       ],
       "settings": {
-        "heading": "<p>ГОРЯЧЕЕ ПРЕДЛОЖЕНИЕ</p>",
+        "heading": "<p>Г О Р Я Ч Е Е  <strong> -   </strong>П Р Е Д Л О Ж Е Н И Е</p>",
         "subheading": "<p><strong>DARK SMART BUILDER GEL </strong>🔥</p>",
         "text_content": "<p>коллекция моделирующих гелей с шиммером</p>",
         "heading_size": "h2",
@@ -404,6 +409,44 @@
         "padding_top": 36,
         "padding_bottom": 36
       }
+    },
+    "image_with_text_aQnCVL": {
+      "type": "image-with-text",
+      "blocks": {
+        "heading_VB98cF": {
+          "type": "heading",
+          "settings": {
+            "heading": "<strong>О МАГАЗИНЕ VEV.MD ☺️</strong>",
+            "heading_size": "h1"
+          }
+        },
+        "text_XnEXTG": {
+          "type": "text",
+          "settings": {
+            "text": "<p>VEV LUX NAILS SHOP - это все необходимые Вам товары для маникюра и дизайна ногтей в Молдове, собранные в одном месте, с доставкой по всему миру. <br/><br/>Мы являемся официальным дистрибьютором брендов: HELLO, DARK, NAILS OF THE DAY, LUNA, GA&MA, SUNUV, MARATHON, ÜLKA, DA'23, EASY, AMERICAN CREATOR и многих других. Получите приятный бонус в виде кэшбека 5% с каждого заказа на сайте.<br/><br/>Работаем как с розничными клиентами, так и с салонами красоты по перечислению, а для больших оптовых заказов действуют скидки. Заказать товар можно прямо с сайта или Instagram. В наличии гель-лаки, всё для стемпинга, оригинальные UV-лампы, фрезеры и вытяжки, а также любые инструменты и расходные материалы.<br/><br/>Мы находимся по адресу: ул. Михай Витязул 34а, г. Бельцы, Республика Молдова. Будем рады вас видеть!<br/><br/>SRL VOLOSANOVSCHI NAILS<br/>IDNO 1023602001320</p>",
+            "text_style": "body"
+          }
+        }
+      },
+      "block_order": [
+        "heading_VB98cF",
+        "text_XnEXTG"
+      ],
+      "settings": {
+        "image": "shopify://shop_images/image_2f5e4909-b589-447a-8f6e-b0f05f6a16ef.jpg",
+        "height": "large",
+        "desktop_image_width": "medium",
+        "layout": "image_first",
+        "desktop_content_position": "top",
+        "desktop_content_alignment": "left",
+        "content_layout": "no-overlap",
+        "section_color_scheme": "",
+        "color_scheme": "",
+        "image_behavior": "none",
+        "mobile_content_alignment": "left",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
     }
   },
   "order": [
@@ -415,6 +458,7 @@
     "featured_collection_9zRDWp",
     "collage_3VGjEW",
     "featured_blog_UhBKqY",
-    "featured_collection_HWdCEJ"
+    "featured_collection_HWdCEJ",
+    "image_with_text_aQnCVL"
   ]
 }
