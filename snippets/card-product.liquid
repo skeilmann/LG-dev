@@ -157,8 +157,17 @@
             {% assign today = 'now' | date: '%s' %}
             {% assign days_old = today | minus: created_date | divided_by: 86400 %}
 
+            {% assign is_on_sale = false %}
+            {% if product.compare_at_price > product.price %}
+              {% assign is_on_sale = true %}
+            {% endif %}
+
             {% if days_old < 14 %}
               <span class="badge badge--bottom-left new-badge">{{ 'products.product.new_badge' | t }}</span>
+            {% endif %}
+
+            {% if is_on_sale %}
+              <span class="badge badge--bottom-left new-sale">Sale</span>
             {% endif %}
           </div>
         </div>
