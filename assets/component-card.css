@@ -281,9 +281,13 @@
 }
 
 .card__badge {
-  align-self: flex-end;
-  grid-row-start: 3;
-  justify-self: flex-start;
+  /* position: absolute;
+  top: 1rem;
+  left: 1rem;
+  display: flex;
+  flex-direction: column; */
+  gap: 0.5rem;
+  z-index: 2;
 }
 
 .card__badge.top {
@@ -596,4 +600,9 @@
   .grid__item:nth-child(8n) .product-card-wrapper:hover .shape--blob {
     clip-path: polygon(var(--shape--blob-5));
   }
+}
+
+.badge.new-badge {
+  background: #ff0000;
+  color: #ffffff;
 }

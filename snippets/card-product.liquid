@@ -69,7 +69,6 @@
             </svg>
           </div>
         {% endcomment %}
-
         {%- if card_product.featured_media -%}
           <div class="card__media{% if image_shape and image_shape != 'default' %} shape--{{ image_shape }} color-{{ settings.card_color_scheme }} gradient{% endif %}">
             <div class="media media--transparent media--hover-effect">
@@ -153,6 +152,14 @@
                 {{- 'products.product.on_sale' | t -}}
               </span>
             {%- endif -%}
+
+            {% assign created_date = card_product.metafields.custom.dateadded | date: '%s' %}
+            {% assign today = 'now' | date: '%s' %}
+            {% assign days_old = today | minus: created_date | divided_by: 86400 %}
+
+            {% if days_old < 14 %}
+              <span class="badge badge--bottom-left new-badge">{{ 'products.product.new_badge' | t }}</span>
+            {% endif %}
           </div>
         </div>
       </div>
