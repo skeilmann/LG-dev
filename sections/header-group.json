@@ -40,8 +40,8 @@
         ".custom-section {padding-top: 0; padding-bottom: 0; display: grid; align-items: center; display: grid; grid-template-areas: \"left-icons heading icons\"; grid-template-columns: 1fr 2fr 1fr; align-items: center;}"
       ],
       "settings": {
-        "enable_country_selector": false,
-        "enable_language_selector": false,
+        "enable_country_selector": true,
+        "enable_language_selector": true,
         "color_scheme": "scheme-5"
       }
     },
