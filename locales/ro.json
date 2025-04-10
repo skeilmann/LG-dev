@@ -116,6 +116,7 @@
   },
   "products": {
     "product": {
+      "new_badge": "Nou",
       "add_to_cart": "Adăugați în coș",
       "description": "Descriere",
       "on_sale": "Vânzare",
@@ -334,7 +335,9 @@
     },
     "featured_collection": {
       "view_all": "Afișați tot",
-      "view_all_label": "Afișați toate produsele din colecția {{ collection_name }}"
+      "view_all_label": "Afișați toate produsele din colecția {{ collection_name }}",
+      "clear_filters": "Șterge filtrele",
+      "all": "Toate"
     },
     "collection_list": {
       "view_all": "Afișați tot"
