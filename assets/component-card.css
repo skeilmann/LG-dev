@@ -611,3 +611,9 @@
   background: rgb(76, 224, 101);
   border: none;
 }
+
+.badge.discount-badge {
+  background-color: #000080;
+  /* green for discount */
+  color: white;
+}

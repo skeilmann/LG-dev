@@ -158,7 +158,7 @@
             {% assign days_old = today | minus: created_date | divided_by: 86400 %}
 
             {% assign is_on_sale = false %}
-            {% if product.compare_at_price > product.price %}
+            {% if card_product.compare_at_price > card_product.price %}
               {% assign is_on_sale = true %}
             {% endif %}
 
@@ -167,9 +167,13 @@
             {% endif %}
 
             {% if is_on_sale %}
-              {% assign discount = product.compare_at_price | minus: product.price %}
-              {% assign discount_percent = discount | times: 100.0 | divided_by: product.compare_at_price | round %}
-              <span class="badge badge--bottom-left sale-badge">-{{ discount_percent }}%</span>
+              {% assign discount = card_product.compare_at_price | minus: card_product.price %}
+              {% assign discount_percent = discount
+                | times: 100.0
+                | divided_by: card_product.compare_at_price
+                | round
+              %}
+              <span class="badge badge--bottom-left discount-badge">-{{ discount_percent }}%</span>
             {% endif %}
           </div>
         </div>
