@@ -281,13 +281,16 @@
 }
 
 .card__badge {
-  /* position: absolute;
+  position: absolute;
   top: 1rem;
   left: 1rem;
   display: flex;
-  flex-direction: column; */
+  flex-direction: column;
   gap: 0.5rem;
   z-index: 2;
+  max-height: calc(4 * (22px + 0.5rem));
+  /* Maximum height for 4 badges */
+  overflow: hidden;
 }
 
 .card__badge.top {
@@ -603,7 +606,13 @@
 }
 
 .badge {
-  border-radius: 7.27px;
+  border-radius: 9px;
+  padding: 10px;
+  color: rgb(255, 255, 255);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 22px;
+  min-width: max-content;
 }
 
 .badge.new-badge {
@@ -613,7 +622,21 @@
 }
 
 .badge.discount-badge {
-  background-color: #000080;
-  /* green for discount */
-  color: white;
+  border: none;
+}
+
+/* Different colors based on discount percentage */
+.badge.discount-badge[data-discount="small"] {
+  background-color: #F93E89;
+  box-shadow: 0px 3.23px 12px 1.7px rgba(249, 62, 137, 0.2);
+}
+
+.badge.discount-badge[data-discount="medium"] {
+  background-color: #FF6B00;
+  box-shadow: 0px 3.23px 12px 1.7px rgba(255, 107, 0, 0.2);
+}
+
+.badge.discount-badge[data-discount="large"] {
+  background-color: #FF0000;
+  box-shadow: 0px 3.23px 12px 1.7px rgba(255, 0, 0, 0.2);
 }
