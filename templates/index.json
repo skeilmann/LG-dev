@@ -50,7 +50,6 @@
     },
     "featured_collection": {
       "type": "featured-collection",
-      "disabled": true,
       "settings": {
         "show_filter": false,
         "filter_collections": [],
@@ -60,7 +59,7 @@
         "description": "",
         "show_description": false,
         "description_style": "uppercase",
-        "collection": "all",
+        "collection": "акции-недели",
         "products_to_show": 10,
         "columns_desktop": 5,
         "full_width": false,
