@@ -167,7 +167,9 @@
             {% endif %}
 
             {% if is_on_sale %}
-              <span class="badge badge--bottom-left new-sale">Sale</span>
+              {% assign discount = product.compare_at_price | minus: product.price %}
+              {% assign discount_percent = discount | times: 100.0 | divided_by: product.compare_at_price | round %}
+              <span class="badge badge--bottom-left sale-badge">-{{ discount_percent }}%</span>
             {% endif %}
           </div>
         </div>

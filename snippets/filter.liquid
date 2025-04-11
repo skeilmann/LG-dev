@@ -8,14 +8,14 @@
         aria-pressed="false"
         role="switch"
       >
+        <img
+          src="{{ collection.image | image_url: width: 50 }}"
+          alt="{{ collection.title }}"
+          class="filter-image"
+          width="50"
+          height="50"
+        >
         <div class="filter-item-content">
-          <img
-            src="{{ collection.image | image_url: width: 50 }}"
-            alt="{{ collection.title }}"
-            class="filter-image"
-            width="50"
-            height="50"
-          >
           <span class="filter-title">{{ collection.title }}</span>
         </div>
       </button>
@@ -40,7 +40,7 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 0.8rem 1.5rem;
+    padding: 0;
     background-color: #fff;
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 10rem;
@@ -66,6 +66,7 @@
     display: flex;
     align-items: center;
     gap: 1rem;
+    padding: 0.5 rem;
   }
 
   .filter-image {
