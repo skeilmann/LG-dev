@@ -1,0 +1,79 @@
+{% comment %}
+  A reusable product card template that shows:
+  - Product image
+  - Title
+  - Price
+  - Favorite button
+{% endcomment %}
+
+<div class="card-wrapper product-card-wrapper">
+  <div class="card card--product" tabindex="-1">
+    <div class="card__inner">
+      <div class="card__media">
+        <div class="media media--transparent media--square">
+          {% if product.featured_media %}
+            <img
+              srcset="
+                {%- if product.featured_media.width >= 165 -%}{{ product.featured_media | image_url: width: 165 }} 165w,{%- endif -%}
+                {%- if product.featured_media.width >= 360 -%}{{ product.featured_media | image_url: width: 360 }} 360w,{%- endif -%}
+                {%- if product.featured_media.width >= 533 -%}{{ product.featured_media | image_url: width: 533 }} 533w,{%- endif -%}
+                {%- if product.featured_media.width >= 720 -%}{{ product.featured_media | image_url: width: 720 }} 720w,{%- endif -%}
+                {%- if product.featured_media.width >= 940 -%}{{ product.featured_media | image_url: width: 940 }} 940w,{%- endif -%}
+                {%- if product.featured_media.width >= 1066 -%}{{ product.featured_media | image_url: width: 1066 }} 1066w,{%- endif -%}
+              "
+              src="{{ product.featured_media | image_url: width: 533 }}"
+              sizes="(min-width: 1200px) 267px, (min-width: 990px) calc((100vw - 130px) / 4), (min-width: 750px) calc((100vw - 120px) / 3), calc((100vw - 35px) / 2)"
+              alt="{{ product.featured_media.alt | escape }}"
+              class="motion-reduce"
+              loading="lazy"
+              width="{{ product.featured_media.width }}"
+              height="{{ product.featured_media.height }}"
+            >
+          {% else %}
+            {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="card__content">
+        <div class="card__information">
+          <h3 class="card__heading h5">
+            <a href="{{ product.url }}" class="full-unstyled-link">
+              {{ product.title | escape }}
+            </a>
+          </h3>
+
+          <div class="card-information">
+            <div class="price">
+              <div class="price__regular">
+                <span class="price-item price-item--regular">
+                  {{ product.price | money }}
+                </span>
+              </div>
+              {% if product.compare_at_price > product.price %}
+                <div class="price__sale">
+                  <span class="price-item price-item--sale">
+                    {{ product.compare_at_price | money }}
+                  </span>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div class="quick-add">
+          <button
+            type="button"
+            class="favorite-icon"
+            data-product-id="{{ product.id }}"
+            aria-label="{% if product.id in favorites %}{{ 'customer.favorites.remove' | t }}{% else %}{{ 'customer.favorites.add' | t }}{% endif %}"
+          >
+            <svg class="icon icon-heart" viewBox="0 0 1200 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M600 1114C590.3 1114 580.7 1111.8 572.1 1107.3C431.5 1038.5 315.4 953.8 231.1 856.1C122.5 729.7 75 611.3 75 484.9C75 363.3 116.7 254.1 189.5 176.7C263.4 97.9 363.5 53 471.2 53C545.9 53 616.1 73.2 676.5 112.2C708.7 132.5 737.8 158.1 763.1 188.1C788.4 158.1 817.5 132.5 849.7 112.2C910.1 73.2 980.3 53 1055 53C1162.7 53 1262.8 97.9 1336.7 176.7C1409.5 254.1 1451.2 363.3 1451.2 484.9C1451.2 611.3 1403.7 729.7 1295.1 856.2C1210.8 953.8 1094.8 1038.5 954.1 1107.3C945.5 1111.8 935.9 1114 926.2 1114H600Z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

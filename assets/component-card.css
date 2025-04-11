@@ -1,28 +1,14 @@
 .favorite-icon {
   position: absolute;
-  bottom: 3rem;
+  top: 3rem;
   right: 3rem;
   cursor: pointer;
   z-index: 10;
 }
 
-.heart-icon {
-  fill: transparent;
-  stroke: #000;
-  transition: all 0.3s ease;
+.favorite-icon.active .icon-heart path {
+  fill: #F4B8DD;
 }
-
-.favorite-icon .heart-icon path {
-  fill: none;
-  stroke: black;
-  transition: fill 0.2s ease;
-}
-
-.favorite-icon.active .heart-icon path {
-  fill: red;
-  stroke: red;
-}
-
 
 .card-wrapper {
   color: inherit;

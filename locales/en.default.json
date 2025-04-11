@@ -503,6 +503,13 @@
       "password": "Password",
       "password_confirm": "Confirm password",
       "submit": "Reset password"
+    },
+    "favorites": {
+      "title": "My Favorites",
+      "empty": "You haven't added any favorites yet",
+      "add": "Add to Favorites",
+      "remove": "Remove from Favorites",
+      "login_message": "Log in to sync your favorites across devices"
     }
   },
   "gift_cards": {

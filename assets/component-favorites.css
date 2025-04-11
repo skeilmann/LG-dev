@@ -1,0 +1,75 @@
+.favorite-icon {
+    background: none;
+    border: none;
+    padding: 0.6rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+}
+
+.favorite-icon:hover {
+    background-color: rgba(var(--color-foreground), 0.06);
+}
+
+.favorite-icon .icon-heart {
+    width: 2.4rem;
+    height: 2.4rem;
+    fill: rgba(var(--color-foreground), 0.4);
+    stroke: currentColor;
+    stroke-width: 2px;
+    transition: fill 0.3s ease;
+}
+
+.favorite-icon.active .icon-heart {
+    fill: rgb(var(--color-button));
+    stroke: none;
+}
+
+.local-favorites__grid {
+    margin-bottom: 3rem;
+}
+
+.local-favorites__empty-state {
+    text-align: center;
+    padding: 4rem 0;
+}
+
+.local-favorites__empty-state p {
+    margin: 0;
+    color: rgba(var(--color-foreground), 0.75);
+}
+
+.local-favorites__products {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+@media screen and (min-width: 750px) {
+    .local-favorites__products {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media screen and (min-width: 990px) {
+    .local-favorites__products {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.heart-icon[style*="display: none"] {
+    pointer-events: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+}
+
+.favorite-icon[style*="display: none"] {
+    pointer-events: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+}
