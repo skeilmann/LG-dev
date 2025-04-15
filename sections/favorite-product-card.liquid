@@ -1,0 +1,14 @@
+{% if request.page_type == blank and request.query_string contains 'product_id=' %}
+  {% assign product_id = request.query_string | split: 'product_id=' | last | split: '&' | first %}
+  {% assign product = all_products[product_id] %}
+  {% if product != blank %}
+    {% render 'favorite-product-card', product: product, section_id: section.id %}
+  {% endif %}
+{% endif %}
+
+{% schema %}
+{
+  "name": "Favorite Product Card",
+  "settings": []
+}
+{% endschema %}

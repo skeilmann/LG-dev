@@ -1,0 +1,5 @@
+{ "id": {{ product.id | json }}, "title": {{ product.title | json }}, "handle": {{ product.handle | json }}, "url":
+{{ product.url | json }}, "featured_image": {{ product.featured_image | image_url: width: 400 | json }}, "price":
+{{ product.price | json }}, "compare_at_price": {{ product.compare_at_price | json }}, "price_varies":
+{{ product.price_varies | json }}, "price_min": {{ product.price_min | json }}, "available":
+{{ product.available | json }}, "vendor": {{ product.vendor | json }}, "type": {{ product.type | json }} }

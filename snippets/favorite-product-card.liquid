@@ -1,0 +1,12 @@
+{% comment %}
+  Renders a favorite product card by wrapping the standard card-product template
+  with necessary favorites-specific classes and attributes.
+
+  Accepts:
+  - product: {Object} Product Liquid object
+  - section_id: {String} The ID of the section that contains this card
+{% endcomment %}
+
+<div class="favorites-modal__product">
+  {% render 'card-product', card_product: product, show_vendor: true, show_rating: false, section_id: section_id %}
+</div>
