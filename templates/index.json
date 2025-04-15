@@ -34,6 +34,7 @@
       "block_order": [
         "slide_VR38xH"
       ],
+      "disabled": true,
       "custom_css": [
         ".slideshow {border-radius: var(--product-card-corner-radius);}"
       ],
@@ -190,6 +191,7 @@
         "featured_collection_RLcdnQ",
         "featured_collection_FWWPgT"
       ],
+      "disabled": true,
       "custom_css": [
         ".card__media {border-radius: 10px;}"
       ],
