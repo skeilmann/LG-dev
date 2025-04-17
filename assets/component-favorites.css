@@ -1,3 +1,7 @@
+.hidden {
+    display: none !important;
+}
+
 .favorite-icon {
     background: none;
     border: none;
@@ -19,17 +23,17 @@
 .favorite-icon .icon-heart {
     width: 2.4rem;
     height: 2.4rem;
-    fill: rgba(244, 184, 221, 0.4);
-    /* Light pink with opacity */
-    stroke: #F4B8DD;
-    /* Solid pink outline */
-    stroke-width: 2px;
-    transition: fill 0.3s ease;
 }
 
-.favorite-icon.active .icon-heart {
+.favorite-icon .icon-heart path {
+    fill: rgba(244, 184, 221, 0.4);
+    stroke: #F4B8DD;
+    stroke-width: 2px;
+    transition: fill 0.3s ease, stroke 0.3s ease;
+}
+
+.favorite-icon.active .icon-heart path {
     fill: #F4B8DD;
-    /* Solid pink fill when active */
     stroke: none;
 }
 
@@ -176,4 +180,29 @@
 
 body:not(.customer-logged-in) .header__icon--favorites {
     display: flex;
+}
+
+.favorites-modal__list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.favorites-modal__item {
+    background: rgba(var(--color-foreground), 0.04);
+    border-radius: 0.8rem;
+    padding: 1.5rem;
+}
+
+.favorites-modal__item-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.favorites-modal__item-content h3 {
+    margin: 0;
+    font-size: 1.6rem;
 }

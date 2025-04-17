@@ -1,13 +1,20 @@
+/**
+ * Handles favorite product functionality for both logged-in and non-logged-in users
+ * Manages favorites storage, UI updates, and modal interactions
+ */
 class FavoritesHandler {
     constructor() {
-        this.favorites = new Set(this.loadFavorites());
+        // Initialize core properties
+        this.favorites = this.loadFavorites();
         this.isLoggedIn = window.Shopify && window.Shopify.customerId;
         this.createModal();
-        this.handleAppHeartIcons();
-        this.bindEvents();
-        this.updateAllButtons();
+        this.initializeUI();
     }
 
+    /**
+     * Creates and sets up the favorites modal
+     * @private
+     */
     createModal() {
         const modal = document.createElement('div');
         modal.className = 'favorites-modal global-settings-popup';
@@ -26,276 +33,302 @@ class FavoritesHandler {
         this.modal = modal;
         this.modalGrid = modal.querySelector('.favorites-modal__grid');
 
-        // Close button handler
-        modal.querySelector('.favorites-modal__close').addEventListener('click', () => this.closeModal());
+        // Set up modal event listeners
+        this.setupModalEvents();
+    }
 
-        // Close on overlay click
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) this.closeModal();
+    /**
+     * Sets up modal related event listeners
+     * @private
+     */
+    setupModalEvents() {
+        this.modal.querySelector('.favorites-modal__close').addEventListener('click', () => this.closeModal());
+        this.modal.addEventListener('click', (e) => {
+            if (e.target === this.modal) this.closeModal();
         });
-
-        // Close on Escape key
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+            if (e.key === 'Escape' && this.modal.classList.contains('active')) {
                 this.closeModal();
             }
         });
     }
 
-    showModal() {
-        this.updateModalContent();
-        this.modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
+    /**
+     * Initializes UI elements and sets up event listeners
+     * @private
+     */
+    initializeUI() {
+        this.updateButtons();
+        this.setupEventListeners();
     }
 
-    closeModal() {
-        this.modal.classList.remove('active');
-        document.body.style.overflow = '';
-    }
+    /**
+     * Updates visibility and state of all favorite buttons in the UI
+     * @private
+     * @param {HTMLElement} [root=document] - Root element to search from
+     */
+    updateButtons(root = document) {
+        // Handle heart icons for logged-in users
+        root.querySelectorAll('.heart-icon').forEach(icon => {
+            icon.style.removeProperty('display');
+            icon.classList.toggle('hidden', !this.isLoggedIn);
+        });
 
-    async updateModalContent() {
-        this.modalGrid.innerHTML = '';
-        if (this.favorites.size === 0) {
-            this.modalGrid.innerHTML = `
-                <div class="favorites-modal__empty">
-                    <p>${window.translations?.customer?.favorites?.empty || 'No favorites yet'}</p>
-                </div>
-            `;
-            return;
-        }
+        // Handle favorite icons for non-logged-in users
+        root.querySelectorAll('.favorite-icon').forEach(icon => {
+            icon.style.removeProperty('display');
+            icon.classList.toggle('hidden', this.isLoggedIn);
 
-        // Fetch product data for favorites
-        const products = await this.fetchFavoriteProducts(Array.from(this.favorites));
-        for (const product of products) {
-            const card = await this.createProductCard(product);
-            this.modalGrid.appendChild(card);
-        }
-    }
-
-    async fetchFavoriteProducts(productIds) {
-        const products = [];
-        const isDevelopment = window.location.port === '9292';
-
-        for (const id of productIds) {
-            try {
-                // Construct base URL based on environment
-                const baseUrl = isDevelopment ? '' : '/products/';
-
-                // Try the product JSON view first
-                let response = await fetch(`${baseUrl}${id}?view=json`);
-
-                if (!response.ok && isDevelopment) {
-                    // In development, try without the view parameter
-                    response = await fetch(`${baseUrl}${id}`);
-                }
-
-                if (!response.ok) {
-                    // Try the .js endpoint as fallback
-                    response = await fetch(`${baseUrl}${id}.js`);
-                }
-
-                if (!response.ok) {
-                    console.warn(`Could not fetch product ${id}. It may have been deleted or unpublished.`);
-                    continue;
-                }
-
-                const product = await response.json();
-                products.push(product);
-            } catch (e) {
-                console.error(`Error fetching product ${id}:`, e);
+            // Only update favorite state for non-logged-in users
+            if (!this.isLoggedIn && icon.dataset.productId) {
+                const isFavorite = this.favorites.has(icon.dataset.productId);
+                icon.classList.toggle('active', isFavorite);
+                icon.setAttribute('aria-label',
+                    isFavorite ?
+                        (window.translations?.customer?.favorites?.remove || 'Remove from Favorites') :
+                        (window.translations?.customer?.favorites?.add || 'Add to Favorites')
+                );
             }
-        }
-        return products;
-    }
-
-    async createProductCard(product) {
-        try {
-            // Fetch the rendered template
-            const response = await fetch(`?section_id=favorite-product-card&product_id=${product.id}`);
-            if (!response.ok) throw new Error('Failed to fetch card template');
-
-            const html = await response.text();
-            const temp = document.createElement('div');
-            temp.innerHTML = html;
-
-            // Extract just the card element
-            const card = temp.querySelector('.favorites-modal__product');
-            if (!card) throw new Error('Card template not found in response');
-
-            return card;
-        } catch (error) {
-            console.error('Error creating product card:', error);
-
-            // Fallback to basic card if template fetch fails
-            const card = document.createElement('div');
-            card.className = 'favorites-modal__product card card--standard';
-            card.innerHTML = `
-                <div class="card__inner">
-                    <div class="card__media">
-                        <img src="${product.featured_image}" alt="${product.title}" loading="lazy">
-                    </div>
-                    <div class="favorite-icon active" data-product-id="${product.id}">
-                        <svg class="icon-heart" viewBox="0 0 24 24" width="24" height="24">
-                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6.5 3.5 5 5.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5 18.5 5 20 6.5 20 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                        </svg>
-                    </div>
-                    <div class="card__content">
-                        <h3 class="card__heading">
-                            <a href="${product.url}" class="full-unstyled-link">${product.title}</a>
-                        </h3>
-                        <div class="card__information">
-                            <div class="price">${this.formatMoney(product.price)}</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            return card;
-        }
-    }
-
-    formatMoney(cents) {
-        return (cents / 100).toLocaleString('en-US', {
-            style: 'currency',
-            currency: Shopify.currency.active || 'USD'
         });
     }
 
+    /**
+     * Loads favorites from localStorage or Shopify customer data
+     * @returns {Map} Map of favorite products
+     */
     loadFavorites() {
         try {
-            // If logged in, use app's favorites, otherwise use localStorage
-            if (this.isLoggedIn && window.Shopify.favorites) {
-                return window.Shopify.favorites || [];
+            if (this.isLoggedIn && window.Shopify?.favorites) {
+                return new Map(window.Shopify.favorites.map(id => [parseInt(id, 10), { id: parseInt(id, 10) }]));
             }
+
             const stored = localStorage.getItem('favorites');
-            return stored ? JSON.parse(stored) : [];
+            if (!stored) return new Map();
+
+            const parsed = JSON.parse(stored);
+            if (!Array.isArray(parsed)) return new Map();
+
+            return new Map(parsed.map(([id, data]) => [
+                parseInt(id, 10),
+                { ...(data || { id: parseInt(id, 10) }) }
+            ]));
         } catch (e) {
             console.error('Error loading favorites:', e);
-            return [];
+            return new Map();
         }
     }
 
-    handleAppHeartIcons() {
-        // Only update icons if their current state doesn't match what we want
-        document.querySelectorAll('.heart-icon').forEach(heart => {
-            const currentDisplay = heart.style.display;
-            const newDisplay = this.isLoggedIn ? 'block' : 'none';
-            if (currentDisplay !== newDisplay) {
-                heart.style.display = newDisplay;
-            }
-        });
-
-        document.querySelectorAll('.favorite-icon').forEach(heart => {
-            const currentDisplay = heart.style.display;
-            const newDisplay = this.isLoggedIn ? 'none' : 'block';
-            if (currentDisplay !== newDisplay) {
-                heart.style.display = newDisplay;
-            }
-        });
-    }
-
+    /**
+     * Saves favorites to localStorage for non-logged-in users
+     * @private
+     */
     saveFavorites() {
         if (!this.isLoggedIn) {
             try {
-                localStorage.setItem('favorites', JSON.stringify(Array.from(this.favorites)));
+                localStorage.setItem('favorites', JSON.stringify(Array.from(this.favorites.entries())));
             } catch (e) {
                 console.error('Error saving favorites:', e);
             }
         }
     }
 
+    /**
+     * Sets up event listeners for favorites functionality
+     * @private
+     */
+    setupEventListeners() {
+        if (this.isLoggedIn) return;
+
+        // Handle favorite toggle and modal open
+        document.addEventListener('click', (e) => {
+            const favoriteButton = e.target.closest('.favorite-icon');
+            if (favoriteButton?.dataset.productId) {
+                this.toggleFavorite(favoriteButton.dataset.productId);
+            }
+
+            if (e.target.closest('.header__icon--favorites')) {
+                e.preventDefault();
+                this.showModal();
+            }
+        });
+
+        // Handle dynamically added elements
+        new MutationObserver((mutations) => {
+            mutations.forEach(mutation => {
+                mutation.addedNodes.forEach(node => {
+                    if (node.nodeType === Node.ELEMENT_NODE) {
+                        this.updateButtons(node);
+                    }
+                });
+            });
+        }).observe(document.body, { childList: true, subtree: true });
+    }
+
+    /**
+     * Shows the favorites modal
+     */
+    showModal() {
+        this.updateModalContent();
+        this.modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    /**
+     * Closes the favorites modal
+     */
+    closeModal() {
+        this.modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    /**
+     * Updates the content of the favorites modal
+     * @private
+     */
+    updateModalContent() {
+        this.modalGrid.innerHTML = this.favorites.size === 0
+            ? `<div class="favorites-modal__empty">
+                <p>${window.translations?.customer?.favorites?.empty || 'No favorites yet'}</p>
+               </div>`
+            : Array.from(this.favorites.entries())
+                .map(([productId, data]) => this.createProductCard(productId, data))
+                .join('');
+    }
+
+    /**
+     * Creates a product card HTML for the modal
+     * @private
+     * @param {number} productId
+     * @param {Object} productData
+     * @returns {string}
+     */
+    createProductCard(productId, productData) {
+        return `
+            <div class="favorites-modal__product card card--standard">
+                <div class="card-wrapper product-card-wrapper underline-links-hover">
+                    <div class="card card--product card--media">
+                        <div class="card__inner">
+                            <div class="favorite-icon active" data-product-id="${productId}">
+                                <svg class="icon-heart" viewBox="0 0 512 512" width="24" height="24">
+                                    <path fill="rgba(244, 184, 221, 0.4)" stroke="#F4B8DD" stroke-width="32" d="M352.92,80C288,80,256,144,256,144s-32-64-96.92-64C106.32,80,64.54,124.14,64,176.81c-1.1,109.33,86.73,187.08,183,252.42a16,16,0,0,0,18,0c96.26-65.34,184.09-143.09,183-252.42C447.46,124.14,405.68,80,352.92,80Z" />
+                                </svg>
+                            </div>
+                            ${this.renderProductMedia(productData)}
+                            ${this.renderProductInfo(productData)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * Toggles a product's favorite status
+     * @param {number|string} productId
+     */
     toggleFavorite(productId) {
-        if (this.isLoggedIn) {
-            // Let the app handle favorites for logged-in users
-            return;
-        }
+        if (this.isLoggedIn) return;
 
         if (this.favorites.has(productId)) {
             this.favorites.delete(productId);
         } else {
-            this.favorites.add(productId);
-        }
-        this.saveFavorites();
-        this.updateAllButtons();
-        this.publishStateChange();
-    }
-
-    updateAllButtons() {
-        if (this.isLoggedIn) return;
-
-        document.querySelectorAll('.favorite-icon').forEach(button => {
-            const productId = button.dataset.productId;
-            this.updateButton(button, this.favorites.has(productId));
-        });
-    }
-
-    updateButton(button, isFavorite) {
-        if (this.isLoggedIn) return;
-
-        button.classList.toggle('active', isFavorite);
-        button.setAttribute('aria-label',
-            isFavorite ?
-                window.translations?.customer?.favorites?.remove || 'Remove from Favorites' :
-                window.translations?.customer?.favorites?.add || 'Add to Favorites'
-        );
-    }
-
-    publishStateChange() {
-        window.dispatchEvent(new CustomEvent('favorites:changed', {
-            detail: {
-                favorites: Array.from(this.favorites)
+            const productData = this.extractProductData(productId);
+            if (productData) {
+                this.favorites.set(productId, productData);
             }
+        }
+
+        this.saveFavorites();
+        this.updateButtons();
+        this.notifyStateChange();
+    }
+
+    /**
+     * Notifies listeners of favorites state changes
+     * @private
+     */
+    notifyStateChange() {
+        window.dispatchEvent(new CustomEvent('favorites:changed', {
+            detail: { favorites: Array.from(this.favorites.keys()) }
         }));
     }
 
-    bindEvents() {
-        if (!this.isLoggedIn) {
-            document.addEventListener('click', (e) => {
-                const button = e.target.closest('.favorite-icon');
-                if (button) {
-                    const productId = button.dataset.productId;
-                    if (productId) {
-                        this.toggleFavorite(productId);
-                    }
-                }
+    /**
+     * Extracts product data from the DOM
+     * @private
+     * @param {number|string} productId
+     * @returns {Object|null}
+     */
+    extractProductData(productId) {
+        const product = document.querySelector(`[data-product-id="${productId}"]`)?.closest('.card-wrapper');
+        if (!product) return null;
 
-                // Handle header favorites icon click
-                if (e.target.closest('.header__icon--favorites')) {
-                    e.preventDefault();
-                    this.showModal();
-                }
-            });
-        }
+        return {
+            id: productId,
+            title: product.querySelector('.card__heading a')?.textContent?.trim(),
+            url: product.querySelector('.card__heading a')?.href,
+            featured_image: product.querySelector('.card__media img')?.src,
+            vendor: product.querySelector('.caption-with-letter-spacing')?.textContent?.trim(),
+            price: product.querySelector('.price-item--regular')?.textContent?.trim()
+        };
+    }
 
-        // In case new favorite buttons are added to the DOM dynamically
-        const observer = new MutationObserver((mutations) => {
-            for (const mutation of mutations) {
-                for (const node of mutation.addedNodes) {
-                    if (node.nodeType === Node.ELEMENT_NODE) {
-                        // Handle newly added heart icons
-                        if (!this.isLoggedIn) {
-                            const buttons = node.querySelectorAll('.favorite-icon');
-                            buttons.forEach(button => {
-                                const productId = button.dataset.productId;
-                                if (productId) {
-                                    this.updateButton(button, this.favorites.has(productId));
-                                }
-                            });
-                        }
-                        // Update visibility of app vs local heart icons
-                        this.handleAppHeartIcons();
-                    }
-                }
-            }
-        });
+    /**
+     * Renders product media HTML
+     * @private
+     * @param {Object} productData
+     * @returns {string}
+     */
+    renderProductMedia(productData) {
+        return productData.featured_image ? `
+            <div class="card__media">
+                <div class="media media--transparent">
+                    <img src="${productData.featured_image}"
+                         alt="${productData.title}"
+                         loading="lazy"
+                         class="motion-reduce">
+                </div>
+            </div>
+        ` : '';
+    }
 
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
+    /**
+     * Renders product information HTML
+     * @private
+     * @param {Object} productData
+     * @returns {string}
+     */
+    renderProductInfo(productData) {
+        return `
+            <div class="card__content">
+                <div class="card__information">
+                    <h3 class="card__heading h5">
+                        <a href="${productData.url}" class="full-unstyled-link">
+                            ${productData.title}
+                        </a>
+                    </h3>
+                    ${productData.vendor ? `
+                        <div class="card-information">
+                            <span class="visually-hidden">Vendor</span>
+                            <div class="caption-with-letter-spacing light">${productData.vendor}</div>
+                        </div>
+                    ` : ''}
+                    ${productData.price ? `
+                        <div class="price">
+                            <div class="price__regular">
+                                <span class="price-item price-item--regular">
+                                    ${productData.price}
+                                </span>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
     }
 }
 
-// Initialize the handler when the DOM is ready
+// Initialize the favorites handler when the DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     window.favoritesHandler = new FavoritesHandler();
 });

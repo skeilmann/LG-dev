@@ -6,6 +6,10 @@
   z-index: 10;
 }
 
+.favorite-icon .icon-heart path {
+  fill: transparent;
+}
+
 .favorite-icon.active .icon-heart path {
   fill: #F4B8DD;
 }
