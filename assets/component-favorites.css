@@ -16,6 +16,12 @@
     transition: background-color 0.3s ease;
 }
 
+.header__icon--favorites path {
+    fill: rgb(var(--color-foreground));
+
+    transition: fill 0.3s ease;
+}
+
 .favorite-icon:hover {
     background-color: rgba(var(--color-foreground), 0.06);
 }
@@ -171,15 +177,6 @@
     .favorites-modal__grid {
         grid-template-columns: repeat(4, 1fr);
     }
-}
-
-/* Custom header icon for non-logged in users */
-.header__icon--favorites {
-    display: flex;
-}
-
-body:not(.customer-logged-in) .header__icon--favorites {
-    display: flex;
 }
 
 .favorites-modal__list {
