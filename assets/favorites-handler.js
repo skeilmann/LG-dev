@@ -77,7 +77,9 @@ class FavoritesHandler {
         // Show .header__icon containing .heart-empty for logged-in users
         root.querySelectorAll('.header__icon').forEach(headerIcon => {
             const heartEmpty = headerIcon.querySelector('.heart-empty');
-            const favIcon = headerIcon.querySelector('.header__icon--favorites');
+            const favIcon = headerIcon.classList.contains('header__icon--favorites')
+                ? headerIcon
+                : headerIcon.querySelector('.header__icon--favorites');
             if (heartEmpty) {
                 headerIcon.style.removeProperty('display');
                 headerIcon.classList.toggle('hidden', !this.isLoggedIn);
