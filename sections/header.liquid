@@ -242,12 +242,11 @@
           </localization-form>
         {%- endif -%}
       </div>
-      {% render 'header-search', input_id: 'Search-In-Modal' %}
-
       <button type="button" class="header__icon header__icon--favorites link focus-inset">
         <span class="svg-wrapper">{{ 'icon-heart.svg' | inline_asset_content }}</span>
         <span class="visually-hidden">{{ 'customer.favorites.title' | t }}</span>
       </button>
+      {% render 'header-search', input_id: 'Search-In-Modal' %}
 
       <a href="{{ routes.cart_url }}" class="header__icon header__icon--cart link focus-inset" id="cart-icon-bubble">
         {% if cart == empty %}

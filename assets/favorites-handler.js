@@ -68,11 +68,34 @@ class FavoritesHandler {
      * @param {HTMLElement} [root=document] - Root element to search from
      */
     updateButtons(root = document) {
-        // Handle heart icons for logged-in users
+        // Show .heart-icon for logged-in users
         root.querySelectorAll('.heart-icon').forEach(icon => {
             icon.style.removeProperty('display');
             icon.classList.toggle('hidden', !this.isLoggedIn);
         });
+
+        // Show .header__icon containing .heart-empty for logged-in users
+        root.querySelectorAll('.header__icon').forEach(headerIcon => {
+            const heartEmpty = headerIcon.querySelector('.heart-empty');
+            const favIcon = headerIcon.querySelector('.header__icon--favorites');
+            if (heartEmpty) {
+                headerIcon.style.removeProperty('display');
+                headerIcon.classList.toggle('hidden', !this.isLoggedIn);
+            }
+            if (favIcon) {
+                favIcon.style.removeProperty('display');
+                favIcon.classList.toggle('hidden', this.isLoggedIn);
+            }
+        });
+
+        // Show .header__icon--favorites cfor non-logged-in users
+        // root.querySelectorAll('.header__icon').forEach(headerIcon => {
+        //     const heartEmpty = headerIcon.querySelector('.heart-empty');
+        //     if (heartEmpty) {
+        //         headerIcon.style.removeProperty('display');
+        //         headerIcon.classList.toggle('hidden', !this.isLoggedIn);
+        //     }
+        // });
 
         // Handle favorite icons for non-logged-in users
         root.querySelectorAll('.favorite-icon').forEach(icon => {
