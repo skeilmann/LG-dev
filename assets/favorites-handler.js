@@ -81,7 +81,7 @@ class FavoritesHandler {
 
             if (!this.isLoggedIn && icon.dataset.productId) {
                 const isFavorite = this.favorites.has(parseInt(icon.dataset.productId, 10));
-                // const isFavorite = this.favorites.has(productId);
+                // const isFavorite = this.favorites.has(icon.dataset.productId);
                 icon.classList.toggle('active', isFavorite);
                 icon.setAttribute('aria-label',
                     isFavorite ?
@@ -203,12 +203,13 @@ class FavoritesHandler {
      * @returns {string}
      */
     createProductCard(productId, productData) {
+        const parsedId = parseInt(productId, 10);
         return `
             <div class="favorites-modal__product card card--standard">
                 <div class="card-wrapper product-card-wrapper underline-links-hover">
                     <div class="card card--product card--media">
                         <div class="card__inner">
-                            <div class="favorite-icon active" data-product-id="${productId}">
+                            <div class="favorite-icon active" data-product-id="${parsedId}">
                                 <svg class="icon-heart" viewBox="0 0 512 512" width="24" height="24">
                                     <path fill="rgba(244, 184, 221, 0.4)" stroke="#F4B8DD" stroke-width="32" d="M352.92,80C288,80,256,144,256,144s-32-64-96.92-64C106.32,80,64.54,124.14,64,176.81c-1.1,109.33,86.73,187.08,183,252.42a16,16,0,0,0,18,0c96.26-65.34,184.09-143.09,183-252.42C447.46,124.14,405.68,80,352.92,80Z" />
                                 </svg>
@@ -229,13 +230,15 @@ class FavoritesHandler {
     toggleFavorite(productId) {
         if (this.isLoggedIn) return;
 
-        if (this.favorites.has(productId)) {
-            console.log('Removing from favorites:', productId);
-            this.favorites.delete(productId);
+        const parsedId = parseInt(productId, 10);
+        if (this.favorites.has(parsedId)) {
+            console.log('Removing from favorites:', parsedId);
+            this.favorites.delete(parsedId);
         } else {
             const productData = this.extractProductData(productId);
             if (productData) {
-                this.favorites.set(productId, productData);
+                productData.id = parsedId;
+                this.favorites.set(parsedId, productData);
             }
         }
 
@@ -261,11 +264,12 @@ class FavoritesHandler {
      * @returns {Object|null}
      */
     extractProductData(productId) {
+        const parsedId = parseInt(productId, 10);
         const product = document.querySelector(`[data-product-id="${productId}"]`)?.closest('.card-wrapper');
         if (!product) return null;
 
         return {
-            id: productId,
+            id: parsedId,
             title: product.querySelector('.card__heading a')?.textContent?.trim(),
             url: product.querySelector('.card__heading a')?.href,
             featured_image: product.querySelector('.card__media img')?.src,
