@@ -5,8 +5,8 @@
 class FavoritesHandler {
     constructor() {
         // Initialize core properties
+        this.isLoggedIn = !!(window.Shopify && window.Shopify.customerId);
         this.favorites = this.loadFavorites();
-        this.isLoggedIn = window.Shopify && window.Shopify.customerId;
         this.createModal();
         this.initializeUI();
     }
@@ -79,9 +79,9 @@ class FavoritesHandler {
             icon.style.removeProperty('display');
             icon.classList.toggle('hidden', this.isLoggedIn);
 
-            // Only update favorite state for non-logged-in users
             if (!this.isLoggedIn && icon.dataset.productId) {
-                const isFavorite = this.favorites.has(icon.dataset.productId);
+                const isFavorite = this.favorites.has(parseInt(icon.dataset.productId, 10));
+                // const isFavorite = this.favorites.has(productId);
                 icon.classList.toggle('active', isFavorite);
                 icon.setAttribute('aria-label',
                     isFavorite ?
@@ -98,7 +98,7 @@ class FavoritesHandler {
      */
     loadFavorites() {
         try {
-            if (this.isLoggedIn && window.Shopify?.favorites) {
+            if (this.isLoggedIn) {
                 return new Map(window.Shopify.favorites.map(id => [parseInt(id, 10), { id: parseInt(id, 10) }]));
             }
 
@@ -157,7 +157,7 @@ class FavoritesHandler {
             mutations.forEach(mutation => {
                 mutation.addedNodes.forEach(node => {
                     if (node.nodeType === Node.ELEMENT_NODE) {
-                        this.updateButtons(node);
+                        this.updateButtons(mutation.target);
                     }
                 });
             });
@@ -230,6 +230,7 @@ class FavoritesHandler {
         if (this.isLoggedIn) return;
 
         if (this.favorites.has(productId)) {
+            console.log('Removing from favorites:', productId);
             this.favorites.delete(productId);
         } else {
             const productData = this.extractProductData(productId);

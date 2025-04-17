@@ -31,6 +31,13 @@
 
     <script src="{{ 'constants.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'pubsub.js' | asset_url }}" defer="defer"></script>
+    {% if customer %}
+      <script>
+        window.Shopify = window.Shopify || {};
+        window.Shopify.customerId = {{ customer.id }};
+        window.Shopify.favorites = {{ customer.metafields.custom.favorites | json }};
+      </script>
+    {% endif %}
     <script src="{{ 'global.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'details-disclosure.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'details-modal.js' | asset_url }}" defer="defer"></script>
@@ -383,15 +390,5 @@
       <script src="{{ 'cart-drawer.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
     {%- render 'ecom_footer' -%}
-
-    {% comment %}
-      {% if customer %}
-        <script>
-          window.Shopify = window.Shopify || {};
-          Shopify.customerId = {{ customer.id }};
-          Shopify.favorites = {{ customer.metafields.custom.favorites | json }};
-        </script>
-      {% endif %}
-    {% endcomment %}
   </body>
 </html>
