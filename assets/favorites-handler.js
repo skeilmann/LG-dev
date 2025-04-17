@@ -99,7 +99,8 @@ class FavoritesHandler {
     loadFavorites() {
         try {
             if (this.isLoggedIn) {
-                return new Map(window.Shopify.favorites.map(id => [parseInt(id, 10), { id: parseInt(id, 10) }]));
+                // return new Map(window.Shopify.favorites.map(id => [parseInt(id, 10), { id: parseInt(id, 10) }]));
+                console.log('We cant Load favorites from Shopify customer data');
             }
 
             const stored = localStorage.getItem('favorites');
