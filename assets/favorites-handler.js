@@ -144,7 +144,11 @@ class FavoritesHandler {
 
             return new Map(parsed.map(([id, data]) => [
                 parseInt(id, 10),
-                { ...(data || { id: parseInt(id, 10) }) }
+                { 
+                    id: parseInt(id, 10),
+                    variantId: data?.variantId ? parseInt(data.variantId, 10) : undefined,
+                    ...data
+                }
             ]));
         } catch (e) {
             console.error('Error loading favorites:', e);
@@ -260,11 +264,14 @@ class FavoritesHandler {
     /**
      * Toggles a product's favorite status
      * @param {number|string} productId
+     * @param {number|string} [variantId] - Optional variant ID
      */
-    toggleFavorite(productId) {
+    toggleFavorite(productId, variantId) {
         if (this.isLoggedIn) return;
 
         const parsedId = parseInt(productId, 10);
+        const parsedVariantId = variantId ? parseInt(variantId, 10) : undefined;
+
         if (this.favorites.has(parsedId)) {
             console.log('Removing from favorites:', parsedId);
             this.favorites.delete(parsedId);
@@ -272,6 +279,7 @@ class FavoritesHandler {
             const productData = this.extractProductData(productId);
             if (productData) {
                 productData.id = parsedId;
+                productData.variantId = parsedVariantId;
                 this.favorites.set(parsedId, productData);
             }
         }
@@ -302,8 +310,13 @@ class FavoritesHandler {
         const product = document.querySelector(`[data-product-id="${productId}"]`)?.closest('.card-wrapper');
         if (!product) return null;
 
+        // Get the selected variant ID if available
+        const variantSelect = product.querySelector('select[name="id"]');
+        const variantId = variantSelect ? parseInt(variantSelect.value, 10) : undefined;
+
         return {
             id: parsedId,
+            variantId: variantId,
             title: product.querySelector('.card__heading a')?.textContent?.trim(),
             url: product.querySelector('.card__heading a')?.href,
             featured_image: product.querySelector('.card__media img')?.src,
