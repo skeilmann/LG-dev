@@ -137,19 +137,31 @@ class FavoritesHandler {
             }
 
             const stored = localStorage.getItem('favorites');
+            console.log('Loading favorites from localStorage:', stored);
+            
             if (!stored) return new Map();
 
             const parsed = JSON.parse(stored);
+            console.log('Parsed favorites:', parsed);
+            
             if (!Array.isArray(parsed)) return new Map();
 
-            return new Map(parsed.map(([id, data]) => [
-                parseInt(id, 10),
-                { 
-                    id: parseInt(id, 10),
-                    variantId: data?.variantId ? parseInt(data.variantId, 10) : undefined,
-                    ...data
-                }
-            ]));
+            const favoritesMap = new Map(parsed.map(([id, data]) => {
+                const productId = parseInt(id, 10);
+                const variantId = data?.variantId ? parseInt(data.variantId, 10) : undefined;
+                console.log(`Processing favorite - Product ID: ${productId}, Variant ID: ${variantId}, Full data:`, data);
+                return [
+                    productId,
+                    { 
+                        id: productId,
+                        variantId: variantId,
+                        ...data
+                    }
+                ];
+            }));
+            
+            console.log('Final favorites map:', Array.from(favoritesMap.entries()));
+            return favoritesMap;
         } catch (e) {
             console.error('Error loading favorites:', e);
             return new Map();
@@ -163,7 +175,9 @@ class FavoritesHandler {
     saveFavorites() {
         if (!this.isLoggedIn) {
             try {
-                localStorage.setItem('favorites', JSON.stringify(Array.from(this.favorites.entries())));
+                const favoritesArray = Array.from(this.favorites.entries());
+                console.log('Saving favorites to localStorage:', favoritesArray);
+                localStorage.setItem('favorites', JSON.stringify(favoritesArray));
             } catch (e) {
                 console.error('Error saving favorites:', e);
             }
@@ -271,15 +285,20 @@ class FavoritesHandler {
 
         const parsedId = parseInt(productId, 10);
         const parsedVariantId = variantId ? parseInt(variantId, 10) : undefined;
+        
+        console.log('Toggling favorite:', { productId: parsedId, variantId: parsedVariantId });
 
         if (this.favorites.has(parsedId)) {
             console.log('Removing from favorites:', parsedId);
             this.favorites.delete(parsedId);
         } else {
             const productData = this.extractProductData(productId);
+            console.log('Extracted product data:', productData);
+            
             if (productData) {
                 productData.id = parsedId;
-                productData.variantId = parsedVariantId;
+                productData.variantId = parsedVariantId || productData.variantId;
+                console.log('Setting favorite with data:', productData);
                 this.favorites.set(parsedId, productData);
             }
         }
@@ -308,13 +327,17 @@ class FavoritesHandler {
     extractProductData(productId) {
         const parsedId = parseInt(productId, 10);
         const product = document.querySelector(`[data-product-id="${productId}"]`)?.closest('.card-wrapper');
-        if (!product) return null;
+        if (!product) {
+            console.log('Product not found for ID:', productId);
+            return null;
+        }
 
         // Get the selected variant ID if available
         const variantSelect = product.querySelector('select[name="id"]');
         const variantId = variantSelect ? parseInt(variantSelect.value, 10) : undefined;
+        console.log('Found variant select:', variantSelect?.value, 'Parsed variant ID:', variantId);
 
-        return {
+        const productData = {
             id: parsedId,
             variantId: variantId,
             title: product.querySelector('.card__heading a')?.textContent?.trim(),
@@ -323,6 +346,9 @@ class FavoritesHandler {
             vendor: product.querySelector('.caption-with-letter-spacing')?.textContent?.trim(),
             price: product.querySelector('.price-item--regular')?.textContent?.trim()
         };
+
+        console.log('Extracted product data:', productData);
+        return productData;
     }
 
     /**
