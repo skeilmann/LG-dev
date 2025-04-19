@@ -133,7 +133,7 @@ class FavoritesHandler {
         try {
             if (this.isLoggedIn) {
                 // return new Map(window.Shopify.favorites.map(id => [parseInt(id, 10), { id: parseInt(id, 10) }]));
-                console.log('We cant Load favorites from Shopify customer data');
+                // console.log('We cant Load favorites from Shopify customer data');
             }
 
             const stored = localStorage.getItem('favorites');
@@ -393,11 +393,34 @@ class FavoritesHandler {
             });
 
             if (response.ok) {
-                // Clear local storage after successful migration
-                localStorage.removeItem('favorites');
+                // Get the updated favorites from the response
+                const updatedFavorites = await response.json();
                 
-                // Reload the page to refresh the favorites state
-                window.location.reload();
+                // Merge the updated favorites with local storage
+                const mergedFavorites = new Map(guestFavorites);
+                
+                // Add any favorites from the customer's metafields that aren't already in local storage
+                if (updatedFavorites.favorites) {
+                    updatedFavorites.favorites.forEach(fav => {
+                        const productId = parseInt(fav.productId, 10);
+                        if (!mergedFavorites.has(productId)) {
+                            mergedFavorites.set(productId, {
+                                id: productId,
+                                variantId: fav.variantId ? parseInt(fav.variantId, 10) : undefined
+                            });
+                        }
+                    });
+                }
+
+                // Save the merged favorites back to local storage
+                localStorage.setItem('favorites', JSON.stringify(Array.from(mergedFavorites.entries())));
+                
+                // Update the current favorites state
+                this.favorites = mergedFavorites;
+                
+                // Update the UI to reflect the merged favorites
+                this.updateButtons();
+                this.updateModalContent();
             } else {
                 console.error('Failed to migrate favorites:', await response.text());
             }
