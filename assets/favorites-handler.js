@@ -9,6 +9,14 @@ class FavoritesHandler {
         this.favorites = this.loadFavorites();
         this.createModal();
         this.initializeUI();
+
+        // Check if we need to migrate guest favorites
+        if (this.isLoggedIn) {
+            const guestFavorites = localStorage.getItem('favorites');
+            if (guestFavorites) {
+                this.migrateGuestFavorites(JSON.parse(guestFavorites));
+            }
+        }
     }
 
     /**
@@ -356,6 +364,46 @@ class FavoritesHandler {
                 </div>
             </div>
         `;
+    }
+
+    /**
+     * Migrates guest favorites to user favorites after login
+     * @param {Array} guestFavorites - Array of guest favorite products
+     * @private
+     */
+    async migrateGuestFavorites(guestFavorites) {
+        if (!Array.isArray(guestFavorites) || !guestFavorites.length) {
+            return;
+        }
+
+        try {
+            const response = await fetch('https://vev-app.onrender.com/api/sync-favorites', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': 'Gheorghe2025$VeV'
+                },
+                body: JSON.stringify({
+                    customerId: window.Shopify.customerId,
+                    favorites: guestFavorites.map(([id, data]) => ({
+                        productId: id.toString(),
+                        variantId: data?.variantId?.toString() || ''
+                    }))
+                })
+            });
+
+            if (response.ok) {
+                // Clear local storage after successful migration
+                localStorage.removeItem('favorites');
+                
+                // Reload the page to refresh the favorites state
+                window.location.reload();
+            } else {
+                console.error('Failed to migrate favorites:', await response.text());
+            }
+        } catch (error) {
+            console.error('Error migrating favorites:', error);
+        }
     }
 }
 
