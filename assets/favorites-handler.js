@@ -4,13 +4,13 @@
  */
 class FavoritesHandler {
     constructor() {
-        // Initialize core properties
+        // Initialize core properties and check for guest favorites migration
         this.isLoggedIn = !!(window.Shopify && window.Shopify.customerId);
         this.favorites = this.loadFavorites();
         this.createModal();
         this.initializeUI();
 
-        // Check if we need to migrate guest favorites
+        // Migrate guest favorites to user account on login
         if (this.isLoggedIn) {
             const guestFavorites = localStorage.getItem('favorites');
             if (guestFavorites) {
@@ -40,8 +40,6 @@ class FavoritesHandler {
         document.body.appendChild(modal);
         this.modal = modal;
         this.modalGrid = modal.querySelector('.favorites-modal__grid');
-
-        // Set up modal event listeners
         this.setupModalEvents();
     }
 
@@ -98,15 +96,6 @@ class FavoritesHandler {
             }
         });
 
-        // Show .header__icon--favorites cfor non-logged-in users
-        // root.querySelectorAll('.header__icon').forEach(headerIcon => {
-        //     const heartEmpty = headerIcon.querySelector('.heart-empty');
-        //     if (heartEmpty) {
-        //         headerIcon.style.removeProperty('display');
-        //         headerIcon.classList.toggle('hidden', !this.isLoggedIn);
-        //     }
-        // });
-
         // Handle favorite icons for non-logged-in users
         root.querySelectorAll('.favorite-icon').forEach(icon => {
             icon.style.removeProperty('display');
@@ -114,7 +103,6 @@ class FavoritesHandler {
 
             if (!this.isLoggedIn && icon.dataset.productId) {
                 const isFavorite = this.favorites.has(parseInt(icon.dataset.productId, 10));
-                // const isFavorite = this.favorites.has(icon.dataset.productId);
                 icon.classList.toggle('active', isFavorite);
                 icon.setAttribute('aria-label',
                     isFavorite ?
@@ -137,33 +125,23 @@ class FavoritesHandler {
             }
 
             const stored = localStorage.getItem('favorites');
-            console.log('Loading favorites from localStorage:', stored);
-            
             if (!stored) return new Map();
 
             const parsed = JSON.parse(stored);
-            console.log('Parsed favorites:', parsed);
-            
             if (!Array.isArray(parsed)) return new Map();
 
-            const favoritesMap = new Map(parsed.map(([id, data]) => {
-                const productId = parseInt(id, 10);
-                const variantId = data?.variantId ? parseInt(data.variantId, 10) : undefined;
-                console.log(`Processing favorite - Product ID: ${productId}, Variant ID: ${variantId}, Full data:`, data);
-                return [
-                    productId,
-                    { 
-                        id: productId,
-                        variantId: variantId,
-                        ...data
-                    }
-                ];
-            }));
-            
-            console.log('Final favorites map:', Array.from(favoritesMap.entries()));
-            return favoritesMap;
+            return new Map(parsed.map(([id, data]) => [
+                parseInt(id, 10),
+                { 
+                    id: parseInt(id, 10),
+                    title: data.title,
+                    url: data.url,
+                    featured_image: data.featured_image,
+                    vendor: data.vendor,
+                    price: data.price
+                }
+            ]));
         } catch (e) {
-            console.error('Error loading favorites:', e);
             return new Map();
         }
     }
@@ -175,11 +153,20 @@ class FavoritesHandler {
     saveFavorites() {
         if (!this.isLoggedIn) {
             try {
-                const favoritesArray = Array.from(this.favorites.entries());
-                console.log('Saving favorites to localStorage:', favoritesArray);
+                const favoritesArray = Array.from(this.favorites.entries()).map(([id, data]) => [
+                    id,
+                    {
+                        id: data.id,
+                        title: data.title,
+                        url: data.url,
+                        featured_image: data.featured_image,
+                        vendor: data.vendor,
+                        price: data.price
+                    }
+                ]);
                 localStorage.setItem('favorites', JSON.stringify(favoritesArray));
             } catch (e) {
-                console.error('Error saving favorites:', e);
+                // Silently fail if localStorage is not available
             }
         }
     }
@@ -255,13 +242,12 @@ class FavoritesHandler {
      * @returns {string}
      */
     createProductCard(productId, productData) {
-        const parsedId = parseInt(productId, 10);
         return `
             <div class="favorites-modal__product card card--standard">
                 <div class="card-wrapper product-card-wrapper underline-links-hover">
                     <div class="card card--product card--media">
                         <div class="card__inner">
-                            <div class="favorite-icon active" data-product-id="${parsedId}">
+                            <div class="favorite-icon active" data-product-id="${productId}">
                                 <svg class="icon-heart" viewBox="0 0 512 512" width="24" height="24">
                                     <path fill="rgba(244, 184, 221, 0.4)" stroke="#F4B8DD" stroke-width="32" d="M352.92,80C288,80,256,144,256,144s-32-64-96.92-64C106.32,80,64.54,124.14,64,176.81c-1.1,109.33,86.73,187.08,183,252.42a16,16,0,0,0,18,0c96.26-65.34,184.09-143.09,183-252.42C447.46,124.14,405.68,80,352.92,80Z" />
                                 </svg>
@@ -278,27 +264,16 @@ class FavoritesHandler {
     /**
      * Toggles a product's favorite status
      * @param {number|string} productId
-     * @param {number|string} [variantId] - Optional variant ID
      */
-    toggleFavorite(productId, variantId) {
+    toggleFavorite(productId) {
         if (this.isLoggedIn) return;
 
         const parsedId = parseInt(productId, 10);
-        const parsedVariantId = variantId ? parseInt(variantId, 10) : undefined;
-        
-        console.log('Toggling favorite:', { productId: parsedId, variantId: parsedVariantId });
-
         if (this.favorites.has(parsedId)) {
-            console.log('Removing from favorites:', parsedId);
             this.favorites.delete(parsedId);
         } else {
             const productData = this.extractProductData(productId);
-            console.log('Extracted product data:', productData);
-            
             if (productData) {
-                productData.id = parsedId;
-                productData.variantId = parsedVariantId || productData.variantId;
-                console.log('Setting favorite with data:', productData);
                 this.favorites.set(parsedId, productData);
             }
         }
@@ -327,28 +302,16 @@ class FavoritesHandler {
     extractProductData(productId) {
         const parsedId = parseInt(productId, 10);
         const product = document.querySelector(`[data-product-id="${productId}"]`)?.closest('.card-wrapper');
-        if (!product) {
-            console.log('Product not found for ID:', productId);
-            return null;
-        }
+        if (!product) return null;
 
-        // Get the selected variant ID if available
-        const variantSelect = product.querySelector('select[name="id"]');
-        const variantId = variantSelect ? parseInt(variantSelect.value, 10) : undefined;
-        console.log('Found variant select:', variantSelect?.value, 'Parsed variant ID:', variantId);
-
-        const productData = {
+        return {
             id: parsedId,
-            variantId: variantId,
             title: product.querySelector('.card__heading a')?.textContent?.trim(),
             url: product.querySelector('.card__heading a')?.href,
             featured_image: product.querySelector('.card__media img')?.src,
             vendor: product.querySelector('.caption-with-letter-spacing')?.textContent?.trim(),
             price: product.querySelector('.price-item--regular')?.textContent?.trim()
         };
-
-        console.log('Extracted product data:', productData);
-        return productData;
     }
 
     /**
@@ -432,39 +395,41 @@ class FavoritesHandler {
             });
 
             if (response.ok) {
-                // Get the updated favorites from the response
                 const updatedFavorites = await response.json();
-                
-                // Merge the updated favorites with local storage
                 const mergedFavorites = new Map(guestFavorites);
                 
-                // Add any favorites from the customer's metafields that aren't already in local storage
                 if (updatedFavorites.favorites) {
                     updatedFavorites.favorites.forEach(fav => {
                         const productId = parseInt(fav.productId, 10);
-                        if (!mergedFavorites.has(productId)) {
+                        const variantId = fav.variantId ? parseInt(fav.variantId, 10) : undefined;
+                        
+                        if (mergedFavorites.has(productId)) {
+                            const existingData = mergedFavorites.get(productId);
+                            mergedFavorites.set(productId, {
+                                ...existingData,
+                                variantId: variantId || existingData.variantId
+                            });
+                        } else {
                             mergedFavorites.set(productId, {
                                 id: productId,
-                                variantId: fav.variantId ? parseInt(fav.variantId, 10) : undefined
+                                variantId: variantId,
+                                title: fav.title || '',
+                                url: fav.url || '',
+                                featured_image: fav.featured_image || '',
+                                vendor: fav.vendor || '',
+                                price: fav.price || ''
                             });
                         }
                     });
                 }
 
-                // Save the merged favorites back to local storage
                 localStorage.setItem('favorites', JSON.stringify(Array.from(mergedFavorites.entries())));
-                
-                // Update the current favorites state
                 this.favorites = mergedFavorites;
-                
-                // Update the UI to reflect the merged favorites
                 this.updateButtons();
                 this.updateModalContent();
-            } else {
-                console.error('Failed to migrate favorites:', await response.text());
             }
         } catch (error) {
-            console.error('Error migrating favorites:', error);
+            // Silently fail if migration fails
         }
     }
 }
