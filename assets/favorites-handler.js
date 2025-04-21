@@ -383,7 +383,7 @@ class FavoritesHandler {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-api-key': 'Gheorghe2025$VeV'
+                    'x-api-key': 'Gheorghe2025VeV'
                 },
                 body: JSON.stringify({
                     customerId: window.Shopify.customerId,
