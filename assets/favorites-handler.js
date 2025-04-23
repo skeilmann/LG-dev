@@ -262,22 +262,19 @@ class FavoritesHandler {
     }
 
     /**
-     * Toggles a product's favorite status
-     * @param {number|string} productId
+     * Toggles favorite status for a product
+     * @param {string|number} productId - Product ID to toggle
      */
     toggleFavorite(productId) {
-        if (this.isLoggedIn) return;
-
-        const parsedId = parseInt(productId, 10);
-        if (this.favorites.has(parsedId)) {
-            this.favorites.delete(parsedId);
+        const id = parseInt(productId, 10);
+        if (this.favorites.has(id)) {
+            this.favorites.delete(id);
         } else {
-            const productData = this.extractProductData(productId);
+            const productData = this.extractProductData(id);
             if (productData) {
-                this.favorites.set(parsedId, productData);
+                this.favorites.set(id, productData);
             }
         }
-
         this.saveFavorites();
         this.updateButtons();
         this.notifyStateChange();
@@ -296,21 +293,23 @@ class FavoritesHandler {
     /**
      * Extracts product data from the DOM
      * @private
-     * @param {number|string} productId
+     * @param {number} productId
      * @returns {Object|null}
      */
     extractProductData(productId) {
-        const parsedId = parseInt(productId, 10);
-        const product = document.querySelector(`[data-product-id="${productId}"]`)?.closest('.card-wrapper');
-        if (!product) return null;
+        const productElement = document.querySelector(`[data-product-id="${productId}"]`);
+        if (!productElement) return null;
+
+        const productCard = productElement.closest('.card');
+        if (!productCard) return null;
 
         return {
-            id: parsedId,
-            title: product.querySelector('.card__heading a')?.textContent?.trim(),
-            url: product.querySelector('.card__heading a')?.href,
-            featured_image: product.querySelector('.card__media img')?.src,
-            vendor: product.querySelector('.caption-with-letter-spacing')?.textContent?.trim(),
-            price: product.querySelector('.price-item--regular')?.textContent?.trim()
+            id: productId,
+            title: productCard.querySelector('.card__heading')?.textContent.trim() || '',
+            url: productCard.querySelector('a')?.href || '',
+            featured_image: productCard.querySelector('img')?.src || '',
+            vendor: productCard.querySelector('.card__vendor')?.textContent.trim() || '',
+            price: productCard.querySelector('.price')?.textContent.trim() || ''
         };
     }
 
@@ -387,10 +386,9 @@ class FavoritesHandler {
                 },
                 body: JSON.stringify({
                     customerId: window.Shopify.customerId,
-                    favorites: guestFavorites.map((id) => ({
-                    // favorites: guestFavorites.map(([id, data]) => ({
-                        productId: id.toString()
-                        // variantId: data?.variantId?.toString() || ''
+                    favorites: guestFavorites.map(([id, data]) => ({
+                        productId: id.toString(),
+                        variantId: data?.variantId?.toString() || ''
                     }))
                 })
             });
