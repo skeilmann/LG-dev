@@ -387,9 +387,10 @@ class FavoritesHandler {
                 },
                 body: JSON.stringify({
                     customerId: window.Shopify.customerId,
-                    favorites: guestFavorites.map(([id, data]) => ({
-                        productId: id.toString(),
-                        variantId: data?.variantId?.toString() || ''
+                    favorites: guestFavorites.map((id) => ({
+                    // favorites: guestFavorites.map(([id, data]) => ({
+                        productId: id.toString()
+                        // variantId: data?.variantId?.toString() || ''
                     }))
                 })
             });
