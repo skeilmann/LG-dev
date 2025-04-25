@@ -82,10 +82,8 @@ class FavoritesHandler {
     async loadFavorites() {
         try {
             if (this.isLoggedIn) {
-                const response = await fetch('/api/favorites?customerId=' + window.Shopify.customerId);
-                if (!response.ok) throw new Error('Failed to fetch logged-in favorites');
-                const data = await response.json();
-                return new Map(data.map(id => [parseInt(id, 10), { id: parseInt(id, 10) }]));
+                console.log('Skipping server fetch of favorites (handled by sync)');
+                return new Map(); // Or consider loading from customer metafields if needed
             }
 
             const stored = localStorage.getItem('guestFavorites');
@@ -246,19 +244,21 @@ class FavoritesHandler {
         }
 
         try {
+            const payload = {
+                customerId: window.Shopify.customerId,
+                favorites: guestFavorites.map(id => ({
+                    productId: id.toString(),
+                    variantId: ''
+                }))
+            };
+            console.log('Sending favorites to backend:', payload);
             const response = await fetch('https://vev-app.onrender.com/api/sync-favorites', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'x-api-key': 'Gheorghe2025VeV'
                 },
-                body: JSON.stringify({
-                    customerId: window.Shopify.customerId,
-                    favorites: guestFavorites.map(id => ({
-                        productId: id.toString(),
-                        variantId: ''
-                    }))
-                })
+                body: JSON.stringify(payload)
             });
 
             if (response.ok) {
