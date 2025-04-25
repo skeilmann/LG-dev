@@ -1,0 +1,12 @@
+{
+    "name": "Favorites Page",
+    "sections": {
+      "favorites": {
+        "type": "favorites-products"
+      },
+      "recommendations": {
+        "type": "product-recommendations"
+      }
+    },
+    "order": ["favorites", "recommendations"]
+  }

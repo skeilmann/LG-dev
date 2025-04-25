@@ -1,0 +1,17 @@
+<div class="page-width">
+  <h2 class="h2">Recommended for You</h2>
+  <div id="recommended-products">
+    {% assign collection = collections.frontpage %}
+    <div class="grid grid--2-col-tablet grid--4-col-desktop">
+      {% for product in collection.products limit: 4 %}
+        <div class="grid__item">
+          <a href="{{ product.url }}">
+            <img src="{{ product.featured_image | image_url: width: 500 }}" alt="{{ product.title }}">
+            <h3>{{ product.title }}</h3>
+            <p>{{ product.price | money }}</p>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>

@@ -239,148 +239,42 @@ class FavoritesHandler {
      */
     async updateModalContent() {
         this.modalGrid.innerHTML = ''; // Clear existing grid
-        this.modalRecommendations.innerHTML = ''; // Clear existing recommendations
 
-        // Add a loading indicator
+        // Add a loading indicator for the main content area (Shopify Page)
         this.modalGrid.innerHTML = `<div class="loading-overlay gradient"></div>`; 
+        // Add a loading indicator for recommendations
         this.modalRecommendations.innerHTML = `<div class="loading-overlay gradient"></div>`;
 
-        if (this.favorites.size === 0) {
-            this.modalGrid.innerHTML = `<div class="favorites-modal__empty">
-                <p>${window.translations?.customer?.favorites?.empty || 'No favorites yet'}</p>
-               </div>`;
-        } else {
-            // Fetch and render favorite product cards
-            const favoritePromises = Array.from(this.favorites.values())
-                .map(data => this.fetchAndRenderProductCard(data, this.modalGrid));
-            
-            try {
-                await Promise.all(favoritePromises);
-                // Remove loading indicator after all cards are loaded or failed
-                const loadingIndicator = this.modalGrid.querySelector('.loading-overlay');
-                if (loadingIndicator) loadingIndicator.remove();
-
-            } catch (error) {
-                console.error("Error loading favorite product cards:", error);
-                // Optionally show an error message in the grid
-                const loadingIndicator = this.modalGrid.querySelector('.loading-overlay');
-                if (loadingIndicator) loadingIndicator.remove();
-                this.modalGrid.innerHTML = `<p>Error loading favorites.</p>`; 
-            }
-        }
-
-        // Fetch and render recommendations
+        // Fetch and render the Shopify page content
         try {
-            await this.fetchAndRenderRecommendations();
-             // Remove loading indicator after recommendations are loaded or failed
-            const loadingIndicator = this.modalRecommendations.querySelector('.loading-overlay');
-            if (loadingIndicator) loadingIndicator.remove();
-        } catch (error) {
-            console.error("Error loading recommendations:", error);
-             // Optionally show an error message for recommendations
-             const loadingIndicator = this.modalRecommendations.querySelector('.loading-overlay');
-             if (loadingIndicator) loadingIndicator.remove();
-            this.modalRecommendations.innerHTML = `<p>Error loading recommendations.</p>`;
-        }
-    }
-
-    /**
-     * Fetches product data and renders its card HTML using Shopify's card view.
-     * Appends the card to the specified container.
-     * @private
-     * @param {Object} productData - Product data containing at least 'url'.
-     * @param {HTMLElement} containerElement - The element to append the card to.
-     * @returns {Promise<void>}
-     */
-    async fetchAndRenderProductCard(productData, containerElement) {
-        if (!productData?.url) {
-            console.warn('Product data missing URL, cannot fetch card:', productData);
-            return; // Skip if URL is missing
-        }
-
-        try {
-            // Extract handle from URL: https://shop.com/products/product-handle -> product-handle
-            const urlObject = new URL(productData.url, window.location.origin);
-            const pathParts = urlObject.pathname.split('/');
-            const handle = pathParts[pathParts.length - 1];
-
-            if (!handle) {
-                console.warn('Could not extract handle from URL:', productData.url);
-                return;
-            }
-
-            // Fetch the product card HTML using a 'card' view (adjust view name if needed)
-            // Common practice is to have a product template suffix like 'product.card.liquid'
-            // which responds to '?view=card'
-            const response = await fetch(`${urlObject.pathname}?view=card`); 
+            // *** Replace '/pages/favorites' with the actual URL/handle of your Shopify page ***
+            const pageUrl = '/pages/favorites'; 
+            const response = await fetch(pageUrl);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            const cardHtml = await response.text();
+            const pageHtml = await response.text();
 
-            // Append the fetched HTML. We might need to wrap it or adjust structure.
-            // Assuming the fetched HTML is a complete card.
+            // Extract the main content if necessary (depends on your theme structure)
+            // This example assumes the fetched HTML contains the desired content directly.
+            // You might need to parse pageHtml and select a specific element's content.
             const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = cardHtml;
+            tempDiv.innerHTML = pageHtml;
+            // Example: If your page content is inside a <main> tag or a specific div#MainContent
+            const mainContent = tempDiv.querySelector('#MainContent') || tempDiv.querySelector('main') || tempDiv; 
             
-            // Append the actual card element(s) from the fetched HTML
-            // This handles cases where the fetched HTML might have extra whitespace or wrapper elements
-             if (tempDiv.firstElementChild) {
-                // Append all top-level elements from the fetched HTML
-                Array.from(tempDiv.children).forEach(child => {
-                    // Re-attach favorite toggle listener if needed, assuming the card uses the same structure
-                    const favoriteIcon = child.querySelector(`.favorite-icon[data-product-id="${productData.id}"]`);
-                    if (favoriteIcon) {
-                        favoriteIcon.classList.add('active'); // Ensure it shows as active
-                         favoriteIcon.setAttribute('aria-label', window.translations?.customer?.favorites?.remove || 'Remove from Favorites');
-                        // Note: The main click listener on document should handle toggling
-                    }
-                    containerElement.appendChild(child);
-                 });
+            this.modalGrid.innerHTML = mainContent.innerHTML; // Inject the content
 
-            } else {
-                console.warn('Fetched card HTML seems empty for handle:', handle);
-            }
+            // Re-initialize favorite buttons within the loaded content
+            this.updateButtons(this.modalGrid);
 
         } catch (error) {
-            console.error(`Error fetching product card for URL ${productData.url}:`, error);
-            // Optionally append an error message or placeholder card
-             const errorElement = document.createElement('div');
-             errorElement.innerHTML = `<p>Could not load product: ${productData.title || productData.id}</p>`;
-             containerElement.appendChild(errorElement);
-        }
-    }
-
-    /**
-     * Fetches product recommendations using Shopify's recommendations endpoint
-     * and renders them in the modal.
-     * @private
-     * @returns {Promise<void>}
-     */
-    async fetchAndRenderRecommendations() {
-        try {
-            // Standard Shopify endpoint. Section ID might vary by theme.
-            // 'product-recommendations' is common for the section on product pages.
-            // We might need a different section_id for general recommendations if available.
-            const recommendationsUrl = `/recommendations/products.json?section_id=product-recommendations&limit=4`; 
-            const response = await fetch(recommendationsUrl);
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const recommendations = await response.json();
-
-            if (recommendations?.products) {
-                 // The response usually contains pre-rendered HTML
-                this.modalRecommendations.innerHTML = recommendations.products;
-                // Re-initialize favorite buttons within the recommendations
-                this.updateButtons(this.modalRecommendations); 
-            } else {
-                this.modalRecommendations.innerHTML = `<p>${window.translations?.customer?.favorites?.no_recommendations || 'No recommendations available.'}</p>`;
-            }
-        } catch (error) {
-            console.error('Error fetching recommendations:', error);
-            this.modalRecommendations.innerHTML = `<p>Could not load recommendations.</p>`;
+            console.error("Error loading Shopify page content:", error);
+            // Remove loading indicator on error
+            const loadingIndicator = this.modalGrid.querySelector('.loading-overlay');
+            if (loadingIndicator) loadingIndicator.remove();
+            // Show an error message
+            this.modalGrid.innerHTML = `<p>${window.translations?.customer?.favorites?.load_error || 'Error loading content.'}</p>`;
         }
     }
 
