@@ -246,10 +246,7 @@ class FavoritesHandler {
         try {
             const payload = {
                 customerId: window.Shopify.customerId,
-                favorites: guestFavorites.map(id => ({
-                    productId: id.toString(),
-                    variantId: null
-                }))
+                favorites: guestFavorites.map(id => id.toString())
             };
             console.log('Sending favorites to backend:', payload);
             const response = await fetch('https://vev-app.onrender.com/api/sync-favorites', {
