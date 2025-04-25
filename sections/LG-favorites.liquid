@@ -2,38 +2,29 @@
   <h1 class="h2">Your Favorite Products</h1>
   <div id="favorites-page-grid-wrapper">
     <div id="favorites-page-grid" class="grid grid--2-col-tablet grid--4-col-desktop">
-      <!-- JS will populate this with product cards -->
+      {% assign ids = request.params.favorites | split: ',' %}
+      {% assign found_products = false %}
+      {% for id in ids %}
+        {% assign product = all_products[id] %}
+        {% if product %}
+          {% assign found_products = true %}
+          <div class="grid__item">
+            <a href="{{ product.url }}">
+              <img
+                src="{{ product.featured_image | image_url: width: 500 }}"
+                alt="{{ product.title }}"
+                width="500"
+                height="{{ 500 | divided_by: product.featured_image.aspect_ratio | round }}"
+              >
+              <h3>{{ product.title }}</h3>
+              <p>{{ product.price | money }}</p>
+            </a>
+          </div>
+        {% endif %}
+      {% endfor %}
+      {% unless found_products %}
+        <p>You haven’t added any favorite products yet.</p>
+      {% endunless %}
     </div>
   </div>
 </div>
-
-{% comment %}
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const favoritesContainer = document.getElementById('favorites-list');
-      const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-
-      if (favorites.length === 0) {
-        favoritesContainer.innerHTML = "<p>You haven't added any favorites yet.</p>";
-        return;
-      }
-
-      // For each product handle or ID in favorites, fetch product data and render
-      favorites.forEach((handle) => {
-        fetch(`/products/${handle}.js`)
-          .then((res) => res.json())
-          .then((product) => {
-            const html = `
-                <div class="grid__item">
-                  <a href="/products/${product.handle}">
-                    <img src="${product.images[0]}" alt="${product.title}" style="width: 100%">
-                    <h3>${product.title}</h3>
-                    <p>${Shopify.formatMoney(product.price)}</p>
-                  </a>
-                </div>`;
-            favoritesContainer.insertAdjacentHTML('beforeend', html);
-          });
-      });
-    });
-  </script>
-{% endcomment %}

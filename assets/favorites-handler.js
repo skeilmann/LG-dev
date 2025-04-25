@@ -7,7 +7,6 @@ class FavoritesHandler {
         // Initialize core properties and check for guest favorites migration
         this.isLoggedIn = !!(window.Shopify && window.Shopify.customerId);
         this.favorites = this.loadFavorites();
-        this.createModal();
         this.initializeUI();
 
         // Migrate guest favorites to user account on login
@@ -17,51 +16,6 @@ class FavoritesHandler {
                 this.migrateGuestFavorites(JSON.parse(guestFavorites));
             }
         }
-    }
-
-    /**
-     * Creates and sets up the favorites modal
-     * @private
-     */
-    createModal() {
-        const modal = document.createElement('div');
-        modal.className = 'favorites-modal global-settings-popup';
-        modal.innerHTML = `
-            <div class="favorites-modal__content">
-            <button type="button" class="favorites-modal__close" aria-label="${window.translations?.accessibility?.close || 'Close'}">
-                <svg class="icon icon-close" aria-hidden="true" focusable="false">
-                <use href="${window.Shopify?.asset_url || ''}/assets/icon-close.svg"/>
-                </svg>
-            </button>
-            <h2 class="favorites-modal__heading">${window.translations?.customer?.favorites?.title || 'My Favorites'}</h2>
-            <div class="favorites-modal__grid"></div>
-            <div class="favorites-modal__recommendations-container">
-                <h3 class="favorites-modal__recommendations-heading">${window.translations?.customer?.favorites?.recommendations_title || 'You might also like'}</h3>
-                <div class="favorites-modal__recommendations"></div>
-            </div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        this.modal = modal;
-        this.modalGrid = modal.querySelector('.favorites-modal__grid');
-        this.modalRecommendations = modal.querySelector('.favorites-modal__recommendations');
-        this.setupModalEvents();
-    }
-
-    /**
-     * Sets up modal related event listeners
-     * @private
-     */
-    setupModalEvents() {
-        this.modal.querySelector('.favorites-modal__close').addEventListener('click', () => this.closeModal());
-        this.modal.addEventListener('click', (e) => {
-            if (e.target === this.modal) this.closeModal();
-        });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && this.modal.classList.contains('active')) {
-                this.closeModal();
-            }
-        });
     }
 
     /**
@@ -135,17 +89,8 @@ class FavoritesHandler {
             const parsed = JSON.parse(stored);
             if (!Array.isArray(parsed)) return new Map();
 
-            return new Map(parsed.map(([id, data]) => [
-                parseInt(id, 10),
-                {
-                    id: parseInt(id, 10),
-                    title: data.title,
-                    url: data.url,
-                    featured_image: data.featured_image,
-                    vendor: data.vendor,
-                    price: data.price
-                }
-            ]));
+            // Only store product IDs, not objects
+            return new Map(parsed.map(id => [parseInt(id, 10), { id: parseInt(id, 10) }]));
         } catch (e) {
             return new Map();
         }
@@ -158,17 +103,8 @@ class FavoritesHandler {
     saveFavorites() {
         if (!this.isLoggedIn) {
             try {
-                const favoritesArray = Array.from(this.favorites.entries()).map(([id, data]) => [
-                    id,
-                    {
-                        id: data.id,
-                        title: data.title,
-                        url: data.url,
-                        featured_image: data.featured_image,
-                        vendor: data.vendor,
-                        price: data.price
-                    }
-                ]);
+                // Only save array of IDs
+                const favoritesArray = Array.from(this.favorites.keys());
                 localStorage.setItem('favorites', JSON.stringify(favoritesArray));
             } catch (e) {
                 // Silently fail if localStorage is not available
@@ -192,10 +128,26 @@ class FavoritesHandler {
 
             const favoritesHeaderIcon = e.target.closest('.header__icon');
             if (favoritesHeaderIcon) {
-
-
                 e.preventDefault();
-                this.showModal();
+                // Get favorites from localStorage (array of product IDs)
+                let favorites = [];
+                try {
+                    const stored = localStorage.getItem('favorites');
+                    if (stored) {
+                        // Support both array of IDs and array of [id, data] pairs
+                        const parsed = JSON.parse(stored);
+                        if (Array.isArray(parsed) && typeof parsed[0] === 'object' && Array.isArray(parsed[0])) {
+                            favorites = parsed.map(pair => pair[0]);
+                        } else {
+                            favorites = parsed;
+                        }
+                    }
+                } catch (e) { }
+                if (favorites.length) {
+                    window.location.href = '/pages/favorites?favorites=' + favorites.join(',');
+                } else {
+                    window.location.href = '/pages/favorites';
+                }
             }
         });
 
@@ -212,76 +164,6 @@ class FavoritesHandler {
     }
 
     /**
-     * Shows the favorites modal
-     */
-    showModal() {
-        this.updateModalContent();
-        this.modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-
-    /**
-     * Closes the favorites modal
-     */
-    closeModal() {
-        this.modal.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-
-    /**
-     * Updates the content of the favorites modal asynchronously
-     * Renders the same favorites grid as on the page
-     * @private
-     */
-    async updateModalContent() {
-        this.modalGrid.innerHTML = '<div class="loading-overlay gradient"></div>';
-        await this.renderFavoritesGrid(this.modalGrid);
-    }
-
-    /**
-     * Renders favorite product cards into the given container element
-     * @param {HTMLElement} targetElement - The container to render cards into
-     */
-    async renderFavoritesGrid(targetElement) {
-        if (!targetElement) return;
-
-        const favorites = Array.from(this.favorites.values());
-
-        if (favorites.length === 0) {
-            targetElement.innerHTML = `<p>You haven’t added any favorite products yet.</p>`;
-            return;
-        }
-
-        targetElement.innerHTML = `<div class="loading-overlay gradient"></div>`;
-
-        for (const product of favorites) {
-            try {
-                const response = await fetch(`/products/${product.id}.js`);
-                const data = await response.json();
-
-                const cardHtml = `
-                <div class="grid__item" data-product-id="${data.id}">
-                    <a href="${data.url}">
-                        <img src="${data.images[0]}" alt="${data.title}" style="width: 100%">
-                        <h3>${data.title}</h3>
-                        <p>${Shopify.formatMoney(data.price)}</p>
-                    </a>
-                </div>
-            `;
-                targetElement.insertAdjacentHTML('beforeend', cardHtml);
-            } catch (error) {
-                console.error(`Failed to load product ${product.id}:`, error);
-            }
-        }
-
-        // Remove loading
-        const loader = targetElement.querySelector('.loading-overlay');
-        if (loader) loader.remove();
-
-        this.updateButtons(targetElement);
-    }
-
-    /**
      * Toggles favorite status for a product
      * @param {string|number} productId - Product ID to toggle
      */
@@ -290,10 +172,8 @@ class FavoritesHandler {
         if (this.favorites.has(id)) {
             this.favorites.delete(id);
         } else {
-            const productData = this.extractProductData(id);
-            if (productData) {
-                this.favorites.set(id, productData);
-            }
+
+            this.favorites.set(id);
         }
         this.saveFavorites();
         this.updateButtons();
@@ -308,29 +188,6 @@ class FavoritesHandler {
         window.dispatchEvent(new CustomEvent('favorites:changed', {
             detail: { favorites: Array.from(this.favorites.keys()) }
         }));
-    }
-
-    /**
-     * Extracts product data from the DOM
-     * @private
-     * @param {number} productId
-     * @returns {Object|null}
-     */
-    extractProductData(productId) {
-        const productElement = document.querySelector(`[data-product-id="${productId}"]`);
-        if (!productElement) return null;
-
-        const productCard = productElement.closest('.card');
-        if (!productCard) return null;
-
-        return {
-            id: productId,
-            title: productCard.querySelector('.card__heading')?.textContent.trim() || '',
-            url: productCard.querySelector('a')?.href || '',
-            featured_image: productCard.querySelector('img')?.src || '',
-            vendor: productCard.querySelector('.card__vendor')?.textContent.trim() || '',
-            price: productCard.querySelector('.price')?.textContent.trim() || ''
-        };
     }
 
     /**
@@ -367,24 +224,6 @@ class FavoritesHandler {
                     updatedFavorites.favorites.forEach(fav => {
                         const productId = parseInt(fav.productId, 10);
                         const variantId = fav.variantId ? parseInt(fav.variantId, 10) : undefined;
-
-                        if (mergedFavorites.has(productId)) {
-                            const existingData = mergedFavorites.get(productId);
-                            mergedFavorites.set(productId, {
-                                ...existingData,
-                                variantId: variantId || existingData.variantId
-                            });
-                        } else {
-                            mergedFavorites.set(productId, {
-                                id: productId,
-                                variantId: variantId,
-                                title: fav.title || '',
-                                url: fav.url || '',
-                                featured_image: fav.featured_image || '',
-                                vendor: fav.vendor || '',
-                                price: fav.price || ''
-                            });
-                        }
                     });
                 }
 
@@ -397,14 +236,19 @@ class FavoritesHandler {
             // Silently fail if migration fails
         }
     }
+
+    /**
+     * Only return the ID, no extra info
+     * @param {string|number} productId - Product ID to extract data from
+     * @returns {{id: (string|number)}}
+     */
+    extractProductData(productId) {
+        // Only return the ID, no extra info
+        return { id: productId };
+    }
 }
 
 // Initialize the favorites handler when the DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     window.favoritesHandler = new FavoritesHandler();
-
-    const gridEl = document.getElementById('favorites-page-grid');
-    if (gridEl) {
-        window.favoritesHandler.renderFavoritesGrid(gridEl);
-    }
 });
