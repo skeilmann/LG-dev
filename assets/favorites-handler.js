@@ -248,7 +248,7 @@ class FavoritesHandler {
                 customerId: window.Shopify.customerId,
                 favorites: guestFavorites.map(id => ({
                     productId: id.toString(),
-                    variantId: ''
+                    variantId: null
                 }))
             };
             console.log('Sending favorites to backend:', payload);
@@ -261,7 +261,10 @@ class FavoritesHandler {
                 body: JSON.stringify(payload)
             });
 
-            if (response.ok) {
+            if (!response.ok) {
+                const text = await response.text();
+                console.error('Sync failed. Server response:', text);
+            } else {
                 localStorage.removeItem('guestFavorites');
             }
         } catch (error) {
