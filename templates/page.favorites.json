@@ -1,12 +1,25 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
-    "name": "Favorites Page",
-    "sections": {
+  "sections": {
     "favorites": {
-      "type": "LG-favorites"
+      "type": "LG-favorites",
+      "settings": {}
     },
     "recommendations": {
-      "type": "LG-product-recomendations"
+      "type": "LG-product-recomendations",
+      "settings": {}
     }
-    },
-    "order": ["favorites", "recommendations"]
-  }
+  },
+  "order": [
+    "favorites",
+    "recommendations"
+  ]
+}

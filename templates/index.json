@@ -49,6 +49,17 @@
         "accessibility_info": "Slideshow about our brand"
       }
     },
+    "page_FDaRX6": {
+      "type": "page",
+      "name": "t:sections.page.presets.name",
+      "settings": {
+        "page": "favorites",
+        "heading_size": "h1",
+        "color_scheme": "",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
     "featured_collection": {
       "type": "featured-collection",
       "settings": {
@@ -452,6 +463,7 @@
   },
   "order": [
     "slideshow_kHzFpH",
+    "page_FDaRX6",
     "featured_collection",
     "collection_list_EmXY8a",
     "featured_collection_FKK34Y",
