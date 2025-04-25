@@ -4,18 +4,21 @@
  */
 class FavoritesHandler {
     constructor() {
-        // Initialize core properties and check for guest favorites migration
         this.isLoggedIn = !!(window.Shopify && window.Shopify.customerId);
-        this.favorites = this.loadFavorites();
-        this.initializeUI();
+        this.favorites = new Map(); // temporarily initialize with empty Map
 
-        // Migrate guest favorites to user account on login
-        if (this.isLoggedIn) {
-            const guestFavorites = localStorage.getItem('guestFavorites');
-            if (guestFavorites) {
-                this.migrateGuestFavorites(JSON.parse(guestFavorites));
+        this.loadFavorites().then(favorites => {
+            this.favorites = favorites;
+            this.initializeUI();
+
+            // Migrate guest favorites to user account on login
+            if (this.isLoggedIn) {
+                const guestFavorites = localStorage.getItem('guestFavorites');
+                if (guestFavorites) {
+                    this.migrateGuestFavorites(JSON.parse(guestFavorites));
+                }
             }
-        }
+        });
     }
 
     /**
