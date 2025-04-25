@@ -11,7 +11,7 @@ class FavoritesHandler {
 
         // Migrate guest favorites to user account on login
         if (this.isLoggedIn) {
-            const guestFavorites = localStorage.getItem('favorites');
+            const guestFavorites = localStorage.getItem('guestFavorites');
             if (guestFavorites) {
                 this.migrateGuestFavorites(JSON.parse(guestFavorites));
             }
@@ -76,22 +76,22 @@ class FavoritesHandler {
      * Loads favorites from localStorage or Shopify customer data
      * @returns {Map} Map of favorite products
      */
-    loadFavorites() {
+    async loadFavorites() {
         try {
             if (this.isLoggedIn) {
-                // return new Map(window.Shopify.favorites.map(id => [parseInt(id, 10), { id: parseInt(id, 10) }]));
-                // console.log('We cant Load favorites from Shopify customer data');
+                const response = await fetch('/api/favorites?customerId=' + window.Shopify.customerId);
+                if (!response.ok) throw new Error('Failed to fetch logged-in favorites');
+                const data = await response.json();
+                return new Map(data.map(id => [parseInt(id, 10), { id: parseInt(id, 10) }]));
             }
 
-            const stored = localStorage.getItem('favorites');
+            const stored = localStorage.getItem('guestFavorites');
             if (!stored) return new Map();
-
             const parsed = JSON.parse(stored);
             if (!Array.isArray(parsed)) return new Map();
-
-            // Only store product IDs, not objects
             return new Map(parsed.map(id => [parseInt(id, 10), { id: parseInt(id, 10) }]));
         } catch (e) {
+            console.error('Error loading favorites:', e);
             return new Map();
         }
     }
@@ -105,7 +105,7 @@ class FavoritesHandler {
             try {
                 // Only save array of IDs
                 const favoritesArray = Array.from(this.favorites.keys());
-                localStorage.setItem('favorites', JSON.stringify(favoritesArray));
+                localStorage.setItem('guestFavorites', JSON.stringify(favoritesArray));
             } catch (e) {
                 // Silently fail if localStorage is not available
             }
@@ -132,7 +132,7 @@ class FavoritesHandler {
                 // Get favorites from localStorage (array of product IDs)
                 let favorites = [];
                 try {
-                    const stored = localStorage.getItem('favorites');
+                    const stored = localStorage.getItem('guestFavorites');
                     if (stored) {
                         // Support both array of IDs and array of [id, data] pairs
                         const parsed = JSON.parse(stored);
@@ -171,13 +171,42 @@ class FavoritesHandler {
         const id = parseInt(productId, 10);
         if (this.favorites.has(id)) {
             this.favorites.delete(id);
+            if (this.isLoggedIn) {
+                this.removeFavoriteFromServer(id);
+            }
         } else {
-
-            this.favorites.set(id);
+            this.favorites.set(id, { id });
+            if (this.isLoggedIn) {
+                this.addFavoriteToServer(id);
+            }
         }
         this.saveFavorites();
         this.updateButtons();
         this.notifyStateChange();
+    }
+
+    async addFavoriteToServer(productId) {
+        try {
+            await fetch('/api/favorites', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ customerId: window.Shopify.customerId, productId })
+            });
+        } catch (e) {
+            console.error('Error adding favorite to server:', e);
+        }
+    }
+
+    async removeFavoriteFromServer(productId) {
+        try {
+            await fetch('/api/favorites', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ customerId: window.Shopify.customerId, productId })
+            });
+        } catch (e) {
+            console.error('Error removing favorite from server:', e);
+        }
     }
 
     /**
@@ -222,31 +251,18 @@ class FavoritesHandler {
                 },
                 body: JSON.stringify({
                     customerId: window.Shopify.customerId,
-                    favorites: guestFavorites.map(([id, data]) => ({
+                    favorites: guestFavorites.map(id => ({
                         productId: id.toString(),
-                        variantId: data?.variantId?.toString() || ''
+                        variantId: ''
                     }))
                 })
             });
 
             if (response.ok) {
-                const updatedFavorites = await response.json();
-                const mergedFavorites = new Map(guestFavorites);
-
-                if (updatedFavorites.favorites) {
-                    updatedFavorites.favorites.forEach(fav => {
-                        const productId = parseInt(fav.productId, 10);
-                        const variantId = fav.variantId ? parseInt(fav.variantId, 10) : undefined;
-                    });
-                }
-
-                localStorage.setItem('favorites', JSON.stringify(Array.from(mergedFavorites.entries())));
-                this.favorites = mergedFavorites;
-                this.updateButtons();
-                this.updateModalContent();
+                localStorage.removeItem('guestFavorites');
             }
         } catch (error) {
-            // Silently fail if migration fails
+            console.error('Error migrating guest favorites:', error);
         }
     }
 
