@@ -1,12 +1,12 @@
 {
     "name": "Favorites Page",
     "sections": {
-      "favorites": {
-        "type": "favorites-products"
-      },
-      "recommendations": {
-        "type": "product-recommendations"
-      }
+    "favorites": {
+      "type": "LG-favorites"
+    },
+    "recommendations": {
+      "type": "LG-product-recomendations"
+    }
     },
     "order": ["favorites", "recommendations"]
   }
