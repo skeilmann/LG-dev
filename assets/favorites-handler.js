@@ -28,17 +28,17 @@ class FavoritesHandler {
         modal.className = 'favorites-modal global-settings-popup';
         modal.innerHTML = `
             <div class="favorites-modal__content">
-                <button type="button" class="favorites-modal__close" aria-label="${window.translations?.accessibility?.close || 'Close'}">
-                    <svg class="icon icon-close" aria-hidden="true" focusable="false">
-                        <use href="#icon-close"/>
-                    </svg>
-                </button>
-                <h2 class="favorites-modal__heading">${window.translations?.customer?.favorites?.title || 'My Favorites'}</h2>
-                <div class="favorites-modal__grid"></div>
-                <div class="favorites-modal__recommendations-container">
-                    <h3 class="favorites-modal__recommendations-heading">${window.translations?.customer?.favorites?.recommendations_title || 'You might also like'}</h3>
-                    <div class="favorites-modal__recommendations"></div>
-                </div>
+            <button type="button" class="favorites-modal__close" aria-label="${window.translations?.accessibility?.close || 'Close'}">
+                <svg class="icon icon-close" aria-hidden="true" focusable="false">
+                <use href="${window.Shopify?.asset_url || ''}/assets/icon-close.svg"/>
+                </svg>
+            </button>
+            <h2 class="favorites-modal__heading">${window.translations?.customer?.favorites?.title || 'My Favorites'}</h2>
+            <div class="favorites-modal__grid"></div>
+            <div class="favorites-modal__recommendations-container">
+                <h3 class="favorites-modal__recommendations-heading">${window.translations?.customer?.favorites?.recommendations_title || 'You might also like'}</h3>
+                <div class="favorites-modal__recommendations"></div>
+            </div>
             </div>
         `;
         document.body.appendChild(modal);
@@ -137,7 +137,7 @@ class FavoritesHandler {
 
             return new Map(parsed.map(([id, data]) => [
                 parseInt(id, 10),
-                { 
+                {
                     id: parseInt(id, 10),
                     title: data.title,
                     url: data.url,
@@ -192,11 +192,7 @@ class FavoritesHandler {
 
             const favoritesHeaderIcon = e.target.closest('.header__icon');
             if (favoritesHeaderIcon) {
-                // Ping the server to wake it up
-                fetch('https://vev-app.onrender.com/api/ping').catch(error => {
-                    // Optional: Log error silently or handle it if needed
-                    console.error('Ping failed:', error); 
-                });
+
 
                 e.preventDefault();
                 this.showModal();
@@ -234,48 +230,55 @@ class FavoritesHandler {
 
     /**
      * Updates the content of the favorites modal asynchronously
-     * Fetches product cards and recommendations from Shopify.
+     * Renders the same favorites grid as on the page
      * @private
      */
     async updateModalContent() {
-        this.modalGrid.innerHTML = ''; // Clear existing grid
+        this.modalGrid.innerHTML = '<div class="loading-overlay gradient"></div>';
+        await this.renderFavoritesGrid(this.modalGrid);
+    }
 
-        // Add a loading indicator for the main content area (Shopify Page)
-        this.modalGrid.innerHTML = `<div class="loading-overlay gradient"></div>`; 
-        // Add a loading indicator for recommendations
-        this.modalRecommendations.innerHTML = `<div class="loading-overlay gradient"></div>`;
+    /**
+     * Renders favorite product cards into the given container element
+     * @param {HTMLElement} targetElement - The container to render cards into
+     */
+    async renderFavoritesGrid(targetElement) {
+        if (!targetElement) return;
 
-        // Fetch and render the Shopify page content
-        try {
-            // *** Replace '/pages/favorites' with the actual URL/handle of your Shopify page ***
-            const pageUrl = '/pages/favorites'; 
-            const response = await fetch(pageUrl);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const pageHtml = await response.text();
+        const favorites = Array.from(this.favorites.values());
 
-            // Extract the main content if necessary (depends on your theme structure)
-            // This example assumes the fetched HTML contains the desired content directly.
-            // You might need to parse pageHtml and select a specific element's content.
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = pageHtml;
-            // Example: If your page content is inside a <main> tag or a specific div#MainContent
-            const mainContent = tempDiv.querySelector('#MainContent') || tempDiv.querySelector('main') || tempDiv; 
-            
-            this.modalGrid.innerHTML = mainContent.innerHTML; // Inject the content
-
-            // Re-initialize favorite buttons within the loaded content
-            this.updateButtons(this.modalGrid);
-
-        } catch (error) {
-            console.error("Error loading Shopify page content:", error);
-            // Remove loading indicator on error
-            const loadingIndicator = this.modalGrid.querySelector('.loading-overlay');
-            if (loadingIndicator) loadingIndicator.remove();
-            // Show an error message
-            this.modalGrid.innerHTML = `<p>${window.translations?.customer?.favorites?.load_error || 'Error loading content.'}</p>`;
+        if (favorites.length === 0) {
+            targetElement.innerHTML = `<p>You haven’t added any favorite products yet.</p>`;
+            return;
         }
+
+        targetElement.innerHTML = `<div class="loading-overlay gradient"></div>`;
+
+        for (const product of favorites) {
+            try {
+                const response = await fetch(`/products/${product.id}.js`);
+                const data = await response.json();
+
+                const cardHtml = `
+                <div class="grid__item" data-product-id="${data.id}">
+                    <a href="${data.url}">
+                        <img src="${data.images[0]}" alt="${data.title}" style="width: 100%">
+                        <h3>${data.title}</h3>
+                        <p>${Shopify.formatMoney(data.price)}</p>
+                    </a>
+                </div>
+            `;
+                targetElement.insertAdjacentHTML('beforeend', cardHtml);
+            } catch (error) {
+                console.error(`Failed to load product ${product.id}:`, error);
+            }
+        }
+
+        // Remove loading
+        const loader = targetElement.querySelector('.loading-overlay');
+        if (loader) loader.remove();
+
+        this.updateButtons(targetElement);
     }
 
     /**
@@ -359,12 +362,12 @@ class FavoritesHandler {
             if (response.ok) {
                 const updatedFavorites = await response.json();
                 const mergedFavorites = new Map(guestFavorites);
-                
+
                 if (updatedFavorites.favorites) {
                     updatedFavorites.favorites.forEach(fav => {
                         const productId = parseInt(fav.productId, 10);
                         const variantId = fav.variantId ? parseInt(fav.variantId, 10) : undefined;
-                        
+
                         if (mergedFavorites.has(productId)) {
                             const existingData = mergedFavorites.get(productId);
                             mergedFavorites.set(productId, {
@@ -399,4 +402,9 @@ class FavoritesHandler {
 // Initialize the favorites handler when the DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     window.favoritesHandler = new FavoritesHandler();
+
+    const gridEl = document.getElementById('favorites-page-grid');
+    if (gridEl) {
+        window.favoritesHandler.renderFavoritesGrid(gridEl);
+    }
 });

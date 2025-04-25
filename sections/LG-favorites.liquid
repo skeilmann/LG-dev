@@ -1,35 +1,39 @@
-<div class="page-width" id="favorites-section">
-  <h2 class="h2">Your Favorite Products</h2>
-  <div id="favorites-list" class="grid grid--2-col-tablet grid--4-col-desktop">
-    <!-- Products will be injected here by JavaScript -->
+<div class="page-width">
+  <h1 class="h2">Your Favorite Products</h1>
+  <div id="favorites-page-grid-wrapper">
+    <div id="favorites-page-grid" class="grid grid--2-col-tablet grid--4-col-desktop">
+      <!-- JS will populate this with product cards -->
+    </div>
   </div>
 </div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const favoritesContainer = document.getElementById('favorites-list');
-    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+{% comment %}
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const favoritesContainer = document.getElementById('favorites-list');
+      const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
 
-    if (favorites.length === 0) {
-      favoritesContainer.innerHTML = "<p>You haven't added any favorites yet.</p>";
-      return;
-    }
+      if (favorites.length === 0) {
+        favoritesContainer.innerHTML = "<p>You haven't added any favorites yet.</p>";
+        return;
+      }
 
-    // For each product handle or ID in favorites, fetch product data and render
-    favorites.forEach((handle) => {
-      fetch(`/products/${handle}.js`)
-        .then((res) => res.json())
-        .then((product) => {
-          const html = `
-              <div class="grid__item">
-                <a href="/products/${product.handle}">
-                  <img src="${product.images[0]}" alt="${product.title}" style="width: 100%">
-                  <h3>${product.title}</h3>
-                  <p>${Shopify.formatMoney(product.price)}</p>
-                </a>
-              </div>`;
-          favoritesContainer.insertAdjacentHTML('beforeend', html);
-        });
+      // For each product handle or ID in favorites, fetch product data and render
+      favorites.forEach((handle) => {
+        fetch(`/products/${handle}.js`)
+          .then((res) => res.json())
+          .then((product) => {
+            const html = `
+                <div class="grid__item">
+                  <a href="/products/${product.handle}">
+                    <img src="${product.images[0]}" alt="${product.title}" style="width: 100%">
+                    <h3>${product.title}</h3>
+                    <p>${Shopify.formatMoney(product.price)}</p>
+                  </a>
+                </div>`;
+            favoritesContainer.insertAdjacentHTML('beforeend', html);
+          });
+      });
     });
-  });
-</script>
+  </script>
+{% endcomment %}
