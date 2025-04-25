@@ -74,24 +74,38 @@ class FavoritesHandler {
      * @param {HTMLElement} [root=document] - Root element to search from
      */
     updateButtons(root = document) {
-        // Simplified: Only handles non-logged-in favorite icons
-        if (this.isLoggedIn) {
-             // Hide guest favorite icons if logged in
-             root.querySelectorAll('.favorite-icon').forEach(icon => {
-                icon.classList.add('hidden');
-             });
-             // Optionally show different logged-in icons if needed here
-             return; 
-        }
+                // Show .heart-icon for logged-in users
+                root.querySelectorAll('.heart-icon').forEach(icon => {
+                    icon.style.removeProperty('display');
+                    icon.classList.toggle('hidden', !this.isLoggedIn);
+                });
+        
+                // Show .header__icon containing .heart-empty for logged-in users
+                root.querySelectorAll('.header__icon').forEach(headerIcon => {
+                    const heartEmpty = headerIcon.querySelector('.heart-empty');
+                    const favIcon = headerIcon.classList.contains('header__icon--favorites')
+                        ? headerIcon
+                        : headerIcon.querySelector('.header__icon--favorites');
+                    if (heartEmpty) {
+                        headerIcon.style.removeProperty('display');
+                        headerIcon.classList.toggle('hidden', !this.isLoggedIn);
+                    }
+                    if (favIcon) {
+                        favIcon.style.removeProperty('display');
+                        favIcon.classList.toggle('hidden', this.isLoggedIn);
+                    }
+                });
+        
 
         // Handle favorite icons for non-logged-in users
         root.querySelectorAll('.favorite-icon').forEach(icon => {
-            icon.style.removeProperty('display'); // Ensure visible
-            icon.classList.remove('hidden'); // Ensure visible
+            icon.style.removeProperty('display');
+            icon.classList.toggle('hidden', this.isLoggedIn);
 
-            if (icon.dataset.productId) {
-                const productId = parseInt(icon.dataset.productId, 10);
-                const isFavorite = this.favorites.has(productId);
+
+            if (!this.isLoggedIn && icon.dataset.productId) {
+                const isFavorite = this.favorites.has(parseInt(icon.dataset.productId, 10));
+
                 icon.classList.toggle('active', isFavorite);
                 icon.setAttribute('aria-label',
                     isFavorite ?
