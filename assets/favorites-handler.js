@@ -196,7 +196,20 @@ class FavoritesHandler {
      * @private
      */
     async migrateGuestFavorites(guestFavorites) {
+        // Check if guestFavorites is valid
         if (!Array.isArray(guestFavorites) || !guestFavorites.length) {
+            console.log('migrateGuestFavorites: No guest favorites data to migrate.');
+            return;
+        }
+
+        // ---> ADD THIS CHECK <---
+        // Check if we have a customer ID to associate these favorites with
+        const customerId = window.Shopify?.customerId; // Use optional chaining for safety
+        if (!customerId) {
+            console.log('migrateGuestFavorites: No customer ID found. Cannot migrate guest favorites.');
+            // Decide what to do here. Usually, you just stop.
+            // You might keep the guest favorites in localStorage until login,
+            // but don't try to sync them without an ID.
             return;
         }
 
