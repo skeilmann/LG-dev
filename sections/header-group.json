@@ -66,10 +66,26 @@
         "header_columns_layout": "flex",
         "header_columns_gap": 20
       }
+    },
+    "lg_breadcrumps_pUhQyM": {
+      "type": "LG-breadcrumps",
+      "name": "Breadcrumb Navigation",
+      "settings": {
+        "breadcrumbs_home_icon_bool": true,
+        "breadcrumb_delimeter": "angle_right",
+        "breadcrumb_bg_color": "#fff",
+        "breadcrumb_text_color": "#465076",
+        "breadcrumb_accent_color_bool": true,
+        "breadcrumb_accent_color": "#f4b8dd",
+        "enable_product_page": true,
+        "enable_collection_page": true,
+        "enable_complete_site": false
+      }
     }
   },
   "order": [
     "costum_section_gDgPjr",
-    "header"
+    "header",
+    "lg_breadcrumps_pUhQyM"
   ]
 }
