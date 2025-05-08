@@ -84,9 +84,10 @@
     max-height: 300px;
   }
 
-  #shopify-section-{{ section.id }} .slider .grid__item:not(:first-child):not(:nth-child(2)) {
+  /* Remove the rule that hides all but the first two cards */
+  /* #shopify-section-{{ section.id }} .slider .grid__item:not(:first-child):not(:nth-child(2)) {
     display: none;
-  }
+  } */
 
   #shopify-section-{{ section.id }} .slider--desktop .grid__item,
   #shopify-section-{{ section.id }} .slider--mobile .grid__item {
@@ -219,7 +220,15 @@
             {%- if days_left > 0 -%}
               <div class="countdown-box">
                 <p class="number">{{ days_left }}</p>
-                <p class="text">дней до конца акции</p>
+                <p class="text">
+                  {%- if days_left == 1 -%}
+                    день до конца акции
+                  {%- elsif days_left > 1 and days_left < 5 -%}
+                    дня до конца акции
+                  {%- else -%}
+                    дней до конца акции
+                  {%- endif -%}
+                </p>
               </div>
             {%- endif -%}
             {{

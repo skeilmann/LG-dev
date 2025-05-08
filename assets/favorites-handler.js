@@ -82,7 +82,6 @@ class FavoritesHandler {
     async loadFavorites() {
         try {
             if (this.isLoggedIn) {
-                console.log('Skipping server fetch of favorites (handled by sync)');
                 return new Map(); // Or consider loading from customer metafields if needed
             }
 
@@ -280,7 +279,18 @@ class FavoritesHandler {
     }
 }
 
-// Initialize the favorites handler when the DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOMContentLoaded event fired. Initializing FavoritesHandler and login click listener.');
+
     window.favoritesHandler = new FavoritesHandler();
+
+    document.addEventListener('pointerdown', (e) => {
+        const loginLink = e.target.closest('.header__icon--account');
+        if (loginLink) {
+            console.log('[Wake-Up] Login link was pressed. Sending backend wake-up ping...');
+            fetch('https://vev-app.onrender.com/api/ping')
+                .then(() => console.log('[Wake-Up] Backend ping successful.'))
+                .catch(err => console.warn('[Wake-Up] Ping failed:', err));
+        }
+    });
 });
