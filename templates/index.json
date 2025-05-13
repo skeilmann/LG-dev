@@ -51,6 +51,7 @@
     },
     "page_FDaRX6": {
       "type": "page",
+      "disabled": true,
       "name": "t:sections.page.presets.name",
       "settings": {
         "page": "favorites",
