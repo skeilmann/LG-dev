@@ -1,30 +1,72 @@
 <div class="page-width">
   <h1 class="h2">Your Favorite Products</h1>
   <div id="favorites-page-grid-wrapper">
-    <div id="favorites-page-grid" class="grid grid--2-col-tablet grid--4-col-desktop">
-      {% assign ids = request.params.favorites | split: ',' %}
-      {% assign found_products = false %}
-      {% for id in ids %}
-        {% assign product = all_products[id] %}
-        {% if product %}
-          {% assign found_products = true %}
-          <div class="grid__item">
-            <a href="{{ product.url }}">
-              <img
-                src="{{ product.featured_image | image_url: width: 500 }}"
-                alt="{{ product.title }}"
-                width="500"
-                height="{{ 500 | divided_by: product.featured_image.aspect_ratio | round }}"
-              >
-              <h3>{{ product.title }}</h3>
-              <p>{{ product.price | money }}</p>
-            </a>
-          </div>
-        {% endif %}
-      {% endfor %}
-      {% unless found_products %}
-        <p>You haven’t added any favorite products yet.</p>
-      {% endunless %}
-    </div>
+    <ul
+      id="favorites-page-grid"
+      class="
+        grid product-grid contains-card contains-card--product grid--5-col-desktop grid--2-col-tablet-down
+        slider slider--tablet grid--peek
+      "
+      style="padding:0;margin:0;"
+    ></ul>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var favoritesRaw = localStorage.getItem('guestFavorites');
+    var grid = document.getElementById('favorites-page-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    if (favoritesRaw) {
+      try {
+        var favorites = JSON.parse(favoritesRaw);
+        if (Array.isArray(favorites) && favorites.length > 0) {
+          favorites.forEach(function (product) {
+            if (!product || !product.id) return;
+            var imageSrc =
+              product.image ||
+              'https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-product-2_large.png';
+            var li = document.createElement('li');
+            li.className = 'grid__item slider__slide scroll-trigger animate--slide-in';
+            li.innerHTML = `
+              
+            <div class="card-wrapper product-card-wrapper underline-links-hover">
+
+            <div class="card card--card card--media color-scheme-1 gradient">
+                <div class="card__inner ratio" style="--ratio-percent: 100%;">
+                  <a href="/products/${product.handle}" class="full-unstyled-link">
+                    <div class="card__media">
+                      <div class="media media--transparent media--hover-effect">
+                        <img src="${imageSrc}" alt="${
+              product.title || ''
+            }" width="500" height="500" loading="lazy" class="motion-reduce" style="object-fit:cover; border-radius: 12px 12px 0 0; width:100%; height:auto;" />
+                      </div>
+                    </div>
+                    <div class="card__content">
+                      <div class="card__information">
+                        <h3 class="card__heading h5">${product.title || ''}</h3>
+                        <div class="card-information">
+                          <div class="caption-with-letter-spacing light">${product.vendor || ''}</div>
+                          <span class="price-item price-item--regular">${product.price || ''}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+              </div>
+            `;
+            grid.appendChild(li);
+          });
+        } else {
+          grid.innerHTML = '<p>You haven’t added any favorite products yet.</p>';
+        }
+      } catch (e) {
+        grid.innerHTML = '<p>Error loading favorites.</p>';
+      }
+    } else {
+      grid.innerHTML = '<p>You haven’t added any favorite products yet.</p>';
+    }
+  });
+</script>

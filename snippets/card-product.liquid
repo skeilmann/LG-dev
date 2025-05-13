@@ -57,7 +57,10 @@
         class="card__inner {% if settings.card_style == 'standard' %}color-{{ settings.card_color_scheme }} gradient{% endif %}{% if card_product.featured_media or settings.card_style == 'standard' %} ratio{% endif %}"
         style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;"
       >
-        <div class="favorite-icon" data-product-id="{{ card_product.id }}">
+        <div
+          class="favorite-icon"
+          data-product-id="{{ card_product.id }}"
+        >
           <svg class="icon-heart" viewBox="0 0 24 24" width="24" height="24">
             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6.5 3.5 5 5.5 5c1.54 0 3.04.99
                      3.57 2.36h1.87C13.46 5.99 14.96 5

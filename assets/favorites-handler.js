@@ -5,10 +5,16 @@
 class FavoritesHandler {
     constructor() {
         this.isLoggedIn = !!(window.Shopify && window.Shopify.customerId);
-        this.favorites = new Map(); // temporarily initialize with empty Map
+        this.favorites = new Map(); // id -> {id, handle}
+        this.idToHandle = new Map(); // id -> handle
+        this.handleToId = new Map(); // handle -> id
 
         this.loadFavorites().then(favorites => {
             this.favorites = favorites;
+            for (const [id, data] of this.favorites.entries()) {
+                this.idToHandle.set(id, data.handle);
+                this.handleToId.set(data.handle, id);
+            }
             this.initializeUI();
 
             // Migrate guest favorites to user account on login
@@ -64,7 +70,8 @@ class FavoritesHandler {
             icon.classList.toggle('hidden', this.isLoggedIn);
 
             if (!this.isLoggedIn && icon.dataset.productId) {
-                const isFavorite = this.favorites.has(parseInt(icon.dataset.productId, 10));
+                const id = parseInt(icon.dataset.productId, 10);
+                const isFavorite = this.favorites.has(id);
                 icon.classList.toggle('active', isFavorite);
                 icon.setAttribute('aria-label',
                     isFavorite ?
@@ -84,12 +91,18 @@ class FavoritesHandler {
             if (this.isLoggedIn) {
                 return new Map(); // Or consider loading from customer metafields if needed
             }
-
             const stored = localStorage.getItem('guestFavorites');
             if (!stored) return new Map();
             const parsed = JSON.parse(stored);
             if (!Array.isArray(parsed)) return new Map();
-            return new Map(parsed.map(id => [parseInt(id, 10), { id: parseInt(id, 10) }]));
+            // parsed is array of {id, handle}
+            const favorites = new Map();
+            parsed.forEach(obj => {
+                if (obj && obj.id) {
+                    favorites.set(parseInt(obj.id, 10), { id: parseInt(obj.id, 10), handle: obj.handle });
+                }
+            });
+            return favorites;
         } catch (e) {
             console.error('Error loading favorites:', e);
             return new Map();
@@ -103,8 +116,8 @@ class FavoritesHandler {
     saveFavorites() {
         if (!this.isLoggedIn) {
             try {
-                // Only save array of IDs
-                const favoritesArray = Array.from(this.favorites.keys());
+                // Save array of {id, handle}
+                const favoritesArray = Array.from(this.favorites.values());
                 localStorage.setItem('guestFavorites', JSON.stringify(favoritesArray));
             } catch (e) {
                 // Silently fail if localStorage is not available
@@ -129,22 +142,18 @@ class FavoritesHandler {
             const favoritesHeaderIcon = e.target.closest('.header__icon');
             if (favoritesHeaderIcon) {
                 e.preventDefault();
-                // Get favorites from localStorage (array of product IDs)
+                // Get favorites from localStorage (array of {id, handle})
                 let favorites = [];
                 try {
                     const stored = localStorage.getItem('guestFavorites');
                     if (stored) {
-                        // Support both array of IDs and array of [id, data] pairs
                         const parsed = JSON.parse(stored);
-                        if (Array.isArray(parsed) && typeof parsed[0] === 'object' && Array.isArray(parsed[0])) {
-                            favorites = parsed.map(pair => pair[0]);
-                        } else {
-                            favorites = parsed;
-                        }
+                        favorites = parsed;
                     }
                 } catch (e) { }
                 if (favorites.length) {
-                    window.location.href = '/pages/favorites?favorites=' + favorites.join(',');
+                    // Render favorites page using handles
+                    window.location.href = '/pages/favorites?favorites=' + favorites.map(f => f.handle).join(',');
                 } else {
                     window.location.href = '/pages/favorites';
                 }
@@ -175,7 +184,36 @@ class FavoritesHandler {
                 this.removeFavoriteFromServer(id);
             }
         } else {
-            this.favorites.set(id, { id });
+            // Try to get product info from DOM
+            let handle = null, title = '', price = '', vendor = '', image = '';
+            const el = document.querySelector(`[data-product-id='${id}']`);
+            if (el) {
+                // Try to find parent with product info
+                const card = el.closest('.card, .product-card-wrapper');
+                if (card) {
+                    // Try to get handle from link
+                    const link = card.querySelector('a[href*="/products/"]');
+                    if (link) {
+                        const match = link.getAttribute('href').match(/\/products\/([^/?#]+)/);
+                        if (match) handle = match[1];
+                    }
+                    // Title
+                    const titleEl = card.querySelector('.card__heading, .card__heading.h5, .card__heading.h2, .card__heading.h3');
+                    if (titleEl) title = titleEl.textContent.trim();
+                    // Price: get only the regular price (not compare-at)
+                    const priceEl = card.querySelector('.price-item--regular, .price__regular .price-item');
+                    if (priceEl) price = priceEl.textContent.trim();
+                    // Vendor
+                    const vendorEl = card.querySelector('.caption-with-letter-spacing, .product-card-vendor');
+                    if (vendorEl) vendor = vendorEl.textContent.trim();
+                    // Image: prefer featured image
+                    const imgEl = card.querySelector('.card__media img, img');
+                    if (imgEl) image = imgEl.getAttribute('src');
+                }
+            }
+            this.favorites.set(id, { id, handle, title, price, vendor, image });
+            this.idToHandle.set(id, handle);
+            this.handleToId.set(handle, id);
             if (this.isLoggedIn) {
                 this.addFavoriteToServer(id);
             }
@@ -225,27 +263,22 @@ class FavoritesHandler {
      * @private
      */
     async migrateGuestFavorites(guestFavorites) {
-        // Check if guestFavorites is valid
+        // guestFavorites is now array of {id, handle}
         if (!Array.isArray(guestFavorites) || !guestFavorites.length) {
             console.log('migrateGuestFavorites: No guest favorites data to migrate.');
             return;
         }
-
-        // ---> ADD THIS CHECK <---
-        // Check if we have a customer ID to associate these favorites with
-        const customerId = window.Shopify?.customerId; // Use optional chaining for safety
+        const customerId = window.Shopify?.customerId;
         if (!customerId) {
             console.log('migrateGuestFavorites: No customer ID found. Cannot migrate guest favorites.');
-            // Decide what to do here. Usually, you just stop.
-            // You might keep the guest favorites in localStorage until login,
-            // but don't try to sync them without an ID.
             return;
         }
-
+        // Map to IDs for server sync
+        const ids = guestFavorites.map(obj => obj.id ? obj.id.toString() : null).filter(Boolean);
         try {
             const payload = {
                 customerId: window.Shopify.customerId,
-                favorites: guestFavorites.map(id => id.toString())
+                favorites: ids
             };
             console.log('Sending favorites to backend:', payload);
             const response = await fetch('https://vev-app.onrender.com/api/sync-favorites', {
@@ -256,7 +289,6 @@ class FavoritesHandler {
                 },
                 body: JSON.stringify(payload)
             });
-
             if (!response.ok) {
                 const text = await response.text();
                 console.error('Sync failed. Server response:', text);
