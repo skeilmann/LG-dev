@@ -11,7 +11,12 @@
   "sections": {
     "favorites": {
       "type": "LG-favorites",
-      "settings": {}
+      "settings": {
+        "columns_desktop": 6,
+        "full_width": false,
+        "show_view_all": true,
+        "enable_desktop_slider": true
+      }
     },
     "recommendations": {
       "type": "LG-product-recomendations",
