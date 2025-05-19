@@ -13,8 +13,8 @@
       "type": "LG-favorites",
       "settings": {
         "columns_desktop": 6,
-        "full_width": false,
-        "show_view_all": true,
+        "full_width": true,
+        "show_view_all": false,
         "enable_desktop_slider": false
       }
     },
