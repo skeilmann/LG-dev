@@ -55,101 +55,31 @@
   </div>
 </div>
 
-<script>
-const recommendedList = document.getElementById('RecommendedSlider-{{ section.id }}');
-const sliderButtons = document.getElementById('recommended-slider-buttons-{{ section.id }}');
+{%- assign product_limit = section.settings.product_limit | default: 4 -%}
+{%- assign fallback_collection = section.settings.fallback_collection -%}
+{%- assign products = fallback_collection.products | slice: 0, product_limit -%}
 
-async function displayRecommendedProducts() {
-  let recommendedProducts = [];
-  // Try dynamic recommendations (Shopify endpoint)
-  let productId = null;
-  {% if product and product.id %}
-    productId = {{ product.id }};
-  {% else %}
-    try {
-      var guestFavorites = JSON.parse(localStorage.getItem('guestFavorites')) || [];
-      if (guestFavorites.length > 0 && guestFavorites[0].id) {
-        productId = guestFavorites[0].id;
-      }
-    } catch (e) {}
-  {% endif %}
-
-  if (productId) {
-    try {
-      const response = await fetch(`/recommendations/products.json?product_id=${productId}&limit={{ product_limit }}`);
-      if (response.ok) {
-        const data = await response.json();
-        if (data.products && data.products.length > 0) {
-          recommendedProducts = data.products;
-        }
-      }
-    } catch (e) {}
-  }
-
-  // Fallback to static collection if needed
-  var hasFallback = {% if fallback_collection != blank %}true{% else %}false{% endif %};
-  if (recommendedProducts.length === 0 && hasFallback) {
-    try {
-      const response = await fetch('/collections/{{ fallback_collection.handle }}/products.json?limit={{ product_limit }}');
-      if (response.ok) {
-        const data = await response.json();
-        if (data.products && data.products.length > 0) {
-          recommendedProducts = data.products;
-        }
-      }
-    } catch (e) {}
-  }
-
-  recommendedList.innerHTML = '';
-  let slideIndex = 1;
-  if (recommendedProducts.length === 0) {
-    recommendedList.innerHTML = '<li><p>No recommendations available.</p></li>';
-    sliderButtons.style.display = 'none';
-    return;
-  }
-  for (const prod of recommendedProducts) {
-    try {
-      const response = await fetch(`/products/${prod.handle}?section_id=card-product-standalone`);
-      if (!response.ok) continue;
-      const productCardHTML = await response.text();
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = productCardHTML;
-      const card = tempDiv.querySelector('.card-wrapper');
-      if (card) {
-        const li = document.createElement('li');
-        li.className = 'grid__item{% if enable_slider %} slider__slide{% endif %}';
-        {% if enable_slider %}
-        li.id = 'Slide-{{ section.id }}-' + slideIndex;
-        slideIndex++;
-        {% endif %}
-        li.appendChild(card);
-        recommendedList.appendChild(li);
-      }
-    } catch (error) {
-      // skip
-    }
-  }
-  // Show slider buttons only if slider enabled and more than 1 product
-  if ({{ enable_slider | json }} && recommendedProducts.length > 1) {
-    sliderButtons.style.display = '';
-    const sliderComponent = recommendedList.closest('slider-component');
-    // Only call resetPages if the sliderComponent contains at least one .slider__slide
-    if (sliderComponent && sliderComponent.querySelector('.slider__slide')) {
-      if (typeof sliderComponent.resetPages === 'function') {
-        sliderComponent.resetPages();
-      } else {
-        if (window.Shopify && Shopify.theme && typeof Shopify.theme.initSliders === 'function') {
-          Shopify.theme.initSliders();
-        }
-        window.dispatchEvent(new Event('resize'));
-      }
-    }
-  } else {
-    sliderButtons.style.display = 'none';
-  }
-}
-displayRecommendedProducts();
-</script>
+{%- if products.size > 0 -%}
+  {%- assign show_slider_buttons = false -%}
+  {%- if section.settings.enable_slider and products.size > 1 -%}
+    {%- assign show_slider_buttons = true -%}
+  {%- endif -%}
+  <script>
+    document.getElementById('recommended-slider-buttons-{{ section.id }}').style.display = {{ show_slider_buttons | json }} ? '' : 'none';
+  </script>
+  {%- for product in products -%}
+    <li
+      class="grid__item{% if section.settings.enable_slider %} slider__slide{% endif %}"
+      {% if section.settings.enable_slider %}
+        id="Slide-{{ section.id }}-{{ forloop.index }}"
+      {% endif %}
+    >
+      {% render 'card-product', product: product %}
+    </li>
+  {%- endfor -%}
+{%- else -%}
+  <li><p>No recommendations available.</p></li>
+{%- endif -%}
 
 {% schema %}
 {
