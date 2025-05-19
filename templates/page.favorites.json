@@ -23,6 +23,7 @@
     },
     "lg_recommended_products_eGr3K3": {
       "type": "LG-recommended-products",
+      "disabled": true,
       "name": "Recommended Products",
       "settings": {
         "product_limit": 9,
