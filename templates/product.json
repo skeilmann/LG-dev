@@ -120,10 +120,19 @@
         "padding_top": 36,
         "padding_bottom": 28
       }
+    },
+    "lg_recommended_products_8kG8Ff": {
+      "type": "LG-recommended-products",
+      "name": "Recommended Products",
+      "settings": {
+        "product_limit": 12,
+        "enable_slider": true
+      }
     }
   },
   "order": [
     "main",
-    "related-products"
+    "related-products",
+    "lg_recommended_products_8kG8Ff"
   ]
 }

@@ -18,11 +18,21 @@
     },
     "recommendations": {
       "type": "LG-product-recomendations",
+      "disabled": true,
       "settings": {}
+    },
+    "lg_recommended_products_eGr3K3": {
+      "type": "LG-recommended-products",
+      "name": "Recommended Products",
+      "settings": {
+        "product_limit": 8,
+        "enable_slider": true
+      }
     }
   },
   "order": [
     "favorites",
-    "recommendations"
+    "recommendations",
+    "lg_recommended_products_eGr3K3"
   ]
 }
