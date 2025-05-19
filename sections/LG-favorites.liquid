@@ -1,72 +1,139 @@
-<div class="page-width">
-  <h1 class="h2">Your Favorite Products</h1>
-  <div id="favorites-page-grid-wrapper">
-    <ul
-      id="favorites-page-grid"
-      class="
-        grid product-grid contains-card contains-card--product grid--5-col-desktop grid--2-col-tablet-down
-        slider slider--tablet grid--peek
-      "
-      style="padding:0;margin:0;"
-    ></ul>
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-slider.css' | asset_url | stylesheet_tag }}
+
+{%- assign columns = section.settings.columns_desktop | default: 4 -%}
+{%- assign full_width = section.settings.full_width -%}
+{%- assign show_view_all = section.settings.show_view_all -%}
+{%- assign enable_slider = section.settings.enable_desktop_slider -%}
+
+<div class="lg-favorites-section{% if full_width %} lg-favorites-section--full{% endif %}">
+  <div class="{% if full_width %}full-width{% else %}page-width{% endif %}">
+    <div class="lg-favorites__header">
+      <h1 class="h2">Your Favorite Products</h1>
+      {% if show_view_all %}
+        <a href="/collections/all" class="button lg-favorites__view-all">View All</a>
+      {% endif %}
+    </div>
+    {% if enable_slider %}
+      <slider-component class="lg-favorites-slider-component{% if full_width %} slider-component-full-width{% endif %}">
+        <div
+          id="product-container"
+          class="slider slider--desktop grid--{{ columns }}-col-desktop lg-favorites__slider"
+        ></div>
+        <button name="previous" class="slider-button slider-button--prev" aria-label="Previous" data-step="1">
+          &#8592;
+        </button>
+        <button name="next" class="slider-button slider-button--next" aria-label="Next" data-step="1">&#8594;</button>
+        <div class="slider-counter">
+          <span class="slider-counter--current">1</span> /
+          <span class="slider-counter--total">1</span>
+        </div>
+      </slider-component>
+    {% else %}
+      <div
+        id="product-container"
+        class="local-favorites__products lg-favorites__products--columns-{{ columns }}"
+      ></div>
+    {% endif %}
   </div>
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    var favoritesRaw = localStorage.getItem('guestFavorites');
-    var grid = document.getElementById('favorites-page-grid');
-    if (!grid) return;
-    grid.innerHTML = '';
-    if (favoritesRaw) {
-      try {
-        var favorites = JSON.parse(favoritesRaw);
-        if (Array.isArray(favorites) && favorites.length > 0) {
-          favorites.forEach(function (product) {
-            if (!product || !product.id) return;
-            var imageSrc =
-              product.image ||
-              'https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-product-2_large.png';
-            var li = document.createElement('li');
-            li.className = 'grid__item slider__slide scroll-trigger animate--slide-in';
-            li.innerHTML = `
-              
-            <div class="card-wrapper product-card-wrapper underline-links-hover">
+  const productContainer = document.getElementById('product-container');
 
-            <div class="card card--card card--media color-scheme-1 gradient">
-                <div class="card__inner ratio" style="--ratio-percent: 100%;">
-                  <a href="/products/${product.handle}" class="full-unstyled-link">
-                    <div class="card__media">
-                      <div class="media media--transparent media--hover-effect">
-                        <img src="${imageSrc}" alt="${
-              product.title || ''
-            }" width="500" height="500" loading="lazy" class="motion-reduce" style="object-fit:cover; border-radius: 12px 12px 0 0; width:100%; height:auto;" />
-                      </div>
-                    </div>
-                    <div class="card__content">
-                      <div class="card__information">
-                        <h3 class="card__heading h5">${product.title || ''}</h3>
-                        <div class="card-information">
-                          <div class="caption-with-letter-spacing light">${product.vendor || ''}</div>
-                          <span class="price-item price-item--regular">${product.price || ''}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </a>
-                </div>
-              </div>
-              </div>
-            `;
-            grid.appendChild(li);
-          });
-        } else {
-          grid.innerHTML = '<p>You haven’t added any favorite products yet.</p>';
-        }
-      } catch (e) {
-        grid.innerHTML = '<p>Error loading favorites.</p>';
-      }
-    } else {
-      grid.innerHTML = '<p>You haven’t added any favorite products yet.</p>';
+  async function displayProductsFromLocalStorage() {
+    // Read guestFavorites from localStorage (array of {id, handle, ...})
+    const guestFavorites = JSON.parse(localStorage.getItem('guestFavorites')) || [];
+    const productHandles = guestFavorites.map((fav) => fav.handle).filter(Boolean);
+    if (productHandles.length === 0) {
+      productContainer.innerHTML = '<p>No recently viewed products.</p>';
+      return;
     }
-  });
+
+    // Clear previous content
+    productContainer.innerHTML = '';
+
+    let slideIndex = 0;
+    for (const handle of productHandles) {
+      try {
+        // Use section-based AJAX render for full product data (including images)
+        const response = await fetch(`/products/${handle}?section_id=card-product-standalone`);
+        if (!response.ok) {
+          console.error(`Failed to fetch product card for ${handle}`);
+          continue;
+        }
+        const productCardHTML = await response.text();
+
+        // Ensure no duplicate rendering or wrapping
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = productCardHTML;
+        const card = tempDiv.querySelector('.card-wrapper');
+        if (card) {
+          {% if enable_slider %}
+          card.id = `Slide-${slideIndex}`;
+          card.classList.add('slider__slide');
+          slideIndex++;
+          {% endif %}
+          productContainer.appendChild(card);
+        } else {
+          console.error(`Invalid product card structure for ${handle}`);
+        }
+      } catch (error) {
+        console.error(`Error fetching product card for ${handle}:`, error);
+      }
+    }
+
+    {% if enable_slider %}
+    // After cards are loaded, trigger slider component to recalculate
+    const sliderComponent = productContainer.closest('slider-component');
+    if (sliderComponent && typeof sliderComponent.resetPages === 'function') {
+      sliderComponent.resetPages();
+    } else if (sliderComponent) {
+      // fallback: dispatch resize event to trigger observer
+      window.dispatchEvent(new Event('resize'));
+    }
+    {% endif %}
+  }
+
+  displayProductsFromLocalStorage();
 </script>
+
+{% schema %}
+{
+  "name": "Favorites",
+  "settings": [
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 4,
+      "label": "t:sections.featured-collection.settings.columns_desktop.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "t:sections.featured-collection.settings.full_width.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "default": true,
+      "label": "t:sections.featured-collection.settings.show_view_all.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_desktop_slider",
+      "label": "t:sections.featured-collection.settings.enable_desktop_slider.label",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Favorites section"
+    }
+  ]
+}
+{% endschema %}
