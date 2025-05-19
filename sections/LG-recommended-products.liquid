@@ -12,51 +12,18 @@
     <div class="recommended-products__header">
       <h2 class="h3">Recommended for you</h2>
     </div>
-    <div id="dynamic-recommendations-{{ section.id }}"></div>
-    <slider-component class="{% if enable_slider %}slider-component-desktop{% else %}page-width-desktop{% endif %}">
-      {%- if product or collection or fallback_collection != blank -%}
-        <ul
-          id="RecommendedSlider-{{ section.id }}"
-          class="grid product-grid contains-card contains-card--product grid--{{ product_limit }}-col-desktop{% if enable_slider %} slider slider--desktop{% endif %}"
-          role="list"
-          aria-label="Recommended products slider"
-        >
-          {%- assign recommended_products = blank -%}
-          {%- if product and product.collections.size > 0 -%}
-            {%- assign main_collection = product.collections.first -%}
-            {%- assign recommended_products = main_collection.products
-              | where: 'id', product.id, false
-              | slice: 0, product_limit
-            -%}
-          {%- elsif collection -%}
-            {%- assign recommended_products = collection.products | slice: 0, product_limit -%}
-          {%- elsif fallback_collection != blank -%}
-            {%- assign recommended_products = fallback_collection.products | slice: 0, product_limit -%}
-          {%- endif -%}
-          {%- if recommended_products and recommended_products.size > 0 -%}
-            {%- for prod in recommended_products -%}
-              <li class="grid__item{% if enable_slider %} slider__slide{% endif %}">
-                {% render 'card-product', product: prod %}
-              </li>
-            {%- endfor -%}
-          {%- else -%}
-            <li>
-              <p>
-                No recommendations available.<br>
-                <small
-                  >Debug: product={{ product | json }}, collection={{ collection | json }}, fallback_collection=
-                  {{- fallback_collection | json -}}
-                </small>
-              </p>
-            </li>
-          {%- endif -%}
-        </ul>
-      {%- else -%}
-        <ul>
-          <li><p>No source for recommendations (no product, collection, or fallback collection).</p></li>
-        </ul>
-      {%- endif -%}
-      {% if enable_slider %}
+    <slider-component
+      class="{% if enable_slider %}slider-component-desktop{% else %}page-width-desktop{% endif %}"
+      style="overflow:visible;"
+    >
+      <ul
+        id="RecommendedSlider-{{ section.id }}"
+        class="grid product-grid contains-card contains-card--product grid--{{ product_limit }}-col-desktop{% if enable_slider %} slider slider--desktop{% endif %}"
+        role="list"
+        aria-label="Recommended products slider"
+        style="margin:0;padding:0;list-style:none;"
+      ></ul>
+      <div id="recommended-slider-buttons-{{ section.id }}" style="display:none;">
         <div class="slider-buttons">
           <button
             type="button"
@@ -83,22 +50,22 @@
             <span class="svg-wrapper">{{ 'icon-caret.svg' | inline_asset_content }}</span>
           </button>
         </div>
-      {% endif %}
+      </div>
     </slider-component>
   </div>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  var productId = null;
-  var limit = {{ section.settings.product_limit | default: 4 }};
-  var container = document.getElementById('dynamic-recommendations-{{ section.id }}');
+const recommendedList = document.getElementById('RecommendedSlider-{{ section.id }}');
+const sliderButtons = document.getElementById('recommended-slider-buttons-{{ section.id }}');
 
-  // Try to get productId from product page context
+async function displayRecommendedProducts() {
+  let recommendedProducts = [];
+  // Try dynamic recommendations (Shopify endpoint)
+  let productId = null;
   {% if product and product.id %}
     productId = {{ product.id }};
   {% else %}
-    // Try to get from favorites in localStorage (first product)
     try {
       var guestFavorites = JSON.parse(localStorage.getItem('guestFavorites')) || [];
       if (guestFavorites.length > 0 && guestFavorites[0].id) {
@@ -107,16 +74,81 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch (e) {}
   {% endif %}
 
-  if (productId && container) {
-    fetch(`/recommendations/products?section_id=dynamic-recommendations&product_id=${productId}&limit=${limit}`)
-      .then(response => response.text())
-      .then(html => {
-        if (html && html.indexOf('No dynamic recommendations available') === -1) {
-          container.innerHTML = html;
+  if (productId) {
+    try {
+      const response = await fetch(`/recommendations/products.json?product_id=${productId}&limit={{ product_limit }}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.products && data.products.length > 0) {
+          recommendedProducts = data.products;
         }
-      });
+      }
+    } catch (e) {}
   }
-});
+
+  // Fallback to static collection if needed
+  var hasFallback = {% if fallback_collection != blank %}true{% else %}false{% endif %};
+  if (recommendedProducts.length === 0 && hasFallback) {
+    try {
+      const response = await fetch('/collections/{{ fallback_collection.handle }}/products.json?limit={{ product_limit }}');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.products && data.products.length > 0) {
+          recommendedProducts = data.products;
+        }
+      }
+    } catch (e) {}
+  }
+
+  recommendedList.innerHTML = '';
+  let slideIndex = 1;
+  if (recommendedProducts.length === 0) {
+    recommendedList.innerHTML = '<li><p>No recommendations available.</p></li>';
+    sliderButtons.style.display = 'none';
+    return;
+  }
+  for (const prod of recommendedProducts) {
+    try {
+      const response = await fetch(`/products/${prod.handle}?section_id=card-product-standalone`);
+      if (!response.ok) continue;
+      const productCardHTML = await response.text();
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = productCardHTML;
+      const card = tempDiv.querySelector('.card-wrapper');
+      if (card) {
+        const li = document.createElement('li');
+        li.className = 'grid__item{% if enable_slider %} slider__slide{% endif %}';
+        {% if enable_slider %}
+        li.id = 'Slide-{{ section.id }}-' + slideIndex;
+        slideIndex++;
+        {% endif %}
+        li.appendChild(card);
+        recommendedList.appendChild(li);
+      }
+    } catch (error) {
+      // skip
+    }
+  }
+  // Show slider buttons only if slider enabled and more than 1 product
+  if ({{ enable_slider | json }} && recommendedProducts.length > 1) {
+    sliderButtons.style.display = '';
+    const sliderComponent = recommendedList.closest('slider-component');
+    // Only call resetPages if the sliderComponent contains at least one .slider__slide
+    if (sliderComponent && sliderComponent.querySelector('.slider__slide')) {
+      if (typeof sliderComponent.resetPages === 'function') {
+        sliderComponent.resetPages();
+      } else {
+        if (window.Shopify && Shopify.theme && typeof Shopify.theme.initSliders === 'function') {
+          Shopify.theme.initSliders();
+        }
+        window.dispatchEvent(new Event('resize'));
+      }
+    }
+  } else {
+    sliderButtons.style.display = 'none';
+  }
+}
+displayRecommendedProducts();
 </script>
 
 {% schema %}
