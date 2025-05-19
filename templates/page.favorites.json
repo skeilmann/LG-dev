@@ -25,7 +25,7 @@
       "type": "LG-recommended-products",
       "name": "Recommended Products",
       "settings": {
-        "product_limit": 6,
+        "product_limit": 9,
         "enable_slider": true,
         "fallback_collection": "best-selling-products"
       }
