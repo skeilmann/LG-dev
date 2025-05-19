@@ -12,8 +12,8 @@
     "favorites": {
       "type": "LG-favorites",
       "settings": {
-        "columns_desktop": 6,
-        "enable_desktop_slider": false
+        "columns_desktop": 3,
+        "enable_desktop_slider": true
       }
     },
     "recommendations": {
