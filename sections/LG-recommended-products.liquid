@@ -12,6 +12,7 @@
     <div class="recommended-products__header">
       <h2 class="h3">Recommended for you</h2>
     </div>
+    <div id="dynamic-recommendations-{{ section.id }}"></div>
     <slider-component class="{% if enable_slider %}slider-component-desktop{% else %}page-width-desktop{% endif %}">
       {%- if product or collection or fallback_collection != blank -%}
         <ul
@@ -86,6 +87,37 @@
     </slider-component>
   </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var productId = null;
+  var limit = {{ section.settings.product_limit | default: 4 }};
+  var container = document.getElementById('dynamic-recommendations-{{ section.id }}');
+
+  // Try to get productId from product page context
+  {% if product and product.id %}
+    productId = {{ product.id }};
+  {% else %}
+    // Try to get from favorites in localStorage (first product)
+    try {
+      var guestFavorites = JSON.parse(localStorage.getItem('guestFavorites')) || [];
+      if (guestFavorites.length > 0 && guestFavorites[0].id) {
+        productId = guestFavorites[0].id;
+      }
+    } catch (e) {}
+  {% endif %}
+
+  if (productId && container) {
+    fetch(`/recommendations/products?section_id=dynamic-recommendations&product_id=${productId}&limit=${limit}`)
+      .then(response => response.text())
+      .then(html => {
+        if (html && html.indexOf('No dynamic recommendations available') === -1) {
+          container.innerHTML = html;
+        }
+      });
+  }
+});
+</script>
 
 {% schema %}
 {

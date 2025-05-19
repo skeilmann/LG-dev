@@ -1,0 +1,12 @@
+{%- assign recommendations = recommendations.products | default: blank -%}
+<ul class="grid product-grid contains-card contains-card--product grid--4-col-desktop">
+  {%- if recommendations and recommendations.size > 0 -%}
+    {%- for prod in recommendations -%}
+      <li class="grid__item">
+        {% render 'card-product', product: prod %}
+      </li>
+    {%- endfor -%}
+  {%- else -%}
+    <li><p>No dynamic recommendations available.</p></li>
+  {%- endif -%}
+</ul>
