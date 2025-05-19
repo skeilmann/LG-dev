@@ -2,99 +2,95 @@
 {{ 'component-slider.css' | asset_url | stylesheet_tag }}
 
 {%- assign columns = section.settings.columns_desktop | default: 4 -%}
-{%- assign full_width = section.settings.full_width -%}
-{%- assign show_view_all = section.settings.show_view_all -%}
 {%- assign enable_slider = section.settings.enable_desktop_slider -%}
 
-<div class="lg-favorites-section{% if full_width %} lg-favorites-section--full{% endif %}">
-  <div class="{% if full_width %}full-width{% else %}page-width{% endif %}">
+<div class="lg-favorites-section">
+  <div class="page-width">
     <div class="lg-favorites__header">
       <h1 class="h2">Your Favorite Products</h1>
-      {% if show_view_all %}
-        <a href="/collections/all" class="button lg-favorites__view-all">View All</a>
-      {% endif %}
     </div>
-    {% if enable_slider %}
-      <slider-component class="lg-favorites-slider-component{% if full_width %} slider-component-full-width{% endif %}">
-        <div
-          id="product-container"
-          class="slider slider--desktop grid--{{ columns }}-col-desktop lg-favorites__slider"
-        ></div>
-        <button name="previous" class="slider-button slider-button--prev" aria-label="Previous" data-step="1">
-          &#8592;
-        </button>
-        <button name="next" class="slider-button slider-button--next" aria-label="Next" data-step="1">&#8594;</button>
-        <div class="slider-counter">
-          <span class="slider-counter--current">1</span> /
-          <span class="slider-counter--total">1</span>
+    <slider-component class="{% if enable_slider %}slider-component-desktop{% else %}page-width-desktop{% endif %}">
+      <ul
+        id="Slider-{{ section.id }}"
+        class="grid product-grid contains-card contains-card--product grid--{{ columns }}-col-desktop{% if enable_slider %} slider slider--desktop{% endif %}"
+        role="list"
+        aria-label="Your favorite products slider"
+      ></ul>
+      {% if enable_slider %}
+        <div class="slider-buttons">
+          <button
+            type="button"
+            class="slider-button slider-button--prev"
+            name="previous"
+            aria-label="Previous slide"
+            aria-controls="Slider-{{ section.id }}"
+          >
+            <span class="svg-wrapper">{{ 'icon-caret.svg' | inline_asset_content }}</span>
+          </button>
+          <div class="slider-counter caption">
+            <span class="slider-counter--current">1</span>
+            <span aria-hidden="true"> / </span>
+            <span class="visually-hidden">of</span>
+            <span class="slider-counter--total">1</span>
+          </div>
+          <button
+            type="button"
+            class="slider-button slider-button--next"
+            name="next"
+            aria-label="Next slide"
+            aria-controls="Slider-{{ section.id }}"
+          >
+            <span class="svg-wrapper">{{ 'icon-caret.svg' | inline_asset_content }}</span>
+          </button>
         </div>
-      </slider-component>
-    {% else %}
-      <div
-        id="product-container"
-        class="local-favorites__products lg-favorites__products--columns-{{ columns }}"
-      ></div>
-    {% endif %}
+      {% endif %}
+    </slider-component>
   </div>
 </div>
 
 <script>
-  const productContainer = document.getElementById('product-container');
+  const productList = document.getElementById('Slider-{{ section.id }}');
 
   async function displayProductsFromLocalStorage() {
-    // Read guestFavorites from localStorage (array of {id, handle, ...})
     const guestFavorites = JSON.parse(localStorage.getItem('guestFavorites')) || [];
     const productHandles = guestFavorites.map((fav) => fav.handle).filter(Boolean);
     if (productHandles.length === 0) {
-      productContainer.innerHTML = '<p>No recently viewed products.</p>';
+      productList.innerHTML = '<li><p>No recently viewed products.</p></li>';
       return;
     }
-
-    // Clear previous content
-    productContainer.innerHTML = '';
-
-    let slideIndex = 0;
+    productList.innerHTML = '';
+    let slideIndex = 1;
     for (const handle of productHandles) {
       try {
-        // Use section-based AJAX render for full product data (including images)
         const response = await fetch(`/products/${handle}?section_id=card-product-standalone`);
-        if (!response.ok) {
-          console.error(`Failed to fetch product card for ${handle}`);
-          continue;
-        }
+        if (!response.ok) continue;
         const productCardHTML = await response.text();
-
-        // Ensure no duplicate rendering or wrapping
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = productCardHTML;
         const card = tempDiv.querySelector('.card-wrapper');
         if (card) {
+          const li = document.createElement('li');
+          li.className = 'grid__item{% if enable_slider %} slider__slide{% endif %}';
           {% if enable_slider %}
-          card.id = `Slide-${slideIndex}`;
-          card.classList.add('slider__slide');
+          li.id = 'Slide-{{ section.id }}-' + slideIndex;
           slideIndex++;
           {% endif %}
-          productContainer.appendChild(card);
-        } else {
-          console.error(`Invalid product card structure for ${handle}`);
+          li.appendChild(card);
+          productList.appendChild(li);
         }
       } catch (error) {
-        console.error(`Error fetching product card for ${handle}:`, error);
+        // skip
       }
     }
-
     {% if enable_slider %}
-    // After cards are loaded, trigger slider component to recalculate
-    const sliderComponent = productContainer.closest('slider-component');
+    const sliderComponent = productList.closest('slider-component');
     if (sliderComponent && typeof sliderComponent.resetPages === 'function') {
       sliderComponent.resetPages();
     } else if (sliderComponent) {
-      // fallback: dispatch resize event to trigger observer
       window.dispatchEvent(new Event('resize'));
     }
     {% endif %}
   }
-
   displayProductsFromLocalStorage();
 </script>
 
@@ -109,24 +105,12 @@
       "max": 6,
       "step": 1,
       "default": 4,
-      "label": "t:sections.featured-collection.settings.columns_desktop.label"
-    },
-    {
-      "type": "checkbox",
-      "id": "full_width",
-      "label": "t:sections.featured-collection.settings.full_width.label",
-      "default": false
-    },
-    {
-      "type": "checkbox",
-      "id": "show_view_all",
-      "default": true,
-      "label": "t:sections.featured-collection.settings.show_view_all.label"
+      "label": "Products per row"
     },
     {
       "type": "checkbox",
       "id": "enable_desktop_slider",
-      "label": "t:sections.featured-collection.settings.enable_desktop_slider.label",
+      "label": "Enable desktop slider",
       "default": false
     }
   ],
