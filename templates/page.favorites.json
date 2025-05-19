@@ -13,7 +13,7 @@
       "type": "LG-favorites",
       "settings": {
         "columns_desktop": 6,
-        "enable_desktop_slider": true
+        "enable_desktop_slider": false
       }
     },
     "recommendations": {
@@ -23,6 +23,7 @@
     },
     "lg_recommended_products_eGr3K3": {
       "type": "LG-recommended-products",
+      "disabled": true,
       "name": "Recommended Products",
       "settings": {
         "product_limit": 8,
