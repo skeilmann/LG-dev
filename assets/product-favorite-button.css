@@ -1,0 +1,57 @@
+/* Styles for the product favorite button */
+.product-form__buttons .button.button--secondary.product-favorite-btn {
+    box-shadow: 0 0 0 calc(var(--buttons-border-width) + var(--border-offset)) #ff7eb3,
+        0 0 0 var(--buttons-border-width) #ff7eb3;
+    background-color: transparent;
+    transition: background-color 0.7s ease, color 0.7s ease, box-shadow 0.7s ease !important;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    font-weight: 600;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.product-form__buttons .button.button--secondary.product-favorite-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, rgb(244, 184, 221), #ff7eb3);
+    opacity: 0;
+    transition: opacity 0.7s ease;
+    z-index: -1;
+}
+
+.product-form__buttons .button.button--secondary.product-favorite-btn:hover::before {
+    opacity: 1;
+}
+
+.product-favorite-btn .favorite-label {
+    z-index: 1;
+}
+
+.product-favorite-btn .favorite-heart {
+    width: 1.5em;
+    height: 1.5em;
+    display: inline-block;
+    vertical-align: middle;
+    transition: fill 0.7s ease, stroke 0.7s ease !important;
+    stroke: #ff7eb3;
+
+    fill: none;
+}
+
+.product-favorite-btn:hover .favorite-heart {
+    fill: #fff;
+}
+
+.product-favorite-btn.favorited .favorite-heart {
+    fill: #ff7eb3;
+    stroke: #ff7eb3;
+}
+
+.product-favorite-btn.favorited:hover .favorite-heart {
+    stroke: #fff;
+}

@@ -178,39 +178,80 @@ class FavoritesHandler {
      */
     toggleFavorite(productId) {
         const id = parseInt(productId, 10);
+        let handle = null, title = '', price = '', vendor = '', image = '';
+        // Try to get handle and info from global Shopify object if on product page
+        if (window.Shopify && window.Shopify.product) {
+            const shopifyProduct = window.Shopify.product;
+
+            // Use data only if we're on the product page and productId matches
+            if (id === Number(shopifyProduct.id)) {
+                handle = shopifyProduct.handle;
+                title = shopifyProduct.title;
+                if (shopifyProduct.selected_or_first_available_variant) {
+                    price = shopifyProduct.selected_or_first_available_variant.price;
+                } else if (shopifyProduct.price) {
+                    price = shopifyProduct.price;
+                }
+                vendor = shopifyProduct.vendor;
+                image = shopifyProduct.featured_image || shopifyProduct.featuredImage || (shopifyProduct.images && shopifyProduct.images[0]) || '';
+            }
+
+            // Fallback: if handle is still null but we're clearly on a product page
+            if (!handle && shopifyProduct.handle) {
+                handle = shopifyProduct.handle;
+                title ||= shopifyProduct.title;
+                price ||= shopifyProduct.selected_or_first_available_variant?.price || shopifyProduct.price;
+                vendor ||= shopifyProduct.vendor;
+                image ||= shopifyProduct.featured_image || shopifyProduct.featuredImage || (shopifyProduct.images && shopifyProduct.images[0]) || '';
+            }
+        }
+        if (!handle) {
+            // Try to get product info from DOM
+            const el = document.querySelector(`[data-product-id='${id}']`);
+            if (el) {
+                // Try to find parent with product info (card for collections, or product page info wrapper)
+                let card = el.closest('.card, .product-card-wrapper');
+                if (!card) {
+                    // On product page, look for info wrapper
+                    card = document.querySelector('.product__info-wrapper, .product__info-container');
+                }
+                if (card) {
+                    // Try to get handle from link (for cards)
+                    let link = card.querySelector('a[href*="/products/"]');
+                    if (!link) {
+                        // On product page, try canonical link
+                        link = document.querySelector('link[rel="canonical"]');
+                    }
+                    if (link) {
+                        let href = link.getAttribute('href') || link.getAttribute('href') || link.getAttribute('content');
+                        const match = href && href.match(/\/products\/([^/?#]+)/);
+                        if (match) handle = match[1];
+                    }
+                    // Title
+                    let titleEl = card.querySelector('.product__title, .product__title h1, .product__info-title, .card__heading, .card__heading.h5, .card__heading.h2, .card__heading.h3');
+                    if (!titleEl) titleEl = document.querySelector('h1.product__title, h1.product__info-title');
+                    if (titleEl) title = titleEl.textContent.trim();
+                    // Price: get only the regular price (not compare-at)
+                    let priceEl = card.querySelector('.price-item--regular, .price__regular .price-item, .product__price, .price');
+                    if (!priceEl) priceEl = document.querySelector('.product__price, .price');
+                    if (priceEl) price = priceEl.textContent.trim();
+                    // Vendor
+                    let vendorEl = card.querySelector('.caption-with-letter-spacing, .product-card-vendor, .product__vendor');
+                    if (!vendorEl) vendorEl = document.querySelector('.product__vendor');
+                    if (vendorEl) vendor = vendorEl.textContent.trim();
+                    // Image: prefer featured image
+                    let imgEl = card.querySelector('.card__media img, .product__media img, img');
+                    if (!imgEl) imgEl = document.querySelector('.product__media img, .product__image, img');
+                    if (imgEl) image = imgEl.getAttribute('src');
+                }
+            }
+        }
         if (this.favorites.has(id)) {
             this.favorites.delete(id);
             if (this.isLoggedIn) {
                 this.removeFavoriteFromServer(id);
             }
         } else {
-            // Try to get product info from DOM
-            let handle = null, title = '', price = '', vendor = '', image = '';
-            const el = document.querySelector(`[data-product-id='${id}']`);
-            if (el) {
-                // Try to find parent with product info
-                const card = el.closest('.card, .product-card-wrapper');
-                if (card) {
-                    // Try to get handle from link
-                    const link = card.querySelector('a[href*="/products/"]');
-                    if (link) {
-                        const match = link.getAttribute('href').match(/\/products\/([^/?#]+)/);
-                        if (match) handle = match[1];
-                    }
-                    // Title
-                    const titleEl = card.querySelector('.card__heading, .card__heading.h5, .card__heading.h2, .card__heading.h3');
-                    if (titleEl) title = titleEl.textContent.trim();
-                    // Price: get only the regular price (not compare-at)
-                    const priceEl = card.querySelector('.price-item--regular, .price__regular .price-item');
-                    if (priceEl) price = priceEl.textContent.trim();
-                    // Vendor
-                    const vendorEl = card.querySelector('.caption-with-letter-spacing, .product-card-vendor');
-                    if (vendorEl) vendor = vendorEl.textContent.trim();
-                    // Image: prefer featured image
-                    const imgEl = card.querySelector('.card__media img, img');
-                    if (imgEl) image = imgEl.getAttribute('src');
-                }
-            }
             this.favorites.set(id, { id, handle, title, price, vendor, image });
             this.idToHandle.set(id, handle);
             this.handleToId.set(handle, id);
