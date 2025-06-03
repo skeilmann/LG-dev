@@ -15,8 +15,10 @@
   {{ 'component-slider.css' | asset_url | stylesheet_tag }}
   {{ 'component-rating.css' | asset_url | stylesheet_tag }}
   {{ 'component-deferred-media.css' | asset_url | stylesheet_tag }}
-  <script src="{{ 'product-favorite-button.js' | asset_url }}" defer="defer"></script>
+  {% comment %} {{ 'inventory-bar.css' | asset_url | stylesheet_tag }} {% endcomment %}
   {{ 'product-favorite-button.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'product-favorite-button.js' | asset_url }}" defer="defer"></script>
+  {% comment %} <script src="{{ 'inventory-bar.js' | asset_url }}" defer="defer"></script> {% endcomment %}
 
   {% unless product.has_only_default_variant %}
     {{ 'component-product-variant-picker.css' | asset_url | stylesheet_tag }}
