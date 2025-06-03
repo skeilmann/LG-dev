@@ -116,6 +116,7 @@
   },
   "products": {
     "product": {
+      "new_badge": "New",
       "add_to_cart": "Agregar al carrito",
       "description": "Descripción",
       "on_sale": "Oferta",
@@ -334,7 +335,9 @@
     },
     "featured_collection": {
       "view_all": "Ver todo",
-      "view_all_label": "Ver todos los productos de la colección {{ collection_name }}"
+      "view_all_label": "Ver todos los productos de la colección {{ collection_name }}",
+      "clear_filters": "Clear filters",
+      "all": "All collections",
     },
     "collection_list": {
       "view_all": "Ver todo"
@@ -545,5 +548,13 @@
       "expanded": "Formulario del destinatario de la tarjeta de regalo expandido",
       "collapsed": "Formulario del destinatario de tarjeta de regalo contraído"
     }
+  },
+  "favorites": {
+    "title": "My Favorites",
+    "empty": "You haven't added any favorites yet",
+    "add": "Add to Favorites",
+    "remove": "Remove from Favorites",
+    "login_message": "Log in to sync your favorites across devices",
+    "added": "Added to Favorites"
   }
 }

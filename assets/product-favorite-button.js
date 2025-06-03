@@ -126,7 +126,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const isFavorited = handler.favorites && handler.favorites.has(Number(productId));
         favoriteBtn.classList.toggle('favorited', isFavorited);
         const label = favoriteBtn.querySelector('.favorite-label');
-        if (label) label.textContent = isFavorited ? 'Added to Favorites' : 'Add to Favorites';
+        if (label) {
+            label.textContent = isFavorited
+                ? window?.theme?.strings?.favoriteAdded || 'Added to Favorites'
+                : window?.theme?.strings?.favoriteAdd || 'Add to Favorites';
+        }
     }
 
     if (favoriteBtn) {

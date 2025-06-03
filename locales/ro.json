@@ -548,5 +548,13 @@
       "expanded": "Formularul pentru destinatarul cardului cadou este extins",
       "collapsed": "Formularul pentru destinatarul cardului cadou este restrâns"
     }
+  },
+  "favorites": {
+    "title": "My Favorites",
+    "empty": "You haven't added any favorites yet",
+    "add": "Add to Favorites",
+    "remove": "Remove from Favorites",
+    "login_message": "Log in to sync your favorites across devices",
+    "added": "Added to Favorites"
   }
 }

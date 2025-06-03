@@ -3,7 +3,7 @@
     box-shadow: 0 0 0 calc(var(--buttons-border-width) + var(--border-offset)) #ff7eb3,
         0 0 0 var(--buttons-border-width) #ff7eb3;
     background-color: transparent;
-    transition: background-color 0.7s ease, color 0.7s ease, box-shadow 0.7s ease !important;
+    transition: background-color 0.7s ease, color 0.7s ease, transform var(--duration-default) var(--ease-out-slow), box-shadow 0.7s ease !important;
     position: relative;
     display: flex;
     align-items: center;
