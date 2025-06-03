@@ -1,56 +1,62 @@
 /* inventory-bar.css */
+.inventory-bar__wrapper {
+    display: flex;
+    /* flex-direction: column; */
+    align-items: center;
+    gap: 20px;
+    transition: box-shadow 0.4s;
+    box-shadow: none;
+    border-radius: 8px;
+    padding: 8px;
+    max-width: 250px;
+}
+
 .inventory-bar {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin: 12px 0;
+    height: var(--inventory-bar-height, 12px);
+    width: var(--inventory-bar-width, 120px);
+    margin: 8px 0;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: none;
+    border: none;
 }
 
 .inventory-bar__section {
-    display: inline-block;
-    width: 22px;
-    height: 5px;
-    border-radius: 5px;
-    background: #e0e0e0;
-    margin-right: 2px;
+    display: flex;
+    height: 6px;
+    width: 25px;
+    background: #eceef1;
+    border-radius: 2px;
+    margin: 0 6px;
+    box-shadow: none;
 }
 
-.inventory-bar__section.filled {
-    background: #e0e0e0;
-    /* Default color, will be colored by JS */
+.inventory-bar__section.filled-green {
+    background: #3ed660;
+    box-shadow: 0 0 8px 2px #3ed66099;
 }
 
-.inventory-bar__label {
-    margin-left: 12px;
-    font-size: 13px;
-    color: #555;
-    font-weight: 500;
-    position: relative;
-    z-index: 1;
+.inventory-bar__section.filled-yellow {
+    background: #f1c40f;
+    box-shadow: 0 0 8px 2px #f1c40f99;
 }
 
-.inventory-bar__label.emphasize {
-    animation: pop-qty 0.7s cubic-bezier(.68, -0.55, .27, 1.55) 1;
-    color: #222;
-    font-size: 16px;
-    font-weight: 700;
-    text-shadow: 0 2px 8px rgba(62, 214, 96, 0.15);
+.inventory-bar__section.filled-red {
+    background: #e74c3c;
+    box-shadow: 0 0 8px 2px #e74c3c99;
 }
 
-@keyframes pop-qty {
-    0% {
-        transform: scale(1);
-    }
+.inventory-bar__wrapper.glow-green {
+    box-shadow: 0 0 16px 4px #3ed66080;
+}
 
-    40% {
-        transform: scale(1.25) rotate(-2deg);
-    }
+.inventory-bar__wrapper.glow-yellow {
+    box-shadow: 0 0 16px 4px #f1c40f80;
+}
 
-    60% {
-        transform: scale(0.95) rotate(2deg);
-    }
-
-    100% {
-        transform: scale(1);
-    }
+.inventory-bar__wrapper.glow-red {
+    box-shadow: 0 0 16px 4px #e74c3c80;
 }

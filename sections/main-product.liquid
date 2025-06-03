@@ -15,10 +15,10 @@
   {{ 'component-slider.css' | asset_url | stylesheet_tag }}
   {{ 'component-rating.css' | asset_url | stylesheet_tag }}
   {{ 'component-deferred-media.css' | asset_url | stylesheet_tag }}
-  {% comment %} {{ 'inventory-bar.css' | asset_url | stylesheet_tag }} {% endcomment %}
+  {{ 'inventory-bar.css' | asset_url | stylesheet_tag }}
   {{ 'product-favorite-button.css' | asset_url | stylesheet_tag }}
   <script src="{{ 'product-favorite-button.js' | asset_url }}" defer="defer"></script>
-  {% comment %} <script src="{{ 'inventory-bar.js' | asset_url }}" defer="defer"></script> {% endcomment %}
+  <script src="{{ 'inventory-bar.js' | asset_url }}" defer="defer"></script>
 
   {% unless product.has_only_default_variant %}
     {{ 'component-product-variant-picker.css' | asset_url | stylesheet_tag }}
@@ -145,56 +145,32 @@
                   {%- endform -%}
                 </div>
               {%- when 'inventory' -%}
-                <p
-                  class="product__inventory{% if block.settings.text_style == 'uppercase' %} caption-with-letter-spacing{% elsif block.settings.text_style == 'subtitle' %} subtitle{% endif %}{% if product.selected_or_first_available_variant.inventory_management != 'shopify' %} visibility-hidden{% endif %}"
+                <div
+                  class="product-form__buttons inventory-bar__wrapper"
+                  style="--inventory-bar-height: {{ block.settings.bar_height }}px; --inventory-bar-width: {{ block.settings.bar_width }}px;"
                   {{ block.shopify_attributes }}
                   id="Inventory-{{ section.id }}"
                   role="status"
                 >
-                  {%- if product.selected_or_first_available_variant.inventory_management == 'shopify' -%}
-                    {%- if product.selected_or_first_available_variant.inventory_quantity > 0 -%}
-                      {%- if product.selected_or_first_available_variant.inventory_quantity
-                          <= block.settings.inventory_threshold
-                      -%}
-                        <span class="svg-wrapper" style="color: rgb(238, 148, 65)">
-                          {{- 'icon-inventory-status.svg' | inline_asset_content -}}
-                        </span>
-                        {%- if block.settings.show_inventory_quantity -%}
-                          {{-
-                            'products.product.inventory_low_stock_show_count'
-                            | t: quantity: product.selected_or_first_available_variant.inventory_quantity
-                          -}}
-                        {%- else -%}
-                          {{- 'products.product.inventory_low_stock' | t -}}
-                        {%- endif -%}
-                      {%- else -%}
-                        <span class="svg-wrapper" style="color: rgb(62, 214, 96)">
-                          {{- 'icon-inventory-status.svg' | inline_asset_content -}}
-                        </span>
-                        {%- if block.settings.show_inventory_quantity -%}
-                          {{-
-                            'products.product.inventory_in_stock_show_count'
-                            | t: quantity: product.selected_or_first_available_variant.inventory_quantity
-                          -}}
-                        {%- else -%}
-                          {{- 'products.product.inventory_in_stock' | t -}}
-                        {%- endif -%}
-                      {%- endif -%}
-                    {%- else -%}
-                      {%- if product.selected_or_first_available_variant.inventory_policy == 'continue' -%}
-                        <span class="svg-wrapper" style="color: rgb(62, 214, 96)">
-                          {{- 'icon-inventory-status.svg' | inline_asset_content -}}
-                        </span>
-                        {{- 'products.product.inventory_out_of_stock_continue_selling' | t -}}
-                      {%- else -%}
-                        <span class="svg-wrapper" style="color: rgb(200, 200, 200)">
-                          {{- 'icon-inventory-status.svg' | inline_asset_content -}}
-                        </span>
-                        {{- 'products.product.inventory_out_of_stock' | t -}}
-                      {%- endif -%}
-                    {%- endif -%}
-                  {%- endif -%}
-                </p>
+                  {% if block.settings.show_inventory_label %}
+                    <span class="inventory-bar__label">
+                      {% if product.selected_or_first_available_variant.inventory_quantity > 0 %}
+                        {{ 'Stock:' }}
+                        {{ product.selected_or_first_available_variant.inventory_quantity }}
+                      {% else %}
+                        {{ 'Out of stock' }}
+                      {% endif %}
+                    </span>
+                  {% endif %}
+                  <div
+                    class="inventory-bar"
+                    data-inventory="{{ product.selected_or_first_available_variant.inventory_quantity }}"
+                  >
+                    {% for i in (1..3) %}
+                      <span class="inventory-bar__section"></span>
+                    {% endfor %}
+                  </div>
+                </div>
               {%- when 'description' -%}
                 {%- if product.description != blank -%}
                   <div class="product__description rte quick-add-hidden" {{ block.shopify_attributes }}>
@@ -834,19 +810,93 @@
         },
         {
           "type": "range",
-          "id": "inventory_threshold",
-          "label": "t:sections.main-product.blocks.inventory.settings.inventory_threshold.label",
+          "id": "inventory_threshold_low",
+          "label": "Low stock threshold",
           "min": 0,
-          "max": 100,
+          "max": 10,
           "step": 1,
-          "info": "t:sections.main-product.blocks.inventory.settings.inventory_threshold.info",
+          "default": 2
+        },
+        {
+          "type": "range",
+          "id": "inventory_threshold_medium",
+          "label": "Medium stock threshold",
+          "min": 1,
+          "max": 20,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "range",
+          "id": "inventory_threshold_high",
+          "label": "High stock threshold",
+          "min": 1,
+          "max": 50,
+          "step": 1,
           "default": 10
         },
         {
+          "type": "range",
+          "id": "inventory_threshold_full",
+          "label": "Full stock threshold",
+          "min": 1,
+          "max": 100,
+          "step": 1,
+          "default": 20
+        },
+        {
+          "type": "color",
+          "id": "bar_color_low",
+          "label": "Bar color (low)",
+          "default": "#e74c3c"
+        },
+        {
+          "type": "color",
+          "id": "bar_color_medium",
+          "label": "Bar color (medium)",
+          "default": "#e69441"
+        },
+        {
+          "type": "color",
+          "id": "bar_color_high",
+          "label": "Bar color (high)",
+          "default": "#f1c40f"
+        },
+        {
+          "type": "color",
+          "id": "bar_color_full",
+          "label": "Bar color (full)",
+          "default": "#3ed660"
+        },
+        {
+          "type": "color",
+          "id": "bar_color_oos",
+          "label": "Bar color (out of stock)",
+          "default": "#cccccc"
+        },
+        {
           "type": "checkbox",
-          "id": "show_inventory_quantity",
-          "label": "t:sections.main-product.blocks.inventory.settings.show_inventory_quantity.label",
+          "id": "show_inventory_label",
+          "label": "Show inventory label",
           "default": true
+        },
+        {
+          "type": "range",
+          "id": "bar_height",
+          "label": "Bar height (px)",
+          "min": 4,
+          "max": 32,
+          "step": 1,
+          "default": 12
+        },
+        {
+          "type": "range",
+          "id": "bar_width",
+          "label": "Bar width (px)",
+          "min": 60,
+          "max": 300,
+          "step": 4,
+          "default": 120
         }
       ]
     },
