@@ -33,8 +33,27 @@
           "type": "price",
           "settings": {}
         },
+        "inventory_aUQmaM": {
+          "type": "inventory",
+          "settings": {
+            "text_style": "body",
+            "inventory_threshold_low": 2,
+            "inventory_threshold_medium": 5,
+            "inventory_threshold_high": 10,
+            "inventory_threshold_full": 20,
+            "bar_color_low": "#e74c3c",
+            "bar_color_medium": "#e69441",
+            "bar_color_high": "#f1c40f",
+            "bar_color_full": "#3ed660",
+            "bar_color_oos": "#cccccc",
+            "show_inventory_label": true,
+            "bar_height": 12,
+            "bar_width": 120
+          }
+        },
         "variant_picker": {
           "type": "variant_picker",
+          "disabled": true,
           "settings": {
             "picker_type": "button",
             "swatch_shape": "circle"
@@ -49,14 +68,6 @@
           "settings": {
             "show_dynamic_checkout": true,
             "show_gift_card_recipient": true
-          }
-        },
-        "inventory_aUQmaM": {
-          "type": "inventory",
-          "settings": {
-            "text_style": "body",
-            "inventory_threshold": 10,
-            "show_inventory_quantity": true
           }
         },
         "share": {
@@ -88,10 +99,10 @@
         "vendor",
         "title",
         "price",
+        "inventory_aUQmaM",
         "variant_picker",
         "quantity_selector",
         "buy_buttons",
-        "inventory_aUQmaM",
         "share",
         "description",
         "complementary_dTFRKe"
