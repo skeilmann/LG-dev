@@ -53,24 +53,28 @@
   asyc="async"
   id="ecom-vendors-slider_js"
   src="https://cdn.ecomposer.app/vendors/js/ecom-swiper@11.0.5.js"
+  defer
 ></script>
 <script
   type="text/javascript"
   asyc="async"
   id="ecom-vendors-modal_js"
   src="https://cdn.ecomposer.app/vendors/js/ecom_modal.js"
+  defer
 ></script>
 <script
   type="text/javascript"
   asyc="async"
   id="ecom-vendors-zoom_js"
   src="https://cdn.ecomposer.app/vendors/js/ecom_zoom.js"
+  defer
 ></script>
 <script
   type="text/javascript"
   asyc="async"
   id="ecom-vendors-shopify_option_selection_js"
   src="https://cdn.ecomposer.app/vendors/js/ecomposer_option_selection.js"
+  defer
 ></script>
 {% capture section_id %}ecom-default-template{% endcapture -%}
 {%- if section and section_id == section.id and headless == true %}
@@ -364,11 +368,12 @@
                                                   >
                                                     <img
                                                       class="ecom-product-thumbnail"
-                                                      src="{{ image | img_url: '350x350' , crop: 'center' }}"
+                                                      src="{{ image | image_url: width: 350, height: 350, crop: 'center' }}"
+                                                      width="{{ image.width }}"
+                                                      height="{{ image.height }}"
                                                       alt="{{ image.alt }}"
-                                                      ,
                                                       fetchpriority="{{ fetchpriority }}"
-                                                      ,loading="lazy"
+                                                      loading="lazy"
                                                     >
                                                   </div>
                                                 {% endfor %}
@@ -382,7 +387,9 @@
                                                         {% endif %}
                                                       </div>
                                                       <img
-                                                        src="{{ media.preview_image | img_url: '350x350' , crop: 'center' }}"
+                                                        src="{{ media.preview_image | image_url: width: 350, height: 350, crop: 'center' }}"
+                                                        width="{{ media.preview_image.width }}"
+                                                        height="{{ media.preview_image.height }}"
                                                         alt="{{ media.alt }}"
                                                         loading="lazy"
                                                       >
@@ -1075,6 +1082,8 @@
                                                               src="https://cdn.shopify.com/s/files/1/0726/1221/7115/files/trus.svg?v=1678270241"
                                                               alt="trus"
                                                               style=""
+                                                              width="{{ image.width }}"
+                                                              height="{{ image.height }}"
                                                           ></picture>
                                                         </div>
                                                       </div>

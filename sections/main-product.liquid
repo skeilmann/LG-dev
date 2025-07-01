@@ -155,10 +155,10 @@
                   {% if block.settings.show_inventory_label %}
                     <span class="inventory-bar__label">
                       {% if product.selected_or_first_available_variant.inventory_quantity > 0 %}
-                        {{ 'Stock:' }}
+                        {{ 'stock.in_stock' | t}}
                         {{ product.selected_or_first_available_variant.inventory_quantity }}
                       {% else %}
-                        {{ 'Out of stock' }}
+                        {{ 'stock.out_of_stock' | t }}
                       {% endif %}
                     </span>
                   {% endif %}

@@ -1,0 +1,75 @@
+{% comment %}
+  Free shipping progress bar section
+  Author: You!
+{% endcomment %}
+
+{% assign free_shipping_goal = section.settings.free_shipping_amount | times: 100 %}
+{% comment %}
+  Note: Shopify returns prices in cents. So we multiply by 100 to compare correctly.
+{% endcomment %}
+
+<div
+  id="free-shipping-bar-{{ section.id }}"
+  class="free-shipping-bar"
+  data-free-shipping-goal="{{ free_shipping_goal }}"
+>
+  <div class="free-shipping-message">
+    {{ section.settings.initial_message }}
+  </div>
+
+  <div class="progress-bar-container" style="background-color: {{ section.settings.bar_background }};">
+    <div
+      class="progress-bar-fill"
+      style="background-color: {{ section.settings.bar_color }}; width: 0%;"
+    ></div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Free Shipping Bar",
+  "settings": [
+    {
+      "type": "number",
+      "id": "free_shipping_amount",
+      "label": "Free shipping amount (€)",
+      "default": 50
+    },
+    {
+      "type": "color",
+      "id": "bar_color",
+      "label": "Bar color",
+      "default": "#ff6699"
+    },
+    {
+      "type": "color",
+      "id": "bar_background",
+      "label": "Background color",
+      "default": "#eee"
+    },
+    {
+      "type": "text",
+      "id": "initial_message",
+      "label": "Message before free shipping",
+      "default": "You are €{{amount}} away from free shipping!"
+    },
+    {
+      "type": "text",
+      "id": "unlocked_message",
+      "label": "Message after free shipping unlocked",
+      "default": "Congratulations! You unlocked free shipping!"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_on_homepage",
+      "label": "Show on home page",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Free Shipping Progress Bar"
+    }
+  ]
+}
+{% endschema %}

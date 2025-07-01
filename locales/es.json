@@ -556,5 +556,11 @@
     "remove": "Remove from Favorites",
     "login_message": "Log in to sync your favorites across devices",
     "added": "Added to Favorites"
-  }
+  },
+  "stock": {
+    "in_stock": "In stock",
+    "low_stock": "Low stock",
+    "out_of_stock": "Out of stock",
+    "unavailable": "Unavailable"
+  },
 }
