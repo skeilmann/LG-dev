@@ -36,3 +36,15 @@
     transition: width 0.4s ease;
     /* Smooth animation */
 }
+
+/* Stick bar to top or bottom on mobile */
+@media (max-width: 768px) {
+    .free-shipping-bar {
+        position: fixed;
+        bottom: 0;
+        /* or top: 0; */
+        left: 0;
+        width: 100%;
+        z-index: 9999;
+    }
+}
