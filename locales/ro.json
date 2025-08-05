@@ -407,6 +407,14 @@
     "country_results_count": "{{ count }} țări/regiuni găsite"
   },
   "customer": {
+    "favorites": {
+      "title": "Favorite",
+      "count": {
+        "one": "{{ count }} favorit",
+        "other": "{{ count }} favorite",
+        "few": "{{ count }} favorite"
+      }
+    },
     "account": {
       "title": "Cont",
       "details": "Detalii cont",
@@ -454,7 +462,7 @@
       "forgot_password": "Ați uitat parola?",
       "guest_continue": "Continuați",
       "guest_title": "Continuați ca invitat",
-      "password": "Parolă",
+      "password": "Parola",
       "title": "Conectați-vă",
       "sign_in": "Conectați-vă",
       "submit": "Trimiteți",

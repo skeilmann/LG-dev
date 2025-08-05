@@ -419,6 +419,9 @@
     "country_results_count": "Найдены страны / регионы: {{ count }}"
   },
   "customer": {
+    "favorites": {
+      "title": "Избранное"
+    },
     "account": {
       "title": "Учетная запись",
       "details": "Сведения учетной записи",

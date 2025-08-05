@@ -242,9 +242,10 @@
           </localization-form>
         {%- endif -%}
       </div>
-      <button type="button" class="header__icon header__icon--favorites link focus-inset">
+      <button type="button" class="header__icon header__icon--favorites link focus-inset" id="favorites-icon-bubble">
         <span class="svg-wrapper">{{ 'icon-heart.svg' | inline_asset_content }}</span>
         <span class="visually-hidden">{{ 'customer.favorites.title' | t }}</span>
+        {% render 'favorites-icon-bubble' %}
       </button>
       {% render 'header-search', input_id: 'Search-In-Modal' %}
 

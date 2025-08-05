@@ -395,6 +395,13 @@
     "country_results_count": "{{ count }} countries/regions found"
   },
   "customer": {
+    "favorites": {
+      "title": "Favorites",
+      "count": {
+        "one": "{{ count }} favorite",
+        "other": "{{ count }} favorites"
+      }
+    },
     "account": {
       "title": "Account",
       "details": "Account details",

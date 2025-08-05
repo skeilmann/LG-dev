@@ -80,6 +80,9 @@ class FavoritesHandler {
                 );
             }
         });
+
+        // Update favorites count bubble
+        this.updateFavoritesBubble();
     }
 
     /**
@@ -285,6 +288,32 @@ class FavoritesHandler {
             });
         } catch (e) {
             console.error('Error removing favorite from server:', e);
+        }
+    }
+
+    /**
+     * Updates the favorites count bubble in the header
+     * @private
+     */
+    updateFavoritesBubble() {
+        const bubble = document.getElementById('favorites-count-bubble');
+        const countElement = document.getElementById('favorites-count');
+        const count = this.favorites.size;
+
+        if (bubble && countElement) {
+            if (count > 0) {
+                bubble.style.display = 'flex';
+                countElement.textContent = count < 100 ? count : '99+';
+                
+                // Update the visually hidden text
+                const visuallyHidden = bubble.querySelector('.visually-hidden');
+                if (visuallyHidden) {
+                    const translation = window.translations?.customer?.favorites?.count || '{{ count }} favorites';
+                    visuallyHidden.textContent = translation.replace('{{ count }}', count);
+                }
+            } else {
+                bubble.style.display = 'none';
+            }
         }
     }
 
