@@ -64,6 +64,13 @@
       "next_slide": "Faire glisser vers la droite",
       "previous_slide": "Faire glisser vers la gauche",
       "name": "Carrousel"
+    },
+    "free_shipping": {
+      "title": "Progrès de Livraison Gratuite",
+      "add_more": "Ajouter",
+      "more_for_free_shipping": "plus pour la livraison gratuite!",
+      "you_qualify": "Vous êtes éligible à la livraison gratuite!",
+      "remaining_amount": "Il vous manque {{amount}} pour la livraison gratuite!"
     }
   },
   "newsletter": {

@@ -19,6 +19,13 @@
       "admin_link_html": "Are you the store owner? <a href=\"/admin\" class=\"link underlined-link\">Log in here</a>",
       "powered_by_shopify_html": "This shop will be powered by {{ shopify }}"
     },
+    "free_shipping": {
+      "title": "Free Shipping Progress",
+      "add_more": "Add",
+      "more_for_free_shipping": "more for free shipping!",
+      "you_qualify": "You qualify for free shipping!",
+      "remaining_amount": "You are {{amount}} away from free shipping!"
+    },
     "social": {
       "alt_text": {
         "share_on_facebook": "Share on Facebook",

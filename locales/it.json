@@ -64,6 +64,13 @@
       "next_slide": "Scorri verso destra",
       "previous_slide": "Scorri verso sinistra",
       "name": "Cursore"
+    },
+    "free_shipping": {
+      "title": "Progresso Spedizione Gratuita",
+      "add_more": "Aggiungi",
+      "more_for_free_shipping": "di più per la spedizione gratuita!",
+      "you_qualify": "Ti qualifichi per la spedizione gratuita!",
+      "remaining_amount": "Ti mancano {{amount}} per la spedizione gratuita!"
     }
   },
   "newsletter": {

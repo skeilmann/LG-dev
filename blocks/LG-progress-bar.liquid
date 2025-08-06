@@ -1,11 +1,40 @@
 {% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
 
+{% comment %}
+  Get current country and set appropriate threshold
+{% endcomment %}
+{% assign current_country = localization.country.iso_code %}
+{% assign free_shipping_threshold = block.settings.threshold %}
+
+{% comment %}
+  Set different thresholds based on country/region
+{% endcomment %}
+{% case current_country %}
+  {% when 'US' %}
+    {% assign free_shipping_threshold = 50 %}
+  {% when 'CA' %}
+    {% assign free_shipping_threshold = 75 %}
+  {% when 'GB' %}
+    {% assign free_shipping_threshold = 40 %}
+  {% when 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'AT', 'CH' %}
+    {% assign free_shipping_threshold = 60 %}
+  {% when 'AU' %}
+    {% assign free_shipping_threshold = 80 %}
+  {% when 'JP' %}
+    {% assign free_shipping_threshold = 5000 %}
+  {% else %}
+    {% assign free_shipping_threshold = block.settings.threshold %}
+{% endcase %}
+
 {% style %}
   .ai-cart-progress-{{ ai_gen_id }} {
     background-color: {{ block.settings.background_color }};
     padding: {{ block.settings.padding }}px;
     border-radius: {{ block.settings.border_radius }}px;
-    margin: 20px 0;}
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+  }
 
   .ai-cart-progress__header-{{ ai_gen_id }} {
     display: flex;
@@ -88,16 +117,18 @@
 
 <cart-progress-bar-{{ ai_gen_id }}
   class="ai-cart-progress-{{ ai_gen_id }}"
-  data-threshold="{{ block.settings.threshold }}"
+  data-threshold="{{ free_shipping_threshold }}"
   data-currency-symbol="{{ cart.currency.symbol }}"
+  data-current-country="{{ current_country }}"
+  data-translations="{{ 'general.free_shipping.title' | t }},{{ 'general.free_shipping.add_more' | t }},{{ 'general.free_shipping.more_for_free_shipping' | t }},{{ 'general.free_shipping.you_qualify' | t }},{{ 'general.free_shipping.remaining_amount' | t }}"
   {{ block.shopify_attributes }}
 >
   <div class="ai-cart-progress__header-{{ ai_gen_id }}">
-    <h3 class="ai-cart-progress__title-{{ ai_gen_id }}">{{ block.settings.title }}</h3>
+    <h3 class="ai-cart-progress__title-{{ ai_gen_id }}">{{ 'general.free_shipping.title' | t }}</h3>
     <div class="ai-cart-progress__amount-{{ ai_gen_id }}">
       <span class="ai-cart-progress__current-{{ ai_gen_id }}">{{ cart.total_price | money }}</span>
       <span> / </span>
-      <span class="ai-cart-progress__target-{{ ai_gen_id }}">{{ block.settings.threshold | times: 100 | money }}</span>
+      <span class="ai-cart-progress__target-{{ ai_gen_id }}">{{ free_shipping_threshold | times: 100 | money }}</span>
     </div>
   </div>
 
@@ -120,17 +151,105 @@
         super();
         this.threshold = parseFloat(this.dataset.threshold) * 100;
         this.currencySymbol = this.dataset.currencySymbol;
+        this.currentCountry = this.dataset.currentCountry;
         this.progressBar = this.querySelector('.ai-cart-progress__bar-fill-{{ ai_gen_id }}');
         this.currentAmount = this.querySelector('.ai-cart-progress__current-{{ ai_gen_id }}');
         this.messageText = this.querySelector('.ai-cart-progress__text-{{ ai_gen_id }}');
+
+        // Parse translations
+        const translations = this.dataset.translations.split(',');
+        this.translations = {
+          title: translations[0],
+          addMore: translations[1],
+          moreForFreeShipping: translations[2],
+          youQualify: translations[3],
+          remainingAmount: translations[4]
+        };
       }
 
       connectedCallback() {
         this.updateProgress();
         this.setupCartListener();
+        this.setupCountryChangeListener();
       }
 
-      setupCartListener() {document.addEventListener('cart:updated', () => {
+      setupCountryChangeListener() {
+        // Listen for country changes via form submissions
+        document.addEventListener('submit', (event) => {
+          if (event.target.classList.contains('localization-form')) {
+            // Country is being changed, update threshold after a delay
+            setTimeout(() => {
+              this.updateThresholdForCountry();
+            }, 1000);
+          }
+        });
+
+        // Also listen for URL changes that might indicate country change
+        let currentUrl = window.location.href;
+        setInterval(() => {
+          if (window.location.href !== currentUrl) {
+            currentUrl = window.location.href;
+            setTimeout(() => {
+              this.updateThresholdForCountry();
+            }, 500);
+          }
+        }, 1000);
+      }
+
+      updateThresholdForCountry() {
+        // Get current country from the page
+        const countryElement = document.querySelector('[data-value]');
+        if (countryElement) {
+          const newCountry = countryElement.dataset.value;
+          if (newCountry && newCountry !== this.currentCountry) {
+            this.currentCountry = newCountry;
+            this.updateThreshold();
+            this.fetchCartAndUpdate();
+          }
+        }
+      }
+
+      updateThreshold() {
+        // Update threshold based on current country
+        let newThreshold = this.threshold / 100; // Convert back to base unit
+
+        switch(this.currentCountry) {
+          case 'US':
+            newThreshold = 50;
+            break;
+          case 'CA':
+            newThreshold = 75;
+            break;
+          case 'GB':
+            newThreshold = 40;
+            break;
+          case 'DE':
+          case 'FR':
+          case 'IT':
+          case 'ES':
+          case 'NL':
+          case 'BE':
+          case 'AT':
+          case 'CH':
+            newThreshold = 60;
+            break;
+          case 'AU':
+            newThreshold = 80;
+            break;
+          case 'JP':
+            newThreshold = 5000;
+            break;
+          default:
+            // Keep original threshold
+            break;
+        }
+
+        this.threshold = newThreshold * 100;
+        this.querySelector('.ai-cart-progress__target-{{ ai_gen_id }}').textContent = this.formatMoney(this.threshold);
+      }
+
+      setupCartListener() {
+        document.addEventListener('cart:updated', () => {
           this.fetchCartAndUpdate();
         });
 
@@ -171,9 +290,12 @@
         this.progressBar.style.width = percentage + '%';
 
         if (cartTotal >= this.threshold) {
-          this.messageText.innerHTML = '<span class="ai-cart-progress__success-{{ ai_gen_id }}">{{ block.settings.success_message }}</span>';} else {
+          this.messageText.innerHTML = '<span class="ai-cart-progress__success-{{ ai_gen_id }}">' + this.translations.youQualify + '</span>';
+        } else {
           const remaining = this.threshold - cartTotal;
-          this.messageText.innerHTML = '{{ block.settings.progress_message }} <span class="ai-cart-progress__remaining-{{ ai_gen_id }}">' + this.formatMoney(remaining) + '</span> {{ block.settings.progress_message_suffix }}';
+          const remainingFormatted = this.formatMoney(remaining);
+          const message = this.translations.remainingAmount.replace('{{amount}}', remainingFormatted);
+          this.messageText.innerHTML = message;
         }
       }
 
@@ -195,10 +317,12 @@
         this.progressBar.style.width = percentage + '%';
 
         if (cartTotal >= this.threshold) {
-          this.messageText.innerHTML = '<span class="ai-cart-progress__success-{{ ai_gen_id }}">{{ block.settings.success_message }}</span>';
+          this.messageText.innerHTML = '<span class="ai-cart-progress__success-{{ ai_gen_id }}">' + this.translations.youQualify + '</span>';
         } else {
           const remaining = this.threshold - cartTotal;
-          this.messageText.innerHTML = '{{ block.settings.progress_message }} <span class="ai-cart-progress__remaining-{{ ai_gen_id }}">' + this.formatMoney(remaining) + '</span> {{ block.settings.progress_message_suffix }}';
+          const remainingFormatted = this.formatMoney(remaining);
+          const message = this.translations.remainingAmount.replace('{{amount}}', remainingFormatted);
+          this.messageText.innerHTML = message;
         }
       }
 
@@ -232,26 +356,20 @@
       "max": 500,
       "step": 25,
       "unit": "$",
-      "label": "Target amount",
-      "default": 100
+      "label": "Default target amount (will be overridden by country-specific)",
+      "default": 500
     },
     {
-      "type": "text",
-      "id": "progress_message",
-      "label": "Progress message",
-      "default": "Add"
+      "type": "header",
+      "content": "Country-Specific Thresholds"
     },
     {
-      "type": "text",
-      "id": "progress_message_suffix",
-      "label": "Progress message suffix",
-      "default": "more for free shipping!"
+      "type": "paragraph",
+      "content": "The following thresholds are automatically applied based on customer location:"
     },
     {
-      "type": "text",
-      "id": "success_message",
-      "label": "Success message",
-      "default": "You qualify for free shipping!"
+      "type": "paragraph",
+      "content": "• US: $50 • CA: $75 • GB: £40 • EU: €60 • AU: $80 • JP: ¥5000"
     },
     {
       "type": "header",

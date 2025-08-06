@@ -1,9 +1,30 @@
 {% comment %}
-  Free shipping progress bar section
-  Author: You!
+  Get current country and set appropriate threshold
 {% endcomment %}
+{% assign current_country = localization.country.iso_code %}
+{% assign free_shipping_goal = section.settings.free_shipping_amount %}
 
-{% assign free_shipping_goal = section.settings.free_shipping_amount | times: 100 %}
+{% comment %}
+  Set different thresholds based on country/region
+{% endcomment %}
+{% case current_country %}
+  {% when 'US' %}
+    {% assign free_shipping_goal = 50 %}
+  {% when 'CA' %}
+    {% assign free_shipping_goal = 75 %}
+  {% when 'GB' %}
+    {% assign free_shipping_goal = 40 %}
+  {% when 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'AT', 'CH' %}
+    {% assign free_shipping_goal = 60 %}
+  {% when 'AU' %}
+    {% assign free_shipping_goal = 80 %}
+  {% when 'JP' %}
+    {% assign free_shipping_goal = 5000 %}
+  {% else %}
+    {% assign free_shipping_goal = section.settings.free_shipping_amount %}
+{% endcase %}
+
+{% assign free_shipping_goal_cents = free_shipping_goal | times: 100 %}
 {% comment %}
   Note: Shopify returns prices in cents. So we multiply by 100 to compare correctly.
 {% endcomment %}
@@ -11,10 +32,12 @@
 <div
   id="free-shipping-bar-{{ section.id }}"
   class="free-shipping-bar"
-  data-free-shipping-goal="{{ free_shipping_goal }}"
+  data-free-shipping-goal="{{ free_shipping_goal_cents }}"
+  data-current-country="{{ current_country }}"
+  data-translations="{{ 'general.free_shipping.remaining_amount' | t }},{{ 'general.free_shipping.you_qualify' | t }}"
 >
   <div class="free-shipping-message">
-    {{ section.settings.initial_message }}
+    {{ 'general.free_shipping.remaining_amount' | t: amount: free_shipping_goal | money }}
   </div>
 
   <div class="progress-bar-container" style="background-color: {{ section.settings.bar_background }};">
@@ -30,10 +53,26 @@
   "name": "Free Shipping Bar",
   "settings": [
     {
+      "type": "header",
+      "content": "Free Shipping Thresholds"
+    },
+    {
+      "type": "paragraph",
+      "content": "The following thresholds are automatically applied based on customer location:"
+    },
+    {
+      "type": "paragraph",
+      "content": "• US: $50 • CA: $75 • GB: £40 • EU: €60 • AU: $80 • JP: ¥5000"
+    },
+    {
       "type": "number",
       "id": "free_shipping_amount",
-      "label": "Free shipping amount (€)",
+      "label": "Default free shipping amount (overwiten by country settings)",
       "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Style Settings"
     },
     {
       "type": "color",
@@ -46,18 +85,6 @@
       "id": "bar_background",
       "label": "Background color",
       "default": "#eee"
-    },
-    {
-      "type": "text",
-      "id": "initial_message",
-      "label": "Message before free shipping",
-      "default": "You are €{{amount}} away from free shipping!"
-    },
-    {
-      "type": "text",
-      "id": "unlocked_message",
-      "label": "Message after free shipping unlocked",
-      "default": "Congratulations! You unlocked free shipping!"
     },
     {
       "type": "checkbox",

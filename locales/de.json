@@ -64,6 +64,13 @@
       "next_slide": "Nach rechts schieben",
       "previous_slide": "Nach links schieben",
       "name": "Slider"
+    },
+    "free_shipping": {
+      "title": "Kostenloser Versand Fortschritt",
+      "add_more": "Hinzufügen",
+      "more_for_free_shipping": "mehr für kostenlosen Versand!",
+      "you_qualify": "Sie qualifizieren sich für kostenlosen Versand!",
+      "remaining_amount": "Sie sind {{amount}} vom kostenlosen Versand entfernt!"
     }
   },
   "newsletter": {
