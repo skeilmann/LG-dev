@@ -5,23 +5,46 @@
 {% assign free_shipping_goal = section.settings.free_shipping_amount %}
 
 {% comment %}
-  Set different thresholds based on country/region
+  Set different thresholds based on country/region groups
 {% endcomment %}
 {% case current_country %}
-  {% when 'US' %}
-    {% assign free_shipping_goal = 50 %}
-  {% when 'CA' %}
-    {% assign free_shipping_goal = 75 %}
-  {% when 'GB' %}
-    {% assign free_shipping_goal = 40 %}
-  {% when 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'AT', 'CH' %}
-    {% assign free_shipping_goal = 60 %}
-  {% when 'AU' %}
-    {% assign free_shipping_goal = 80 %}
-  {% when 'JP' %}
-    {% assign free_shipping_goal = 5000 %}
+  {% when 'MD' %}
+    {% assign free_shipping_goal = section.settings.moldova_threshold %}
+  {% when 'RO' %}
+    {% assign free_shipping_goal = section.settings.romania_threshold %}
+  {% when 'DE',
+    'FR',
+    'IT',
+    'ES',
+    'NL',
+    'BE',
+    'AT',
+    'CH',
+    'GB',
+    'IE',
+    'PT',
+    'SE',
+    'NO',
+    'DK',
+    'FI',
+    'PL',
+    'CZ',
+    'SK',
+    'HU',
+    'BG',
+    'HR',
+    'SI',
+    'EE',
+    'LV',
+    'LT',
+    'MT',
+    'CY',
+    'LU',
+    'GR'
+  %}
+    {% assign free_shipping_goal = section.settings.europe_threshold %}
   {% else %}
-    {% assign free_shipping_goal = section.settings.free_shipping_amount %}
+    {% assign free_shipping_goal = section.settings.world_threshold %}
 {% endcase %}
 
 {% assign free_shipping_goal_cents = free_shipping_goal | times: 100 %}
@@ -37,7 +60,7 @@
   data-translations="{{ 'general.free_shipping.remaining_amount' | t }},{{ 'general.free_shipping.you_qualify' | t }}"
 >
   <div class="free-shipping-message">
-    {{ 'general.free_shipping.remaining_amount' | t: amount: free_shipping_goal | money }}
+    <!-- Message will be populated by JavaScript -->
   </div>
 
   <div class="progress-bar-container" style="background-color: {{ section.settings.bar_background }};">
@@ -57,18 +80,44 @@
       "content": "Free Shipping Thresholds"
     },
     {
-      "type": "paragraph",
-      "content": "The following thresholds are automatically applied based on customer location:"
+      "type": "range",
+      "id": "moldova_threshold",
+      "min": 100,
+      "max": 5000,
+      "step": 100,
+      "unit": "$",
+      "label": "Moldova threshold",
+      "default": 500
     },
     {
-      "type": "paragraph",
-      "content": "• US: $50 • CA: $75 • GB: £40 • EU: €60 • AU: $80 • JP: ¥5000"
+      "type": "range",
+      "id": "romania_threshold",
+      "min": 100,
+      "max": 5000,
+      "step": 100,
+      "unit": "$",
+      "label": "Romania threshold",
+      "default": 1000
     },
     {
-      "type": "number",
-      "id": "free_shipping_amount",
-      "label": "Default free shipping amount (overwiten by country settings)",
-      "default": 50
+      "type": "range",
+      "id": "europe_threshold",
+      "min": 100,
+      "max": 5000,
+      "step": 100,
+      "unit": "$",
+      "label": "Europe threshold",
+      "default": 3000
+    },
+    {
+      "type": "range",
+      "id": "world_threshold",
+      "min": 100,
+      "max": 5000,
+      "step": 100,
+      "unit": "$",
+      "label": "World threshold",
+      "default": 5000
     },
     {
       "type": "header",

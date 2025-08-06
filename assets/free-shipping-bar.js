@@ -17,13 +17,10 @@ document.addEventListener('DOMContentLoaded', () => {
         let newThreshold = goal / 100; // Convert back to base unit
         
         switch(currentCountry) {
-            case 'US':
-                newThreshold = 50;
+            case 'MD':
+                newThreshold = 30;
                 break;
-            case 'CA':
-                newThreshold = 75;
-                break;
-            case 'GB':
+            case 'RO':
                 newThreshold = 40;
                 break;
             case 'DE':
@@ -34,16 +31,31 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'BE':
             case 'AT':
             case 'CH':
+            case 'GB':
+            case 'IE':
+            case 'PT':
+            case 'SE':
+            case 'NO':
+            case 'DK':
+            case 'FI':
+            case 'PL':
+            case 'CZ':
+            case 'SK':
+            case 'HU':
+            case 'BG':
+            case 'HR':
+            case 'SI':
+            case 'EE':
+            case 'LV':
+            case 'LT':
+            case 'MT':
+            case 'CY':
+            case 'LU':
+            case 'GR':
                 newThreshold = 60;
                 break;
-            case 'AU':
-                newThreshold = 80;
-                break;
-            case 'JP':
-                newThreshold = 5000;
-                break;
             default:
-                // Keep original threshold
+                newThreshold = 80;
                 break;
         }
         
@@ -67,6 +79,11 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(cart => {
             updateBar(cart.total_price);
+        })
+        .catch(error => {
+            console.error('Error fetching cart:', error);
+            // Initialize with empty cart
+            updateBar(0);
         });
 
     function updateBar(total) {
