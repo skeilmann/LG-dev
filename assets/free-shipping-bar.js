@@ -12,69 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
         youQualify: translations[1]
     };
 
-    // Function to update threshold based on country
-    function updateThresholdForCountry() {
-        let newThreshold = goal / 100; // Convert back to base unit
-        
-        switch(currentCountry) {
-            case 'MD':
-                newThreshold = 30;
-                break;
-            case 'RO':
-                newThreshold = 40;
-                break;
-            case 'DE':
-            case 'FR':
-            case 'IT':
-            case 'ES':
-            case 'NL':
-            case 'BE':
-            case 'AT':
-            case 'CH':
-            case 'GB':
-            case 'IE':
-            case 'PT':
-            case 'SE':
-            case 'NO':
-            case 'DK':
-            case 'FI':
-            case 'PL':
-            case 'CZ':
-            case 'SK':
-            case 'HU':
-            case 'BG':
-            case 'HR':
-            case 'SI':
-            case 'EE':
-            case 'LV':
-            case 'LT':
-            case 'MT':
-            case 'CY':
-            case 'LU':
-            case 'GR':
-                newThreshold = 60;
-                break;
-            default:
-                newThreshold = 80;
-                break;
-        }
-        
-        return newThreshold * 100; // Convert back to cents
-    }
-
-    // Listen for country changes
-    document.addEventListener('submit', (event) => {
-        if (event.target.classList.contains('localization-form')) {
-            // Country is being changed, update threshold after a delay
-            setTimeout(() => {
-                const newCountry = document.querySelector('[data-value]')?.dataset.value;
-                if (newCountry && newCountry !== currentCountry) {
-                    location.reload(); // Reload to get updated translations and threshold
-                }
-            }, 1000);
-        }
-    });
-
     fetch('/cart.js')
         .then(response => response.json())
         .then(cart => {
@@ -101,8 +38,22 @@ document.addEventListener('DOMContentLoaded', () => {
             fill.style.width = `${progress}%`;
 
             const remainingFormatted = formatMoney(remaining);
-            const newText = translationsObj.remainingAmount.replace('{{amount}}', remainingFormatted);
-            fadeText(message, newText);
+            
+            // Replace the placeholder with the actual amount
+            let newText = translationsObj.remainingAmount.replace('{{amount}}', remainingFormatted);
+            
+            // Check if replacement worked
+            if (newText.includes('{{amount}}')) {
+                // Fallback: create a simple message
+                const fallbackText = `Вам не хватает ${remainingFormatted} для бесплатной доставки!`;
+                fadeText(message, fallbackText);
+            } else {
+                // Clear any existing content first
+                message.textContent = '';
+                
+                // Set the new message
+                fadeText(message, newText);
+            }
         }
     }
 
@@ -110,6 +61,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function fadeText(element, newText) {
         element.style.opacity = 0;
         setTimeout(() => {
+            // Clear any existing content
+            element.textContent = '';
+            // Set the new text
             element.textContent = newText;
             element.style.opacity = 1;
         }, 200); // half of CSS transition
@@ -117,7 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Helper to format money
     function formatMoney(amount) {
-        const currencySymbol = document.querySelector('[data-currency-symbol]')?.dataset.currencySymbol || '$';
+        // Get currency symbol from the bar's data attribute
+        const currencySymbol = bar.dataset.currencySymbol || '$';
         return currencySymbol + amount.toFixed(2);
     }
 

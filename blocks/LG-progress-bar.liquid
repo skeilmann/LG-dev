@@ -331,7 +331,18 @@
         } else {
           const remaining = this.threshold - cartTotal;
           const remainingFormatted = this.formatMoney(remaining);
-          const message = this.translations.remainingAmount.replace('{{amount}}', remainingFormatted);
+          
+          // Replace the placeholder with the actual amount
+          let message = this.translations.remainingAmount.replace('{{amount}}', remainingFormatted);
+          
+          // Check if replacement worked
+          if (message.includes('{{amount}}')) {
+            // Fallback: create a simple message
+            message = `Вам не хватает ${remainingFormatted} для бесплатной доставки!`;
+          }
+          
+          // Clear any existing content first
+          this.messageText.textContent = '';
           this.messageText.innerHTML = message;
         }
       }
@@ -358,7 +369,18 @@
         } else {
           const remaining = this.threshold - cartTotal;
           const remainingFormatted = this.formatMoney(remaining);
-          const message = this.translations.remainingAmount.replace('{{amount}}', remainingFormatted);
+          
+          // Replace the placeholder with the actual amount
+          let message = this.translations.remainingAmount.replace('{{amount}}', remainingFormatted);
+          
+          // Check if replacement worked
+          if (message.includes('{{amount}}')) {
+            // Fallback: create a simple message
+            message = `Вам не хватает ${remainingFormatted} для бесплатной доставки!`;
+          }
+          
+          // Clear any existing content first
+          this.messageText.textContent = '';
           this.messageText.innerHTML = message;
         }
       }
