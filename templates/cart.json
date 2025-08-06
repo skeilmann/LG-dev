@@ -18,7 +18,7 @@
         "europe_threshold": 3000,
         "world_threshold": 5000,
         "bar_color": "#ff6699",
-        "bar_background": "#eee",
+        "bar_background": "#eeeeee",
         "show_on_homepage": true
       }
     },
@@ -54,8 +54,8 @@
     }
   },
   "order": [
-    "free_shipping_bar_LjYWeV",
     "cart-items",
+    "free_shipping_bar_LjYWeV",
     "cart-footer"
   ]
 }
