@@ -23,24 +23,27 @@
           "blocks": {}
         },
         "lg_progress_bar_rzY3UU": {
-          "type": "LG-progress-bar",
+          "type": "lg-progress-bar",
           "name": "Cart Progress Bar",
           "settings": {
             "title": "Free Shipping Progress",
-            "threshold": 300,
+            "moldova_threshold": 500,
+            "romania_threshold": 1000,
+            "europe_threshold": 3000,
+            "world_threshold": 5000,
             "background_color": "#f8f9fa",
             "text_color": "#333333",
             "accent_color": "#007bff",
             "success_color": "#28a745",
             "padding": 10,
-            "border_radius": 8,
+            "border_radius": 20,
             "bar_background_color": "#e9ecef",
             "bar_fill_color": "#007bff",
-            "bar_height": 12,
-            "bar_border_radius": 6,
-            "title_size": 16,
-            "amount_size": 14,
-            "message_size": 14
+            "bar_height": 8,
+            "bar_border_radius": 15,
+            "title_size": 12,
+            "amount_size": 12,
+            "message_size": 12
           },
           "blocks": {}
         }
