@@ -169,8 +169,8 @@
         }
       },
       "2367010369087667184": {
-        "type": "shopify://apps/customer-account-deluxe/blocks/cad/b059626d-05f0-44bc-b55f-d2fc6d268902",
-        "disabled": false,
+        "type": "shopify://apps/deluxe-accounts/blocks/cad/b059626d-05f0-44bc-b55f-d2fc6d268902",
+        "disabled": true,
         "settings": {}
       }
     },
