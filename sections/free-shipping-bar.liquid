@@ -52,23 +52,34 @@
   Note: Shopify returns prices in cents. So we multiply by 100 to compare correctly.
 {% endcomment %}
 
-<div
-  id="free-shipping-bar-{{ section.id }}"
-  class="free-shipping-bar"
-  data-free-shipping-goal="{{ free_shipping_goal_cents }}"
-  data-current-country="{{ current_country }}"
-  data-currency-symbol="{{ cart.currency.symbol }}"
-  data-translations="{{ 'general.free_shipping.remaining_amount' | t }},{{ 'general.free_shipping.you_qualify' | t }}"
->
-  <div class="free-shipping-message">
-    <!-- Message will be populated by JavaScript -->
-  </div>
+<div class="page-width">
+  <div
+    id="free-shipping-bar-{{ section.id }}"
+    class="free-shipping-bar"
+    data-free-shipping-goal="{{ free_shipping_goal_cents }}"
+    data-current-country="{{ current_country }}"
+    data-currency-symbol="{{ cart.currency.symbol }}"
+    data-translations="{{ 'general.free_shipping.title' | t }},{{ 'general.free_shipping.add_more' | t }},{{ 'general.free_shipping.more_for_free_shipping' | t }},{{ 'general.free_shipping.you_qualify' | t }},{{ 'general.free_shipping.remaining_amount' | t }}"
+  >
+    <div class="free-shipping-header">
+      <h3 class="free-shipping-title">{{ 'general.free_shipping.title' | t }}</h3>
+      <div class="free-shipping-amount">
+        <span class="free-shipping-current">{{ cart.total_price | money }}</span>
+        <span> / </span>
+        <span class="free-shipping-target">{{ free_shipping_goal | times: 100 | money }}</span>
+      </div>
+    </div>
 
-  <div class="progress-bar-container" style="background-color: {{ section.settings.bar_background }};">
-    <div
-      class="progress-bar-fill"
-      style="background-color: {{ section.settings.bar_color }}; width: 0%;"
-    ></div>
+    <div class="progress-bar-container" style="background-color: {{ section.settings.bar_background }};">
+      <div
+        class="progress-bar-fill"
+        style="background-color: {{ section.settings.bar_color }}; width: 0%;"
+      ></div>
+    </div>
+
+    <div class="free-shipping-message">
+      <span class="free-shipping-text"></span>
+    </div>
   </div>
 </div>
 

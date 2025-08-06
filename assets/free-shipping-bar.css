@@ -5,11 +5,42 @@
     font-size: 14px;
     text-align: center;
     border-radius: 4px;
+    width: 35rem;
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header with title and amounts */
+.free-shipping-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.free-shipping-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    color: #333;
+}
+
+.free-shipping-amount {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
 }
 
 /* Text message */
 .free-shipping-message {
-    margin-bottom: 6px;
+    margin-top: 12px;
+    text-align: center;
+    font-size: 14px;
+    color: #333;
+}
+
+.free-shipping-text {
     color: #333;
 }
 
@@ -50,6 +81,15 @@
 
     100% {
         width: var(--target-width, 0%);
+    }
+}
+
+/* Responsive styles */
+@media screen and (max-width: 749px) {
+    .free-shipping-header {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
     }
 }
 

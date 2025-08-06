@@ -10,8 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Parse translations
     const translations = bar.dataset.translations.split(',');
     const translationsObj = {
-        remainingAmount: translations[0],
-        youQualify: translations[1]
+        title: translations[0],
+        addMore: translations[1],
+        moreForFreeShipping: translations[2],
+        youQualify: translations[3],
+        remainingAmount: translations[4]
     };
 
     // Initial load
@@ -129,9 +132,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateBar(total) {
         const fill = bar.querySelector('.progress-bar-fill');
-        const message = bar.querySelector('.free-shipping-message');
+        const message = bar.querySelector('.free-shipping-text');
         const progressContainer = bar.querySelector('.progress-bar-container');
         const header = bar.querySelector('.free-shipping-header');
+        const currentAmount = bar.querySelector('.free-shipping-current');
+        const targetAmount = bar.querySelector('.free-shipping-target');
+
+        // Update current amount display
+        if (currentAmount) {
+            currentAmount.textContent = formatMoney(total / 100);
+        }
 
         if (total >= goal) {
             // Hide progress bar and show only success message
@@ -171,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (header) header.style.display = 'none';
         
         // Show only success message
-        const message = bar.querySelector('.free-shipping-message');
+        const message = bar.querySelector('.free-shipping-text');
         if (message) {
             fadeText(message, translationsObj.youQualify);
         }
