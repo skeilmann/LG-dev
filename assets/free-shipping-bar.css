@@ -35,6 +35,22 @@
     /* default, overridden by Liquid */
     transition: width 0.4s ease;
     /* Smooth animation */
+    display: flex !important;
+}
+
+/* Loading animation for progress bar */
+.progress-bar-fill.loading {
+    animation: free-shipping-load 1s ease-out forwards;
+}
+
+@keyframes free-shipping-load {
+    0% {
+        width: 0;
+    }
+
+    100% {
+        width: var(--target-width, 0%);
+    }
 }
 
 /* Stick bar to top or bottom on mobile */

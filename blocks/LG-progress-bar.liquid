@@ -89,12 +89,23 @@
   }
 
   .ai-cart-progress__bar-fill-{{ ai_gen_id }} {
+    display: flex !important;
     height: 100%;
     background: {{ block.settings.bar_fill_color }};
     border-radius: {{ block.settings.bar_border_radius }}px;
     transition: width 0.5s ease;
     position: relative;
     overflow: hidden;
+    width: 0;
+  }
+
+  .ai-cart-progress__bar-fill-{{ ai_gen_id }}.loading {
+    animation: ai-cart-progress-load-{{ ai_gen_id }} 1s ease-out forwards;
+  }
+
+  @keyframes ai-cart-progress-load-{{ ai_gen_id }} {
+    0% { width: 0; }
+    100% { width: var(--target-width, 0%); }
   }
 
   .ai-cart-progress__bar-fill-{{ ai_gen_id }}::after {
@@ -178,6 +189,8 @@
         this.progressBar = this.querySelector('.ai-cart-progress__bar-fill-{{ ai_gen_id }}');
         this.currentAmount = this.querySelector('.ai-cart-progress__current-{{ ai_gen_id }}');
         this.messageText = this.querySelector('.ai-cart-progress__text-{{ ai_gen_id }}');
+        this.lastCartTotal = 0;
+        this.isUpdating = false;
 
         // Parse translations
         const translations = this.dataset.translations.split(',');
@@ -194,6 +207,7 @@
         this.updateProgress();
         this.setupCartListener();
         this.setupCountryChangeListener();
+        this.animateOnLoad();
       }
 
       setupCountryChangeListener() {
@@ -284,38 +298,100 @@
       }
 
       setupCartListener() {
+        // Listen for custom cart events
         document.addEventListener('cart:updated', () => {
           this.fetchCartAndUpdate();
         });
 
+        // Listen for cart drawer events
+        document.addEventListener('cart:drawer:opened', () => {
+          this.fetchCartAndUpdate();
+        });
+
+        // Listen for quantity changes
+        document.addEventListener('change', (event) => {
+          if (event.target.matches('[name="updates[]"], .quantity-input, .cart-quantity')) {
+            setTimeout(() => this.fetchCartAndUpdate(), 300);
+          }
+        });
+
+        // Listen for remove buttons
+        document.addEventListener('click', (event) => {
+          if (event.target.matches('.cart-remove, .remove-item, [data-action="remove"]')) {
+            setTimeout(() => this.fetchCartAndUpdate(), 300);
+          }
+        });
+
+        // Listen for add to cart forms
+        document.addEventListener('submit', (event) => {
+          if (event.target.matches('form[action*="/cart/add"], .add-to-cart-form')) {
+            setTimeout(() => this.fetchCartAndUpdate(), 500);
+          }
+        });
+
+        // Listen for quick add buttons
+        document.addEventListener('click', (event) => {
+          if (event.target.matches('.quick-add, .quick-add-button, [data-quick-add]')) {
+            setTimeout(() => this.fetchCartAndUpdate(), 500);
+          }
+        });
+
+        // Listen for AJAX cart updates
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (mutation.type === 'childList') {
+              mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                  // Check if cart-related elements were added
+                  if (node.querySelector && (
+                    node.querySelector('[data-cart-total]') ||
+                    node.querySelector('.cart-total') ||
+                    node.querySelector('[data-cart-count]')
+                  )) {
+                    setTimeout(() => this.fetchCartAndUpdate(), 200);
+                  }
+                }
+              });
+            }
+          });
+        });
+
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true
+        });
+
+        // Initial load
         document.addEventListener('DOMContentLoaded', () => {
           this.fetchCartAndUpdate();
         });
 
-        const addToCartForms = document.querySelectorAll('form[action*="/cart/add"]');
-        addToCartForms.forEach(form => {
-          form.addEventListener('submit', () => {
-            setTimeout(() => this.fetchCartAndUpdate(), 500);
-          });
-        });
-
-        const cartUpdateButtons = document.querySelectorAll('[name="updates[]"], .cart-remove-button, .cart-update-button');
-        cartUpdateButtons.forEach(button => {
-          button.addEventListener('click', () => {
-            setTimeout(() => this.fetchCartAndUpdate(), 500);
-          });
-        });
+        // Fallback: check for cart updates every 2 seconds
+        setInterval(() => {
+          this.checkForCartChanges();
+        }, 2000);
       }
 
       async fetchCartAndUpdate() {
+        if (this.isUpdating) return; // Prevent concurrent updates
+        
+        this.isUpdating = true;
+        
         try {
           const response = await fetch('/cart.js');
           const cart = await response.json();
-          this.updateProgressWithCart(cart);
+          
+          // Only update if cart total has actually changed
+          if (cart.total_price !== this.lastCartTotal) {
+            this.lastCartTotal = cart.total_price;
+            this.updateProgressWithCart(cart);
+          }
         } catch (error) {
           console.error('Error fetching cart:', error);
           // Initialize with empty cart
           this.updateProgressWithCart({ total_price: 0 });
+        } finally {
+          this.isUpdating = false;
         }
       }
 
@@ -324,11 +400,15 @@
         this.currentAmount.textContent = this.formatMoney(cartTotal);
 
         const percentage = Math.min((cartTotal / this.threshold) * 100, 100);
-        this.progressBar.style.width = percentage + '%';
-
+        
         if (cartTotal >= this.threshold) {
-          this.messageText.innerHTML = '<span class="ai-cart-progress__success-{{ ai_gen_id }}">' + this.translations.youQualify + '</span>';
+          // Hide progress bar and show only success message
+          this.showSuccessState();
         } else {
+          // Show progress bar and animate update
+          this.showProgressState();
+          this.animateProgressBar(percentage);
+          
           const remaining = this.threshold - cartTotal;
           const remainingFormatted = this.formatMoney(remaining);
           
@@ -345,6 +425,91 @@
           this.messageText.textContent = '';
           this.messageText.innerHTML = message;
         }
+      }
+
+      showSuccessState() {
+        // Hide progress bar elements
+        const progressContainer = this.querySelector('.ai-cart-progress__bar-container-{{ ai_gen_id }}');
+        const header = this.querySelector('.ai-cart-progress__header-{{ ai_gen_id }}');
+        
+        if (progressContainer) progressContainer.style.display = 'none';
+        if (header) header.style.display = 'none';
+        
+        // Show only success message
+        this.messageText.innerHTML = '<span class="ai-cart-progress__success-{{ ai_gen_id }}">' + this.translations.youQualify + '</span>';
+      }
+
+      showProgressState() {
+        // Show progress bar elements
+        const progressContainer = this.querySelector('.ai-cart-progress__bar-container-{{ ai_gen_id }}');
+        const header = this.querySelector('.ai-cart-progress__header-{{ ai_gen_id }}');
+        
+        if (progressContainer) progressContainer.style.display = 'block';
+        if (header) header.style.display = 'flex';
+      }
+
+      animateProgressBar(targetPercentage) {
+        const currentWidth = parseFloat(this.progressBar.style.width) || 0;
+        const targetWidth = targetPercentage;
+        
+        // Set the CSS custom property for the animation target
+        this.progressBar.style.setProperty('--target-width', targetWidth + '%');
+        
+        // Add loading class to trigger animation
+        this.progressBar.classList.add('loading');
+        
+        // Remove loading class after animation completes
+        setTimeout(() => {
+          this.progressBar.classList.remove('loading');
+          // Ensure final width is set correctly
+          this.progressBar.style.width = targetWidth + '%';
+        }, 1000);
+      }
+
+      checkForCartChanges() {
+        // Only check if we're not already updating
+        if (this.isUpdating) return;
+        
+        // Check if cart total has changed by looking for cart-related elements
+        const cartTotalElement = document.querySelector('[data-cart-total]');
+        const cartTotalText = document.querySelector('.cart-total, .cart__total, [class*="total"]');
+        
+        if (cartTotalElement || cartTotalText) {
+          // If we find cart elements, fetch the latest cart data
+          this.fetchCartAndUpdate();
+        }
+      }
+
+      animateOnLoad() {
+        // Set initial width to 0
+        this.progressBar.style.width = '0%';
+        
+        // Get the target percentage for animation
+        const cartTotalElement = document.querySelector('[data-cart-total]');
+        let cartTotal = 0;
+
+        if (cartTotalElement) {
+          cartTotal = parseInt(cartTotalElement.dataset.cartTotal) || 0;
+        } else {
+          const cartTotalText = document.querySelector('.cart-total, .cart__total, [class*="total"]');
+          if (cartTotalText) {
+            const totalMatch = cartTotalText.textContent.match(/[\d,]+/);
+            cartTotal = totalMatch ? parseInt(totalMatch[0].replace(/,/g, '')) * 100 : 0;
+          }
+        }
+
+        const percentage = Math.min((cartTotal / this.threshold) * 100, 100);
+        
+        // Set the CSS custom property for the animation target
+        this.progressBar.style.setProperty('--target-width', percentage + '%');
+        
+        // Add loading class to trigger animation
+        this.progressBar.classList.add('loading');
+        
+        // Remove loading class after animation completes
+        setTimeout(() => {
+          this.progressBar.classList.remove('loading');
+        }, 3000);
       }
 
       updateProgress() {
