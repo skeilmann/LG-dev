@@ -9,6 +9,19 @@
  */
 {
   "sections": {
+    "free_shipping_bar_LjYWeV": {
+      "type": "free-shipping-bar",
+      "name": "Free Shipping Progress Bar",
+      "settings": {
+        "moldova_threshold": 500,
+        "romania_threshold": 1000,
+        "europe_threshold": 3000,
+        "world_threshold": 5000,
+        "bar_color": "#ff6699",
+        "bar_background": "#eee",
+        "show_on_homepage": true
+      }
+    },
     "cart-items": {
       "type": "main-cart-items",
       "settings": {
@@ -19,30 +32,29 @@
     },
     "cart-footer": {
       "type": "main-cart-footer",
-      "settings": {
-        "color_scheme": "scheme-1",
-        "padding_top": 20,
-        "padding_bottom": 40
-      },
       "blocks": {
         "subtotal": {
           "type": "subtotal",
-          "settings": {
-          }
+          "settings": {}
         },
         "buttons": {
           "type": "buttons",
-          "settings": {
-          }
+          "settings": {}
         }
       },
       "block_order": [
         "subtotal",
         "buttons"
-      ]
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "padding_top": 20,
+        "padding_bottom": 40
+      }
     }
   },
   "order": [
+    "free_shipping_bar_LjYWeV",
     "cart-items",
     "cart-footer"
   ]

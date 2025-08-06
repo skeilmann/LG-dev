@@ -25,6 +25,7 @@
         "lg_progress_bar_rzY3UU": {
           "type": "lg-progress-bar",
           "name": "Cart Progress Bar",
+          "disabled": true,
           "settings": {
             "title": "Free Shipping Progress",
             "moldova_threshold": 500,
