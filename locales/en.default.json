@@ -74,6 +74,13 @@
       "name": "Slider"
     }
   },
+  "announcement": {
+    "free_shipping": {
+      "empty": "Your cart is empty",
+      "progress": "Spend {{ remaining }} to get free shipping",
+      "reached": "You have free shipping!"
+    }
+  },
   "newsletter": {
     "label": "Email",
     "success": "Thanks for subscribing",

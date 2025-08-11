@@ -1463,6 +1463,20 @@
         "id": "cart_color_scheme",
         "label": "t:sections.all.colors.label",
         "default": "scheme-1"
+      },
+      {
+        "type": "header",
+        "content": "Free shipping"
+      },
+      {
+        "type": "range",
+        "id": "free_shipping_threshold",
+        "min": 0,
+        "max": 9900,
+        "step": 100,
+        "unit": "$",
+        "label": "Free shipping threshold (store currency)",
+        "default": 0
       }
     ]
   }

@@ -50,6 +50,25 @@
             </a>
           {%- endif -%}
         {%- endif -%}
+
+        <div
+          class="announcement-free-shipping"
+          style="margin:0;"
+          data-free-shipping-progress
+          data-threshold-cents="{{ settings.free_shipping_threshold | default: 0 | times: 100 }}"
+          data-currency-code="{{ cart.currency.iso_code | default: shop.currency }}"
+          data-locale-message-progress="{{ 'announcement.free_shipping.progress' | t: remaining: '__REMAINING__' }}"
+          data-locale-message-empty="{{ 'announcement.free_shipping.empty' | t }}"
+          data-locale-message-reached="{{ 'announcement.free_shipping.reached' | t }}"
+          data-settings-message-progress="{{ section.settings.message_progress | escape }}"
+          data-settings-message-empty="{{ section.settings.message_empty | escape }}"
+          data-settings-message-reached="{{ section.settings.message_reached | escape }}"
+        >
+          <div class="progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="progress__fill" style="width:0%"></div>
+          </div>
+          <p class="message h5" aria-live="polite"></p>
+        </div>
       </div>
     {%- elsif section.blocks.size > 1 -%}
       <slideshow-component
@@ -107,6 +126,24 @@
                         {{- 'icon-arrow.svg' | inline_asset_content -}}
                       {%- endif -%}
                     </p>
+                    <div
+                      class="announcement-free-shipping"
+                      style="margin:0;"
+                      data-free-shipping-progress
+                      data-threshold-cents="{{ settings.free_shipping_threshold | default: 0 | times: 100 }}"
+                      data-currency-code="{{ cart.currency.iso_code | default: shop.currency }}"
+                      data-locale-message-progress="{{ 'announcement.free_shipping.progress' | t: remaining: '__REMAINING__' }}"
+                      data-locale-message-empty="{{ 'announcement.free_shipping.empty' | t }}"
+                      data-locale-message-reached="{{ 'announcement.free_shipping.reached' | t }}"
+                      data-settings-message-progress="{{ section.settings.message_progress | escape }}"
+                      data-settings-message-empty="{{ section.settings.message_empty | escape }}"
+                      data-settings-message-reached="{{ section.settings.message_reached | escape }}"
+                    >
+                      <div class="progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                        <div class="progress__fill" style="width:0%"></div>
+                      </div>
+                      <p class="message h5" aria-live="polite"></p>
+                    </div>
                     {%- if block.settings.link != blank -%}
                       </a>
                     {%- endif -%}
@@ -237,6 +274,28 @@
       "id": "enable_language_selector",
       "default": false,
       "label": "t:sections.announcement-bar.settings.enable_language_selector.label"
+    },
+    {
+      "type": "header",
+      "content": "Free shipping messages"
+    },
+    {
+      "type": "text",
+      "id": "message_empty",
+      "label": "Empty cart message",
+      "default": "Your cart is empty"
+    },
+    {
+      "type": "text",
+      "id": "message_progress",
+      "label": "Progress message (use {{ remaining }} to show remaining)",
+      "default": "Spend {{ remaining }} to get free shipping"
+    },
+    {
+      "type": "text",
+      "id": "message_reached",
+      "label": "Reached threshold message",
+      "default": "You have free shipping!"
     }
   ],
   "blocks": [

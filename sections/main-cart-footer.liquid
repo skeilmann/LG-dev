@@ -63,6 +63,21 @@
                   <p class="totals__total-value">{{ cart.total_price | money_with_currency }}</p>
                 </div>
 
+                <div
+                  class="announcement-free-shipping"
+                  data-free-shipping-progress
+                  data-threshold-cents="{{ settings.free_shipping_threshold | default: 0 | times: 100 }}"
+                  data-currency-code="{{ cart.currency.iso_code | default: shop.currency }}"
+                  data-locale-message-progress="{{ 'announcement.free_shipping.progress' | t: remaining: '__REMAINING__' }}"
+                  data-locale-message-empty="{{ 'announcement.free_shipping.empty' | t }}"
+                  data-locale-message-reached="{{ 'announcement.free_shipping.reached' | t }}"
+                >
+                  <div class="progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                    <div class="progress__fill" style="width:0%"></div>
+                  </div>
+                  <p class="message" aria-live="polite"></p>
+                </div>
+
                 <small class="tax-note caption-large rte">
                   {%- if cart.duties_included and cart.taxes_included -%}
                     {%- if shop.shipping_policy.body == blank -%}

@@ -54,7 +54,7 @@
     background-color: {{ block.settings.background_color }};
     padding: {{ block.settings.padding }}px;
     border-radius: {{ block.settings.border_radius }}px;
-    margin: 20px 0;
+    margin: 0;
     display: flex;
     flex-direction: column;
   }
@@ -183,17 +183,11 @@
   }
 {% endstyle %}
 
-<cart-progress-bar-{{ ai_gen_id }}
+<div
   class="ai-cart-progress-{{ ai_gen_id }}"
-  data-threshold="{{ free_shipping_threshold }}"
-  data-currency-symbol="{{ cart.currency.symbol }}"
-  data-current-country="{{ current_country }}"
-  data-translations="{{ 'general.free_shipping.title' | t }},{{ 'general.free_shipping.add_more' | t }},{{ 'general.free_shipping.more_for_free_shipping' | t }},{{ 'general.free_shipping.you_qualify' | t }},{{ 'general.free_shipping.remaining_amount' | t }},{{ 'general.free_shipping.available_message' | t }}"
-  data-moldova-threshold="{{ block.settings.moldova_threshold }}"
-  data-romania-threshold="{{ block.settings.romania_threshold }}"
-  data-europe-threshold="{{ block.settings.europe_threshold }}"
-  data-world-threshold="{{ block.settings.world_threshold }}"
-  data-empty-cart-message="{{ block.settings.empty_cart_message }}"
+  data-free-shipping-progress
+  data-threshold-cents="{{ free_shipping_threshold | times: 100 }}"
+  data-currency-code="{{ cart.currency.iso_code | default: shop.currency }}"
   {{ block.shopify_attributes }}
 >
   <!-- Progress Bar Content -->
@@ -207,9 +201,14 @@
       </div>
     </div>
 
-    <div class="ai-cart-progress__bar-container-{{ ai_gen_id }}">
+    <div
+      class="ai-cart-progress__bar-container-{{ ai_gen_id }} progress"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="0"
+    >
       <div
-        class="ai-cart-progress__bar-fill-{{ ai_gen_id }}"
+        class="ai-cart-progress__bar-fill-{{ ai_gen_id }} progress__fill"
         style="width: 0%;"
       ></div>
     </div>
@@ -223,9 +222,10 @@
   <div class="ai-cart-progress__empty-message-{{ ai_gen_id }}" style="display: none;">
     <span class="ai-cart-progress__empty-text-{{ ai_gen_id }}">{{ block.settings.empty_cart_message }}</span>
   </div>
-</cart-progress-bar-{{ ai_gen_id }}>
+</div>
 
 <script>
+  // Handled by assets/free-shipping-progress.js
   (function() {
     class CartProgressBar{{ ai_gen_id }} extends HTMLElement {
       constructor() {

@@ -90,10 +90,11 @@
   }
 {% endstyle %}
 
-<cart-progress-bar-{{ ai_gen_id }}
+<div
   class="ai-cart-progress-{{ ai_gen_id }}"
-  data-threshold="{{ block.settings.threshold }}"
-  data-currency-symbol="{{ cart.currency.symbol }}"
+  data-free-shipping-progress
+  data-threshold-cents="{{ block.settings.threshold | times: 100 }}"
+  data-currency-code="{{ cart.currency.iso_code | default: shop.currency }}"
   {{ block.shopify_attributes }}
 >
   <div class="ai-cart-progress__header-{{ ai_gen_id }}">
@@ -115,104 +116,10 @@
   <div class="ai-cart-progress__message-{{ ai_gen_id }}">
     <span class="ai-cart-progress__text-{{ ai_gen_id }}"></span>
   </div>
-</cart-progress-bar-{{ ai_gen_id }}>
+</div>
 
 <script>
-  (function() {
-    class CartProgressBar{{ ai_gen_id }} extends HTMLElement {
-      constructor() {
-        super();
-        this.threshold = parseFloat(this.dataset.threshold) * 100;
-        this.currencySymbol = this.dataset.currencySymbol;
-        this.progressBar = this.querySelector('.ai-cart-progress__bar-fill-{{ ai_gen_id }}');
-        this.currentAmount = this.querySelector('.ai-cart-progress__current-{{ ai_gen_id }}');
-        this.messageText = this.querySelector('.ai-cart-progress__text-{{ ai_gen_id }}');
-      }
-
-      connectedCallback() {
-        this.updateProgress();
-        this.setupCartListener();
-      }
-
-      setupCartListener() {document.addEventListener('cart:updated', () => {
-          this.fetchCartAndUpdate();
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-          this.fetchCartAndUpdate();
-        });
-
-        const addToCartForms = document.querySelectorAll('form[action*="/cart/add"]');
-        addToCartForms.forEach(form => {
-          form.addEventListener('submit', () => {
-            setTimeout(() => this.fetchCartAndUpdate(), 500);
-          });
-        });
-
-        const cartUpdateButtons = document.querySelectorAll('[name="updates[]"], .cart-remove-button, .cart-update-button');
-        cartUpdateButtons.forEach(button => {
-          button.addEventListener('click', () => {
-            setTimeout(() => this.fetchCartAndUpdate(), 500);
-          });
-        });
-      }
-
-      async fetchCartAndUpdate() {
-        try {
-          const response = await fetch('/cart.js');
-          const cart = await response.json();
-          this.updateProgressWithCart(cart);
-        } catch (error) {
-          console.error('Error fetching cart:', error);
-        }
-      }
-
-      updateProgressWithCart(cart) {
-        const cartTotal = cart.total_price;
-        this.currentAmount.textContent = this.formatMoney(cartTotal);
-
-        const percentage = Math.min((cartTotal / this.threshold) * 100, 100);
-        this.progressBar.style.width = percentage + '%';
-
-        if (cartTotal >= this.threshold) {
-          this.messageText.innerHTML = '<span class="ai-cart-progress__success-{{ ai_gen_id }}">{{ block.settings.success_message }}</span>';} else {
-          const remaining = this.threshold - cartTotal;
-          this.messageText.innerHTML = '{{ block.settings.progress_message }} <span class="ai-cart-progress__remaining-{{ ai_gen_id }}">' + this.formatMoney(remaining) + '</span> {{ block.settings.progress_message_suffix }}';
-        }
-      }
-
-      updateProgress() {
-        const cartTotalElement = document.querySelector('[data-cart-total]');
-        let cartTotal = 0;
-
-        if (cartTotalElement) {
-          cartTotal = parseInt(cartTotalElement.dataset.cartTotal) || 0;
-        } else {
-          const cartTotalText = document.querySelector('.cart-total, .cart__total, [class*="total"]');
-          if (cartTotalText) {
-            const totalMatch = cartTotalText.textContent.match(/[\d,]+/);
-            cartTotal = totalMatch ? parseInt(totalMatch[0].replace(/,/g, '')) * 100 : 0;
-          }
-        }
-
-        const percentage = Math.min((cartTotal / this.threshold) * 100, 100);
-        this.progressBar.style.width = percentage + '%';
-
-        if (cartTotal >= this.threshold) {
-          this.messageText.innerHTML = '<span class="ai-cart-progress__success-{{ ai_gen_id }}">{{ block.settings.success_message }}</span>';
-        } else {
-          const remaining = this.threshold - cartTotal;
-          this.messageText.innerHTML = '{{ block.settings.progress_message }} <span class="ai-cart-progress__remaining-{{ ai_gen_id }}">' + this.formatMoney(remaining) + '</span> {{ block.settings.progress_message_suffix }}';
-        }
-      }
-
-      formatMoney(cents) {
-        return this.currencySymbol + (cents / 100).toFixed(2);
-      }
-    }
-
-    customElements.define('cart-progress-bar-{{ ai_gen_id }}', CartProgressBar{{ ai_gen_id }});
-  })();
+  // Progress logic centralized in assets/free-shipping-progress.js
 </script>
 
 {% schema %}
