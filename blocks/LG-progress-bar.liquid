@@ -169,6 +169,10 @@
   data-currency-symbol="{{ cart.currency.symbol }}"
   data-current-country="{{ current_country }}"
   data-translations="{{ 'general.free_shipping.title' | t }},{{ 'general.free_shipping.add_more' | t }},{{ 'general.free_shipping.more_for_free_shipping' | t }},{{ 'general.free_shipping.you_qualify' | t }},{{ 'general.free_shipping.remaining_amount' | t }},{{ 'general.free_shipping.available_message' | t }}"
+  data-moldova-threshold="{{ block.settings.moldova_threshold }}"
+  data-romania-threshold="{{ block.settings.romania_threshold }}"
+  data-europe-threshold="{{ block.settings.europe_threshold }}"
+  data-world-threshold="{{ block.settings.world_threshold }}"
   {{ block.shopify_attributes }}
 >
   <!-- Progress Bar Content -->
@@ -228,10 +232,28 @@
           availableMessage: translations[5]
         };
         
+        // Store threshold values for event emission
+        this.moldovaThreshold = 500; // Default values
+        this.romaniaThreshold = 1000;
+        this.europeThreshold = 3000;
+        this.worldThreshold = 5000;
+        
+        // Try to get thresholds from data attributes if available
+        if (this.dataset.moldovaThreshold) this.moldovaThreshold = parseInt(this.dataset.moldovaThreshold);
+        if (this.dataset.romaniaThreshold) this.romaniaThreshold = parseInt(this.dataset.romaniaThreshold);
+        if (this.dataset.europeThreshold) this.europeThreshold = parseInt(this.dataset.europeThreshold);
+        if (this.dataset.worldThreshold) this.worldThreshold = parseInt(this.dataset.worldThreshold);
+        
         // Debug: log translations to see what we're getting
         console.log('Progress Bar Translations:', this.translations);
         console.log('Remaining amount translation:', this.translations.remainingAmount);
         console.log('Translation keys available:', Object.keys(this.translations));
+        console.log('Stored thresholds:', {
+          moldova: this.moldovaThreshold,
+          romania: this.romaniaThreshold,
+          europe: this.europeThreshold,
+          world: this.worldThreshold
+        });
       }
 
       connectedCallback() {
@@ -326,6 +348,31 @@
 
         this.threshold = newThreshold * 100;
         this.querySelector('.ai-cart-progress__target-{{ ai_gen_id }}').textContent = this.formatMoney(this.threshold);
+        
+        // Emit event to notify other components about threshold change
+        this.emitThresholdUpdate();
+      }
+
+      emitThresholdUpdate() {
+        // Get thresholds from block settings (these are stored in the constructor)
+        const thresholds = {
+          moldova: this.moldovaThreshold || 500,
+          romania: this.romaniaThreshold || 1000,
+          europe: this.europeThreshold || 3000,
+          world: this.worldThreshold || 5000
+        };
+        
+        // Create custom event with threshold data
+        const event = new CustomEvent('threshold:updated', {
+          detail: {
+            thresholds: thresholds,
+            currentCountry: this.currentCountry,
+            currentThreshold: this.threshold
+          }
+        });
+        
+        document.dispatchEvent(event);
+        console.log('Threshold update event emitted:', event.detail);
       }
 
       setupCartListener() {

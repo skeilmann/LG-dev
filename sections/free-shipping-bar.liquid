@@ -185,6 +185,7 @@
         this.updateProgress();
         this.setupCartListener();
         this.setupCountryChangeListener();
+        this.setupThresholdSync();
       }
 
       setupCountryChangeListener() {
@@ -367,6 +368,68 @@
         document.addEventListener('DOMContentLoaded', () => {
           this.fetchCartAndUpdate();
         });
+      }
+
+      setupThresholdSync() {
+        // Listen for threshold changes from LG-progress-bar
+        document.addEventListener('threshold:updated', (event) => {
+          if (event.detail && event.detail.thresholds) {
+            this.thresholds = event.detail.thresholds;
+            this.recalculateThreshold();
+            this.updateProgress();
+            console.log('Thresholds synced from LG-progress-bar:', this.thresholds);
+          }
+        });
+
+        // Also listen for any cart-progress-bar elements that might update
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (mutation.type === 'childList') {
+              mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === Node.ELEMENT_NODE && node.dataset && node.dataset.moldovaThreshold) {
+                  // LG-progress-bar was updated, sync thresholds
+                  this.syncThresholdsFromBlock();
+                }
+              });
+            }
+          });
+        });
+
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true,
+        });
+
+        // Periodic sync check (every 5 seconds)
+        setInterval(() => {
+          this.syncThresholdsFromBlock();
+        }, 5000);
+      }
+
+      syncThresholdsFromBlock() {
+        // Find the LG-progress-bar block and get its current thresholds
+        const lgBlock = document.querySelector('[data-moldova-threshold]');
+        if (lgBlock) {
+          // Get all threshold values from the block
+          const moldovaThreshold = parseInt(lgBlock.dataset.moldovaThreshold) || 500;
+          const romaniaThreshold = parseInt(lgBlock.dataset.romaniaThreshold) || 1000;
+          const europeThreshold = parseInt(lgBlock.dataset.europeThreshold) || 3000;
+          const worldThreshold = parseInt(lgBlock.dataset.worldThreshold) || 5000;
+
+          // Update our thresholds object
+          this.thresholds = {
+            moldova: moldovaThreshold,
+            romania: romaniaThreshold,
+            europe: europeThreshold,
+            world: worldThreshold,
+          };
+
+          // Recalculate and update
+          this.recalculateThreshold();
+          this.updateProgress();
+
+          console.log('Thresholds synced from block:', this.thresholds);
+        }
       }
 
       async fetchCartAndUpdate() {
