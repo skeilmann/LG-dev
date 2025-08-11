@@ -70,7 +70,8 @@
       "add_more": "Adăugați",
       "more_for_free_shipping": "mai mult pentru transport gratuit!",
       "you_qualify": "Vă calificați pentru transport gratuit!",
-      "remaining_amount": "Vă lipsesc {{amount}} pentru transport gratuit!"
+      "remaining_amount": "Vă lipsesc __AMOUNT__ pentru transport gratuit!",
+      "available_message": "Transport gratuit disponibil pentru comenzi peste __AMOUNT__!"
     }
   },
   "newsletter": {

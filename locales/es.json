@@ -70,7 +70,7 @@
       "add_more": "Agregar",
       "more_for_free_shipping": "más para envío gratis!",
       "you_qualify": "¡Calificas para envío gratis!",
-      "remaining_amount": "¡Te faltan {{amount}} para envío gratis!"
+      "remaining_amount": "¡Te faltan __AMOUNT__ para envío gratis!"
     }
   },
   "newsletter": {

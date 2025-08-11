@@ -24,7 +24,8 @@
       "add_more": "Add",
       "more_for_free_shipping": "more for free shipping!",
       "you_qualify": "You qualify for free shipping!",
-      "remaining_amount": "You are {{amount}} away from free shipping!"
+      "remaining_amount": "You are __AMOUNT__ away from free shipping!",
+      "available_message": "Free shipping available for orders over __AMOUNT__!"
     },
     "social": {
       "alt_text": {

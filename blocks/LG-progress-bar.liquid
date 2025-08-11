@@ -168,7 +168,7 @@
   data-threshold="{{ free_shipping_threshold }}"
   data-currency-symbol="{{ cart.currency.symbol }}"
   data-current-country="{{ current_country }}"
-  data-translations="{{ 'general.free_shipping.title' | t }},{{ 'general.free_shipping.add_more' | t }},{{ 'general.free_shipping.more_for_free_shipping' | t }},{{ 'general.free_shipping.you_qualify' | t }},{{ 'general.free_shipping.remaining_amount' | t }}"
+  data-translations="{{ 'general.free_shipping.title' | t }},{{ 'general.free_shipping.add_more' | t }},{{ 'general.free_shipping.more_for_free_shipping' | t }},{{ 'general.free_shipping.you_qualify' | t }},{{ 'general.free_shipping.remaining_amount' | t }},{{ 'general.free_shipping.available_message' | t }}"
   {{ block.shopify_attributes }}
 >
   <!-- Progress Bar Content -->
@@ -224,8 +224,14 @@
           addMore: translations[1],
           moreForFreeShipping: translations[2],
           youQualify: translations[3],
-          remainingAmount: translations[4]
+          remainingAmount: translations[4],
+          availableMessage: translations[5]
         };
+        
+        // Debug: log translations to see what we're getting
+        console.log('Progress Bar Translations:', this.translations);
+        console.log('Remaining amount translation:', this.translations.remainingAmount);
+        console.log('Translation keys available:', Object.keys(this.translations));
       }
 
       connectedCallback() {
@@ -443,14 +449,8 @@
           const remaining = this.threshold - cartTotal;
           const remainingFormatted = this.formatMoney(remaining);
           
-          // Replace the placeholder with the actual amount
-          let message = this.translations.remainingAmount.replace('{{amount}}', remainingFormatted);
-          
-          // Check if replacement worked
-          if (message.includes('{{amount}}')) {
-            // Fallback: create a simple message
-            message = `Вам не хватает ${remainingFormatted} для бесплатной доставки!`;
-          }
+          // Get the translated message with proper placeholder replacement
+          const message = this.getTranslation('remainingAmount', { AMOUNT: remainingFormatted });
           
           // Clear any existing content first
           this.messageText.textContent = '';
@@ -480,7 +480,8 @@
         // Show simple message
         if (this.simpleMessage) {
           this.simpleMessage.style.display = 'block';
-          this.simpleText.textContent = `Free shipping available for orders over ${this.formatMoney(this.threshold)}!`;
+          const message = this.getTranslation('availableMessage', { AMOUNT: this.formatMoney(this.threshold) });
+          this.simpleText.textContent = message;
         }
       }
 
@@ -593,19 +594,32 @@
           const remaining = this.threshold - cartTotal;
           const remainingFormatted = this.formatMoney(remaining);
           
-          // Replace the placeholder with the actual amount
-          let message = this.translations.remainingAmount.replace('{{amount}}', remainingFormatted);
-          
-          // Check if replacement worked
-          if (message.includes('{{amount}}')) {
-            // Fallback: create a simple message
-            message = `Вам не хватает ${remainingFormatted} для бесплатной доставки!`;
-          }
+          // Get the translated message with proper placeholder replacement
+          const message = this.getTranslation('remainingAmount', { AMOUNT: remainingFormatted });
           
           // Clear any existing content first
           this.messageText.textContent = '';
           this.messageText.innerHTML = message;
         }
+      }
+
+      getTranslation(key, replacements = {}) {
+        // Get the translation from our stored translations
+        let translation = this.translations[key] || key;
+        
+        console.log(`getTranslation called with key: ${key}, translation: ${translation}`);
+        console.log('Replacements:', replacements);
+        
+        // Replace placeholders
+        Object.keys(replacements).forEach(placeholder => {
+          const regex = new RegExp(`__${placeholder}__`, 'g');
+          const before = translation;
+          translation = translation.replace(regex, replacements[placeholder]);
+          console.log(`Replacing __${placeholder}__ with ${replacements[placeholder]}: "${before}" -> "${translation}"`);
+        });
+        
+        console.log(`Final result: ${translation}`);
+        return translation;
       }
 
       formatMoney(cents) {
