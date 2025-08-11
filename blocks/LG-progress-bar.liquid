@@ -141,18 +141,38 @@
     font-weight: 600;
   }
 
-  .ai-cart-progress__simple-message-{{ ai_gen_id }} {
+  /* Empty cart message styling - simple centered text */
+  .ai-cart-progress__empty-message-{{ ai_gen_id }} {
     text-align: center;
     font-size: {{ block.settings.message_size }}px;
     color: {{ block.settings.text_color }};
-    padding: {{ block.settings.padding }}px;
-    background-color: {{ block.settings.background_color }};
-    border-radius: {{ block.settings.border_radius }}px;
+    padding: 20px 0;
     margin: 20px 0;
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
   }
 
-  .ai-cart-progress__simple-text-{{ ai_gen_id }} {
+  .ai-cart-progress__empty-message-{{ ai_gen_id }}.fade-out {
+    opacity: 0;
+  }
+
+  .ai-cart-progress__empty-text-{{ ai_gen_id }} {
     font-weight: 500;
+    line-height: 1.4;
+  }
+
+  /* Progress content animations */
+  .ai-cart-progress__content-{{ ai_gen_id }} {
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  .ai-cart-progress__content-{{ ai_gen_id }}.fade-in {
+    opacity: 1;
+  }
+
+  .ai-cart-progress__content-{{ ai_gen_id }}.fade-out {
+    opacity: 0;
   }
 
   @media screen and (max-width: 749px) {
@@ -173,6 +193,7 @@
   data-romania-threshold="{{ block.settings.romania_threshold }}"
   data-europe-threshold="{{ block.settings.europe_threshold }}"
   data-world-threshold="{{ block.settings.world_threshold }}"
+  data-empty-cart-message="{{ block.settings.empty_cart_message }}"
   {{ block.shopify_attributes }}
 >
   <!-- Progress Bar Content -->
@@ -198,9 +219,9 @@
     </div>
   </div>
 
-  <!-- Simple Message for Empty Cart -->
-  <div class="ai-cart-progress__simple-message-{{ ai_gen_id }}" style="display: none;">
-    <span class="ai-cart-progress__simple-text-{{ ai_gen_id }}"></span>
+  <!-- Empty Cart Message -->
+  <div class="ai-cart-progress__empty-message-{{ ai_gen_id }}" style="display: none;">
+    <span class="ai-cart-progress__empty-text-{{ ai_gen_id }}">{{ block.settings.empty_cart_message }}</span>
   </div>
 </cart-progress-bar-{{ ai_gen_id }}>
 
@@ -216,8 +237,8 @@
         this.currentAmount = this.querySelector('.ai-cart-progress__current-{{ ai_gen_id }}');
         this.messageText = this.querySelector('.ai-cart-progress__text-{{ ai_gen_id }}');
         this.progressContent = this.querySelector('.ai-cart-progress__content-{{ ai_gen_id }}');
-        this.simpleMessage = this.querySelector('.ai-cart-progress__simple-message-{{ ai_gen_id }}');
-        this.simpleText = this.querySelector('.ai-cart-progress__simple-text-{{ ai_gen_id }}');
+        this.emptyMessage = this.querySelector('.ai-cart-progress__empty-message-{{ ai_gen_id }}');
+        this.emptyText = this.querySelector('.ai-cart-progress__empty-text-{{ ai_gen_id }}');
         this.lastCartTotal = 0;
         this.isUpdating = false;
 
@@ -467,7 +488,7 @@
 
         // Show simple message if cart is empty, hide progress bar
         if (cartTotal === 0) {
-          this.showSimpleMessage();
+          this.showEmptyMessage();
           return;
         }
 
@@ -505,18 +526,24 @@
         this.messageText.innerHTML = '<span class="ai-cart-progress__success-{{ ai_gen_id }}">' + this.translations.youQualify + '</span>';
       }
 
-      showSimpleMessage() {
+      showEmptyMessage() {
         // Show the component
         this.style.display = 'block';
         
-        // Hide progress content
-        if (this.progressContent) this.progressContent.style.display = 'none';
+        // Hide progress content with fade out animation
+        if (this.progressContent) {
+          this.progressContent.classList.add('fade-out');
+          setTimeout(() => {
+            this.progressContent.style.display = 'none';
+            this.progressContent.classList.remove('fade-out');
+          }, 300);
+        }
         
-        // Show simple message
-        if (this.simpleMessage) {
-          this.simpleMessage.style.display = 'block';
-          const message = this.getTranslation('availableMessage', { AMOUNT: this.formatMoney(this.threshold) });
-          this.simpleText.textContent = message;
+        // Show empty message with fade in animation
+        if (this.emptyMessage) {
+          this.emptyMessage.style.display = 'block';
+          // Use the message from block settings
+          this.emptyText.textContent = this.getEmptyCartMessage();
         }
       }
 
@@ -524,11 +551,25 @@
         // Show the entire progress bar component
         this.style.display = 'flex';
         
-        // Hide simple message
-        if (this.simpleMessage) this.simpleMessage.style.display = 'none';
+        // Hide empty message with fade out animation
+        if (this.emptyMessage) {
+          this.emptyMessage.classList.add('fade-out');
+          setTimeout(() => {
+            this.emptyMessage.style.display = 'none';
+            this.emptyMessage.classList.remove('fade-out');
+          }, 300);
+        }
+        
+        // Show progress content with fade in animation
+        if (this.progressContent) {
+          this.progressContent.style.display = 'block';
+          // Add fade in class after a brief delay to trigger animation
+          setTimeout(() => {
+            this.progressContent.classList.add('fade-in');
+          }, 50);
+        }
         
         // Show progress bar elements
-        if (this.progressContent) this.progressContent.style.display = 'block';
         const progressContainer = this.querySelector('.ai-cart-progress__bar-container-{{ ai_gen_id }}');
         const header = this.querySelector('.ai-cart-progress__header-{{ ai_gen_id }}');
         
@@ -616,7 +657,7 @@
 
         // Show simple message if cart is empty, hide progress bar
         if (cartTotal === 0) {
-          this.showSimpleMessage();
+          this.showEmptyMessage();
           return;
         }
 
@@ -655,6 +696,11 @@
 
       formatMoney(cents) {
         return this.currencySymbol + (cents / 100).toFixed(2);
+      }
+
+      getEmptyCartMessage() {
+        // Get the empty cart message from block settings via data attribute
+        return this.dataset.emptyCartMessage || 'Your cart is empty. Add items to qualify for free shipping.';
       }
     }
 
@@ -837,6 +883,12 @@
       "unit": "px",
       "label": "Message size",
       "default": 14
+    },
+    {
+      "type": "text",
+      "id": "empty_cart_message",
+      "label": "Empty Cart Message",
+      "default": "Your cart is empty. Add items to qualify for free shipping."
     }
   ],
   "presets": [
