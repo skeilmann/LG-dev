@@ -27,7 +27,7 @@
           "name": "Cart Progress Bar",
           "settings": {
             "title": "Free Shipping Progress",
-            "moldova_threshold": 300,
+            "moldova_threshold": 500,
             "romania_threshold": 1000,
             "europe_threshold": 3000,
             "world_threshold": 5000,
