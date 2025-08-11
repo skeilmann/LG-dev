@@ -9,19 +9,6 @@
  */
 {
   "sections": {
-    "free_shipping_bar_LjYWeV": {
-      "type": "free-shipping-bar",
-      "name": "Free Shipping Progress Bar",
-      "settings": {
-        "moldova_threshold": 500,
-        "romania_threshold": 1000,
-        "europe_threshold": 3000,
-        "world_threshold": 5000,
-        "bar_color": "#ff6699",
-        "bar_background": "#eeeeee",
-        "show_on_homepage": true
-      }
-    },
     "cart-items": {
       "type": "main-cart-items",
       "settings": {
@@ -55,7 +42,6 @@
   },
   "order": [
     "cart-items",
-    "free_shipping_bar_LjYWeV",
     "cart-footer"
   ]
 }
