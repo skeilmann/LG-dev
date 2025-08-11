@@ -176,6 +176,9 @@
         this.messageText = this.element.querySelector('.free-shipping-text');
 
         this.init();
+
+        // Initialize the threshold based on current country
+        this.recalculateThreshold();
       }
 
       init() {
@@ -212,7 +215,7 @@
           const newCountry = countryElement.dataset.value;
           if (newCountry && newCountry !== this.currentCountry) {
             this.currentCountry = newCountry;
-            this.updateThreshold();
+            this.recalculateThreshold();
             this.fetchCartAndUpdate();
           }
         }
@@ -267,6 +270,58 @@
         this.freeShippingGoal = newThreshold * 100;
         this.targetAmount.textContent = this.formatMoney(this.freeShippingGoal);
         this.updateProgress();
+      }
+
+      // Add method to recalculate threshold based on current country
+      recalculateThreshold() {
+        let newThreshold;
+
+        switch (this.currentCountry) {
+          case 'MD':
+            newThreshold = this.thresholds.moldova;
+            break;
+          case 'RO':
+            newThreshold = this.thresholds.romania;
+            break;
+          case 'DE':
+          case 'FR':
+          case 'IT':
+          case 'ES':
+          case 'NL':
+          case 'BE':
+          case 'AT':
+          case 'CH':
+          case 'GB':
+          case 'IE':
+          case 'PT':
+          case 'SE':
+          case 'NO':
+          case 'DK':
+          case 'FI':
+          case 'PL':
+          case 'CZ':
+          case 'SK':
+          case 'HU':
+          case 'BG':
+          case 'HR':
+          case 'SI':
+          case 'EE':
+          case 'LV':
+          case 'LT':
+          case 'MT':
+          case 'CY':
+          case 'LU':
+          case 'GR':
+            newThreshold = this.thresholds.europe;
+            break;
+          default:
+            newThreshold = this.thresholds.world;
+            break;
+        }
+
+        this.freeShippingGoal = newThreshold * 100;
+        this.targetAmount.textContent = this.formatMoney(this.freeShippingGoal);
+        return this.freeShippingGoal;
       }
 
       setupCartListener() {
