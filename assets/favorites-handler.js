@@ -382,7 +382,6 @@ class FavoritesHandler {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOMContentLoaded event fired. Initializing FavoritesHandler and login click listener.');
 
     window.favoritesHandler = new FavoritesHandler();
 

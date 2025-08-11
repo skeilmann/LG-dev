@@ -243,17 +243,6 @@
         if (this.dataset.romaniaThreshold) this.romaniaThreshold = parseInt(this.dataset.romaniaThreshold);
         if (this.dataset.europeThreshold) this.europeThreshold = parseInt(this.dataset.europeThreshold);
         if (this.dataset.worldThreshold) this.worldThreshold = parseInt(this.dataset.worldThreshold);
-        
-        // Debug: log translations to see what we're getting
-        console.log('Progress Bar Translations:', this.translations);
-        console.log('Remaining amount translation:', this.translations.remainingAmount);
-        console.log('Translation keys available:', Object.keys(this.translations));
-        console.log('Stored thresholds:', {
-          moldova: this.moldovaThreshold,
-          romania: this.romaniaThreshold,
-          europe: this.europeThreshold,
-          world: this.worldThreshold
-        });
       }
 
       connectedCallback() {
@@ -372,7 +361,6 @@
         });
         
         document.dispatchEvent(event);
-        console.log('Threshold update event emitted:', event.detail);
       }
 
       setupCartListener() {
@@ -654,18 +642,14 @@
         // Get the translation from our stored translations
         let translation = this.translations[key] || key;
         
-        console.log(`getTranslation called with key: ${key}, translation: ${translation}`);
-        console.log('Replacements:', replacements);
         
         // Replace placeholders
         Object.keys(replacements).forEach(placeholder => {
           const regex = new RegExp(`__${placeholder}__`, 'g');
           const before = translation;
           translation = translation.replace(regex, replacements[placeholder]);
-          console.log(`Replacing __${placeholder}__ with ${replacements[placeholder]}: "${before}" -> "${translation}"`);
         });
         
-        console.log(`Final result: ${translation}`);
         return translation;
       }
 

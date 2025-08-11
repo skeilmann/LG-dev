@@ -374,36 +374,25 @@
         // Listen for threshold changes from LG-progress-bar
         document.addEventListener('threshold:updated', (event) => {
           if (event.detail && event.detail.thresholds) {
-            this.thresholds = event.detail.thresholds;
-            this.recalculateThreshold();
-            this.updateProgress();
-            console.log('Thresholds synced from LG-progress-bar:', this.thresholds);
+            // Check if thresholds have actually changed
+            const newThresholds = event.detail.thresholds;
+            if (
+              !this.thresholds ||
+              this.thresholds.moldova !== newThresholds.moldova ||
+              this.thresholds.romania !== newThresholds.romania ||
+              this.thresholds.europe !== newThresholds.europe ||
+              this.thresholds.world !== newThresholds.world
+            ) {
+              this.thresholds = newThresholds;
+              this.recalculateThreshold();
+              this.updateProgress();
+            }
           }
         });
 
-        // Also listen for any cart-progress-bar elements that might update
-        const observer = new MutationObserver((mutations) => {
-          mutations.forEach((mutation) => {
-            if (mutation.type === 'childList') {
-              mutation.addedNodes.forEach((node) => {
-                if (node.nodeType === Node.ELEMENT_NODE && node.dataset && node.dataset.moldovaThreshold) {
-                  // LG-progress-bar was updated, sync thresholds
-                  this.syncThresholdsFromBlock();
-                }
-              });
-            }
-          });
-        });
-
-        observer.observe(document.body, {
-          childList: true,
-          subtree: true,
-        });
-
-        // Periodic sync check (every 5 seconds)
-        setInterval(() => {
-          this.syncThresholdsFromBlock();
-        }, 5000);
+        // Only do initial sync, remove periodic checks and mutation observer
+        // This prevents performance issues and infinite loops
+        this.syncThresholdsFromBlock();
       }
 
       syncThresholdsFromBlock() {
@@ -416,19 +405,28 @@
           const europeThreshold = parseInt(lgBlock.dataset.europeThreshold) || 3000;
           const worldThreshold = parseInt(lgBlock.dataset.worldThreshold) || 5000;
 
-          // Update our thresholds object
-          this.thresholds = {
+          // Check if thresholds have actually changed to prevent unnecessary updates
+          const newThresholds = {
             moldova: moldovaThreshold,
             romania: romaniaThreshold,
             europe: europeThreshold,
             world: worldThreshold,
           };
 
-          // Recalculate and update
-          this.recalculateThreshold();
-          this.updateProgress();
+          // Only update if thresholds are different
+          if (
+            !this.thresholds ||
+            this.thresholds.moldova !== newThresholds.moldova ||
+            this.thresholds.romania !== newThresholds.romania ||
+            this.thresholds.europe !== newThresholds.europe ||
+            this.thresholds.world !== newThresholds.world
+          ) {
+            this.thresholds = newThresholds;
 
-          console.log('Thresholds synced from block:', this.thresholds);
+            // Recalculate and update
+            this.recalculateThreshold();
+            this.updateProgress();
+          }
         }
       }
 
