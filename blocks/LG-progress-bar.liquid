@@ -141,6 +141,20 @@
     font-weight: 600;
   }
 
+  .ai-cart-progress__simple-message-{{ ai_gen_id }} {
+    text-align: center;
+    font-size: {{ block.settings.message_size }}px;
+    color: {{ block.settings.text_color }};
+    padding: {{ block.settings.padding }}px;
+    background-color: {{ block.settings.background_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    margin: 20px 0;
+  }
+
+  .ai-cart-progress__simple-text-{{ ai_gen_id }} {
+    font-weight: 500;
+  }
+
   @media screen and (max-width: 749px) {
     .ai-cart-progress__header-{{ ai_gen_id }} {
       flex-direction: column;
@@ -157,24 +171,32 @@
   data-translations="{{ 'general.free_shipping.title' | t }},{{ 'general.free_shipping.add_more' | t }},{{ 'general.free_shipping.more_for_free_shipping' | t }},{{ 'general.free_shipping.you_qualify' | t }},{{ 'general.free_shipping.remaining_amount' | t }}"
   {{ block.shopify_attributes }}
 >
-  <div class="ai-cart-progress__header-{{ ai_gen_id }}">
-    <h3 class="ai-cart-progress__title-{{ ai_gen_id }}">{{ 'general.free_shipping.title' | t }}</h3>
-    <div class="ai-cart-progress__amount-{{ ai_gen_id }}">
-      <span class="ai-cart-progress__current-{{ ai_gen_id }}">{{ cart.total_price | money }}</span>
-      <span> / </span>
-      <span class="ai-cart-progress__target-{{ ai_gen_id }}">{{ free_shipping_threshold | times: 100 | money }}</span>
+  <!-- Progress Bar Content -->
+  <div class="ai-cart-progress__content-{{ ai_gen_id }}">
+    <div class="ai-cart-progress__header-{{ ai_gen_id }}">
+      <h3 class="ai-cart-progress__title-{{ ai_gen_id }}">{{ 'general.free_shipping.title' | t }}</h3>
+      <div class="ai-cart-progress__amount-{{ ai_gen_id }}">
+        <span class="ai-cart-progress__current-{{ ai_gen_id }}">{{ cart.total_price | money }}</span>
+        <span> / </span>
+        <span class="ai-cart-progress__target-{{ ai_gen_id }}">{{ free_shipping_threshold | times: 100 | money }}</span>
+      </div>
+    </div>
+
+    <div class="ai-cart-progress__bar-container-{{ ai_gen_id }}">
+      <div
+        class="ai-cart-progress__bar-fill-{{ ai_gen_id }}"
+        style="width: 0%;"
+      ></div>
+    </div>
+
+    <div class="ai-cart-progress__message-{{ ai_gen_id }}">
+      <span class="ai-cart-progress__text-{{ ai_gen_id }}"></span>
     </div>
   </div>
 
-  <div class="ai-cart-progress__bar-container-{{ ai_gen_id }}">
-    <div
-      class="ai-cart-progress__bar-fill-{{ ai_gen_id }}"
-      style="width: 0%;"
-    ></div>
-  </div>
-
-  <div class="ai-cart-progress__message-{{ ai_gen_id }}">
-    <span class="ai-cart-progress__text-{{ ai_gen_id }}"></span>
+  <!-- Simple Message for Empty Cart -->
+  <div class="ai-cart-progress__simple-message-{{ ai_gen_id }}" style="display: none;">
+    <span class="ai-cart-progress__simple-text-{{ ai_gen_id }}"></span>
   </div>
 </cart-progress-bar-{{ ai_gen_id }}>
 
@@ -189,6 +211,9 @@
         this.progressBar = this.querySelector('.ai-cart-progress__bar-fill-{{ ai_gen_id }}');
         this.currentAmount = this.querySelector('.ai-cart-progress__current-{{ ai_gen_id }}');
         this.messageText = this.querySelector('.ai-cart-progress__text-{{ ai_gen_id }}');
+        this.progressContent = this.querySelector('.ai-cart-progress__content-{{ ai_gen_id }}');
+        this.simpleMessage = this.querySelector('.ai-cart-progress__simple-message-{{ ai_gen_id }}');
+        this.simpleText = this.querySelector('.ai-cart-progress__simple-text-{{ ai_gen_id }}');
         this.lastCartTotal = 0;
         this.isUpdating = false;
 
@@ -399,6 +424,12 @@
         const cartTotal = cart.total_price;
         this.currentAmount.textContent = this.formatMoney(cartTotal);
 
+        // Show simple message if cart is empty, hide progress bar
+        if (cartTotal === 0) {
+          this.showSimpleMessage();
+          return;
+        }
+
         const percentage = Math.min((cartTotal / this.threshold) * 100, 100);
         
         if (cartTotal >= this.threshold) {
@@ -439,8 +470,29 @@
         this.messageText.innerHTML = '<span class="ai-cart-progress__success-{{ ai_gen_id }}">' + this.translations.youQualify + '</span>';
       }
 
+      showSimpleMessage() {
+        // Show the component
+        this.style.display = 'block';
+        
+        // Hide progress content
+        if (this.progressContent) this.progressContent.style.display = 'none';
+        
+        // Show simple message
+        if (this.simpleMessage) {
+          this.simpleMessage.style.display = 'block';
+          this.simpleText.textContent = `Free shipping available for orders over ${this.formatMoney(this.threshold)}!`;
+        }
+      }
+
       showProgressState() {
+        // Show the entire progress bar component
+        this.style.display = 'flex';
+        
+        // Hide simple message
+        if (this.simpleMessage) this.simpleMessage.style.display = 'none';
+        
         // Show progress bar elements
+        if (this.progressContent) this.progressContent.style.display = 'block';
         const progressContainer = this.querySelector('.ai-cart-progress__bar-container-{{ ai_gen_id }}');
         const header = this.querySelector('.ai-cart-progress__header-{{ ai_gen_id }}');
         
@@ -524,6 +576,12 @@
             const totalMatch = cartTotalText.textContent.match(/[\d,]+/);
             cartTotal = totalMatch ? parseInt(totalMatch[0].replace(/,/g, '')) * 100 : 0;
           }
+        }
+
+        // Show simple message if cart is empty, hide progress bar
+        if (cartTotal === 0) {
+          this.showSimpleMessage();
+          return;
         }
 
         const percentage = Math.min((cartTotal / this.threshold) * 100, 100);
