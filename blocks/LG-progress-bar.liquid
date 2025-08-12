@@ -1,59 +1,5 @@
 {% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
 
-{% comment %}
-  Get current country and set appropriate threshold
-{% endcomment %}
-{% assign current_country = localization.country.iso_code %}
-{% assign free_shipping_threshold = block.settings.threshold %}
-
-{% comment %}
-  Set different thresholds based on country/region groups
-{% endcomment %}
-{% case current_country %}
-  {% when 'MD' %}
-    {% assign free_shipping_threshold = block.settings.moldova_threshold %}
-  {% when 'RO' %}
-    {% assign free_shipping_threshold = block.settings.romania_threshold %}
-  {% when 'DE',
-    'FR',
-    'IT',
-    'ES',
-    'NL',
-    'BE',
-    'AT',
-    'CH',
-    'GB',
-    'IE',
-    'PT',
-    'SE',
-    'NO',
-    'DK',
-    'FI',
-    'PL',
-    'CZ',
-    'SK',
-    'HU',
-    'BG',
-    'HR',
-    'SI',
-    'EE',
-    'LV',
-    'LT',
-    'MT',
-    'CY',
-    'LU',
-    'GR'
-  %}
-    {% assign free_shipping_threshold = block.settings.europe_threshold %}
-  {% else %}
-    {% assign free_shipping_threshold = block.settings.world_threshold %}
-{% endcase %}
-
-{% comment %}
-  Format the threshold for display in translations
-{% endcomment %}
-{% assign threshold_formatted = free_shipping_threshold | times: 100 | money %}
-
 {% style %}
   .ai-cart-progress-{{ ai_gen_id }} {
     background-color: {{ block.settings.background_color }};
@@ -61,175 +7,57 @@
     border-radius: {{ block.settings.border_radius }}px;
   }
 
-  .ai-cart-progress__header-{{ ai_gen_id }} {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-  }
-
-  .ai-cart-progress__title-{{ ai_gen_id }} {
+  .ai-cart-progress-{{ ai_gen_id }} .fs-title {
     color: {{ block.settings.text_color }};
     font-size: {{ block.settings.title_size }}px;
-    font-weight: 600;
-    margin: 0;
   }
 
-  .ai-cart-progress__amount-{{ ai_gen_id }} {
+  .ai-cart-progress-{{ ai_gen_id }} .fs-amount {
     color: {{ block.settings.text_color }};
     font-size: {{ block.settings.amount_size }}px;
     font-weight: 500;
   }
 
-  .ai-cart-progress__bar-container-{{ ai_gen_id }} {
-    width: 100%;
+  .ai-cart-progress-{{ ai_gen_id }} .fs-progress-bar {
     height: {{ block.settings.bar_height }}px;
     background-color: {{ block.settings.bar_background_color }};
     border-radius: {{ block.settings.bar_border_radius }}px;
-    overflow: hidden;
-    position: relative;
+
   }
 
-  .ai-cart-progress__bar-fill-{{ ai_gen_id }} {
-    display: flex !important;
-    height: 100%;
+  .ai-cart-progress-{{ ai_gen_id }} .fs-progress-fill {
     background: {{ block.settings.bar_fill_color }};
     border-radius: {{ block.settings.bar_border_radius }}px;
-    transition: width 0.5s ease;
-    position: relative;
-    overflow: hidden;
-    width: 0;
   }
 
-  .ai-cart-progress__bar-fill-{{ ai_gen_id }}.loading {
-    animation: ai-cart-progress-load-{{ ai_gen_id }} 1s ease-out forwards;
-  }
-
-  @keyframes ai-cart-progress-load-{{ ai_gen_id }} {
-    0% { width: 0; }
-    100% { width: var(--target-width, 0%); }
-  }
-
-  .ai-cart-progress__bar-fill-{{ ai_gen_id }}::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    animation: ai-cart-progress-shine-{{ ai_gen_id }} 2s infinite;
-  }
-
-  @keyframes ai-cart-progress-shine-{{ ai_gen_id }} {
-    0% { left: -100%; }
-    100% { left: 100%; }
-  }
-
-  .ai-cart-progress__message-{{ ai_gen_id }} {
-    margin-top: 12px;
-    text-align: center;
+  .ai-cart-progress-{{ ai_gen_id }} .fs-message {
     font-size: {{ block.settings.message_size }}px;
     color: {{ block.settings.text_color }};
   }
 
-  .ai-cart-progress__success-{{ ai_gen_id }} {
-    color: {{ block.settings.success_color }};
-    font-weight: 600;
-  }
-
-  .ai-cart-progress__remaining-{{ ai_gen_id }} {
-    color: {{ block.settings.accent_color }};
-    font-weight: 600;
-  }
-
-  /* Empty cart message styling - simple centered text */
-  .ai-cart-progress__empty-message-{{ ai_gen_id }} {
+  .ai-cart-progress-{{ ai_gen_id }} .fs-empty-message {
     text-align: center;
     font-size: {{ block.settings.message_size }}px;
     color: {{ block.settings.text_color }};
-    opacity: 1;
-    transition: opacity 0.3s ease-in-out;
-  }
-
-  .ai-cart-progress__empty-message-{{ ai_gen_id }}.fade-out {
-    opacity: 0;
-  }
-
-  .ai-cart-progress__empty-text-{{ ai_gen_id }} {
     font-weight: 500;
     line-height: 1.4;
   }
 
-  /* Progress content animations */
-  .ai-cart-progress__content-{{ ai_gen_id }} {
-    opacity: 1;
-    transition: opacity 0.3s ease-in-out;
-  }
-
-  .ai-cart-progress__content-{{ ai_gen_id }}.fade-in {
-    opacity: 1;
-  }
-
-  .ai-cart-progress__content-{{ ai_gen_id }}.fade-out {
-    opacity: 0;
-  }
-
   @media screen and (max-width: 749px) {
-    .ai-cart-progress__header-{{ ai_gen_id }} {
+    .ai-cart-progress-{{ ai_gen_id }} .fs-header {
       flex-direction: column;
-      gap: 8px;text-align: center;
+      gap: 8px;
+      text-align: center;
     }
   }
 {% endstyle %}
 
-<div
-  class="ai-cart-progress-{{ ai_gen_id }} lg-cart-progress fs-progress"
-  data-free-shipping-progress
-  data-threshold-cents="{{ free_shipping_threshold | times: 100 }}"
-  data-currency-code="{{ cart.currency.iso_code | default: shop.currency }}"
-  data-locale-message-progress="{{ 'announcement.free_shipping.progress' | t: remaining: '__REMAINING__' }}"
-  data-locale-message-empty="{{ 'announcement.free_shipping.empty' | t }}"
-  data-locale-message-reached="{{ 'announcement.free_shipping.reached' | t }}"
-  data-settings-message-progress="{{ block.settings.message_progress | escape }}"
-  data-settings-message-empty="{{ block.settings.empty_cart_message | escape }}"
-  data-settings-message-reached="{{ block.settings.success_message | escape }}"
-  {{ block.shopify_attributes }}
->
-  <!-- Progress Bar Content -->
-  <div class="ai-cart-progress__content-{{ ai_gen_id }}">
-    <div class="ai-cart-progress__header-{{ ai_gen_id }}">
-      <h3 class="ai-cart-progress__title-{{ ai_gen_id }}">{{ 'general.free_shipping.title' | t }}</h3>
-      <div class="ai-cart-progress__amount-{{ ai_gen_id }}">
-        <span class="ai-cart-progress__current-{{ ai_gen_id }}">{{ cart.total_price | money }}</span>
-        <span> / </span>
-        <span class="ai-cart-progress__target-{{ ai_gen_id }}">{{ free_shipping_threshold | times: 100 | money }}</span>
-      </div>
-    </div>
-
-    <div
-      class="ai-cart-progress__bar-container-{{ ai_gen_id }} progress"
-      aria-valuemin="0"
-      aria-valuemax="100"
-      aria-valuenow="0"
-    >
-      <div
-        class="ai-cart-progress__bar-fill-{{ ai_gen_id }} progress__fill"
-        style="width: 0%;"
-      ></div>
-    </div>
-
-    <div class="ai-cart-progress__message-{{ ai_gen_id }}">
-      <span class="ai-cart-progress__text-{{ ai_gen_id }}"></span>
-    </div>
-  </div>
-
-  <!-- Empty Cart Message -->
-  <div class="ai-cart-progress__empty-message-{{ ai_gen_id }}" style="display: none;">
-    <span class="ai-cart-progress__empty-text-{{ ai_gen_id }}">
-      {{- block.settings.empty_cart_message | replace: '__THRESHOLD__', free_shipping_threshold | times: 100 | money -}}
-    </span>
-  </div>
+<div class="ai-cart-progress-{{ ai_gen_id }} lg-cart-progress">
+  {% render 'free-shipping-progress',
+    threshold_block: block,
+    container_class: 'fs-progress',
+    custom_message_empty: block.settings.empty_cart_message
+  %}
 </div>
 
 {% schema %}
@@ -240,12 +68,7 @@
       "type": "header",
       "content": "Progress Settings"
     },
-    {
-      "type": "text",
-      "id": "title",
-      "label": "Title",
-      "default": "Free Shipping Progress"
-    },
+
     {
       "type": "header",
       "content": "Free Shipping Thresholds"

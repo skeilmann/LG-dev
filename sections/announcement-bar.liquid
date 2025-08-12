@@ -51,28 +51,13 @@
           {%- endif -%}
         {%- endif -%}
 
-        <div
-          class="announcement-free-shipping fs-progress"
-          data-free-shipping-progress
-          data-threshold-cents="{{ settings.free_shipping_threshold | default: 0 | times: 100 }}"
-          data-currency-code="{{ cart.currency.iso_code | default: shop.currency }}"
-          data-locale-message-progress="{{ 'announcement.free_shipping.progress' | t: remaining: '__REMAINING__' }}"
-          data-locale-message-empty="{{ 'announcement.free_shipping.empty' | t }}"
-          data-locale-message-reached="{{ 'announcement.free_shipping.reached' | t }}"
-          data-settings-message-progress="{{ section.settings.message_progress | escape }}"
-          data-settings-message-empty="{{ section.settings.message_empty | escape }}"
-          data-settings-message-reached="{{ section.settings.message_reached | escape }}"
-        >
-          <div class="fs-empty">
-            <p class="message h5" aria-live="polite"></p>
-          </div>
-          <div class="fs-content">
-            <div class="progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-              <div class="progress__fill" style="width:0%"></div>
-            </div>
-            <p class="message h5" aria-live="polite"></p>
-          </div>
-        </div>
+        {% render 'free-shipping-progress',
+          container_class: 'announcement-free-shipping fs-progress',
+          show_header: false,
+          custom_message_progress: section.settings.message_progress,
+          custom_message_empty: section.settings.message_empty,
+          custom_message_reached: section.settings.message_reached
+        %}
       </div>
     {%- elsif section.blocks.size > 1 -%}
       <slideshow-component
@@ -130,28 +115,13 @@
                         {{- 'icon-arrow.svg' | inline_asset_content -}}
                       {%- endif -%}
                     </p>
-                    <div
-                      class="announcement-free-shipping fs-progress"
-                      data-free-shipping-progress
-                      data-threshold-cents="{{ settings.free_shipping_threshold | default: 0 | times: 100 }}"
-                      data-currency-code="{{ cart.currency.iso_code | default: shop.currency }}"
-                      data-locale-message-progress="{{ 'announcement.free_shipping.progress' | t: remaining: '__REMAINING__' }}"
-                      data-locale-message-empty="{{ 'announcement.free_shipping.empty' | t }}"
-                      data-locale-message-reached="{{ 'announcement.free_shipping.reached' | t }}"
-                      data-settings-message-progress="{{ section.settings.message_progress | escape }}"
-                      data-settings-message-empty="{{ section.settings.message_empty | escape }}"
-                      data-settings-message-reached="{{ section.settings.message_reached | escape }}"
-                    >
-                      <div class="fs-empty">
-                        <p class="message h5" aria-live="polite"></p>
-                      </div>
-                      <div class="fs-content">
-                        <div class="progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-                          <div class="progress__fill" style="width:0%"></div>
-                        </div>
-                        <p class="message h5" aria-live="polite"></p>
-                      </div>
-                    </div>
+                    {% render 'free-shipping-progress',
+                      container_class: 'announcement-free-shipping fs-progress',
+                      show_header: false,
+                      custom_message_progress: section.settings.message_progress,
+                      custom_message_empty: section.settings.message_empty,
+                      custom_message_reached: section.settings.message_reached
+                    %}
                     {%- if block.settings.link != blank -%}
                       </a>
                     {%- endif -%}

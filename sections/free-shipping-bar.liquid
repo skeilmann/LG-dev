@@ -1,11 +1,5 @@
 {% comment %}
-  Get current country and set appropriate threshold from LG-progress-bar block
-{% endcomment %}
-{% assign current_country = localization.country.iso_code %}
-
-{% comment %}
   Find the LG-progress-bar block to get thresholds
-  We'll look for it in the current section's blocks or use fallback values
 {% endcomment %}
 {% assign lg_block = null %}
 {% for block in section.blocks %}
@@ -15,133 +9,12 @@
   {% endif %}
 {% endfor %}
 
-{% comment %}
-  Set different thresholds based on country/region groups using block settings
-{% endcomment %}
-{% if lg_block %}
-  {% case current_country %}
-    {% when 'MD' %}
-      {% assign free_shipping_goal = lg_block.settings.moldova_threshold %}
-    {% when 'RO' %}
-      {% assign free_shipping_goal = lg_block.settings.romania_threshold %}
-    {% when 'DE',
-      'FR',
-      'IT',
-      'ES',
-      'NL',
-      'BE',
-      'AT',
-      'CH',
-      'GB',
-      'IE',
-      'PT',
-      'SE',
-      'NO',
-      'DK',
-      'FI',
-      'PL',
-      'CZ',
-      'SK',
-      'HU',
-      'BG',
-      'HR',
-      'SI',
-      'EE',
-      'LV',
-      'LT',
-      'MT',
-      'CY',
-      'LU',
-      'GR'
-    %}
-      {% assign free_shipping_goal = lg_block.settings.europe_threshold %}
-    {% else %}
-      {% assign free_shipping_goal = lg_block.settings.world_threshold %}
-  {% endcase %}
-{% else %}
-  {% comment %}
-    Fallback values if block is not found
-  {% endcomment %}
-  {% case current_country %}
-    {% when 'MD' %}
-      {% assign free_shipping_goal = 500 %}
-    {% when 'RO' %}
-      {% assign free_shipping_goal = 1000 %}
-    {% when 'DE',
-      'FR',
-      'IT',
-      'ES',
-      'NL',
-      'BE',
-      'AT',
-      'CH',
-      'GB',
-      'IE',
-      'PT',
-      'SE',
-      'NO',
-      'DK',
-      'FI',
-      'PL',
-      'CZ',
-      'SK',
-      'HU',
-      'BG',
-      'HR',
-      'SI',
-      'EE',
-      'LV',
-      'LT',
-      'MT',
-      'CY',
-      'LU',
-      'GR'
-    %}
-      {% assign free_shipping_goal = 3000 %}
-    {% else %}
-      {% assign free_shipping_goal = 5000 %}
-  {% endcase %}
-{% endif %}
-
-{% assign free_shipping_goal_cents = free_shipping_goal | times: 100 %}
-{% comment %}
-  Note: Shopify returns prices in cents. So we multiply by 100 to compare correctly.
-{% endcomment %}
-
 <div class="page-width">
-  <div
-    id="free-shipping-bar-{{ section.id }}"
-    class="free-shipping-bar"
-    data-free-shipping-progress
-    data-threshold-cents="{{ free_shipping_goal_cents }}"
-    data-currency-code="{{ cart.currency.iso_code | default: shop.currency }}"
-    data-locale-message-progress="{{ 'announcement.free_shipping.progress' | t: remaining: '__REMAINING__' }}"
-    data-locale-message-empty="{{ 'announcement.free_shipping.empty' | t }}"
-    data-locale-message-reached="{{ 'announcement.free_shipping.reached' | t }}"
-  >
-    <div class="free-shipping-header">
-      <h3 class="free-shipping-title">{{ 'general.free_shipping.title' | t }}</h3>
-      <div class="free-shipping-amount">
-        <span class="free-shipping-current">{{ cart.total_price | money }}</span>
-        <span> / </span>
-        <span class="free-shipping-target">{{ free_shipping_goal | times: 100 | money }}</span>
-      </div>
-    </div>
-
-    <div
-      class="progress-bar-container progress"
-      style="background-color: {{ section.settings.bar_background }};"
-      aria-valuemin="0"
-      aria-valuemax="100"
-      aria-valuenow="0"
-    >
-      <div
-        class="progress-bar-fill progress__fill"
-        style="background-color: {{ section.settings.bar_color }}; width: 0%;"
-      ></div>
-    </div>
-
-    <div class="free-shipping-message"><span class="free-shipping-text message" aria-live="polite"></span></div>
+  <div id="free-shipping-bar-{{ section.id }}" class="free-shipping-bar">
+    {% render 'free-shipping-progress',
+      threshold_block: lg_block,
+      container_class: 'fs-progress free-shipping-progress'
+    %}
   </div>
 </div>
 
@@ -180,53 +53,7 @@
     {
       "type": "LG-progress-bar",
       "name": "LG Progress Bar",
-      "limit": 1,
-      "settings": [
-        {
-          "type": "header",
-          "content": "Free Shipping Thresholds"
-        },
-        {
-          "type": "range",
-          "id": "moldova_threshold",
-          "min": 100,
-          "max": 5000,
-          "step": 100,
-          "unit": "$",
-          "label": "Moldova threshold",
-          "default": 500
-        },
-        {
-          "type": "range",
-          "id": "romania_threshold",
-          "min": 100,
-          "max": 5000,
-          "step": 100,
-          "unit": "$",
-          "label": "Romania threshold",
-          "default": 1000
-        },
-        {
-          "type": "range",
-          "id": "europe_threshold",
-          "min": 100,
-          "max": 5000,
-          "step": 100,
-          "unit": "$",
-          "label": "Europe threshold",
-          "default": 3000
-        },
-        {
-          "type": "range",
-          "id": "world_threshold",
-          "min": 100,
-          "max": 5000,
-          "step": 100,
-          "unit": "$",
-          "label": "World threshold",
-          "default": 5000
-        }
-      ]
+      "limit": 1
     }
   ],
   "presets": [

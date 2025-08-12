@@ -1,0 +1,137 @@
+{% comment %}
+  Central Free Shipping Progress Bar Snippet
+
+  Parameters:
+  - threshold_block: LG-progress-bar block with threshold settings
+  - container_class: CSS class for the container (optional)
+  - show_header: Show title and amount header (default: true)
+  - show_empty_state: Show empty cart message (default: true)
+  - style_prefix: CSS class prefix for styling (optional)
+  - custom_messages: Object with custom message overrides (optional)
+{% endcomment %}
+
+{% liquid
+  # Get current country for threshold calculation
+  assign current_country = localization.country.iso_code
+
+  # Find LG-progress-bar block if not provided
+  unless threshold_block
+    for block in section.blocks
+      if block.type == 'LG-progress-bar'
+        assign threshold_block = block
+        break
+      endif
+    endfor
+  endunless
+
+  # Calculate threshold based on country
+  if threshold_block
+    case current_country
+      when 'MD'
+        assign free_shipping_threshold = threshold_block.settings.moldova_threshold
+      when 'RO'
+        assign free_shipping_threshold = threshold_block.settings.romania_threshold
+      when 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'AT', 'CH', 'GB', 'IE', 'PT', 'SE', 'NO', 'DK', 'FI', 'PL', 'CZ', 'SK', 'HU', 'BG', 'HR', 'SI', 'EE', 'LV', 'LT', 'MT', 'CY', 'LU', 'GR'
+        assign free_shipping_threshold = threshold_block.settings.europe_threshold
+      else
+        assign free_shipping_threshold = threshold_block.settings.world_threshold
+    endcase
+  else
+    # Fallback thresholds if no block found
+    case current_country
+      when 'MD'
+        assign free_shipping_threshold = 500
+      when 'RO'
+        assign free_shipping_threshold = 1000
+      when 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'AT', 'CH', 'GB', 'IE', 'PT', 'SE', 'NO', 'DK', 'FI', 'PL', 'CZ', 'SK', 'HU', 'BG', 'HR', 'SI', 'EE', 'LV', 'LT', 'MT', 'CY', 'LU', 'GR'
+        assign free_shipping_threshold = 3000
+      else
+        assign free_shipping_threshold = 5000
+    endcase
+  endif
+
+  # Set defaults
+  assign show_header = show_header | default: true
+  assign show_empty_state = show_empty_state | default: true
+  assign container_class = container_class | default: 'fs-progress'
+  assign style_prefix = style_prefix | default: ''
+
+  # Prepare threshold in cents
+  assign threshold_cents = free_shipping_threshold | times: 100
+  assign threshold_formatted = threshold_cents | money
+
+  # Prepare individual translation strings
+  assign progress_msg = 'announcement.free_shipping.progress' | t: remaining: '__REMAINING__'
+  assign empty_msg = 'announcement.free_shipping.empty' | t
+  assign reached_msg = 'announcement.free_shipping.reached' | t
+  assign qualify_msg = 'general.free_shipping.you_qualify' | t
+
+  # Custom messages can be passed as individual parameters
+  assign custom_progress = custom_message_progress | default: ''
+  assign custom_empty = custom_message_empty | default: ''
+  assign custom_reached = custom_message_reached | default: ''
+%}
+
+<div
+  class="{{ container_class }} {{ style_prefix }}free-shipping-progress"
+  data-free-shipping-progress
+  data-threshold-cents="{{ threshold_cents }}"
+  data-currency-code="{{ cart.currency.iso_code | default: shop.currency }}"
+  data-locale-message-progress="{{ progress_msg | escape }}"
+  data-locale-message-empty="{{ empty_msg | escape }}"
+  data-locale-message-reached="{{ reached_msg | escape }}"
+  data-locale-message-qualify="{{ qualify_msg | escape }}"
+  {% if custom_progress %}
+    data-custom-message-progress="{{ custom_progress }}"
+  {% endif %}
+  {% if custom_empty %}
+    data-custom-message-empty="{{ custom_empty }}"
+  {% endif %}
+  {% if custom_reached %}
+    data-custom-message-reached="{{ custom_reached }}"
+  {% endif %}
+  {% if threshold_block %}
+    {{- threshold_block.shopify_attributes -}}
+  {% endif %}
+>
+  <!-- Default visible state: Empty cart message (prevents :empty CSS rule) -->
+  {% if show_empty_state %}
+    <div class="fs-empty {{ style_prefix }}empty-state">
+      <p class="fs-empty-message {{ style_prefix }}empty-message" aria-live="polite">
+        {% if custom_empty != blank %}
+          {{ custom_empty | replace: '__THRESHOLD__', threshold_formatted }}
+        {% else %}
+          {{ empty_msg | replace: '__THRESHOLD__', threshold_formatted }}
+        {% endif %}
+      </p>
+    </div>
+  {% endif %}
+
+  <div class="fs-content {{ style_prefix }}progress-content" style="display: none;">
+    {% if show_header %}
+      <div class="fs-header">
+        <h3 class="fs-title {{ style_prefix }}title">{{ 'general.free_shipping.title' | t }}</h3>
+        <div class="fs-amount {{ style_prefix }}amount">
+          <span class="fs-current {{ style_prefix }}current">{{ cart.total_price | money }}</span>
+          <span class="fs-separator {{ style_prefix }}separator"> / </span>
+          <span class="fs-target {{ style_prefix }}target">{{ threshold_formatted }}</span>
+        </div>
+      </div>
+    {% endif %}
+
+    <div
+      class="fs-progress-bar {{ style_prefix }}progress-bar"
+      role="progressbar"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="0"
+    >
+      <div class="fs-progress-fill {{ style_prefix }}progress-fill" style="width: 0%;">
+        <span class="progress-bar-placeholder" aria-hidden="true">&nbsp;</span>
+      </div>
+    </div>
+  </div>
+  <div class="fs-success-container {{ style_prefix }}success-container" style="display: none;">
+    <p class="fs-success-message {{ style_prefix }}success-message" aria-live="polite" role="status"></p>
+  </div>
+</div>

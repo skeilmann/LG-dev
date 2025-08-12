@@ -1,6 +1,33 @@
+{% comment %}
+  This is a placeholder block for LG customizations.
+  Use this block to add custom content or functionality.
+{% endcomment %}
+
+<div class="lg-custom-block" {{ block.shopify_attributes }}>
+  {% if block.settings.content != blank %}
+    {{ block.settings.content }}
+  {% endif %}
+</div>
+
 {% schema %}
-  {
-    "name": "Block name",
-    "settings": []
-  }
+{
+  "name": "LG Custom Block",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Custom Content"
+    },
+    {
+      "type": "html",
+      "id": "content",
+      "label": "Custom HTML Content",
+      "info": "Add your custom HTML content here"
+    }
+  ],
+  "presets": [
+    {
+      "name": "LG Custom Block"
+    }
+  ]
+}
 {% endschema %}

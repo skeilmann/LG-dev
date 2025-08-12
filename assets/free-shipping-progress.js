@@ -118,28 +118,30 @@
       this.thresholdCents = parseInt(root.dataset.thresholdCents || root.dataset.threshold || '0', 10) || 0;
       this.currency = root.dataset.currencyCode || (GLOBAL.Shopify && GLOBAL.Shopify.currency && GLOBAL.Shopify.currency.active) || (GLOBAL.Shopify && GLOBAL.Shopify.currency) || 'USD';
 
-      // Merchant overrides
-      this.msgProgressOverride = (root.dataset.settingsMessageProgress || '').trim();
-      this.msgEmptyOverride = (root.dataset.settingsMessageEmpty || '').trim();
-      this.msgReachedOverride = (root.dataset.settingsMessageReached || '').trim();
 
-      // Pre-rendered locale strings coming from Liquid (preferred fallback)
+
+      // Pre-rendered locale strings coming from Liquid
       this.msgProgressLocale = (root.dataset.localeMessageProgress || '').trim();
       this.msgEmptyLocale = (root.dataset.localeMessageEmpty || '').trim();
       this.msgReachedLocale = (root.dataset.localeMessageReached || '').trim();
+      this.msgQualifyLocale = (root.dataset.localeMessageQualify || '').trim();
+      
+      // Custom message overrides
+      this.msgProgressOverride = (root.dataset.customMessageProgress || '').trim();
+      this.msgEmptyOverride = (root.dataset.customMessageEmpty || '').trim();
+      this.msgReachedOverride = (root.dataset.customMessageReached || '').trim();
 
 
-      // Elements - support both new (.fs-content/.fs-empty) and legacy (ai-cart-progress__*) naming
-      this.messageEl = root.querySelector('.message, .free-shipping-message .free-shipping-text, .ai-cart-progress__message span, .ai-cart-progress__text');
-      this.contentEl = root.querySelector('.fs-content, [class*="ai-cart-progress__content"]') || root; // progress area
-      this.emptyEl = root.querySelector('.fs-empty, [class*="ai-cart-progress__empty-message"]');
-      this.emptyMessageEl = root.querySelector('.fs-empty .message, .fs-empty p, [class*="ai-cart-progress__empty-text"]');
-      this.progressFill =
-        root.querySelector('.progress__fill, .progress-bar-fill, [class*="ai-cart-progress__bar-fill"]');
-      this.progressContainer =
-        root.querySelector('.progress, .progress-bar-container, [class*="ai-cart-progress__bar-container"]');
-      this.currentAmountEl = root.querySelector('.js-fs-current-amount, .free-shipping-current, [class*="ai-cart-progress__current"]');
-      this.targetAmountEl = root.querySelector('.js-fs-target-amount, .free-shipping-target, [class*="ai-cart-progress__target"]');
+      // Elements - using standardized naming only
+      this.contentEl = root.querySelector('.fs-content') || root;
+      this.emptyEl = root.querySelector('.fs-empty');
+      this.emptyMessageEl = root.querySelector('.fs-empty-message');
+      this.successEl = root.querySelector('.fs-success-container');
+      this.successMessageEl = root.querySelector('.fs-success-message');
+      this.progressFill = root.querySelector('.fs-progress-fill');
+      this.progressContainer = root.querySelector('.fs-progress-bar');
+      this.currentAmountEl = root.querySelector('.fs-current');
+      this.targetAmountEl = root.querySelector('.fs-target');
 
       if (this.targetAmountEl && this.thresholdCents) {
         this.targetAmountEl.textContent = formatMoneyCents(this.thresholdCents, this.currency);
@@ -162,6 +164,7 @@
         empty: this.msgEmptyLocale || this.msgEmptyOverride || '',
         progress: this.msgProgressLocale || this.msgProgressOverride || '',
         reached: this.msgReachedLocale || this.msgReachedOverride || '',
+        qualify: this.msgQualifyLocale || '',
       };
     }
 
@@ -185,10 +188,13 @@
       const progressPct = threshold > 0 ? Math.round((total / threshold) * 100) : 0;
       const clamped = clamp(progressPct, 0, 100);
       const moneyRemaining = formatMoneyCents(remainingCents, this.currency);
+      const isThresholdMet = total >= threshold && threshold > 0;
 
       if (this.currentAmountEl) this.currentAmountEl.textContent = formatMoneyCents(total, this.currency);
 
-      if (this.progressFill) this.progressFill.style.width = `${clamped}%`;
+      // Set progress bar to 100% when threshold is met, otherwise use calculated percentage
+      const displayProgress = isThresholdMet ? 100 : clamped;
+      if (this.progressFill) this.progressFill.style.width = `${displayProgress}%`;
       if (this.progressContainer) {
         this.progressContainer.setAttribute('role', 'progressbar');
         this.progressContainer.setAttribute('aria-valuemin', '0');
@@ -196,45 +202,73 @@
         this.progressContainer.setAttribute('aria-valuenow', String(clamped));
       }
 
-      const { empty, progress, reached } = this.getMessageTemplates();
-      let message = '';
+      const { empty, progress, reached, qualify } = this.getMessageTemplates();
       
-      // If no threshold is set, don't show free shipping messages
-      if (threshold <= 0) {
-        message = '';
-      } else if (!cart || cart.item_count === 0 || total === 0) {
-        message = tokenize(empty, '', formatMoneyCents(threshold, this.currency));
-      } else if (total >= threshold) {
-        message = reached;
-      } else {
-        message = tokenize(progress, moneyRemaining);
+      // Update empty cart message
+      if (this.emptyMessageEl) {
+        this.emptyMessageEl.textContent = tokenize(empty, '', formatMoneyCents(threshold, this.currency));
       }
 
-      // Update both message elements
-      if (this.messageEl) this.messageEl.textContent = message;
-      if (this.emptyMessageEl) this.emptyMessageEl.textContent = message;
+      // Update success message content
+      if (this.successMessageEl) {
+        this.successMessageEl.textContent = qualify || reached;
+      }
 
-      // Toggle empty/progress blocks with fades
-      if (this.emptyEl && this.contentEl) {
-        // If no threshold, hide both blocks
-        if (threshold <= 0) {
-          this.contentEl.style.display = 'none';
-          this.emptyEl.style.display = 'none';
-          return;
+      // Toggle between empty/progress/success containers based on cart state
+      this.toggleContainerVisibility(cart, total, threshold, isThresholdMet);
+    }
+
+    toggleContainerVisibility(cart, total, threshold, isThresholdMet) {
+      if (!this.emptyEl || !this.contentEl) return;
+
+      // If no threshold is set, show empty message only
+      if (threshold <= 0) {
+        this.showContainer('empty');
+        return;
+      }
+
+      // Determine which container should be visible
+      const isEmpty = !cart || cart.item_count === 0 || total === 0;
+      
+      if (isEmpty) {
+        this.showContainer('empty');
+      } else if (isThresholdMet) {
+        this.showContainer('success');
+      } else {
+        this.showContainer('progress');
+      }
+    }
+
+    showContainer(containerType) {
+      const containers = {
+        empty: this.emptyEl,
+        progress: this.contentEl,
+        success: this.successEl
+      };
+
+      // Hide all containers first
+      Object.entries(containers).forEach(([type, element]) => {
+        if (element) {
+          if (type !== containerType) {
+            element.classList.add('is-hidden');
+            element.classList.remove('fs-visible');
+            // Use setTimeout to allow animation before hiding
+            setTimeout(() => {
+              if (element.classList.contains('is-hidden')) {
+                element.style.display = 'none';
+              }
+            }, 300);
+          }
         }
-        
-        const showEmpty = (!cart || cart.item_count === 0 || total === 0);
-        
-        if (showEmpty) {
-          this.contentEl.classList.add('is-hidden');
-          this.emptyEl.classList.remove('is-hidden');
-          this.contentEl.style.display = 'none';
-          this.emptyEl.style.display = 'block';
-        } else {
-          this.emptyEl.classList.add('is-hidden');
-          this.contentEl.classList.remove('is-hidden');
-          this.emptyEl.style.display = 'none';
-          this.contentEl.style.display = '';
+      });
+
+      // Show the target container
+      const targetContainer = containers[containerType];
+      if (targetContainer) {
+        targetContainer.style.display = 'block';
+        targetContainer.classList.remove('is-hidden');
+        if (containerType === 'success') {
+          targetContainer.classList.add('fs-visible');
         }
       }
     }
