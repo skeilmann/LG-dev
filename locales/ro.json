@@ -74,6 +74,13 @@
       "available_message": "Transport gratuit disponibil pentru comenzi peste __AMOUNT__!"
     }
   },
+  "announcement": {
+    "free_shipping": {
+      "empty": "Transport gratuit de la {{ threshold }}",
+      "progress": "Cheltuiți {{ remaining_amount }} pentru transport gratuit",
+      "reached": "Felicitări! Aveți transport gratuit!"
+    }
+  },
   "newsletter": {
     "label": "E-mail",
     "success": "Vă mulțumim că v-ați abonat",

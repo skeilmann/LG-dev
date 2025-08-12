@@ -76,7 +76,7 @@
   },
   "announcement": {
     "free_shipping": {
-      "empty": "Your cart is empty",
+      "empty": "Free shipping available from {{ threshold }}!",
       "progress": "Spend {{ remaining }} to get free shipping",
       "reached": "You have free shipping!"
     }

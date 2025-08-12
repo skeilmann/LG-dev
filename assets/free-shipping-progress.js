@@ -94,7 +94,7 @@
     return Math.max(min, Math.min(val, max));
   }
 
-  function tokenize(messageTemplate, remainingFormatted) {
+  function tokenize(messageTemplate, remainingFormatted, thresholdFormatted) {
     if (!messageTemplate) return '';
     let out = messageTemplate;
     // Support {{ remaining }} and __REMAINING__ and [remaining]
@@ -103,6 +103,11 @@
     out = out.replace(/\[remaining\]/g, remainingFormatted);
     // Support legacy Dawn key pattern __AMOUNT__
     out = out.replace(/__AMOUNT__/g, remainingFormatted);
+    // Support {{ threshold }} and __THRESHOLD__ tokens for empty messages
+    if (thresholdFormatted) {
+      out = out.replace(/\{\{\s*threshold\s*\}\}/g, thresholdFormatted);
+      out = out.replace(/__THRESHOLD__/g, thresholdFormatted);
+    }
     return out;
   }
 
@@ -123,8 +128,12 @@
       this.msgEmptyLocale = (root.dataset.localeMessageEmpty || '').trim();
       this.msgReachedLocale = (root.dataset.localeMessageReached || '').trim();
 
-      // Elements
+
+      // Elements - support both new (.fs-content/.fs-empty) and legacy (ai-cart-progress__*) naming
       this.messageEl = root.querySelector('.message, .free-shipping-message .free-shipping-text, .ai-cart-progress__message span, .ai-cart-progress__text');
+      this.contentEl = root.querySelector('.fs-content, [class*="ai-cart-progress__content"]') || root; // progress area
+      this.emptyEl = root.querySelector('.fs-empty, [class*="ai-cart-progress__empty-message"]');
+      this.emptyMessageEl = root.querySelector('.fs-empty .message, .fs-empty p, [class*="ai-cart-progress__empty-text"]');
       this.progressFill =
         root.querySelector('.progress__fill, .progress-bar-fill, [class*="ai-cart-progress__bar-fill"]');
       this.progressContainer =
@@ -139,15 +148,20 @@
       this.rafId = null;
       this.lastTotal = -1;
       this.inited = true;
-      this.updateFromCart(CartStore.getLast());
+      
+      // Don't update immediately if no cart data - wait for it to load
+      const initialCart = CartStore.getLast();
+      if (initialCart) {
+        this.updateFromCart(initialCart);
+      }
     }
 
     getMessageTemplates() {
-      // Preference order: setting override -> locale -> empty string
+      // Preference order: locale (with proper translation) -> setting override -> empty string
       return {
-        empty: this.msgEmptyOverride || this.msgEmptyLocale || '',
-        progress: this.msgProgressOverride || this.msgProgressLocale || '',
-        reached: this.msgReachedOverride || this.msgReachedLocale || '',
+        empty: this.msgEmptyLocale || this.msgEmptyOverride || '',
+        progress: this.msgProgressLocale || this.msgProgressOverride || '',
+        reached: this.msgReachedLocale || this.msgReachedOverride || '',
       };
     }
 
@@ -184,15 +198,45 @@
 
       const { empty, progress, reached } = this.getMessageTemplates();
       let message = '';
-      if (!cart || cart.item_count === 0 || total === 0) {
-        message = empty;
-      } else if (threshold > 0 && total >= threshold) {
+      
+      // If no threshold is set, don't show free shipping messages
+      if (threshold <= 0) {
+        message = '';
+      } else if (!cart || cart.item_count === 0 || total === 0) {
+        message = tokenize(empty, '', formatMoneyCents(threshold, this.currency));
+      } else if (total >= threshold) {
         message = reached;
       } else {
         message = tokenize(progress, moneyRemaining);
       }
 
+      // Update both message elements
       if (this.messageEl) this.messageEl.textContent = message;
+      if (this.emptyMessageEl) this.emptyMessageEl.textContent = message;
+
+      // Toggle empty/progress blocks with fades
+      if (this.emptyEl && this.contentEl) {
+        // If no threshold, hide both blocks
+        if (threshold <= 0) {
+          this.contentEl.style.display = 'none';
+          this.emptyEl.style.display = 'none';
+          return;
+        }
+        
+        const showEmpty = (!cart || cart.item_count === 0 || total === 0);
+        
+        if (showEmpty) {
+          this.contentEl.classList.add('is-hidden');
+          this.emptyEl.classList.remove('is-hidden');
+          this.contentEl.style.display = 'none';
+          this.emptyEl.style.display = 'block';
+        } else {
+          this.emptyEl.classList.add('is-hidden');
+          this.contentEl.classList.remove('is-hidden');
+          this.emptyEl.style.display = 'none';
+          this.contentEl.style.display = '';
+        }
+      }
     }
   }
 
@@ -266,5 +310,3 @@
     attachCartListeners();
   }
 })();
-
-

@@ -74,6 +74,13 @@
       "available_message": "Бесплатная доставка доступна для заказов свыше __AMOUNT__!"
     }
   },
+  "announcement": {
+    "free_shipping": {
+      "empty": "Бесплатная доставка от {{ threshold }}",
+      "progress": "Потратьте {{ remaining_amount }} для бесплатной доставки",
+      "reached": "Поздравляем! У вас бесплатная доставка!"
+    }
+  },
   "newsletter": {
     "label": "Адрес электронной почты",
     "success": "Спасибо, что подписались!",
