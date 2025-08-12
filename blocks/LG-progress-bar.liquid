@@ -54,7 +54,7 @@
     background-color: {{ block.settings.background_color }};
     padding: {{ block.settings.padding }}px;
     border-radius: {{ block.settings.border_radius }}px;
-    margin: 0;
+    margin: 20px 0;
     display: flex;
     flex-direction: column;
   }
@@ -230,8 +230,10 @@
     class CartProgressBar{{ ai_gen_id }} extends HTMLElement {
       constructor() {
         super();
-        this.threshold = parseFloat(this.dataset.threshold) * 100;
-        this.currencySymbol = this.dataset.currencySymbol;
+        // Read threshold in cents from data attribute written by Liquid
+        this.threshold = parseInt(this.dataset.thresholdCents || this.dataset.threshold || '0', 10) || 0;
+        // Currency code provided by Liquid; fallback to Shopify global
+        this.currencyCode = this.dataset.currencyCode || (window.Shopify && (Shopify.currency && (Shopify.currency.active || Shopify.currency))) || 'USD';
         this.currentCountry = this.dataset.currentCountry;
         this.progressBar = this.querySelector('.ai-cart-progress__bar-fill-{{ ai_gen_id }}');
         this.currentAmount = this.querySelector('.ai-cart-progress__current-{{ ai_gen_id }}');
@@ -242,15 +244,16 @@
         this.lastCartTotal = 0;
         this.isUpdating = false;
 
-        // Parse translations
-        const translations = this.dataset.translations.split(',');
+        // Parse translations if provided; otherwise use safe defaults
+        const rawTranslations = this.dataset.translations || '';
+        const translations = rawTranslations ? rawTranslations.split(',') : [];
         this.translations = {
-          title: translations[0],
-          addMore: translations[1],
-          moreForFreeShipping: translations[2],
-          youQualify: translations[3],
-          remainingAmount: translations[4],
-          availableMessage: translations[5]
+          title: translations[0] || '',
+          addMore: translations[1] || '',
+          moreForFreeShipping: translations[2] || '',
+          youQualify: translations[3] || 'You qualify for free shipping!',
+          remainingAmount: translations[4] || 'Add __AMOUNT__ more for free shipping',
+          availableMessage: translations[5] || ''
         };
         
         // Store threshold values for event emission
@@ -542,7 +545,7 @@
         // Show empty message with fade in animation
         if (this.emptyMessage) {
           this.emptyMessage.style.display = 'block';
-          // Use the message from block settings
+          // Build message: allow template replacement or default to "Free shipping from {threshold}"
           this.emptyText.textContent = this.getEmptyCartMessage();
         }
       }
@@ -695,12 +698,31 @@
       }
 
       formatMoney(cents) {
-        return this.currencySymbol + (cents / 100).toFixed(2);
+        try {
+          return new Intl.NumberFormat(document.documentElement.lang || 'en', {
+            style: 'currency',
+            currency: this.currencyCode || 'USD',
+            currencyDisplay: 'symbol'
+          }).format((cents || 0) / 100);
+        } catch (e) {
+          const amount = (cents || 0) / 100;
+          return amount.toFixed(2);
+        }
       }
 
       getEmptyCartMessage() {
-        // Get the empty cart message from block settings via data attribute
-        return this.dataset.emptyCartMessage || 'Your cart is empty. Add items to qualify for free shipping.';
+        // Prefer the template text already rendered in the DOM, then dataset override
+        const template = (this.emptyText && this.emptyText.textContent) || this.dataset.emptyCartMessage || '';
+        const thresholdFormatted = this.formatMoney(this.threshold);
+        if (template && template.trim().length > 0) {
+          // Support multiple placeholder syntaxes
+          return template
+            .replace(/__THRESHOLD__/g, thresholdFormatted)
+            .replace(/\{\{\s*threshold\s*\}\}/g, thresholdFormatted)
+            .replace(/\[threshold\]/g, thresholdFormatted);
+        }
+        // Fallback default
+        return `Free shipping from ${thresholdFormatted}`;
       }
     }
 
@@ -888,7 +910,8 @@
       "type": "text",
       "id": "empty_cart_message",
       "label": "Empty Cart Message",
-      "default": "Your cart is empty. Add items to qualify for free shipping."
+      "info": "You can use __THRESHOLD__ to insert the free shipping threshold amount (e.g., Free shipping from __THRESHOLD__).",
+      "default": "Free shipping from __THRESHOLD__"
     }
   ],
   "presets": [
