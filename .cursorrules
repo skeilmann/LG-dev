@@ -1,0 +1,269 @@
+# Cursor AI Assistant Rules
+
+# Comprehensive MCP Server Integration & Development Guidelines
+
+## 🎯 Core Principles
+
+- Always use translation mechanisms instead of hard-coded text literals
+- Move inline styles to CSS classes for better maintainability
+- Provide concise answers when proposing fixes
+- Maximize parallel tool usage for efficiency
+- Gather comprehensive context before making changes
+
+## 🔧 MCP Server Auto-Activation Rules
+
+### GitHub Server - Repository Operations
+
+**Auto-trigger when:**
+
+- Discussing code changes, bugs, or new features
+- Analyzing project history or collaboration patterns
+- Working with version control operations
+- Need context about recent changes or PRs
+
+**Use for:**
+
+- Fetching pull request details and issue context
+- Repository structure analysis
+- Branch management and merge conflict resolution
+- Code review insights and collaboration history
+
+### Shopify Server - E-commerce Development
+
+**Auto-trigger when:**
+
+- Working with `.liquid` files
+- Modifying Shopify theme structure
+- Discussing e-commerce functionality
+- Product or inventory management tasks
+
+**Use for:**
+
+- Liquid template development and optimization
+- Theme performance analysis
+- Store configuration and customization
+- App integration and checkout flows
+
+### Supabase Server - Database & Backend
+
+**Auto-trigger when:**
+
+- Database schema changes or migrations needed
+- Authentication and user management tasks
+- API development or Edge Functions
+- Keywords: "database", "auth", "migration", "API"
+
+**Use for:**
+
+- Database operations and schema management
+- User authentication and security policies
+- Edge Function development and deployment
+- Project and branch management
+- Real-time subscriptions and API endpoints
+
+### Firecrawl Server - Web Research & Content
+
+**Auto-trigger when:**
+
+- Need to research external websites
+- Extract content or structured data
+- Competitive analysis required
+- Keywords: "scrape", "extract", "research", "website"
+
+**Use for:**
+
+- Documentation scraping and research
+- Competitor analysis and market research
+- Content extraction and data gathering
+- Web-based research for implementation guidance
+
+### Context7 Server - Documentation & Libraries
+
+**Auto-trigger when:**
+
+- Working with external libraries or frameworks
+- Need API documentation or implementation examples
+- Adding new dependencies to the project
+- Troubleshooting third-party integrations
+
+**Use for:**
+
+- Library documentation and API references
+- Framework-specific patterns and best practices
+- Implementation examples and code snippets
+- Dependency integration guidance
+
+### Perplexity Server - AI Research & Analysis
+
+**Auto-trigger when:**
+
+- Complex technical research needed
+- Current technology trends or updates
+- Deep analysis of architectural decisions
+- Advanced problem-solving scenarios
+
+**Use for:**
+
+- Cutting-edge technology research
+- Industry trends and best practices
+- Complex debugging and optimization
+- Architecture decision support
+
+## 🚀 Smart Workflow Automation
+
+### Development Workflow
+
+1. **Code Analysis**: Check GitHub for related PRs/issues
+2. **New Dependencies**: Auto-fetch Context7 documentation
+3. **Database Changes**: Use Supabase for migrations and testing
+4. **External APIs**: Research with Perplexity + document with Firecrawl
+
+### Research Workflow
+
+1. **Technical Questions**: Start with Perplexity for current information
+2. **Implementation Details**: Use Context7 for official documentation
+3. **Examples/Tutorials**: Leverage Firecrawl for web content
+4. **Project Context**: Check GitHub for repository history
+
+### E-commerce Workflow
+
+1. **Theme Development**: Shopify server + GitHub integration
+2. **Backend Requirements**: Supabase for database/authentication
+3. **Market Research**: Firecrawl for competitor analysis
+4. **Framework Documentation**: Context7 for technical references
+
+## 📁 File-Based Triggers
+
+### Liquid Files (.liquid)
+
+- Auto-engage Shopify server
+- Check for translation key usage
+- Validate theme structure compliance
+- Optimize for performance
+
+### JavaScript/TypeScript Files
+
+- If contains Supabase imports → Use Supabase server
+- If working with APIs → Research with Context7
+- Check GitHub for related changes
+
+### CSS Files
+
+- Promote inline styles to classes
+- Check for component-specific styling patterns
+- Validate against design system
+
+### Configuration Files
+
+- Research best practices with Perplexity
+- Check documentation with Context7
+- Validate against project standards
+
+## ⚡ Performance & Efficiency Rules
+
+### Parallel Operations
+
+- Use multiple MCP servers simultaneously when tasks overlap
+- Combine GitHub + Context7 for framework updates
+- Merge Firecrawl + Perplexity for comprehensive research
+
+### Caching Strategy
+
+- Use Firecrawl's maxAge parameter for repeated scrapes
+- Cache Context7 documentation for active libraries
+- Leverage GitHub data for project context
+
+### Progressive Enhancement
+
+1. Start with most relevant MCP server
+2. Expand to additional servers if needed
+3. Combine results intelligently
+4. Provide comprehensive but concise responses
+
+## 🎨 Code Quality Standards
+
+### Translation & Localization
+
+- Always use `{{ 'key' | t }}` for user-facing text
+- Check existing translation files before adding new keys
+- Maintain consistency across language files
+
+### CSS & Styling
+
+- Move inline styles to dedicated CSS classes
+- Use component-specific class naming conventions
+- Follow existing design system patterns
+- Optimize for mobile-first responsive design
+
+### JavaScript & Functionality
+
+- Follow existing code patterns and conventions
+- Use modern ES6+ features appropriately
+- Implement proper error handling
+- Optimize for performance and accessibility
+
+## 🔍 Context Gathering Rules
+
+### Before Making Changes
+
+1. **Repository Context**: Check recent changes via GitHub
+2. **Documentation**: Verify current best practices via Context7
+3. **Market Research**: Understand industry standards via Firecrawl/Perplexity
+4. **Technical Validation**: Ensure compatibility and performance
+
+### Information Prioritization
+
+1. **Project-specific context** (GitHub, existing code)
+2. **Official documentation** (Context7, Supabase docs)
+3. **Current best practices** (Perplexity research)
+4. **Real-world examples** (Firecrawl content extraction)
+
+## 🛡️ Security & Best Practices
+
+### Authentication & APIs
+
+- Use environment variables for sensitive data
+- Implement proper error handling for API calls
+- Follow OAuth and security best practices
+- Validate all external data inputs
+
+### Development Practices
+
+- Write maintainable, self-documenting code
+- Implement proper testing strategies
+- Follow version control best practices
+- Optimize for performance and scalability
+
+## 🎯 Task-Specific Automation
+
+### Bug Fixes
+
+1. Check GitHub for related issues
+2. Research solutions with Perplexity
+3. Validate fixes against documentation
+4. Test thoroughly before implementation
+
+### Feature Development
+
+1. Research requirements and best practices
+2. Check existing patterns in codebase
+3. Plan implementation with proper architecture
+4. Document changes and update translations
+
+### Performance Optimization
+
+1. Analyze current performance metrics
+2. Research optimization techniques
+3. Implement changes systematically
+4. Validate improvements with testing
+
+## 📊 Success Metrics
+
+- Reduced development time through smart tool usage
+- Improved code quality and maintainability
+- Enhanced user experience and performance
+- Better project documentation and knowledge sharing
+
+---
+
+_These rules ensure optimal utilization of all MCP server capabilities while maintaining high code quality and development efficiency._
