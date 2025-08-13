@@ -33,12 +33,12 @@
     aria-controls="{{ localPosition }}-country-results"
     aria-describedby="{{ localPosition }}Label"
   >
+    {{ 'LG-arrow-down.svg' | inline_asset_content }}
     <span>
       {{- localization.country.name }} |
       {{ localization.country.currency.iso_code }}
       {{ localization.country.currency.symbol -}}
     </span>
-    {{ 'icon-caret.svg' | inline_asset_content }}
   </button>
   <div class="disclosure__list-wrapper country-selector" hidden>
     <div class="country-filter{% unless show_country_filter %} country-filter--no-padding{% endunless %}">

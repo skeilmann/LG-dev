@@ -97,7 +97,7 @@
 
 /* Language indicator styling for announcement bar */
 .disclosure__button.localization-form__select svg {
-  display: none;
+  /* display: none; */
 }
 
 .disclosure__button .language-indicator {
