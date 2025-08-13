@@ -17,38 +17,21 @@
         "padding_bottom": 36
       }
     },
-    "free_shipping_bar_JehjBT": {
+    "free_shipping_bar_wBHDjz": {
       "type": "free-shipping-bar",
       "blocks": {
-        "lg_progress_bar_crCK7p": {
+        "lg_progress_bar_pjzhA6": {
           "type": "LG-progress-bar",
           "settings": {}
         }
       },
       "block_order": [
-        "lg_progress_bar_crCK7p"
+        "lg_progress_bar_pjzhA6"
       ],
       "name": "Free Shipping Progress Bar",
       "settings": {
         "bar_color": "#ff6699",
         "bar_background": "#eee",
-        "show_on_homepage": true
-      }
-    },
-    "free-shipping": {
-      "type": "free-shipping-bar",
-      "blocks": {
-        "lg_progress_bar_6cqGNE": {
-          "type": "LG-progress-bar",
-          "settings": {}
-        }
-      },
-      "block_order": [
-        "lg_progress_bar_6cqGNE"
-      ],
-      "settings": {
-        "bar_color": "#ff6699",
-        "bar_background": "#eeeeee",
         "show_on_homepage": true
       }
     },
@@ -77,8 +60,7 @@
   },
   "order": [
     "cart-items",
-    "free_shipping_bar_JehjBT",
-    "free-shipping",
+    "free_shipping_bar_wBHDjz",
     "cart-footer"
   ]
 }
