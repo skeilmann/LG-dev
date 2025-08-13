@@ -19,10 +19,19 @@
     },
     "free-shipping": {
       "type": "free-shipping-bar",
+      "blocks": {
+        "lg_progress_bar_6cqGNE": {
+          "type": "LG-progress-bar",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "lg_progress_bar_6cqGNE"
+      ],
       "settings": {
-        "color_scheme": "scheme-1",
-        "padding_top": 20,
-        "padding_bottom": 20
+        "bar_color": "#ff6699",
+        "bar_background": "#eeeeee",
+        "show_on_homepage": true
       }
     },
     "cart-footer": {
