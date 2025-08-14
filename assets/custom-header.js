@@ -9,6 +9,7 @@ class CustomHeader {
     this.mobileMenu = document.querySelector('.header__mobile-menu');
     this.mobileMenuClose = document.querySelector('.header__mobile-menu-close');
     this.dropdownButtons = document.querySelectorAll('.header__menu-item--dropdown');
+    this.dropdownMenus = document.querySelectorAll('.header__dropdown-menu');
 
     this.bindEvents();
   }
@@ -32,6 +33,9 @@ class CustomHeader {
     // Handle dropdown menus
     this.dropdownButtons.forEach(button => {
       button.addEventListener('click', this.toggleDropdown.bind(this));
+      
+      // Add keyboard support for dropdowns
+      button.addEventListener('keydown', this.handleDropdownKeydown.bind(this));
     });
 
     // Close dropdowns when clicking outside
@@ -39,6 +43,12 @@ class CustomHeader {
       if (!e.target.closest('.header__menu-item-wrapper')) {
         this.closeAllDropdowns();
       }
+    });
+
+    // Handle focus management for dropdowns
+    this.dropdownMenus.forEach(menu => {
+      menu.addEventListener('focusin', this.handleDropdownFocusIn.bind(this));
+      menu.addEventListener('focusout', this.handleDropdownFocusOut.bind(this));
     });
 
     // Handle escape key
@@ -117,6 +127,53 @@ class CustomHeader {
         dropdown.setAttribute('aria-hidden', 'true');
       }
     });
+  }
+
+  handleDropdownKeydown(event) {
+    const button = event.currentTarget;
+    const dropdown = button.nextElementSibling;
+    
+    switch (event.key) {
+      case 'Enter':
+      case ' ':
+        event.preventDefault();
+        this.toggleDropdown(event);
+        break;
+      case 'Escape':
+        this.closeAllDropdowns();
+        button.focus();
+        break;
+      case 'ArrowDown':
+        event.preventDefault();
+        if (dropdown && dropdown.getAttribute('aria-hidden') === 'false') {
+          const firstMenuItem = dropdown.querySelector('.header__dropdown-item');
+          if (firstMenuItem) {
+            firstMenuItem.focus();
+          }
+        }
+        break;
+    }
+  }
+
+  handleDropdownFocusIn(event) {
+    const menu = event.currentTarget;
+    const button = menu.previousElementSibling;
+    if (button) {
+      button.setAttribute('aria-expanded', 'true');
+      menu.setAttribute('aria-hidden', 'false');
+    }
+  }
+
+  handleDropdownFocusOut(event) {
+    // Only close if focus moves outside the dropdown and its button
+    const menu = event.currentTarget;
+    const button = menu.previousElementSibling;
+    const relatedTarget = event.relatedTarget;
+    
+    if (!menu.contains(relatedTarget) && !button.contains(relatedTarget)) {
+      button.setAttribute('aria-expanded', 'false');
+      menu.setAttribute('aria-hidden', 'true');
+    }
   }
 
   handleResize() {
