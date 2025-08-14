@@ -64,6 +64,17 @@
     },
     "header": {
       "type": "header",
+      "blocks": {
+        "right_menu_fqzxrK": {
+          "type": "right_menu",
+          "settings": {
+            "right_menu": "right-menu"
+          }
+        }
+      },
+      "block_order": [
+        "right_menu_fqzxrK"
+      ],
       "settings": {
         "left_menu": "left-menu",
         "logo_position": "top-left",
