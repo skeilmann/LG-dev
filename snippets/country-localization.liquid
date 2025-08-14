@@ -33,7 +33,9 @@
     aria-controls="{{ localPosition }}-country-results"
     aria-describedby="{{ localPosition }}Label"
   >
-    {{ 'LG-arrow-down.svg' | inline_asset_content }}
+    <span class="country-arrow" aria-hidden="true">
+      {{ 'LG-caret-down.svg' | inline_asset_content }}
+    </span>
     <span>
       {{- localization.country.name }} |
       {{ localization.country.currency.iso_code }}

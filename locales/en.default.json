@@ -303,6 +303,15 @@
       "cart_count": {
         "one": "{{ count }} item",
         "other": "{{ count }} items"
+      },
+      "menu_items": {
+        "catalog": "CATALOG",
+        "brands": "BRANDS",
+        "new_arrivals": "NEW ARRIVALS",
+        "discounts": "DISCOUNTS UP TO 50%",
+        "store": "STORE",
+        "contacts": "CONTACTS",
+        "for_studios": "FOR STUDIOS"
       }
     },
     "cart": {

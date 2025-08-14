@@ -306,6 +306,15 @@
         "one": "{{ count }} articol",
         "other": "{{ count }} articole",
         "few": "{{ count }} articole"
+      },
+      "menu_items": {
+        "catalog": "CATALOG",
+        "brands": "BRANDURI",
+        "new_arrivals": "NOUTĂȚI",
+        "discounts": "REDUCERI PÂNĂ LA 50%",
+        "store": "MAGAZIN",
+        "contacts": "CONTACTE",
+        "for_studios": "PENTRU STUDII"
       }
     },
     "cart": {

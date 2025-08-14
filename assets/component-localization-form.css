@@ -96,10 +96,6 @@
 }
 
 /* Language indicator styling for announcement bar */
-.disclosure__button.localization-form__select svg {
-  /* display: none; */
-}
-
 .disclosure__button .language-indicator {
   background-color: #000;
   color: #fff;
@@ -124,6 +120,21 @@
 .utility-bar .language-indicator {
   text-shadow: none;
   letter-spacing: 0.05em;
+}
+
+/* Country selector arrow styling */
+.country-arrow svg {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 0.5rem;
+  width: 2rem;
+  height: 2rem;
+  transition: transform 0.3s ease;
+}
+
+/* Rotate arrow when country list is open */
+.localization-form__select[aria-expanded="true"] .country-arrow svg {
+  transform: rotate(180deg);
 }
 
 .disclosure .localization-form__select {

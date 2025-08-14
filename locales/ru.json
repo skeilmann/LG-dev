@@ -316,6 +316,15 @@
         "other": "Элементов: {{ count }}",
         "few": "Элементов: {{ count }}",
         "many": "Элементов: {{ count }}"
+      },
+      "menu_items": {
+        "catalog": "КАТАЛОГ",
+        "brands": "БРЕНДЫ",
+        "new_arrivals": "НОВИНКИ",
+        "discounts": "СКИДКИ ДО 50%",
+        "store": "МАГАЗИН",
+        "contacts": "КОНТАКТЫ",
+        "for_studios": "ДЛЯ СТУДИЙ"
       }
     },
     "cart": {
