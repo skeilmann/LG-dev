@@ -326,17 +326,7 @@
           "info": "This menu is kept for backward compatibility"
         }
       },
-      "blocks": {
-        "right_menu": {
-          "name": "Right Menu Block",
-          "settings": {
-            "right_menu": {
-              "label": "Right Menu",
-              "info": "Select the menu to display on the right side of the logo"
-            }
-          }
-        }
-      }
+
     },
     "cart": {
       "title": "Your cart",

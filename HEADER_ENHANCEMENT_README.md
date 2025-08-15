@@ -49,6 +49,8 @@ This approach allows merchants to:
 - Add a "Right Menu Block" to configure the right menu
 - Maintain full functionality without schema errors
 
+**Note**: The left menu uses translation keys for internationalization, while the right menu block uses direct text to avoid translation complexity and ensure compatibility.
+
 ### File Structure
 
 ```
@@ -86,7 +88,8 @@ locales/
           "type": "link_list",
           "id": "right_menu",
           "default": "main-menu",
-          "label": "Right Menu"
+          "label": "Right Menu",
+          "info": "Select the menu to display on the right side of the logo"
         }
       ]
     }
