@@ -52,7 +52,9 @@
         "text_zbyXqG",
         "lg_progress_bar_qDhzpp"
       ],
-      "custom_css": [],
+      "custom_css": [
+        "@media screen and (min-width: 990px) {p {display: none; }}"
+      ],
       "settings": {
         "enable_country_selector": true,
         "enable_language_selector": true,
