@@ -43,10 +43,7 @@
       "block_order": [
         "lg_progress_bar_rzY3UU"
       ],
-      "custom_css": [
-        ".text-block p {margin: 0;}",
-        ".custom-section {padding-top: 0; padding-bottom: 0; display: grid; align-items: center; display: grid; grid-template-areas: \"left-icons heading icons\"; grid-template-columns: 1fr 2fr 1fr; align-items: center;}"
-      ],
+      "custom_css": [],
       "settings": {
         "enable_country_selector": true,
         "enable_language_selector": true,
