@@ -14,14 +14,6 @@
     "costum_section_gDgPjr": {
       "type": "costum-section",
       "blocks": {
-        "text_8j7Chh": {
-          "type": "text",
-          "settings": {
-            "text": "",
-            "alignment": "left"
-          },
-          "blocks": {}
-        },
         "lg_progress_bar_rzY3UU": {
           "type": "lg-progress-bar",
           "name": "Cart Progress Bar",
@@ -49,7 +41,6 @@
         }
       },
       "block_order": [
-        "text_8j7Chh",
         "lg_progress_bar_rzY3UU"
       ],
       "custom_css": [
