@@ -14,34 +14,43 @@
     "costum_section_gDgPjr": {
       "type": "costum-section",
       "blocks": {
-        "lg_progress_bar_rzY3UU": {
-          "type": "lg-progress-bar",
-          "name": "Cart Progress Bar",
+        "text_zbyXqG": {
+          "type": "text",
+          "name": "Text",
           "settings": {
-            "moldova_threshold": 1000,
-            "romania_threshold": 2000,
+            "text": "",
+            "alignment": "left"
+          },
+          "blocks": {}
+        },
+        "lg_progress_bar_qDhzpp": {
+          "type": "lg-progress-bar",
+          "settings": {
+            "moldova_threshold": 500,
+            "romania_threshold": 1000,
             "europe_threshold": 3000,
             "world_threshold": 5000,
             "background_color": "#f8f9fa",
             "text_color": "#333333",
             "accent_color": "#007bff",
             "success_color": "#28a745",
-            "padding": 10,
-            "border_radius": 20,
+            "padding": 20,
+            "border_radius": 8,
             "bar_background_color": "#e9ecef",
             "bar_fill_color": "#007bff",
-            "bar_height": 8,
-            "bar_border_radius": 15,
-            "title_size": 12,
-            "amount_size": 12,
-            "message_size": 12,
+            "bar_height": 12,
+            "bar_border_radius": 6,
+            "title_size": 16,
+            "amount_size": 14,
+            "message_size": 14,
             "empty_cart_message": "Free shipping from __THRESHOLD__"
           },
           "blocks": {}
         }
       },
       "block_order": [
-        "lg_progress_bar_rzY3UU"
+        "text_zbyXqG",
+        "lg_progress_bar_qDhzpp"
       ],
       "custom_css": [],
       "settings": {
