@@ -91,7 +91,7 @@
     width: 0.8rem;
     height: 0.8rem;
     margin-left: 0.5rem;
-    background-image: url('{{ ' icon-caret.svg' | asset_url }}');
+    background-image: url('{{ "icon-caret.svg" | asset_url }}');
     background-size: contain;
     background-repeat: no-repeat;
     transition: transform var(--duration-short) ease;
@@ -338,25 +338,6 @@
     background-color: rgba(var(--color-foreground), 0.1);
     outline: 2px solid rgb(var(--color-accent));
     outline-offset: -2px;
-}
-
-/* Skip link for accessibility */
-.skip-link {
-    position: absolute;
-    top: -40px;
-    left: 6px;
-    background: rgb(var(--color-background));
-    color: rgb(var(--color-foreground));
-    padding: 8px;
-    text-decoration: none;
-    border: 1px solid rgb(var(--color-foreground));
-    border-radius: 4px;
-    z-index: 10001;
-    transition: top 0.3s ease;
-}
-
-.skip-link:focus {
-    top: 6px;
 }
 
 /* Header drawer styles */

@@ -309,9 +309,6 @@
   endfor
 -%}
 
-<!-- Skip to main content link for accessibility -->
-<a href="#MainContent" class="skip-link">{{ 'accessibility.skip_to_text' | t }}</a>
-
 <div
   {% if section.settings.sticky_header_type != 'none' %}
     sticky-header data-sticky-type="{{ section.settings.sticky_header_type }}"
