@@ -26,8 +26,8 @@
         "lg_progress_bar_qDhzpp": {
           "type": "lg-progress-bar",
           "settings": {
-            "moldova_threshold": 500,
-            "romania_threshold": 1000,
+            "moldova_threshold": 1100,
+            "romania_threshold": 2000,
             "europe_threshold": 3000,
             "world_threshold": 5000,
             "background_color": "#f8f9fa",
@@ -76,7 +76,7 @@
       ],
       "settings": {
         "left_menu": "left-menu",
-        "logo_position": "top-left",
+        "logo_position": "middle-left",
         "sticky_header_type": "reduce-logo-size",
         "show_line_separator": true,
         "color_scheme": "scheme-1",
