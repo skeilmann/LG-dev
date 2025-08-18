@@ -64,6 +64,12 @@
     "header": {
       "type": "header",
       "blocks": {
+        "catalog_menu_EbrCeq": {
+          "type": "catalog_menu",
+          "settings": {
+            "catalog_menu": "main-menu"
+          }
+        },
         "left_menu_7DzDAM": {
           "type": "left_menu",
           "settings": {
@@ -78,6 +84,7 @@
         }
       },
       "block_order": [
+        "catalog_menu_EbrCeq",
         "left_menu_7DzDAM",
         "right_menu_fqzxrK"
       ],
