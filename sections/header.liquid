@@ -168,6 +168,173 @@
     color: rgba(var(--color-foreground), 0.8);
   }
 
+  /* Mega Menu Styles */
+  .mega-menu-wrapper {
+    position: static;
+  }
+
+  .header__menu-item--mega::after {
+    content: '';
+    display: inline-block;
+    width: 0.8rem;
+    height: 0.8rem;
+    margin-left: 0.5rem;
+    background-image: url('{{ 'icon-caret.svg' | asset_url }}');
+    background-size: contain;
+    background-repeat: no-repeat;
+    transition: transform var(--duration-short) ease;
+  }
+
+  .header__menu-item--mega[aria-expanded="true"]::after {
+    transform: rotate(180deg);
+  }
+
+  .mega-menu-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgb(var(--color-background));
+    border: 1px solid rgba(var(--color-foreground), 0.1);
+    border-top: none;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all var(--duration-default) ease;
+  }
+
+  .mega-menu-dropdown[aria-hidden="false"] {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .mega-menu-wrapper:hover .mega-menu-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .mega-menu-content {
+    padding: 2rem 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .mega-menu-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr 300px;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .mega-menu-column {
+    min-height: 200px;
+  }
+
+  .mega-menu-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: rgb(var(--color-foreground));
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .mega-menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .mega-menu-link {
+    display: block;
+    padding: 0.5rem 0;
+    color: rgb(var(--color-foreground));
+    text-decoration: none;
+    font-weight: 500;
+    transition: all var(--duration-short) ease;
+    border-bottom: 1px solid transparent;
+  }
+
+  .mega-menu-link:hover,
+  .mega-menu-category.active {
+    color: rgba(var(--color-foreground), 0.8);
+    border-bottom-color: rgba(var(--color-foreground), 0.2);
+  }
+
+  .mega-menu-subcategories {
+    display: none;
+  }
+
+  .mega-menu-subcategories-display {
+    opacity: 0;
+    transition: opacity var(--duration-default) ease;
+  }
+
+  .mega-menu-subcategories-display.active {
+    opacity: 1;
+  }
+
+  .mega-menu-subcategory-content {
+    min-height: 150px;
+  }
+
+  .mega-menu-subcategory-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .mega-menu-subcategory-link {
+    display: block;
+    padding: 0.4rem 0;
+    color: rgba(var(--color-foreground), 0.8);
+    text-decoration: none;
+    transition: color var(--duration-short) ease;
+  }
+
+  .mega-menu-subcategory-link:hover,
+  .mega-menu-subcategory-link.active {
+    color: rgb(var(--color-foreground));
+  }
+
+  .mega-menu-image-container {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: rgba(var(--color-foreground), 0.05);
+  }
+
+  .mega-menu-featured-image {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .mega-menu-featured-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity var(--duration-default) ease;
+  }
+
+  .mega-menu-default-image {
+    opacity: 0.6;
+  }
+
+  .mega-menu-collection-image {
+    opacity: 0;
+  }
+
+  .mega-menu-collection-image.loaded {
+    opacity: 1;
+  }
+
   .header__dropdown-item {
     display: block;
     padding: 0.75rem 1rem;
@@ -272,6 +439,146 @@
       display: none;
     }
   }
+
+  /* Mobile Catalog Accordion Styles */
+  .mobile-catalog-accordion {
+    border-bottom: 1px solid rgba(var(--color-foreground), 0.1);
+  }
+
+  .mobile-catalog-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .mobile-accordion-icon {
+    transition: transform var(--duration-short) ease;
+  }
+
+  .mobile-catalog-accordion[open] .mobile-accordion-icon,
+  .mobile-subcategory-accordion[open] .mobile-accordion-icon {
+    transform: rotate(180deg);
+  }
+
+  .mobile-catalog-content {
+    padding-top: 1rem;
+    animation: slideDown var(--duration-default) ease;
+  }
+
+  .mobile-category-group {
+    margin-bottom: 1rem;
+  }
+
+  .mobile-subcategory-accordion {
+    border: none;
+  }
+
+  .mobile-category-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    font-weight: 500;
+    color: rgb(var(--color-foreground));
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid rgba(var(--color-foreground), 0.05);
+  }
+
+  .mobile-category-single-link {
+    display: block;
+    padding: 0.75rem 0;
+    color: rgb(var(--color-foreground));
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(var(--color-foreground), 0.05);
+  }
+
+  .mobile-subcategory-content {
+    padding-left: 1rem;
+    animation: slideDown var(--duration-default) ease;
+  }
+
+  .mobile-subcategory-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem 0;
+  }
+
+  .mobile-subcategory-link {
+    display: block;
+    padding: 0.5rem 0;
+    color: rgba(var(--color-foreground), 0.8);
+    text-decoration: none;
+    transition: color var(--duration-short) ease;
+  }
+
+  .mobile-subcategory-link:hover {
+    color: rgb(var(--color-foreground));
+  }
+
+  .mobile-category-image {
+    margin-top: 1rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: rgba(var(--color-foreground), 0.05);
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-image-placeholder {
+    color: rgba(var(--color-foreground), 0.5);
+    font-size: 0.9rem;
+  }
+
+  .mobile-category-image img {
+    width: 100%;
+    height: auto;
+    max-height: 150px;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity var(--duration-default) ease;
+  }
+
+  .mobile-category-image img.loaded {
+    opacity: 1;
+  }
+
+  .mobile-loading-text {
+    font-size: 0.8rem;
+    color: rgba(var(--color-foreground), 0.5);
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Responsive adjustments */
+  @media screen and (max-width: 750px) {
+    .mega-menu-columns {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .mega-menu-content {
+      padding: 1.5rem;
+    }
+
+    .mega-menu-image-container {
+      height: 150px;
+    }
+  }
 </style>
 
 {%- style -%}
@@ -300,6 +607,300 @@
 
 <script src="{{ 'cart-notification.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'custom-header.js' | asset_url }}" defer="defer"></script>
+<script>
+  // Mega Menu Functionality
+  document.addEventListener('DOMContentLoaded', function () {
+    const megaMenuWrapper = document.querySelector('.mega-menu-wrapper');
+    const megaMenuDropdown = document.querySelector('.mega-menu-dropdown');
+    const megaMenuTrigger = document.querySelector('.header__menu-item--mega');
+    const categoriesColumn = document.querySelector('.mega-menu-categories');
+    const subcategoriesDisplay = document.querySelector('.mega-menu-subcategories-display');
+    const subcategoryContent = document.querySelector('.mega-menu-subcategory-content');
+    const subcategoryTitle = document.querySelector('.mega-menu-subcategory-title');
+    const imageContainer = document.querySelector('.mega-menu-featured-image');
+
+    if (!megaMenuWrapper || !megaMenuDropdown) return;
+
+    let hoverTimeout;
+    let currentActiveCategory = null;
+    let imageCache = new Map();
+
+    // Hover events for mega menu
+    megaMenuWrapper.addEventListener('mouseenter', function () {
+      clearTimeout(hoverTimeout);
+      openMegaMenu();
+    });
+
+    megaMenuWrapper.addEventListener('mouseleave', function () {
+      hoverTimeout = setTimeout(() => {
+        closeMegaMenu();
+      }, 150);
+    });
+
+    // Category hover events
+    if (categoriesColumn) {
+      const categoryLinks = categoriesColumn.querySelectorAll('.mega-menu-category');
+
+      categoryLinks.forEach((link) => {
+        link.addEventListener('mouseenter', function () {
+          handleCategoryHover(this);
+        });
+      });
+
+      // Set first category as active by default
+      if (categoryLinks.length > 0) {
+        handleCategoryHover(categoryLinks[0]);
+      }
+    }
+
+    function openMegaMenu() {
+      megaMenuTrigger?.setAttribute('aria-expanded', 'true');
+      megaMenuDropdown.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeMegaMenu() {
+      megaMenuTrigger?.setAttribute('aria-expanded', 'false');
+      megaMenuDropdown.setAttribute('aria-hidden', 'true');
+
+      // Reset active states
+      document.querySelectorAll('.mega-menu-category.active').forEach((cat) => {
+        cat.classList.remove('active');
+      });
+      subcategoriesDisplay?.classList.remove('active');
+      currentActiveCategory = null;
+    }
+
+    function handleCategoryHover(categoryLink) {
+      // Remove active state from previous category
+      if (currentActiveCategory) {
+        currentActiveCategory.classList.remove('active');
+      }
+
+      // Add active state to current category
+      categoryLink.classList.add('active');
+      currentActiveCategory = categoryLink;
+
+      const categoryHandle = categoryLink.getAttribute('data-category-handle');
+      const subcategoriesList = document.querySelector(`[data-parent="${categoryHandle}"]`);
+
+      if (subcategoriesList && subcategoryContent) {
+        // Update subcategory title
+        if (subcategoryTitle) {
+          subcategoryTitle.textContent = categoryLink.textContent.trim();
+        }
+
+        // Clear and populate subcategory content
+        subcategoryContent.innerHTML = '';
+        const subcategoryListClone = subcategoriesList.cloneNode(true);
+        subcategoryListClone.classList.add('mega-menu-subcategory-list');
+        subcategoryContent.appendChild(subcategoryListClone);
+
+        // Show subcategories column
+        subcategoriesDisplay?.classList.add('active');
+
+        // Add hover events to subcategory links for image loading
+        const subcategoryLinks = subcategoryContent.querySelectorAll('.mega-menu-sublink');
+        subcategoryLinks.forEach((sublink) => {
+          sublink.addEventListener('mouseenter', function () {
+            handleSubcategoryHover(this);
+          });
+        });
+
+        // Load image for first subcategory by default
+        if (subcategoryLinks.length > 0) {
+          handleSubcategoryHover(subcategoryLinks[0]);
+        }
+      }
+    }
+
+    function handleSubcategoryHover(subcategoryLink) {
+      // Remove active state from other subcategory links
+      document.querySelectorAll('.mega-menu-subcategory-link.active').forEach((link) => {
+        link.classList.remove('active');
+      });
+
+      // Add active state to current subcategory
+      subcategoryLink.classList.add('active');
+
+      const collectionHandle = subcategoryLink.getAttribute('data-collection-handle');
+      loadCollectionImage(collectionHandle, subcategoryLink.textContent.trim());
+    }
+
+    async function loadCollectionImage(collectionHandle, collectionTitle) {
+      if (!imageContainer || !collectionHandle) return;
+
+      // Check cache first
+      if (imageCache.has(collectionHandle)) {
+        updateImage(imageCache.get(collectionHandle), collectionTitle);
+        return;
+      }
+
+      try {
+        // Fetch collection data
+        const response = await fetch(`/collections/${collectionHandle}.js`);
+
+        if (response.ok) {
+          const collection = await response.json();
+          let imageData = null;
+
+          if (collection.image) {
+            imageData = {
+              src: collection.image,
+              alt: collection.title || collectionTitle,
+            };
+          }
+
+          // Cache the result (even if null)
+          imageCache.set(collectionHandle, imageData);
+          updateImage(imageData, collectionTitle);
+        } else {
+          // Cache null result to avoid repeated failed requests
+          imageCache.set(collectionHandle, null);
+          updateImage(null, collectionTitle);
+        }
+      } catch (error) {
+        console.warn('Failed to load collection image:', error);
+        updateImage(null, collectionTitle);
+      }
+    }
+
+    function updateImage(imageData, fallbackTitle) {
+      if (!imageContainer) return;
+
+      const currentImg = imageContainer.querySelector('img');
+
+      if (imageData && imageData.src) {
+        // Create new image element
+        const newImg = document.createElement('img');
+        newImg.src = imageData.src;
+        newImg.alt = imageData.alt || fallbackTitle;
+        newImg.loading = 'lazy';
+        newImg.classList.add('mega-menu-collection-image');
+
+        newImg.onload = function () {
+          // Fade out current image
+          if (currentImg) {
+            currentImg.style.opacity = '0';
+            setTimeout(() => {
+              currentImg.remove();
+              newImg.classList.add('loaded');
+              imageContainer.appendChild(newImg);
+            }, 200);
+          } else {
+            newImg.classList.add('loaded');
+            imageContainer.appendChild(newImg);
+          }
+        };
+
+        newImg.onerror = function () {
+          // Fallback to default image
+          showDefaultImage(fallbackTitle);
+        };
+      } else {
+        // Show default image
+        showDefaultImage(fallbackTitle);
+      }
+    }
+
+    function showDefaultImage(title) {
+      if (!imageContainer) return;
+
+      const currentImg = imageContainer.querySelector('img');
+      if (currentImg && currentImg.classList.contains('mega-menu-default-image')) {
+        // Already showing default image
+        currentImg.alt = title || '{{ shop.name | escape }}';
+        return;
+      }
+
+      // Create default image
+      const defaultImg = document.createElement('img');
+      defaultImg.src = '{{ settings.logo | default: "logo.png" | asset_url }}';
+      defaultImg.alt = title || '{{ shop.name | escape }}';
+      defaultImg.loading = 'lazy';
+      defaultImg.classList.add('mega-menu-default-image');
+
+      if (currentImg) {
+        currentImg.style.opacity = '0';
+        setTimeout(() => {
+          currentImg.remove();
+          imageContainer.appendChild(defaultImg);
+        }, 200);
+      } else {
+        imageContainer.appendChild(defaultImg);
+      }
+    }
+
+    // Mobile accordion functionality
+    const mobileAccordions = document.querySelectorAll('.mobile-subcategory-accordion');
+
+    mobileAccordions.forEach((accordion) => {
+      const summary = accordion.querySelector('.mobile-category-title');
+      const imageContainer = accordion.querySelector('.mobile-category-image');
+
+      summary?.addEventListener('click', function () {
+        // Lazy load image when accordion opens
+        if (!accordion.hasAttribute('open')) {
+          setTimeout(() => {
+            loadMobileImage(imageContainer);
+          }, 300);
+        }
+      });
+    });
+
+    function loadMobileImage(container) {
+      if (!container || container.querySelector('img')) return;
+
+      const categoryHandle = container.getAttribute('data-category');
+      const placeholder = container.querySelector('.mobile-image-placeholder');
+
+      if (!categoryHandle) return;
+
+      // Get first subcategory link to determine collection
+      const firstSublink = container
+        .closest('.mobile-subcategory-content')
+        ?.querySelector('.mobile-subcategory-link[data-collection-handle]');
+
+      if (!firstSublink) return;
+
+      const collectionHandle = firstSublink.getAttribute('data-collection-handle');
+
+      fetch(`/collections/${collectionHandle}.js`)
+        .then((response) => (response.ok ? response.json() : null))
+        .then((collection) => {
+          if (collection && collection.image) {
+            const img = document.createElement('img');
+            img.src = collection.image;
+            img.alt = collection.title || firstSublink.textContent.trim();
+            img.loading = 'lazy';
+
+            img.onload = function () {
+              this.classList.add('loaded');
+              if (placeholder) {
+                placeholder.style.display = 'none';
+              }
+            };
+
+            container.appendChild(img);
+          } else if (placeholder) {
+            placeholder.innerHTML = '<span class="mobile-loading-text">{{ "sections.header.no_image" | t }}</span>';
+          }
+        })
+        .catch(() => {
+          if (placeholder) {
+            placeholder.innerHTML = '<span class="mobile-loading-text">{{ "sections.header.no_image" | t }}</span>';
+          }
+        });
+    }
+
+    // Keyboard accessibility
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && megaMenuDropdown.getAttribute('aria-hidden') === 'false') {
+        closeMegaMenu();
+        megaMenuTrigger?.focus();
+      }
+    });
+  });
+</script>
 
 {%- liquid
   for block in section.blocks
@@ -346,9 +947,9 @@
       <!-- Left Menu -->
       <nav class="header__left-menu" role="navigation" aria-label="{{ 'sections.header.menu' | t }}">
         <ul class="list-menu list-menu--inline" role="list">
-          <!-- Configurable Catalog Link with Dropdown -->
+          <!-- Catalog Mega Menu -->
           <li>
-            <div class="header__menu-item-wrapper">
+            <div class="header__menu-item-wrapper mega-menu-wrapper">
               {%- assign catalog_menu = null -%}
               {%- for block in section.blocks -%}
                 {%- if block.type == 'catalog_menu' and block.settings.catalog_menu != blank -%}
@@ -358,81 +959,192 @@
               {%- endfor -%}
 
               {%- if catalog_menu != blank -%}
-                {%- assign catalog_link = catalog_menu.links.first -%}
                 <a
-                  href="{{ catalog_link.url | default: routes.root_url }}"
-                  class="header__menu-item header__menu-item--dropdown"
+                  href="{{ catalog_menu.url | default: routes.collections_url }}"
+                  class="header__menu-item header__menu-item--mega"
                   aria-expanded="false"
-                  aria-controls="dropdown-catalog"
+                  aria-controls="mega-menu-catalog"
                   aria-haspopup="true"
                 >
                   {{ 'sections.header.menu_items.catalog' | t }}
                 </a>
-                <ul
-                  id="dropdown-catalog"
-                  class="header__dropdown-menu"
+
+                <div
+                  id="mega-menu-catalog"
+                  class="mega-menu-dropdown"
                   role="menu"
                   aria-hidden="true"
-                  aria-label="{{ 'sections.header.menu_items.catalog' | t }} submenu"
+                  aria-label="{{ 'sections.header.menu_items.catalog' | t }} {{ 'sections.header.mega_menu' | t }}"
                 >
-                  {%- for link in catalog_menu.links -%}
-                    <li role="none">
-                      <a
-                        href="{{ link.url }}"
-                        class="header__dropdown-item"
-                        role="menuitem"
-                        {% if link.current %}
-                          aria-current="page"
-                        {% endif %}
-                      >
-                        {{ link.title | escape }}
-                      </a>
-                    </li>
-                  {%- endfor -%}
-                </ul>
+                  <div class="mega-menu-content">
+                    <div class="mega-menu-columns">
+                      <!-- First Column: Categories -->
+                      <div class="mega-menu-column mega-menu-categories">
+                        <h3 class="mega-menu-title">{{ 'sections.header.categories' | t }}</h3>
+                        <ul class="mega-menu-list" role="list">
+                          {%- for link in catalog_menu.links -%}
+                            <li>
+                              <a
+                                href="{{ link.url }}"
+                                class="mega-menu-link mega-menu-category"
+                                role="menuitem"
+                                data-category-handle="{{ link.handle }}"
+                                {% if link.current %}
+                                  aria-current="page"
+                                {% endif %}
+                              >
+                                {{ link.title | escape }}
+                              </a>
+
+                              {%- if link.links != blank -%}
+                                <ul class="mega-menu-subcategories" data-parent="{{ link.handle }}">
+                                  {%- for sublink in link.links -%}
+                                    <li>
+                                      <a
+                                        href="{{ sublink.url }}"
+                                        class="mega-menu-sublink"
+                                        role="menuitem"
+                                        data-collection-handle="{{ sublink.handle }}"
+                                        {% if sublink.current %}
+                                          aria-current="page"
+                                        {% endif %}
+                                      >
+                                        {{ sublink.title | escape }}
+                                      </a>
+                                    </li>
+                                  {%- endfor -%}
+                                </ul>
+                              {%- endif -%}
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      </div>
+
+                      <!-- Second Column: Subcategories -->
+                      <div class="mega-menu-column mega-menu-subcategories-display">
+                        <h3 class="mega-menu-title mega-menu-subcategory-title">
+                          {{ 'sections.header.subcategories' | t }}
+                        </h3>
+                        <div class="mega-menu-subcategory-content">
+                          <!-- Subcategories will be populated dynamically -->
+                        </div>
+                      </div>
+
+                      <!-- Third Column: Featured Image -->
+                      <div class="mega-menu-column mega-menu-image">
+                        <div class="mega-menu-image-container">
+                          <div class="mega-menu-featured-image">
+                            {%- comment -%} Default fallback image {%- endcomment -%}
+                            <img
+                              src="{{ settings.logo | default: 'logo.png' | asset_url }}"
+                              alt="{{ shop.name | escape }}"
+                              class="mega-menu-default-image"
+                              loading="lazy"
+                              width="200"
+                              height="200"
+                            >
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               {%- else -%}
                 <!-- Fallback to left menu if no catalog menu is set -->
                 <a
-                  href="{{ routes.root_url }}"
-                  class="header__menu-item header__menu-item--dropdown"
+                  href="{{ routes.collections_url }}"
+                  class="header__menu-item header__menu-item--mega"
                   aria-expanded="false"
-                  aria-controls="dropdown-catalog"
+                  aria-controls="mega-menu-catalog"
                   aria-haspopup="true"
                 >
                   {{ 'sections.header.menu_items.catalog' | t }}
                 </a>
-                <ul
-                  id="dropdown-catalog"
-                  class="header__dropdown-menu"
+
+                <div
+                  id="mega-menu-catalog"
+                  class="mega-menu-dropdown"
                   role="menu"
                   aria-hidden="true"
-                  aria-label="{{ 'sections.header.menu_items.catalog' | t }} submenu"
+                  aria-label="{{ 'sections.header.menu_items.catalog' | t }} {{ 'sections.header.mega_menu' | t }}"
                 >
-                  {%- assign left_menu = null -%}
-                  {%- for block in section.blocks -%}
-                    {%- if block.type == 'left_menu' and block.settings.left_menu != blank -%}
-                      {%- assign left_menu = block.settings.left_menu -%}
-                      {%- break -%}
-                    {%- endif -%}
-                  {%- endfor -%}
+                  <div class="mega-menu-content">
+                    <div class="mega-menu-columns">
+                      <div class="mega-menu-column mega-menu-categories">
+                        <h3 class="mega-menu-title">{{ 'sections.header.categories' | t }}</h3>
+                        <ul class="mega-menu-list" role="list">
+                          {%- assign left_menu = null -%}
+                          {%- for block in section.blocks -%}
+                            {%- if block.type == 'left_menu' and block.settings.left_menu != blank -%}
+                              {%- assign left_menu = block.settings.left_menu -%}
+                              {%- break -%}
+                            {%- endif -%}
+                          {%- endfor -%}
 
-                  {%- if left_menu != blank -%}
-                    {%- for link in left_menu.links -%}
-                      <li role="none">
-                        <a
-                          href="{{ link.url }}"
-                          class="header__dropdown-item"
-                          role="menuitem"
-                          {% if link.current %}
-                            aria-current="page"
-                          {% endif %}
-                        >
-                          {{ link.title | escape }}
-                        </a>
-                      </li>
-                    {%- endfor -%}
-                  {%- endif -%}
-                </ul>
+                          {%- if left_menu != blank -%}
+                            {%- for link in left_menu.links -%}
+                              <li>
+                                <a
+                                  href="{{ link.url }}"
+                                  class="mega-menu-link mega-menu-category"
+                                  role="menuitem"
+                                  data-category-handle="{{ link.handle }}"
+                                  {% if link.current %}
+                                    aria-current="page"
+                                  {% endif %}
+                                >
+                                  {{ link.title | escape }}
+                                </a>
+
+                                {%- if link.links != blank -%}
+                                  <ul class="mega-menu-subcategories" data-parent="{{ link.handle }}">
+                                    {%- for sublink in link.links -%}
+                                      <li>
+                                        <a
+                                          href="{{ sublink.url }}"
+                                          class="mega-menu-sublink"
+                                          role="menuitem"
+                                          data-collection-handle="{{ sublink.handle }}"
+                                          {% if sublink.current %}
+                                            aria-current="page"
+                                          {% endif %}
+                                        >
+                                          {{ sublink.title | escape }}
+                                        </a>
+                                      </li>
+                                    {%- endfor -%}
+                                  </ul>
+                                {%- endif -%}
+                              </li>
+                            {%- endfor -%}
+                          {%- endif -%}
+                        </ul>
+                      </div>
+                      <div class="mega-menu-column mega-menu-subcategories-display">
+                        <h3 class="mega-menu-title mega-menu-subcategory-title">
+                          {{ 'sections.header.subcategories' | t }}
+                        </h3>
+                        <div class="mega-menu-subcategory-content">
+                          <!-- Subcategories will be populated dynamically -->
+                        </div>
+                      </div>
+                      <div class="mega-menu-column mega-menu-image">
+                        <div class="mega-menu-image-container">
+                          <div class="mega-menu-featured-image">
+                            <img
+                              src="{{ settings.logo | default: 'logo.png' | asset_url }}"
+                              alt="{{ shop.name | escape }}"
+                              class="mega-menu-default-image"
+                              loading="lazy"
+                              width="200"
+                              height="200"
+                            >
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               {%- endif -%}
             </div>
           </li>
@@ -704,10 +1416,18 @@
       <div class="header__mobile-menu-content">
         <nav role="navigation">
           <ul class="list-menu" role="list">
-            <!-- Mobile Catalog with Dropdown -->
+            <!-- Mobile Catalog Accordion -->
             <li>
-              <details>
-                <summary class="header__mobile-menu-item">
+              <details class="mobile-catalog-accordion">
+                <summary class="header__mobile-menu-item mobile-catalog-summary">
+                  {{ 'sections.header.menu_items.catalog' | t }}
+                  <span class="mobile-accordion-icon">
+                    <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+                      <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                </summary>
+                <div class="mobile-catalog-content">
                   {%- assign catalog_menu = null -%}
                   {%- for block in section.blocks -%}
                     {%- if block.type == 'catalog_menu' and block.settings.catalog_menu != blank -%}
@@ -716,27 +1436,60 @@
                     {%- endif -%}
                   {%- endfor -%}
 
-                  <a
-                    href="{%- if catalog_menu != blank -%}{{ catalog_menu.links.first.url | default: routes.root_url }}{%- else -%}{{ routes.root_url }}{%- endif -%}"
-                    class="header__mobile-menu-item"
-                  >
-                    {{ 'sections.header.menu_items.catalog' | t }}
-                  </a>
-                </summary>
-                <div class="header__mobile-dropdown">
                   {%- if catalog_menu != blank -%}
                     {%- for link in catalog_menu.links -%}
-                      <a
-                        href="{{ link.url }}"
-                        class="header__mobile-dropdown-item"
-                        {% if link.current %}
-                          aria-current="page"
-                        {% endif %}
-                      >
-                        {{ link.title | escape }}
-                      </a>
+                      <div class="mobile-category-group">
+                        {%- if link.links != blank -%}
+                          <details class="mobile-subcategory-accordion">
+                            <summary class="mobile-category-title">
+                              {{ link.title | escape }}
+                              <span class="mobile-accordion-icon">
+                                <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+                                  <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                              </span>
+                            </summary>
+                            <div class="mobile-subcategory-content">
+                              <ul class="mobile-subcategory-list">
+                                {%- for sublink in link.links -%}
+                                  <li>
+                                    <a
+                                      href="{{ sublink.url }}"
+                                      class="mobile-subcategory-link"
+                                      data-collection-handle="{{ sublink.handle }}"
+                                      {% if sublink.current %}
+                                        aria-current="page"
+                                      {% endif %}
+                                    >
+                                      {{ sublink.title | escape }}
+                                    </a>
+                                  </li>
+                                {%- endfor -%}
+                              </ul>
+
+                              <!-- Lazy-loaded image for mobile -->
+                              <div class="mobile-category-image" data-category="{{ link.handle }}">
+                                <div class="mobile-image-placeholder">
+                                  <span class="mobile-loading-text">{{ 'sections.header.loading_image' | t }}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </details>
+                        {%- else -%}
+                          <a
+                            href="{{ link.url }}"
+                            class="mobile-category-single-link"
+                            {% if link.current %}
+                              aria-current="page"
+                            {% endif %}
+                          >
+                            {{ link.title | escape }}
+                          </a>
+                        {%- endif -%}
+                      </div>
                     {%- endfor -%}
                   {%- else -%}
+                    <!-- Fallback to left menu -->
                     {%- assign left_menu = null -%}
                     {%- for block in section.blocks -%}
                       {%- if block.type == 'left_menu' and block.settings.left_menu != blank -%}
@@ -747,15 +1500,53 @@
 
                     {%- if left_menu != blank -%}
                       {%- for link in left_menu.links -%}
-                        <a
-                          href="{{ link.url }}"
-                          class="header__mobile-dropdown-item"
-                          {% if link.current %}
-                            aria-current="page"
-                          {% endif %}
-                        >
-                          {{ link.title | escape }}
-                        </a>
+                        <div class="mobile-category-group">
+                          {%- if link.links != blank -%}
+                            <details class="mobile-subcategory-accordion">
+                              <summary class="mobile-category-title">
+                                {{ link.title | escape }}
+                                <span class="mobile-accordion-icon">
+                                  <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+                                    <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                  </svg>
+                                </span>
+                              </summary>
+                              <div class="mobile-subcategory-content">
+                                <ul class="mobile-subcategory-list">
+                                  {%- for sublink in link.links -%}
+                                    <li>
+                                      <a
+                                        href="{{ sublink.url }}"
+                                        class="mobile-subcategory-link"
+                                        data-collection-handle="{{ sublink.handle }}"
+                                        {% if sublink.current %}
+                                          aria-current="page"
+                                        {% endif %}
+                                      >
+                                        {{ sublink.title | escape }}
+                                      </a>
+                                    </li>
+                                  {%- endfor -%}
+                                </ul>
+                                <div class="mobile-category-image" data-category="{{ link.handle }}">
+                                  <div class="mobile-image-placeholder">
+                                    <span class="mobile-loading-text">{{ 'sections.header.loading_image' | t }}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </details>
+                          {%- else -%}
+                            <a
+                              href="{{ link.url }}"
+                              class="mobile-category-single-link"
+                              {% if link.current %}
+                                aria-current="page"
+                              {% endif %}
+                            >
+                              {{ link.title | escape }}
+                            </a>
+                          {%- endif -%}
+                        </div>
                       {%- endfor -%}
                     {%- endif -%}
                   {%- endif -%}
@@ -1019,13 +1810,13 @@
 
 {% schema %}
 {
-  "name": "t:sections.header.name",
+  "name": "Header",
   "class": "section-header",
   "max_blocks": 5,
   "settings": [
     {
       "type": "header",
-      "content": "t:sections.header.settings.navigation.content"
+      "content": "Navigation Settings"
     },
     {
       "type": "select",
@@ -1033,24 +1824,24 @@
       "options": [
         {
           "value": "top-left",
-          "label": "t:sections.header.settings.logo_position.options__2.label"
+          "label": "Top left"
         },
         {
           "value": "top-center",
-          "label": "t:sections.header.settings.logo_position.options__3.label"
+          "label": "Top center"
         },
         {
           "value": "middle-left",
-          "label": "t:sections.header.settings.logo_position.options__1.label"
+          "label": "Middle left"
         },
         {
           "value": "middle-center",
-          "label": "t:sections.header.settings.logo_position.options__4.label"
+          "label": "Middle center"
         }
       ],
       "default": "middle-center",
-      "label": "t:sections.header.settings.logo_position.label",
-      "info": "t:sections.header.settings.logo_position.info"
+      "label": "Logo position",
+      "info": "Position the logo in the header"
     },
     {
       "type": "select",
@@ -1058,77 +1849,77 @@
       "options": [
         {
           "value": "none",
-          "label": "t:sections.header.settings.sticky_header_type.options__1.label"
+          "label": "None"
         },
         {
           "value": "on-scroll-up",
-          "label": "t:sections.header.settings.sticky_header_type.options__2.label"
+          "label": "On scroll up"
         },
         {
           "value": "always",
-          "label": "t:sections.header.settings.sticky_header_type.options__3.label"
+          "label": "Always"
         },
         {
           "value": "reduce-logo-size",
-          "label": "t:sections.header.settings.sticky_header_type.options__4.label"
+          "label": "Reduce logo size"
         }
       ],
       "default": "on-scroll-up",
-      "label": "t:sections.header.settings.sticky_header_type.label"
+      "label": "Sticky header type"
     },
     {
       "type": "checkbox",
       "id": "show_line_separator",
       "default": true,
-      "label": "t:sections.header.settings.show_line_separator.label"
+      "label": "Show line separator"
     },
     {
       "type": "header",
-      "content": "t:sections.header.settings.header__1.content"
+      "content": "Colors"
     },
     {
       "type": "color_scheme",
       "id": "color_scheme",
-      "label": "t:sections.all.colors.label",
+      "label": "Color scheme",
       "default": "scheme-1"
     },
     {
       "type": "header",
-      "content": "t:sections.header.settings.header__3.content",
-      "info": "t:sections.header.settings.header__4.info"
+      "content": "Country selector",
+      "info": "Enable country/region selector"
     },
     {
       "type": "checkbox",
       "id": "enable_country_selector",
       "default": false,
-      "label": "t:sections.header.settings.enable_country_selector.label"
+      "label": "Enable country selector"
     },
     {
       "type": "header",
-      "content": "t:sections.header.settings.header__5.content",
-      "info": "t:sections.header.settings.header__6.info"
+      "content": "Language selector",
+      "info": "Enable language selector"
     },
     {
       "type": "checkbox",
       "id": "enable_language_selector",
       "default": false,
-      "label": "t:sections.header.settings.enable_language_selector.label"
+      "label": "Enable language selector"
     },
     {
       "type": "header",
-      "content": "t:sections.header.settings.header__7.content",
-      "info": "t:sections.header.settings.header__7.info"
+      "content": "Customer account",
+      "info": "Customer account settings"
     },
     {
       "type": "checkbox",
       "id": "enable_customer_avatar",
       "default": true,
-      "label": "t:sections.header.settings.enable_customer_avatar.label",
-      "info": "t:sections.header.settings.enable_customer_avatar.info"
+      "label": "Enable customer avatar",
+      "info": "Show customer avatar in header"
     },
     {
       "type": "header",
-      "content": "t:sections.header.settings.mobile_layout.content"
+      "content": "Mobile layout"
     },
     {
       "type": "select",
@@ -1136,19 +1927,19 @@
       "options": [
         {
           "value": "center",
-          "label": "t:sections.header.settings.mobile_logo_position.options__1.label"
+          "label": "Center"
         },
         {
           "value": "left",
-          "label": "t:sections.header.settings.mobile_logo_position.options__2.label"
+          "label": "Left"
         }
       ],
       "default": "center",
-      "label": "t:sections.header.settings.mobile_logo_position.label"
+      "label": "Mobile logo position"
     },
     {
       "type": "header",
-      "content": "t:sections.all.spacing"
+      "content": "Spacing"
     },
     {
       "type": "range",
@@ -1157,12 +1948,12 @@
       "max": 100,
       "step": 4,
       "unit": "px",
-      "label": "t:sections.header.settings.margin_bottom.label",
+      "label": "Margin bottom",
       "default": 0
     },
     {
       "type": "header",
-      "content": "t:sections.all.padding.section_padding_heading"
+      "content": "Section padding"
     },
     {
       "type": "range",
@@ -1171,7 +1962,7 @@
       "max": 36,
       "step": 4,
       "unit": "px",
-      "label": "t:sections.all.padding.padding_top",
+      "label": "Padding top",
       "default": 20
     },
     {
@@ -1181,7 +1972,7 @@
       "max": 36,
       "step": 4,
       "unit": "px",
-      "label": "t:sections.all.padding.padding_bottom",
+      "label": "Padding bottom",
       "default": 20
     }
   ],

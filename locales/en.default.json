@@ -313,6 +313,11 @@
         "contacts": "CONTACTS",
         "for_studios": "FOR STUDIOS"
       },
+      "mega_menu": "mega menu",
+      "categories": "Categories",
+      "subcategories": "Subcategories",
+      "loading_image": "Loading image...",
+      "no_image": "No image available",
       "settings": {
         "navigation": {
           "content": "Navigation Settings"
