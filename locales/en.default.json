@@ -323,35 +323,6 @@
           "info": "This menu is kept for backward compatibility"
         }
       },
-      "blocks": {
-        "left_menu": {
-          "name": "Left Menu",
-          "settings": {
-            "left_menu": {
-              "label": "Left Menu",
-              "info": "Select the menu to display on the left side of the logo"
-            }
-          }
-        },
-        "catalog_menu": {
-          "name": "Catalog Menu",
-          "settings": {
-            "catalog_menu": {
-              "label": "Catalog Menu",
-              "info": "Select the menu to display in the Catalog dropdown. If not set, will use the Left Menu."
-            }
-          }
-        },
-        "right_menu": {
-          "name": "Right Menu",
-          "settings": {
-            "right_menu": {
-              "label": "Right Menu",
-              "info": "Select the menu to display on the right side of the logo"
-            }
-          }
-        }
-      }
 
     },
     "cart": {
@@ -574,7 +545,7 @@
       "password": "Password",
       "password_confirm": "Confirm password",
       "submit": "Reset password"
-    },
+    }
   },
   "gift_cards": {
     "issued": {
