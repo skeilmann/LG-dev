@@ -40,9 +40,9 @@
             "bar_fill_color": "#007bff",
             "bar_height": 12,
             "bar_border_radius": 6,
-            "title_size": 16,
-            "amount_size": 14,
-            "message_size": 14,
+            "title_size": 14,
+            "amount_size": 12,
+            "message_size": 12,
             "empty_cart_message": "Free shipping from __THRESHOLD__"
           },
           "blocks": {}
