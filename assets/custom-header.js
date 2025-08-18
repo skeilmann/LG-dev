@@ -32,7 +32,12 @@ class CustomHeader {
 
     // Handle dropdown menus
     this.dropdownButtons.forEach(button => {
-      button.addEventListener('click', this.toggleDropdown.bind(this));
+      // For anchor-based dropdowns, prevent default navigation and show dropdown
+      if (button.tagName === 'A') {
+        button.addEventListener('click', this.handleAnchorDropdown.bind(this));
+      } else {
+        button.addEventListener('click', this.toggleDropdown.bind(this));
+      }
       
       // Add keyboard support for dropdowns
       button.addEventListener('keydown', this.handleDropdownKeydown.bind(this));
@@ -117,6 +122,22 @@ class CustomHeader {
       button.setAttribute('aria-expanded', 'true');
       dropdown.setAttribute('aria-hidden', 'false');
     }
+  }
+
+  handleAnchorDropdown(event) {
+    const anchor = event.currentTarget;
+    const dropdown = anchor.nextElementSibling;
+    const isExpanded = anchor.getAttribute('aria-expanded') === 'true';
+
+    // Close all other dropdowns
+    this.closeAllDropdowns();
+
+    if (!isExpanded) {
+      anchor.setAttribute('aria-expanded', 'true');
+      dropdown.setAttribute('aria-hidden', 'false');
+    }
+    
+    // Don't prevent default - allow navigation to the link
   }
 
   closeAllDropdowns() {

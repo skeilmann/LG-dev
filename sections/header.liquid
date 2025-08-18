@@ -346,25 +346,36 @@
       <!-- Left Menu -->
       <nav class="header__left-menu" role="navigation" aria-label="{{ 'sections.header.menu' | t }}">
         <ul class="list-menu list-menu--inline" role="list">
-          <!-- Fixed Catalog Link with Dropdown -->
+          <!-- Configurable Catalog Link with Dropdown -->
           <li>
             <div class="header__menu-item-wrapper">
-              <button
-                type="button"
-                class="header__menu-item header__menu-item--dropdown"
-                aria-expanded="false"
-                aria-controls="dropdown-catalog"
-              >
-                {{ 'sections.header.menu_items.catalog' | t }}
-              </button>
-              <ul
-                id="dropdown-catalog"
-                class="header__dropdown-menu"
-                role="menu"
-                aria-hidden="true"
-              >
-                {%- if section.settings.left_menu != blank -%}
-                  {%- for link in section.settings.left_menu.links -%}
+              {%- assign catalog_menu = null -%}
+              {%- for block in section.blocks -%}
+                {%- if block.type == 'catalog_menu' and block.settings.catalog_menu != blank -%}
+                  {%- assign catalog_menu = block.settings.catalog_menu -%}
+                  {%- break -%}
+                {%- endif -%}
+              {%- endfor -%}
+
+              {%- if catalog_menu != blank -%}
+                {%- assign catalog_link = catalog_menu.links.first -%}
+                <a
+                  href="{{ catalog_link.url | default: routes.root_url }}"
+                  class="header__menu-item header__menu-item--dropdown"
+                  aria-expanded="false"
+                  aria-controls="dropdown-catalog"
+                  aria-haspopup="true"
+                >
+                  {{ 'sections.header.menu_items.catalog' | t }}
+                </a>
+                <ul
+                  id="dropdown-catalog"
+                  class="header__dropdown-menu"
+                  role="menu"
+                  aria-hidden="true"
+                  aria-label="{{ 'sections.header.menu_items.catalog' | t }} submenu"
+                >
+                  {%- for link in catalog_menu.links -%}
                     <li role="none">
                       <a
                         href="{{ link.url }}"
@@ -378,14 +389,65 @@
                       </a>
                     </li>
                   {%- endfor -%}
-                {%- endif -%}
-              </ul>
+                </ul>
+              {%- else -%}
+                <!-- Fallback to left menu if no catalog menu is set -->
+                <a
+                  href="{{ routes.root_url }}"
+                  class="header__menu-item header__menu-item--dropdown"
+                  aria-expanded="false"
+                  aria-controls="dropdown-catalog"
+                  aria-haspopup="true"
+                >
+                  {{ 'sections.header.menu_items.catalog' | t }}
+                </a>
+                <ul
+                  id="dropdown-catalog"
+                  class="header__dropdown-menu"
+                  role="menu"
+                  aria-hidden="true"
+                  aria-label="{{ 'sections.header.menu_items.catalog' | t }} submenu"
+                >
+                  {%- assign left_menu = null -%}
+                  {%- for block in section.blocks -%}
+                    {%- if block.type == 'left_menu' and block.settings.left_menu != blank -%}
+                      {%- assign left_menu = block.settings.left_menu -%}
+                      {%- break -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+
+                  {%- if left_menu != blank -%}
+                    {%- for link in left_menu.links -%}
+                      <li role="none">
+                        <a
+                          href="{{ link.url }}"
+                          class="header__dropdown-item"
+                          role="menuitem"
+                          {% if link.current %}
+                            aria-current="page"
+                          {% endif %}
+                        >
+                          {{ link.title | escape }}
+                        </a>
+                      </li>
+                    {%- endfor -%}
+                  {%- endif -%}
+                </ul>
+              {%- endif -%}
             </div>
           </li>
 
           <!-- Left Menu Items -->
-          {%- if section.settings.left_menu != blank -%}
-            {%- for link in section.settings.left_menu.links -%}
+          {%- assign left_menu = null -%}
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'left_menu' and block.settings.left_menu != blank -%}
+              {%- assign left_menu = block.settings.left_menu -%}
+              {%- break -%}
+            {%- endif -%}
+          {%- endfor -%}
+
+          {%- if left_menu != blank -%}
+            {%- for link in left_menu.links -%}
               <li>
                 {%- if link.links != blank -%}
                   <div class="header__menu-item-wrapper">
@@ -646,11 +708,24 @@
             <li>
               <details>
                 <summary class="header__mobile-menu-item">
-                  {{ 'sections.header.menu_items.catalog' | t }}
+                  {%- assign catalog_menu = null -%}
+                  {%- for block in section.blocks -%}
+                    {%- if block.type == 'catalog_menu' and block.settings.catalog_menu != blank -%}
+                      {%- assign catalog_menu = block.settings.catalog_menu -%}
+                      {%- break -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+
+                  <a
+                    href="{%- if catalog_menu != blank -%}{{ catalog_menu.links.first.url | default: routes.root_url }}{%- else -%}{{ routes.root_url }}{%- endif -%}"
+                    class="header__mobile-menu-item"
+                  >
+                    {{ 'sections.header.menu_items.catalog' | t }}
+                  </a>
                 </summary>
                 <div class="header__mobile-dropdown">
-                  {%- if section.settings.left_menu != blank -%}
-                    {%- for link in section.settings.left_menu.links -%}
+                  {%- if catalog_menu != blank -%}
+                    {%- for link in catalog_menu.links -%}
                       <a
                         href="{{ link.url }}"
                         class="header__mobile-dropdown-item"
@@ -661,14 +736,44 @@
                         {{ link.title | escape }}
                       </a>
                     {%- endfor -%}
+                  {%- else -%}
+                    {%- assign left_menu = null -%}
+                    {%- for block in section.blocks -%}
+                      {%- if block.type == 'left_menu' and block.settings.left_menu != blank -%}
+                        {%- assign left_menu = block.settings.left_menu -%}
+                        {%- break -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+
+                    {%- if left_menu != blank -%}
+                      {%- for link in left_menu.links -%}
+                        <a
+                          href="{{ link.url }}"
+                          class="header__mobile-dropdown-item"
+                          {% if link.current %}
+                            aria-current="page"
+                          {% endif %}
+                        >
+                          {{ link.title | escape }}
+                        </a>
+                      {%- endfor -%}
+                    {%- endif -%}
                   {%- endif -%}
                 </div>
               </details>
             </li>
 
             <!-- Mobile Left Menu Items -->
-            {%- if section.settings.left_menu != blank -%}
-              {%- for link in section.settings.left_menu.links -%}
+            {%- assign left_menu = null -%}
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'left_menu' and block.settings.left_menu != blank -%}
+                {%- assign left_menu = block.settings.left_menu -%}
+                {%- break -%}
+              {%- endif -%}
+            {%- endfor -%}
+
+            {%- if left_menu != blank -%}
+              {%- for link in left_menu.links -%}
                 <li>
                   {%- if link.links != blank -%}
                     <details>
@@ -680,6 +785,7 @@
                           <a
                             href="{{ childlink.url }}"
                             class="header__mobile-dropdown-item"
+                            role="menuitem"
                             {% if childlink.current %}
                               aria-current="page"
                             {% endif %}
@@ -922,13 +1028,6 @@
       "content": "t:sections.header.settings.navigation.content"
     },
     {
-      "type": "link_list",
-      "id": "left_menu",
-      "default": "main-menu",
-      "label": "t:sections.header.settings.left_menu.label",
-      "info": "t:sections.header.settings.left_menu.info"
-    },
-    {
       "type": "select",
       "id": "logo_position",
       "options": [
@@ -1091,16 +1190,44 @@
       "type": "@app"
     },
     {
+      "type": "left_menu",
+      "name": "t:sections.header.blocks.left_menu.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "link_list",
+          "id": "left_menu",
+          "default": "main-menu",
+          "label": "t:sections.header.blocks.left_menu.settings.left_menu.label",
+          "info": "t:sections.header.blocks.left_menu.settings.left_menu.info"
+        }
+      ]
+    },
+    {
+      "type": "catalog_menu",
+      "name": "t:sections.header.blocks.catalog_menu.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "link_list",
+          "id": "catalog_menu",
+          "default": "main-menu",
+          "label": "t:sections.header.blocks.catalog_menu.settings.catalog_menu.label",
+          "info": "t:sections.header.blocks.catalog_menu.settings.catalog_menu.info"
+        }
+      ]
+    },
+    {
       "type": "right_menu",
-      "name": "Right Menu Block",
+      "name": "t:sections.header.blocks.right_menu.name",
       "limit": 1,
       "settings": [
         {
           "type": "link_list",
           "id": "right_menu",
           "default": "main-menu",
-          "label": "Right Menu",
-          "info": "Select the menu to display on the right side of the logo"
+          "label": "t:sections.header.blocks.right_menu.settings.right_menu.label",
+          "info": "t:sections.header.blocks.right_menu.settings.right_menu.info"
         }
       ]
     }

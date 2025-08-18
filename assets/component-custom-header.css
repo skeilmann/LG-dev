@@ -78,6 +78,9 @@
     cursor: pointer;
     background: none;
     border: none;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
 }
 
 .header__menu-item--dropdown::after {
@@ -131,6 +134,12 @@
 
 .header__menu-item-wrapper:hover .header__menu-item--dropdown[aria-expanded="false"] {
     color: rgba(var(--color-foreground), 0.8);
+}
+
+/* Enhanced hover support for anchor-based dropdowns */
+.header__menu-item-wrapper:hover .header__menu-item--dropdown[aria-expanded="false"]:hover {
+    color: rgba(var(--color-foreground), 0.8);
+    text-decoration: none;
 }
 
 .header__dropdown-item {
@@ -214,6 +223,14 @@
     border-bottom: 1px solid rgba(var(--color-foreground), 0.1);
     font-weight: 500;
     text-transform: uppercase;
+}
+
+/* Ensure mobile catalog link styling is consistent */
+.header__mobile-menu-item a {
+    color: inherit;
+    text-decoration: inherit;
+    display: block;
+    width: 100%;
 }
 
 .header__mobile-dropdown {
