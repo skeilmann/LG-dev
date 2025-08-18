@@ -216,15 +216,6 @@ body:has(.section-header .drawer-menu) .announcement-bar-section .page-width {
   overflow: hidden;
 }
 
-.skip-to-content-link:focus {
-  z-index: 9999;
-  position: inherit;
-  overflow: auto;
-  width: auto;
-  height: auto;
-  clip: auto;
-}
-
 .full-width-link {
   position: absolute;
   top: 0;

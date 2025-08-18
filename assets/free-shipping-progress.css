@@ -53,9 +53,10 @@
     transform: translateY(0);
 }
 
-.fs-title {
-    font-weight: 600;
+.fs-title,
+.fs-amount {
     margin: 0;
+    font-size: 14px;
 }
 
 .fs-success-message {
@@ -95,9 +96,6 @@
 /* Legacy announcement bar compatibility */
 .announcement-free-shipping .fs-progress-bar {
     width: 100%;
-    height: 8px;
-    background-color: var(--fs-progress-bg, #e9ecef);
-    border-radius: 4px;
     overflow: hidden;
     position: relative;
 }

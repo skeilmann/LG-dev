@@ -1,3 +1,25 @@
+<style>
+  @media (max-width: 1023px) {
+    .disclosure__button,
+    .localization-form__select,
+    .localization-selector,
+    .link,
+    .link--text,
+    .caption-large {
+      padding-right: 0 !important;
+    }
+  }
+
+  @media (max-width: 989px) {
+    .custom-section {
+      grid-template-columns: 1fr !important;
+    }
+    .custom-section > *:first-child {
+      display: none !important;
+    }
+  }
+</style>
+
 <div class="custom-section header color-{{ section.settings.color_scheme }}">
   {% content_for 'blocks' %}
 
