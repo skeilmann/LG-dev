@@ -14,6 +14,7 @@
     list-style: none;
     padding: 0;
     margin: 0;
+    text-transform: uppercase;
 }
 
 .list-menu--inline {
@@ -58,15 +59,15 @@
 
 /* Menu item styling */
 .header__menu-item {
+    position: relative;
     color: rgb(var(--color-foreground));
     text-decoration: none;
     font-weight: 500;
     text-transform: uppercase;
     padding: 0.5rem 1rem;
     transition: color var(--duration-short) ease;
-    position: relative;
-    font-size: 0.9rem;
     letter-spacing: 0.05em;
+    font-size: 1rem;
 }
 
 .header__menu-item:hover {
@@ -98,6 +99,236 @@
 .header__menu-item--dropdown[aria-expanded="true"]::after {
     transform: rotate(180deg);
 }
+
+/* ===== MEGA MENU STYLES ===== */
+/* Proper positioning and visibility controls for 4-column mega menu */
+
+/* Wrapper must be relative for absolute dropdown positioning */
+.mega-menu-wrapper {
+    position: relative;
+}
+
+/* Mega menu trigger button styling */
+.header__menu-item--mega {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+}
+
+.header__menu-item--mega::after {
+    content: '';
+    display: inline-block;
+    width: 0.8rem;
+    height: 0.8rem;
+    margin-left: 0.5rem;
+    background-image: url('{{ "icon-caret.svg" | asset_url }}');
+    background-size: contain;
+    background-repeat: no-repeat;
+    transition: transform var(--duration-short) ease;
+}
+
+.header__menu-item--mega[aria-expanded="true"]::after {
+    transform: rotate(180deg);
+}
+
+/* Dropdown container - absolute positioning relative to wrapper */
+.mega-menu-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: rgb(var(--color-background));
+    border: 1px solid rgba(var(--color-foreground), 0.1);
+    border-radius: 0.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) translateY(-10px);
+    transition: all var(--duration-default) ease;
+}
+
+/* Show dropdown on hover and when aria-hidden is false */
+.mega-menu-dropdown[aria-hidden="false"],
+.mega-menu-wrapper:hover .mega-menu-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.mega-menu-content {
+    padding: 2rem;
+    width: 100%;
+}
+
+.mega-menu-columns {
+    display: grid;
+    grid-template-columns: 200px 220px 220px 1fr;
+    gap: 2rem;
+    min-height: 300px;
+}
+
+.mega-menu-column {
+    min-height: 200px;
+}
+
+/* Column 1: Categories - always visible */
+.mega-menu-zone-1 {
+    /* Categories column - always visible, uses default grid properties */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Column 2: Subcategories - hidden by default, shown on category hover */
+.mega-menu-zone-2 {
+    position: relative;
+}
+
+/* Column 3: Sub-subcategories - hidden by default, shown on subcategory hover */
+.mega-menu-zone-3 {
+    position: relative;
+}
+
+/* Column 4: Images - always visible container, content changes on hover */
+.mega-menu-zone-4 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ===== VISIBILITY CONTROL CLASSES ===== */
+/* These classes control what content is shown in columns 2 and 3 */
+
+/* Hidden state - used for subcategory and sub-subcategory lists */
+.mega-menu-hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+}
+
+/* Visible state - shown when parent item is hovered */
+.mega-menu-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+    position: relative;
+}
+
+/* Image visibility control - all images are absolutely positioned and toggled */
+.mega-menu-featured-image {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: rgba(var(--color-foreground), 0.05);
+}
+
+.mega-menu-featured-image img,
+.mega-menu-no-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+}
+
+/* Default state for all images except the default fallback */
+.mega-menu-category-image,
+.mega-menu-subcategory-image,
+.mega-menu-sub-subcategory-image {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* Visible state for images */
+.mega-menu-category-image.mega-menu-visible,
+.mega-menu-subcategory-image.mega-menu-visible,
+.mega-menu-sub-subcategory-image.mega-menu-visible,
+.mega-menu-default-image.mega-menu-visible,
+.mega-menu-no-image.mega-menu-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.mega-menu-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: rgb(var(--color-foreground));
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.mega-menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mega-menu-link {
+    display: block;
+    padding: 0.5rem 0;
+    color: rgb(var(--color-foreground));
+    text-decoration: none;
+    font-weight: 500;
+    transition: all var(--duration-short) ease;
+    border-bottom: 1px solid transparent;
+}
+
+.mega-menu-link:hover,
+.mega-menu-category.active,
+.mega-menu-sublink.active,
+.mega-menu-sub-sublink.active {
+    color: rgba(var(--color-foreground), 0.8);
+    border-bottom-color: rgba(var(--color-foreground), 0.2);
+}
+
+/* Content container styling for columns 2 and 3 */
+.mega-menu-subcategory-content,
+.mega-menu-sub-subcategory-content {
+    position: relative;
+    min-height: 150px;
+    width: 100%;
+}
+
+/* Image container styling */
+.mega-menu-image-container {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: rgba(var(--color-foreground), 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* No image fallback styling */
+.mega-menu-no-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(var(--color-foreground), 0.6);
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+/* ===== DROPDOWN MENU STYLES ===== */
 
 .header__menu-item-wrapper {
     position: relative;
@@ -161,22 +392,16 @@
     border-bottom: none;
 }
 
-/* Mobile menu toggle */
+/* ===== MOBILE MENU STYLES ===== */
+
 .header__mobile-menu-toggle {
     display: none;
     background: none;
     border: none;
     padding: 0.5rem;
     cursor: pointer;
-    color: rgb(var(--color-foreground));
 }
 
-.header__mobile-menu-toggle .svg-wrapper {
-    width: 1.5rem;
-    height: 1.5rem;
-}
-
-/* Mobile menu */
 .header__mobile-menu {
     display: none;
     position: fixed;
@@ -207,7 +432,6 @@
     font-size: 1.5rem;
     cursor: pointer;
     padding: 0.5rem;
-    color: rgb(var(--color-foreground));
 }
 
 .header__mobile-menu-content {
@@ -221,16 +445,6 @@
     text-decoration: none;
     font-size: 1.2rem;
     border-bottom: 1px solid rgba(var(--color-foreground), 0.1);
-    font-weight: 500;
-    text-transform: uppercase;
-}
-
-/* Ensure mobile catalog link styling is consistent */
-.header__mobile-menu-item a {
-    color: inherit;
-    text-decoration: inherit;
-    display: block;
-    width: 100%;
 }
 
 .header__mobile-dropdown {
@@ -244,11 +458,138 @@
     color: rgba(var(--color-foreground), 0.8);
     text-decoration: none;
     font-size: 1rem;
-    text-transform: none;
-    font-weight: normal;
 }
 
-/* Responsive design */
+/* ===== MOBILE CATALOG ACCORDION STYLES ===== */
+
+.mobile-catalog-accordion {
+    border-bottom: 1px solid rgba(var(--color-foreground), 0.1);
+}
+
+.mobile-catalog-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.mobile-accordion-icon {
+    transition: transform var(--duration-short) ease;
+}
+
+.mobile-catalog-accordion[open] .mobile-accordion-icon,
+.mobile-subcategory-accordion[open] .mobile-accordion-icon {
+    transform: rotate(180deg);
+}
+
+.mobile-catalog-content {
+    padding-top: 1rem;
+    animation: slideDown var(--duration-default) ease;
+}
+
+.mobile-category-group {
+    margin-bottom: 1rem;
+}
+
+.mobile-subcategory-accordion {
+    border: none;
+}
+
+.mobile-category-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    font-weight: 500;
+    color: rgb(var(--color-foreground));
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid rgba(var(--color-foreground), 0.05);
+}
+
+.mobile-category-single-link {
+    display: block;
+    padding: 0.75rem 0;
+    color: rgb(var(--color-foreground));
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(var(--color-foreground), 0.05);
+}
+
+.mobile-subcategory-content {
+    padding-left: 1rem;
+    animation: slideDown var(--duration-default) ease;
+}
+
+.mobile-subcategory-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem 0;
+}
+
+.mobile-subcategory-link {
+    display: block;
+    padding: 0.5rem 0;
+    color: rgba(var(--color-foreground), 0.8);
+    text-decoration: none;
+    transition: color var(--duration-short) ease;
+}
+
+.mobile-subcategory-link:hover {
+    color: rgb(var(--color-foreground));
+}
+
+.mobile-category-image {
+    margin-top: 1rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: rgba(var(--color-foreground), 0.05);
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mobile-image-placeholder {
+    color: rgba(var(--color-foreground), 0.5);
+    font-size: 0.9rem;
+}
+
+.mobile-category-image img {
+    width: 100%;
+    height: auto;
+    max-height: 150px;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity var(--duration-default) ease;
+}
+
+.mobile-category-image img.loaded {
+    opacity: 1;
+}
+
+.mobile-loading-text {
+    font-size: 0.8rem;
+    color: rgba(var(--color-foreground), 0.5);
+}
+
+/* ===== ANIMATIONS ===== */
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+
 @media screen and (max-width: 989px) {
 
     .header__left-menu,
@@ -263,42 +604,110 @@
     .header__layout {
         grid-template-columns: auto 1fr auto;
     }
-
-    .header__center-logo {
-        justify-self: center;
-    }
 }
 
 @media screen and (min-width: 990px) {
     .header__mobile-menu-toggle {
         display: none;
     }
+}
 
-    .header__left-menu,
-    .header__right-menu {
-        display: block;
+@media screen and (max-width: 990px) {
+    .mega-menu-dropdown {
+        width: calc(100vw - 2rem);
+        max-width: none;
+    }
+
+    .mega-menu-columns {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto auto;
+        gap: 1.5rem;
+    }
+
+    .mega-menu-content {
+        padding: 1.5rem;
+    }
+
+    .mega-menu-image-container {
+        height: 150px;
+        order: -1;
+        /* Show image first on mobile */
+    }
+
+    /* Hide mega menu on mobile - use mobile accordion instead */
+    .mega-menu-wrapper {
+        display: none;
     }
 }
 
-/* Announcement bar styling */
-.header-announcement {
-    background: linear-gradient(135deg, #E0C9D7 0%, #D4B8C8 100%);
-    padding: 0.5rem 0;
-    text-align: center;
-    font-size: 0.9rem;
-    color: #333;
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+
+/* Use GPU acceleration for transforms */
+.mega-menu-dropdown,
+.mega-menu-hidden,
+.mega-menu-visible {
+    transform: translateZ(0);
+    will-change: opacity, visibility, transform;
 }
 
-/* Bottom separator line */
-.header-wrapper--border-bottom::after {
-    content: '';
-    display: block;
-    height: 2px;
-    background: linear-gradient(90deg, #6A80D7 0%, #E0C9D7 100%);
-    width: 100%;
+/* Optimize transitions to avoid layout thrashing */
+.mega-menu-dropdown {
+    backface-visibility: hidden;
+    perspective: 1000px;
 }
 
-/* Utility icons spacing */
+/* Preload critical images */
+.mega-menu-featured-image img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+}
+
+/* Optimize hover states with hardware acceleration */
+.mega-menu-link:hover {
+    transform: translateZ(0);
+}
+
+/* ===== STICKY HEADER STYLES ===== */
+/* Dynamic styles that remain inline for section-specific settings */
+
+header-drawer {
+    justify-self: start;
+    margin-left: -1.2rem;
+}
+
+@media screen and (min-width: 990px) {
+    header-drawer {
+        display: none;
+    }
+}
+
+/* ===== HEADER PADDING & SPACING ===== */
+/* These styles are kept minimal and dynamic for section settings */
+
+.header {
+    padding: var(--header-padding-top, 20px) 3rem var(--header-padding-bottom, 20px) 3rem;
+}
+
+.section-header {
+    position: sticky;
+    /* This is for fixing a Safari z-index issue. PR #2147 */
+    margin-bottom: var(--header-margin-bottom, 0px);
+}
+
+@media screen and (min-width: 750px) {
+    .section-header {
+        margin-bottom: var(--header-margin-bottom, 0px);
+    }
+}
+
+@media screen and (min-width: 990px) {
+    .header {
+        padding-top: var(--header-padding-top, 20px);
+        padding-bottom: var(--header-padding-bottom, 20px);
+    }
+}
+
+/* ===== UTILITY ICONS SPACING ===== */
 .header__icons {
     display: flex;
     align-items: center;
@@ -319,7 +728,7 @@
     color: rgba(var(--color-foreground), 0.8);
 }
 
-/* Cart count bubble */
+/* ===== CART COUNT BUBBLE ===== */
 .cart-count-bubble {
     position: absolute;
     top: -0.5rem;
@@ -336,7 +745,7 @@
     font-weight: bold;
 }
 
-/* Focus states for accessibility */
+/* ===== FOCUS STATES FOR ACCESSIBILITY ===== */
 .header__menu-item:focus,
 .header__menu-item--dropdown:focus,
 .header__mobile-menu-toggle:focus,
@@ -352,31 +761,15 @@
     outline-offset: -2px;
 }
 
-/* Header drawer styles */
-header-drawer {
-    justify-self: start;
-    margin-left: -1.2rem;
-}
-
-.menu-drawer-container {
-    display: flex;
-}
-
-/* Sticky header styles */
-.shopify-section-header-sticky .header__heading-logo-wrapper {
-    width: 75%;
-}
-
-@media screen and (min-width: 990px) {
-    header-drawer {
-        display: none;
-    }
-}
-
-/* Smooth transitions */
+/* ===== SMOOTH TRANSITIONS ===== */
 .header__layout,
 .header__menu-item,
 .header__dropdown-menu,
 .header__mobile-menu {
     transition: all var(--duration-short) ease;
+}
+
+/* ===== STICKY HEADER LOGO ADJUSTMENT ===== */
+.shopify-section-header-sticky .header__heading-logo-wrapper {
+    width: 75%;
 }

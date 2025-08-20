@@ -316,6 +316,7 @@
       "mega_menu": "mega menu",
       "categories": "Categories",
       "subcategories": "Subcategories",
+      "sub_subcategories": "Sub-subcategories",
       "loading_image": "Loading image...",
       "no_image": "No image available",
       "settings": {
