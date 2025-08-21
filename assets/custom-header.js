@@ -217,9 +217,7 @@ class CustomHeader {
 
     // Use event delegation since subcategory content is dynamically shown/hidden
     this.zone2.addEventListener('mouseover', (e) => {
-      console.log('Zone 2 mouseover event:', e.target, e.target.classList);
       if (e.target.classList.contains('mega-menu-sublink')) {
-        console.log('Subcategory link hovered:', e.target);
         this.handleSubcategoryHover(e.target);
       }
     });
@@ -239,13 +237,6 @@ class CustomHeader {
   // Initialize Sub-subcategory (Column 3) hover events
   initSubSubcategoryHovers() {
     if (!this.zone3) return;
-
-    // Debug: Check if sub-subcategory elements exist
-    const allSubSubcategories = document.querySelectorAll('.mega-menu-sub-subcategories');
-    console.log('Found sub-subcategory lists:', allSubSubcategories.length);
-    allSubSubcategories.forEach((list, index) => {
-      console.log(`Sub-subcategory list ${index}:`, list.getAttribute('data-parent-subcategory'), list);
-    });
 
     // Use event delegation since sub-subcategory content is dynamically shown/hidden
     this.zone3.addEventListener('mouseover', (e) => {
@@ -323,24 +314,21 @@ class CustomHeader {
     // Hide all sub-subcategories (column 3)
     this.resetVisibility(document.querySelectorAll('.mega-menu-sub-subcategories'));
     
-    // Show default image (column 4)
-    this.showDefaultImage();
+    // Clear all images (column 4) - no default placeholder shown
+    this.clearAllImages();
   }
 
   // Universal helper to clear all images before showing a new one
   clearAllImages() {
-    // Hide all image types using our DRY helper
-    this.resetVisibility(document.querySelectorAll('.mega-menu-category-image, .mega-menu-subcategory-image, .mega-menu-sub-subcategory-image, .mega-menu-default-image, .mega-menu-no-image'), false);
+    // Hide all real image types using our DRY helper
+    this.resetVisibility(document.querySelectorAll('.mega-menu-category-image, .mega-menu-subcategory-image, .mega-menu-sub-subcategory-image'), false);
   }
 
-  // Show default fallback image in column 4
+  // Show default fallback image in column 4 - removed placeholder logic
   showDefaultImage() {
     // Clear all images first
     this.clearAllImages();
-    
-    // Show default image
-    const defaultImages = document.querySelectorAll('.mega-menu-default-image, .mega-menu-no-image');
-    this.showElements(defaultImages);
+    // No placeholder images shown - only real images are displayed
   }
 
   // Show category image in column 4
@@ -359,9 +347,8 @@ class CustomHeader {
       
       // Show target image
       this.showElements([categoryImage]);
-    } else {
-      this.showDefaultImage();
     }
+    // No fallback to placeholder images
   }
 
   // Show subcategory image in column 4
@@ -425,11 +412,8 @@ class CustomHeader {
       // Show target subcategories if specified
       if (targetListSelector) {
         const subcategoriesList = document.querySelector(targetListSelector);
-        console.log('Looking for subcategories with selector:', targetListSelector);
-        console.log('Found subcategories list:', subcategoriesList);
         
         if (subcategoriesList) {
-          console.log('Showing subcategories for category:', categoryLink.textContent.trim());
           this.showElements([subcategoriesList]);
         }
       }
@@ -458,7 +442,6 @@ class CustomHeader {
      * This eliminates hardcoded selectors and makes the system more flexible
      */
     const targetListSelector = subcategoryLink.getAttribute('data-target-list');
-    console.log('Subcategory hovered:', subcategoryLink.textContent.trim());
     
     // Hide all sub-subcategories first using our DRY helper
     this.resetVisibility(document.querySelectorAll('.mega-menu-sub-subcategories'));
@@ -466,14 +449,9 @@ class CustomHeader {
     // Show target sub-subcategories if specified
     if (targetListSelector) {
       const subSubcategoriesList = document.querySelector(targetListSelector);
-      console.log('Looking for sub-subcategories with selector:', targetListSelector);
-      console.log('Found sub-subcategories list:', subSubcategoriesList);
       
       if (subSubcategoriesList) {
-        console.log('Showing sub-subcategories for:', subcategoryLink.textContent.trim());
         this.showElements([subSubcategoriesList]);
-      } else {
-        console.log('No sub-subcategories found for selector:', targetListSelector);
       }
     }
     
@@ -743,7 +721,6 @@ class CustomHeader {
     if (!container || container.querySelector('img')) return;
 
     const categoryHandle = container.getAttribute('data-category');
-    const placeholder = container.querySelector('.mobile-image-placeholder');
 
     if (!categoryHandle) return;
 
@@ -767,24 +744,13 @@ class CustomHeader {
 
           img.onload = () => {
             img.classList.add('loaded');
-            if (placeholder) {
-              placeholder.style.display = 'none';
-            }
           };
 
           container.appendChild(img);
-        } else if (placeholder) {
-          // Use translation passed from Liquid template via data attribute or global variable
-          const noImageText = document.documentElement.getAttribute('data-no-image-text') || 'No image available';
-          placeholder.innerHTML = `<span class="mobile-loading-text">${noImageText}</span>`;
         }
       })
       .catch(() => {
-        if (placeholder) {
-          // Use translation passed from Liquid template via data attribute or global variable
-          const noImageText = document.documentElement.getAttribute('data-no-image-text') || 'No image available';
-          placeholder.innerHTML = `<span class="mobile-loading-text">${noImageText}</span>`;
-        }
+        // No fallback placeholder - only real images are shown
       });
   }
 
