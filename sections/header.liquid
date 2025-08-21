@@ -62,6 +62,11 @@
 <script src="{{ 'cart-notification.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'custom-header.js' | asset_url }}" defer="defer"></script>
 
+<script>
+  // Pass translations to JavaScript for mega menu functionality
+  document.documentElement.setAttribute('data-no-image-text', '{{ "sections.header.no_image" | t }}');
+</script>
+
 {%- liquid
   for block in section.blocks
     if block.type == '@app'
@@ -154,6 +159,8 @@
                                 aria-label="{{ 'sections.header.categories' | t }}: {{ link.title | escape }}"
                                 data-category-handle="{{ link.handle }}"
                                 data-category-title="{{ link.title | escape }}"
+                                data-target-list="[data-parent-category='{{ link.handle }}']"
+                                data-target-image="[data-category-image='{{ link.handle }}']"
                                 {% if link.current %}
                                   aria-current="page"
                                 {% endif %}
@@ -175,7 +182,7 @@
                           {%- for link in catalog_menu.links -%}
                             {%- if link.links != blank -%}
                               <ul
-                                class="mega-menu-list mega-menu-subcategories mega-menu-hidden"
+                                class="mega-menu-list mega-menu-subcategories"
                                 data-parent-category="{{ link.handle }}"
                                 role="list"
                                 aria-hidden="true"
@@ -189,6 +196,8 @@
                                       aria-label="{{ 'sections.header.subcategories' | t }}: {{ sublink.title | escape }}"
                                       data-subcategory-handle="{{ sublink.handle }}"
                                       data-subcategory-title="{{ sublink.title | escape }}"
+                                      data-target-list="[data-parent-subcategory='{{ sublink.handle }}']"
+                                      data-target-image="[data-subcategory-image='{{ sublink.handle }}']"
                                       {% if sublink.current %}
                                         aria-current="page"
                                       {% endif %}
@@ -215,7 +224,7 @@
                               {%- for sublink in link.links -%}
                                 {%- if sublink.links != blank -%}
                                   <ul
-                                    class="mega-menu-list mega-menu-sub-subcategories mega-menu-hidden"
+                                    class="mega-menu-list mega-menu-sub-subcategories"
                                     data-parent-subcategory="{{ sublink.handle }}"
                                     role="list"
                                     aria-hidden="true"
@@ -229,6 +238,7 @@
                                           aria-label="{{ 'sections.header.sub_subcategories' | t }}: {{ sub_sublink.title | escape }}"
                                           data-sub-subcategory-handle="{{ sub_sublink.handle }}"
                                           data-sub-subcategory-title="{{ sub_sublink.title | escape }}"
+                                          data-target-image="[data-sub-subcategory-image='{{ sub_sublink.handle }}']"
                                           {% if sub_sublink.current %}
                                             aria-current="page"
                                           {% endif %}
@@ -257,19 +267,17 @@
                             {%- if settings.logo != blank -%}
                               {{
                                 settings.logo
-                                | image_url: width: 400
+                                | image_url: width: 200
                                 | image_tag:
-                                  class: 'mega-menu-default-image mega-menu-visible',
+                                  class: 'mega-menu-default-image is-visible',
                                   alt: shop.name,
                                   loading: 'lazy',
-                                  width: 300,
-                                  height: 200,
-                                  sizes: '300px',
-                                  widths: '300, 400, 600'
+                                  width: 200,
+                                  height: 200
                               }}
                             {%- else -%}
-                              <div class="mega-menu-no-image mega-menu-visible">
-                                <span>{{ shop.name }}</span>
+                              <div class="mega-menu-no-image is-visible">
+                                <span>{{ shop.name | escape }}</span>
                               </div>
                             {%- endif -%}
 
@@ -278,16 +286,13 @@
                               {%- if link.object and link.object.image -%}
                                 {{
                                   link.object.image
-                                  | image_url: width: 400
+                                  | image_url: width: 200
                                   | image_tag:
-                                    class: 'mega-menu-category-image mega-menu-hidden',
-                                    alt: link.object.title
-                                  | default: link.title,
+                                    class: 'mega-menu-category-image',
+                                    alt: link.title,
                                     loading: 'lazy',
-                                    width: 300,
+                                    width: 200,
                                     height: 200,
-                                    sizes: '300px',
-                                    widths: '300, 400, 600',
                                     data-category-image: link.handle
                                 }}
                               {%- endif -%}
@@ -298,16 +303,13 @@
                                   {%- if sublink.object and sublink.object.image -%}
                                     {{
                                       sublink.object.image
-                                      | image_url: width: 400
+                                      | image_url: width: 200
                                       | image_tag:
-                                        class: 'mega-menu-subcategory-image mega-menu-hidden',
-                                        alt: sublink.object.title
-                                      | default: sublink.title,
+                                        class: 'mega-menu-subcategory-image',
+                                        alt: sublink.title,
                                         loading: 'lazy',
-                                        width: 300,
+                                        width: 200,
                                         height: 200,
-                                        sizes: '300px',
-                                        widths: '300, 400, 600',
                                         data-subcategory-image: sublink.handle
                                     }}
                                   {%- endif -%}
@@ -318,16 +320,13 @@
                                       {%- if sub_sublink.object and sub_sublink.object.image -%}
                                         {{
                                           sub_sublink.object.image
-                                          | image_url: width: 400
+                                          | image_url: width: 200
                                           | image_tag:
-                                            class: 'mega-menu-sub-subcategory-image mega-menu-hidden',
-                                            alt: sub_sublink.object.title
-                                          | default: sub_sublink.title,
+                                            class: 'mega-menu-sub-subcategory-image',
+                                            alt: sub_sublink.title,
                                             loading: 'lazy',
-                                            width: 300,
+                                            width: 200,
                                             height: 200,
-                                            sizes: '300px',
-                                            widths: '300, 400, 600',
                                             data-sub-subcategory-image: sub_sublink.handle
                                         }}
                                       {%- endif -%}
@@ -489,19 +488,17 @@
                             {%- if settings.logo != blank -%}
                               {{
                                 settings.logo
-                                | image_url: width: 400
+                                | image_url: width: 200
                                 | image_tag:
                                   class: 'mega-menu-default-image',
                                   alt: shop.name,
                                   loading: 'lazy',
-                                  width: 300,
-                                  height: 200,
-                                  sizes: '300px',
-                                  widths: '300, 400, 600'
+                                  width: 200,
+                                  height: 200
                               }}
                             {%- else -%}
                               <div class="mega-menu-no-image">
-                                <span>{{ shop.name }}</span>
+                                <span>{{ shop.name | escape }}</span>
                               </div>
                             {%- endif -%}
 
@@ -512,15 +509,13 @@
                                 {%- if link.object and link.object.image -%}
                                   {{
                                     link.object.image
-                                    | image_url: width: 400
+                                    | image_url: width: 200
                                     | image_tag:
                                       class: 'mega-menu-category-image',
                                       alt: link.title,
                                       loading: 'lazy',
-                                      width: 300,
+                                      width: 200,
                                       height: 200,
-                                      sizes: '300px',
-                                      widths: '300, 400, 600',
                                       data-category: link.handle
                                   }}
                                 {%- endif -%}
@@ -531,15 +526,13 @@
                                     {%- if sublink.object and sublink.object.image -%}
                                       {{
                                         sublink.object.image
-                                        | image_url: width: 400
+                                        | image_url: width: 200
                                         | image_tag:
                                           class: 'mega-menu-subcategory-image',
                                           alt: sublink.title,
                                           loading: 'lazy',
-                                          width: 300,
+                                          width: 200,
                                           height: 200,
-                                          sizes: '300px',
-                                          widths: '300, 400, 600',
                                           data-subcategory: sublink.handle
                                       }}
                                     {%- endif -%}
@@ -550,15 +543,13 @@
                                         {%- if sub_sublink.object and sub_sublink.object.image -%}
                                           {{
                                             sub_sublink.object.image
-                                            | image_url: width: 400
+                                            | image_url: width: 200
                                             | image_tag:
                                               class: 'mega-menu-sub-subcategory-image',
                                               alt: sub_sublink.title,
                                               loading: 'lazy',
-                                              width: 300,
+                                              width: 200,
                                               height: 200,
-                                              sizes: '300px',
-                                              widths: '300, 400, 600',
                                               data-sub-subcategory: sub_sublink.handle
                                           }}
                                         {%- endif -%}

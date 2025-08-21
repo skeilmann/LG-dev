@@ -1,4 +1,61 @@
-// Custom Header Functionality
+/**
+ * === ARCHITECTURE OVERVIEW ===
+ * 
+ * 1. **Universal .is-visible Class**
+ *    - Single CSS class controls opacity, visibility, and pointer-events
+ *    - Replaces multiple custom visibility classes (.mega-menu-visible, .mega-menu-hidden, .active)
+ *    - Reduces CSS complexity and prevents class proliferation
+ *    - Applied via JavaScript for consistent behavior across all components
+ * 
+ * 2. **DRY Helper Functions**
+ *    - resetVisibility(): Removes .is-visible from element groups
+ *    - showElements(): Adds .is-visible and manages ARIA attributes
+ *    - Eliminates repetitive DOM manipulation code
+ *    - Provides single source of truth for visibility management
+ * 
+ * 3. **Data-Driven Approach**
+ *    - data-target-list: Specifies which subcategory/sub-subcategory list to show
+ *    - data-target-image: Specifies which image to display
+ *    - Eliminates hardcoded selectors and makes system flexible
+ *    - Easy to extend without modifying JavaScript logic
+ * 
+ * === USAGE EXAMPLES ===
+ * 
+ * HTML Structure Requirements:
+ * ```html
+ * <a href="/category" class="mega-menu-category" 
+ *    data-target-list="[data-parent-category='category-handle']"
+ *    data-target-image="[data-category-image='category-handle']">
+ *   Category Name
+ * </a>
+ * 
+ * <ul class="mega-menu-subcategories" data-parent-category="category-handle">
+ *   <li>
+ *     <a href="/subcategory" class="mega-menu-sublink"
+ *        data-target-list="[data-parent-subcategory='subcategory-handle']"
+ *        data-target-image="[data-subcategory-image='subcategory-handle']">
+ *       Subcategory Name
+ *     </a>
+ *   </li>
+ * </ul>
+ * ```
+ * 
+ * === PERFORMANCE FEATURES ===
+ * 
+ * - RAF-based transitions for smooth animations
+ * - GPU acceleration via transform3d
+ * - Lazy image loading for mobile accordions
+ * - Hover timeout delays to prevent flicker
+ * - Memory cleanup on destroy
+ * 
+ * === ACCESSIBILITY FEATURES ===
+ * 
+ * - Full keyboard navigation support
+ * - ARIA attributes for screen readers
+ * - Focus management
+ * - Escape key handling
+ * - Loading states with proper announcements
+ */
 class CustomHeader {
   constructor() {
     this.init();
@@ -28,7 +85,6 @@ class CustomHeader {
     this.imageCache = new Map();
     
     // Performance optimization flags
-    this.isTransitioning = false;
     this.rafId = null;
 
     this.bindEvents();
@@ -107,8 +163,21 @@ class CustomHeader {
     this.megaMenuWrapper.addEventListener('mouseleave', () => {
       this.hoverTimeout = setTimeout(() => {
         this.closeMegaMenu();
-      }, 150);
+      }, 300); // Increased delay for better UX
     });
+
+    // Also handle hover events on the dropdown itself to prevent closing
+    if (this.megaMenuDropdown) {
+      this.megaMenuDropdown.addEventListener('mouseenter', () => {
+        clearTimeout(this.hoverTimeout);
+      });
+
+      this.megaMenuDropdown.addEventListener('mouseleave', () => {
+        this.hoverTimeout = setTimeout(() => {
+          this.closeMegaMenu();
+        }, 200);
+      });
+    }
 
     // Initialize hover events for all menu levels
     this.initCategoryHovers();
@@ -123,17 +192,22 @@ class CustomHeader {
   initCategoryHovers() {
     if (!this.zone1) return;
 
-    const categoryLinks = this.zone1.querySelectorAll('.mega-menu-category');
-    
-    categoryLinks.forEach((link) => {
-      link.addEventListener('mouseenter', () => {
-        this.handleCategoryHover(link);
+      const categoryLinks = this.zone1.querySelectorAll('.mega-menu-category');
+      
+      categoryLinks.forEach((link) => {
+        link.addEventListener('mouseenter', () => {
+          this.handleCategoryHover(link);
+        });
       });
-    });
 
-    // Reset to default state when leaving column 1
-    this.zone1.addEventListener('mouseleave', () => {
-      this.resetToDefaultState();
+    // Reset to default state when leaving column 1 (with delay)
+      this.zone1.addEventListener('mouseleave', () => {
+      this.hoverTimeout = setTimeout(() => {
+        // Only reset if mouse hasn't moved to another zone
+        if (!this.zone2.matches(':hover') && !this.zone3.matches(':hover') && !this.zone4.matches(':hover')) {
+          this.resetToDefaultState();
+        }
+      }, 100);
     });
   }
 
@@ -142,16 +216,23 @@ class CustomHeader {
     if (!this.zone2) return;
 
     // Use event delegation since subcategory content is dynamically shown/hidden
-    this.zone2.addEventListener('mouseenter', (e) => {
+    this.zone2.addEventListener('mouseover', (e) => {
+      console.log('Zone 2 mouseover event:', e.target, e.target.classList);
       if (e.target.classList.contains('mega-menu-sublink')) {
+        console.log('Subcategory link hovered:', e.target);
         this.handleSubcategoryHover(e.target);
       }
     });
 
-    // When leaving column 2, hide column 3 and reset images to category level
-    this.zone2.addEventListener('mouseleave', () => {
-      this.hideAllSubSubcategories();
-      this.showCategoryImage();
+    // When leaving column 2, hide column 3 and reset images to category level (with delay)
+      this.zone2.addEventListener('mouseleave', () => {
+      this.hoverTimeout = setTimeout(() => {
+        // Only hide if mouse hasn't moved to column 3
+        if (!this.zone3.matches(':hover')) {
+          this.resetVisibility(document.querySelectorAll('.mega-menu-sub-subcategories'));
+          this.showCategoryImage();
+        }
+      }, 100);
     });
   }
 
@@ -159,16 +240,25 @@ class CustomHeader {
   initSubSubcategoryHovers() {
     if (!this.zone3) return;
 
+    // Debug: Check if sub-subcategory elements exist
+    const allSubSubcategories = document.querySelectorAll('.mega-menu-sub-subcategories');
+    console.log('Found sub-subcategory lists:', allSubSubcategories.length);
+    allSubSubcategories.forEach((list, index) => {
+      console.log(`Sub-subcategory list ${index}:`, list.getAttribute('data-parent-subcategory'), list);
+    });
+
     // Use event delegation since sub-subcategory content is dynamically shown/hidden
-    this.zone3.addEventListener('mouseenter', (e) => {
+    this.zone3.addEventListener('mouseover', (e) => {
       if (e.target.classList.contains('mega-menu-sub-sublink')) {
         this.handleSubSubcategoryHover(e.target);
       }
     });
 
-    // When leaving column 3, reset image to subcategory level
+    // When leaving column 3, reset image to subcategory level (with delay)
     this.zone3.addEventListener('mouseleave', () => {
-      this.showSubcategoryImage();
+      this.hoverTimeout = setTimeout(() => {
+        this.showSubcategoryImage();
+      }, 100);
     });
   }
 
@@ -183,88 +273,92 @@ class CustomHeader {
   closeMegaMenu() {
     this.megaMenuTrigger?.setAttribute('aria-expanded', 'false');
     this.megaMenuDropdown.setAttribute('aria-hidden', 'true');
-    
+
     // Reset all states when closing
     this.resetToDefaultState();
     this.currentActiveCategory = null;
     this.currentActiveSubcategory = null;
   }
 
+  // ===== DRY HELPER METHODS =====
+  
+  /**
+   * Universal helper to reset visibility of multiple elements
+   * Why this approach? Eliminates code duplication and provides a single source of truth
+   * for visibility management. Makes the system more maintainable and consistent.
+   * @param {NodeList|Array} elements - Elements to hide
+   * @param {boolean} setAriaHidden - Whether to set aria-hidden="true"
+   */
+  resetVisibility(elements, setAriaHidden = true) {
+    elements.forEach((element) => {
+      element.classList.remove('is-visible');
+      if (setAriaHidden) {
+        element.setAttribute('aria-hidden', 'true');
+      }
+    });
+  }
+
+  /**
+   * Universal helper to show specific elements
+   * Complements resetVisibility() by providing a clean way to show targeted content
+   * @param {NodeList|Array} elements - Elements to show
+   */
+  showElements(elements) {
+    elements.forEach((element) => {
+      element.classList.add('is-visible');
+      element.setAttribute('aria-hidden', 'false');
+    });
+  }
+
   // ===== STATE MANAGEMENT METHODS =====
   
   // Reset to default state - show only column 1, hide columns 2&3, show default image
   resetToDefaultState() {
-    // Clear active states
-    document.querySelectorAll('.mega-menu-category.active').forEach((cat) => {
-      cat.classList.remove('active');
-    });
+    // Clear active states from category links
+    this.resetVisibility(document.querySelectorAll('.mega-menu-category.is-visible'), false);
     
     // Hide all subcategories (column 2)
-    this.hideAllSubcategories();
+    this.resetVisibility(document.querySelectorAll('.mega-menu-subcategories'));
     
     // Hide all sub-subcategories (column 3)
-    this.hideAllSubSubcategories();
+    this.resetVisibility(document.querySelectorAll('.mega-menu-sub-subcategories'));
     
     // Show default image (column 4)
     this.showDefaultImage();
   }
 
-  // Hide all subcategory lists in column 2
-  hideAllSubcategories() {
-    document.querySelectorAll('.mega-menu-subcategories').forEach((list) => {
-      list.classList.remove('mega-menu-visible');
-      list.classList.add('mega-menu-hidden');
-      list.setAttribute('aria-hidden', 'true');
-    });
-  }
-
-  // Hide all sub-subcategory lists in column 3
-  hideAllSubSubcategories() {
-    document.querySelectorAll('.mega-menu-sub-subcategories').forEach((list) => {
-      list.classList.remove('mega-menu-visible');
-      list.classList.add('mega-menu-hidden');
-      list.setAttribute('aria-hidden', 'true');
-    });
+  // Universal helper to clear all images before showing a new one
+  clearAllImages() {
+    // Hide all image types using our DRY helper
+    this.resetVisibility(document.querySelectorAll('.mega-menu-category-image, .mega-menu-subcategory-image, .mega-menu-sub-subcategory-image, .mega-menu-default-image, .mega-menu-no-image'), false);
   }
 
   // Show default fallback image in column 4
   showDefaultImage() {
-    // Hide all specific images
-    document.querySelectorAll('.mega-menu-category-image, .mega-menu-subcategory-image, .mega-menu-sub-subcategory-image').forEach((img) => {
-      img.classList.remove('mega-menu-visible');
-      img.classList.add('mega-menu-hidden');
-    });
+    // Clear all images first
+    this.clearAllImages();
     
     // Show default image
-    const defaultImage = document.querySelector('.mega-menu-default-image, .mega-menu-no-image');
-    if (defaultImage) {
-      defaultImage.classList.add('mega-menu-visible');
-      defaultImage.classList.remove('mega-menu-hidden');
-    }
+    const defaultImages = document.querySelectorAll('.mega-menu-default-image, .mega-menu-no-image');
+    this.showElements(defaultImages);
   }
 
   // Show category image in column 4
   showCategoryImage() {
     if (!this.currentActiveCategory) return;
     
-    const categoryHandle = this.currentActiveCategory.getAttribute('data-category-handle');
-    const categoryImage = document.querySelector(`[data-category-image="${categoryHandle}"]`);
+    // Use data-target-image attribute for cleaner logic
+    const targetImageSelector = this.currentActiveCategory.getAttribute('data-target-image');
+    if (!targetImageSelector) return;
     
-    // Hide other images first
-    document.querySelectorAll('.mega-menu-subcategory-image, .mega-menu-sub-subcategory-image').forEach((img) => {
-      img.classList.remove('mega-menu-visible');
-      img.classList.add('mega-menu-hidden');
-    });
+    const categoryImage = document.querySelector(targetImageSelector);
     
     if (categoryImage) {
-      // Hide default image
-      document.querySelectorAll('.mega-menu-default-image, .mega-menu-no-image').forEach((img) => {
-        img.classList.remove('mega-menu-visible');
-        img.classList.add('mega-menu-hidden');
-      });
+      // Clear all images first to prevent switching bugs
+      this.clearAllImages();
       
-      categoryImage.classList.add('mega-menu-visible');
-      categoryImage.classList.remove('mega-menu-hidden');
+      // Show target image
+      this.showElements([categoryImage]);
     } else {
       this.showDefaultImage();
     }
@@ -274,26 +368,23 @@ class CustomHeader {
   showSubcategoryImage() {
     if (!this.currentActiveSubcategory) return;
     
-    const subcategoryHandle = this.currentActiveSubcategory.getAttribute('data-subcategory-handle');
-    const subcategoryImage = document.querySelector(`[data-subcategory-image="${subcategoryHandle}"]`);
+    // Use data-target-image attribute for cleaner logic
+    const targetImageSelector = this.currentActiveSubcategory.getAttribute('data-target-image');
+    if (!targetImageSelector) {
+      this.showCategoryImage(); // Fallback to category image
+      return;
+    }
     
-    // Hide other images first
-    document.querySelectorAll('.mega-menu-sub-subcategory-image').forEach((img) => {
-      img.classList.remove('mega-menu-visible');
-      img.classList.add('mega-menu-hidden');
-    });
+    const subcategoryImage = document.querySelector(targetImageSelector);
     
     if (subcategoryImage) {
-      // Hide default and category images
-      document.querySelectorAll('.mega-menu-default-image, .mega-menu-no-image, .mega-menu-category-image').forEach((img) => {
-        img.classList.remove('mega-menu-visible');
-        img.classList.add('mega-menu-hidden');
-      });
+      // Clear all images first to prevent switching bugs
+      this.clearAllImages();
       
-      subcategoryImage.classList.add('mega-menu-visible');
-      subcategoryImage.classList.remove('mega-menu-hidden');
+      // Show target image
+      this.showElements([subcategoryImage]);
     } else {
-      this.showCategoryImage();
+      this.showCategoryImage(); // Fallback to category image
     }
   }
 
@@ -301,9 +392,11 @@ class CustomHeader {
 
   // Handle category (column 1) hover - show subcategories in column 2
   handleCategoryHover(categoryLink) {
-    // Performance optimization: prevent excessive calls during rapid hovering
-    if (this.isTransitioning) return;
-    this.isTransitioning = true;
+    // Skip if mega menu is closed
+    if (!this.megaMenuDropdown || this.megaMenuDropdown.getAttribute('aria-hidden') === 'true') return;
+    
+    // Skip if this is already the active category to prevent unnecessary work
+    if (this.currentActiveCategory === categoryLink) return;
     
     // Cancel any pending RAF
     if (this.rafId) {
@@ -312,94 +405,113 @@ class CustomHeader {
     
     // Use RAF for smooth transitions
     this.rafId = requestAnimationFrame(() => {
-      // Update active category
-      document.querySelectorAll('.mega-menu-category.active').forEach((cat) => {
-        cat.classList.remove('active');
-      });
-      categoryLink.classList.add('active');
+      // Update active category using our DRY approach
+      this.resetVisibility(document.querySelectorAll('.mega-menu-category.is-visible'), false);
+      categoryLink.classList.add('is-visible');
       this.currentActiveCategory = categoryLink;
       this.currentActiveSubcategory = null;
 
-      const categoryHandle = categoryLink.getAttribute('data-category-handle');
+      /**
+       * Data-driven approach using data-target-list attribute
+       * Why this works: Instead of hardcoding logic for each category, we use
+       * data attributes to specify which subcategory list to show. This makes
+       * the system flexible and reduces repetitive code.
+       */
+      const targetListSelector = categoryLink.getAttribute('data-target-list');
       
-      // Hide all subcategories first
-      this.hideAllSubcategories();
+      // Hide all subcategories first using our DRY helper
+      this.resetVisibility(document.querySelectorAll('.mega-menu-subcategories'));
       
-      // Show subcategories for this category
-      const subcategoriesList = document.querySelector(`[data-parent-category="${categoryHandle}"]`);
-      if (subcategoriesList) {
-        subcategoriesList.classList.remove('mega-menu-hidden');
-        subcategoriesList.classList.add('mega-menu-visible');
-        subcategoriesList.setAttribute('aria-hidden', 'false');
+      // Show target subcategories if specified
+      if (targetListSelector) {
+        const subcategoriesList = document.querySelector(targetListSelector);
+        console.log('Looking for subcategories with selector:', targetListSelector);
+        console.log('Found subcategories list:', subcategoriesList);
+        
+        if (subcategoriesList) {
+          console.log('Showing subcategories for category:', categoryLink.textContent.trim());
+          this.showElements([subcategoriesList]);
+        }
       }
       
-      // Hide all sub-subcategories
-      this.hideAllSubSubcategories();
+      // Hide all sub-subcategories using our DRY helper
+      this.resetVisibility(document.querySelectorAll('.mega-menu-sub-subcategories'));
       
-      // Show category image
+      // Show category image using data-driven approach
       this.showCategoryImage();
-      
-      // Reset transition flag after a short delay
-      setTimeout(() => {
-        this.isTransitioning = false;
-      }, 50);
     });
   }
 
   // Handle subcategory (column 2) hover - show sub-subcategories in column 3
   handleSubcategoryHover(subcategoryLink) {
-    // Update active subcategory
-    document.querySelectorAll('.mega-menu-sublink.active').forEach((link) => {
-      link.classList.remove('active');
-    });
-    subcategoryLink.classList.add('active');
+    // Skip if mega menu is closed
+    if (!this.megaMenuDropdown || this.megaMenuDropdown.getAttribute('aria-hidden') === 'true') return;
+    
+    // Update active subcategory using our DRY approach
+    this.resetVisibility(document.querySelectorAll('.mega-menu-sublink.is-visible'), false);
+    subcategoryLink.classList.add('is-visible');
     this.currentActiveSubcategory = subcategoryLink;
 
-    const subcategoryHandle = subcategoryLink.getAttribute('data-subcategory-handle');
+    /**
+     * Data-driven approach for sub-subcategories
+     * Uses data-target-list to specify which sub-subcategory list to show
+     * This eliminates hardcoded selectors and makes the system more flexible
+     */
+    const targetListSelector = subcategoryLink.getAttribute('data-target-list');
+    console.log('Subcategory hovered:', subcategoryLink.textContent.trim());
     
-    // Hide all sub-subcategories first
-    this.hideAllSubSubcategories();
+    // Hide all sub-subcategories first using our DRY helper
+    this.resetVisibility(document.querySelectorAll('.mega-menu-sub-subcategories'));
     
-    // Show sub-subcategories for this subcategory
-    const subSubcategoriesList = document.querySelector(`[data-parent-subcategory="${subcategoryHandle}"]`);
-    if (subSubcategoriesList) {
-      subSubcategoriesList.classList.remove('mega-menu-hidden');
-      subSubcategoriesList.classList.add('mega-menu-visible');
-      subSubcategoriesList.setAttribute('aria-hidden', 'false');
+    // Show target sub-subcategories if specified
+    if (targetListSelector) {
+      const subSubcategoriesList = document.querySelector(targetListSelector);
+      console.log('Looking for sub-subcategories with selector:', targetListSelector);
+      console.log('Found sub-subcategories list:', subSubcategoriesList);
+      
+      if (subSubcategoriesList) {
+        console.log('Showing sub-subcategories for:', subcategoryLink.textContent.trim());
+        this.showElements([subSubcategoriesList]);
+      } else {
+        console.log('No sub-subcategories found for selector:', targetListSelector);
+      }
     }
     
-    // Show subcategory image
+    // Show subcategory image using data-driven approach
     this.showSubcategoryImage();
   }
 
   // Handle sub-subcategory (column 3) hover - show sub-subcategory image in column 4
   handleSubSubcategoryHover(subSubcategoryLink) {
-    // Update active sub-subcategory
-    document.querySelectorAll('.mega-menu-sub-sublink.active').forEach((link) => {
-      link.classList.remove('active');
-    });
-    subSubcategoryLink.classList.add('active');
-
-    const subSubcategoryHandle = subSubcategoryLink.getAttribute('data-sub-subcategory-handle');
-    const subSubcategoryImage = document.querySelector(`[data-sub-subcategory-image="${subSubcategoryHandle}"]`);
+    // Skip if mega menu is closed
+    if (!this.megaMenuDropdown || this.megaMenuDropdown.getAttribute('aria-hidden') === 'true') return;
     
-    if (subSubcategoryImage) {
-      // Hide all other images
-      document.querySelectorAll('.mega-menu-default-image, .mega-menu-no-image, .mega-menu-category-image, .mega-menu-subcategory-image').forEach((img) => {
-        img.classList.remove('mega-menu-visible');
-        img.classList.add('mega-menu-hidden');
-      });
+    // Update active sub-subcategory using our DRY approach
+    this.resetVisibility(document.querySelectorAll('.mega-menu-sub-sublink.is-visible'), false);
+    subSubcategoryLink.classList.add('is-visible');
+
+    /**
+     * Data-driven image handling for sub-subcategories
+     * Uses data-target-image attribute to specify which image to show
+     * Provides clean fallback chain: sub-subcategory → subcategory → category → default
+     */
+    const targetImageSelector = subSubcategoryLink.getAttribute('data-target-image');
+    
+    if (targetImageSelector) {
+      const subSubcategoryImage = document.querySelector(targetImageSelector);
       
-      // Hide other sub-subcategory images
-      document.querySelectorAll('.mega-menu-sub-subcategory-image').forEach((img) => {
-        img.classList.remove('mega-menu-visible');
-        img.classList.add('mega-menu-hidden');
-      });
-      
-      subSubcategoryImage.classList.add('mega-menu-visible');
-      subSubcategoryImage.classList.remove('mega-menu-hidden');
+      if (subSubcategoryImage) {
+        // Clear all images first to prevent switching bugs
+        this.clearAllImages();
+        
+        // Show target image
+        this.showElements([subSubcategoryImage]);
+      } else {
+        // Fallback to subcategory image
+        this.showSubcategoryImage();
+      }
     } else {
-      // Fallback to subcategory image
+      // No target image specified, fallback to subcategory image
       this.showSubcategoryImage();
     }
   }
@@ -487,7 +599,7 @@ class CustomHeader {
       case 'ArrowRight':
         e.preventDefault();
         // Move to first subcategory if available
-        const visibleSubcategories = this.zone2?.querySelector('.mega-menu-subcategories.mega-menu-visible');
+        const visibleSubcategories = this.zone2?.querySelector('.mega-menu-subcategories.is-visible');
         if (visibleSubcategories) {
           const firstSubcategory = visibleSubcategories.querySelector('.mega-menu-sublink');
           if (firstSubcategory) {
@@ -513,7 +625,7 @@ class CustomHeader {
   handleSubcategoryKeyNavigation(e) {
     if (!e.target.classList.contains('mega-menu-sublink')) return;
     
-    const visibleList = e.target.closest('.mega-menu-subcategories.mega-menu-visible');
+    const visibleList = e.target.closest('.mega-menu-subcategories.is-visible');
     if (!visibleList) return;
     
     const subcategories = Array.from(visibleList.querySelectorAll('.mega-menu-sublink'));
@@ -535,7 +647,7 @@ class CustomHeader {
       case 'ArrowLeft':
         e.preventDefault();
         // Move back to active category
-        const activeCategory = this.zone1?.querySelector('.mega-menu-category.active');
+        const activeCategory = this.zone1?.querySelector('.mega-menu-category.is-visible');
         if (activeCategory) {
           activeCategory.focus();
         }
@@ -543,7 +655,7 @@ class CustomHeader {
       case 'ArrowRight':
         e.preventDefault();
         // Move to first sub-subcategory if available
-        const visibleSubSubcategories = this.zone3?.querySelector('.mega-menu-sub-subcategories.mega-menu-visible');
+        const visibleSubSubcategories = this.zone3?.querySelector('.mega-menu-sub-subcategories.is-visible');
         if (visibleSubSubcategories) {
           const firstSubSubcategory = visibleSubSubcategories.querySelector('.mega-menu-sub-sublink');
           if (firstSubSubcategory) {
@@ -568,7 +680,7 @@ class CustomHeader {
   handleSubSubcategoryKeyNavigation(e) {
     if (!e.target.classList.contains('mega-menu-sub-sublink')) return;
     
-    const visibleList = e.target.closest('.mega-menu-sub-subcategories.mega-menu-visible');
+    const visibleList = e.target.closest('.mega-menu-sub-subcategories.is-visible');
     if (!visibleList) return;
     
     const subSubcategories = Array.from(visibleList.querySelectorAll('.mega-menu-sub-sublink'));
@@ -590,7 +702,7 @@ class CustomHeader {
       case 'ArrowLeft':
         e.preventDefault();
         // Move back to active subcategory
-        const activeSubcategory = this.zone2?.querySelector('.mega-menu-sublink.active');
+        const activeSubcategory = this.zone2?.querySelector('.mega-menu-sublink.is-visible');
         if (activeSubcategory) {
           activeSubcategory.focus();
         }
@@ -662,12 +774,16 @@ class CustomHeader {
 
           container.appendChild(img);
         } else if (placeholder) {
-          placeholder.innerHTML = '<span class="mobile-loading-text">{{ "sections.header.no_image" | t }}</span>';
+          // Use translation passed from Liquid template via data attribute or global variable
+          const noImageText = document.documentElement.getAttribute('data-no-image-text') || 'No image available';
+          placeholder.innerHTML = `<span class="mobile-loading-text">${noImageText}</span>`;
         }
       })
       .catch(() => {
         if (placeholder) {
-          placeholder.innerHTML = '<span class="mobile-loading-text">{{ "sections.header.no_image" | t }}</span>';
+          // Use translation passed from Liquid template via data attribute or global variable
+          const noImageText = document.documentElement.getAttribute('data-no-image-text') || 'No image available';
+          placeholder.innerHTML = `<span class="mobile-loading-text">${noImageText}</span>`;
         }
       });
   }
@@ -805,7 +921,6 @@ class CustomHeader {
     // Reset state
     this.currentActiveCategory = null;
     this.currentActiveSubcategory = null;
-    this.isTransitioning = false;
   }
 }
 

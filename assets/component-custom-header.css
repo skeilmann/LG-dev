@@ -157,6 +157,14 @@
     transform: translateY(0);
 }
 
+/* Ensure hover state is maintained across all columns */
+.mega-menu-wrapper:hover .mega-menu-dropdown,
+.mega-menu-dropdown:hover {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
 .mega-menu-content {
     padding: 2rem;
     width: 100%;
@@ -193,15 +201,21 @@
 /* Column 4: Images - always visible container, content changes on hover */
 .mega-menu-zone-4 {
     display: flex;
-    align-items: center;
     justify-content: center;
 }
 
-/* ===== VISIBILITY CONTROL CLASSES ===== */
-/* These classes control what content is shown in columns 2 and 3 */
+/* ===== GLOBAL VISIBILITY CONTROL CLASS =====
+/* Single universal class for all dropdown and image visibility states.
+ * Why .is-visible? It's semantic, reusable, and prevents class proliferation.
+ * This approach reduces CSS complexity and makes the system more maintainable.
+ */
 
-/* Hidden state - used for subcategory and sub-subcategory lists */
-.mega-menu-hidden {
+/* Default state for all dynamic content - hidden by default */
+.mega-menu-subcategories,
+.mega-menu-sub-subcategories,
+.mega-menu-category-image,
+.mega-menu-subcategory-image,
+.mega-menu-sub-subcategory-image {
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px);
@@ -214,23 +228,26 @@
     height: auto;
 }
 
-/* Visible state - shown when parent item is hovered */
-.mega-menu-visible {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-    pointer-events: auto;
-    position: relative;
+/* Universal visibility class - controls all dynamic content visibility
+ * Applied via JavaScript to show/hide subcategories, sub-subcategories, and images
+ */
+.is-visible {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) !important;
+    pointer-events: auto !important;
+    position: relative !important;
 }
 
 /* Image visibility control - all images are absolutely positioned and toggled */
 .mega-menu-featured-image {
     position: relative;
-    width: 100%;
+    width: 200px;
     height: 200px;
     border-radius: 0.5rem;
     overflow: hidden;
     background: rgba(var(--color-foreground), 0.05);
+    margin: 0 auto;
 }
 
 .mega-menu-featured-image img,
@@ -238,30 +255,27 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 200px;
+    height: 200px;
     object-fit: cover;
     transition: opacity 0.3s ease;
 }
 
-/* Default state for all images except the default fallback */
-.mega-menu-category-image,
-.mega-menu-subcategory-image,
-.mega-menu-sub-subcategory-image {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-}
-
-/* Visible state for images */
-.mega-menu-category-image.mega-menu-visible,
-.mega-menu-subcategory-image.mega-menu-visible,
-.mega-menu-sub-subcategory-image.mega-menu-visible,
-.mega-menu-default-image.mega-menu-visible,
-.mega-menu-no-image.mega-menu-visible {
+/* Default fallback image is visible by default */
+.mega-menu-default-image,
+.mega-menu-no-image {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
+    position: relative;
+}
+
+/* Images that should be hidden when default is shown */
+.mega-menu-default-image:not(.is-visible),
+.mega-menu-no-image:not(.is-visible) {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
 }
 
 .mega-menu-title {
@@ -289,10 +303,11 @@
     border-bottom: 1px solid transparent;
 }
 
+/* Hover and active states for all menu links */
 .mega-menu-link:hover,
-.mega-menu-category.active,
-.mega-menu-sublink.active,
-.mega-menu-sub-sublink.active {
+.mega-menu-category.is-visible,
+.mega-menu-sublink.is-visible,
+.mega-menu-sub-sublink.is-visible {
     color: rgba(var(--color-foreground), 0.8);
     border-bottom-color: rgba(var(--color-foreground), 0.2);
 }
@@ -308,7 +323,7 @@
 /* Image container styling */
 .mega-menu-image-container {
     position: relative;
-    width: 100%;
+    width: 200px;
     height: 200px;
     border-radius: 0.5rem;
     overflow: hidden;
@@ -316,6 +331,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: 0 auto;
 }
 
 /* No image fallback styling */
@@ -644,8 +660,9 @@
 
 /* Use GPU acceleration for transforms */
 .mega-menu-dropdown,
-.mega-menu-hidden,
-.mega-menu-visible {
+.mega-menu-subcategories,
+.mega-menu-sub-subcategories,
+.is-visible {
     transform: translateZ(0);
     will-change: opacity, visibility, transform;
 }

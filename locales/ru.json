@@ -329,6 +329,7 @@
       "mega_menu": "мега меню",
       "categories": "Категории",
       "subcategories": "Подкатегории",
+      "sub_subcategories": "Подподкатегории",
       "loading_image": "Загрузка изображения...",
       "no_image": "Изображение недоступно",
       "settings": {
