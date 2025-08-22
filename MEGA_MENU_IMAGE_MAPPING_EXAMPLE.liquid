@@ -1,0 +1,152 @@
+{% comment %}
+  MEGA MENU IMAGE MAPPING EXAMPLE
+
+  This example demonstrates the required Liquid structure for proper
+  data-target-image mapping in the 4-zone mega menu.
+
+  Key Requirements:
+  1. Each category/subcategory/sub-subcategory link needs a unique data-target-image attribute
+  2. Image elements need corresponding data attributes for matching
+  3. All images should be placed within .mega-menu-featured-image container
+{% endcomment %}
+
+<!-- Zone 1: Categories -->
+<div class="mega-menu-zone-1">
+  <ul class="mega-menu-list">
+    {% for category in collections %}
+      <li>
+        <a
+          href="{{ category.url }}"
+          class="mega-menu-category mega-menu-link"
+          data-target-list="[data-parent-category='{{ category.handle }}']"
+          data-target-image="[data-category-image='{{ category.handle }}']"
+        >
+          {{ category.title }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+
+<!-- Zone 2: Subcategories (dynamically shown/hidden) -->
+<div class="mega-menu-zone-2">
+  {% for category in collections %}
+    <ul
+      class="mega-menu-subcategories"
+      data-parent-category="{{ category.handle }}"
+      aria-hidden="true"
+    >
+      {% for subcategory in category.products %}
+        <li>
+          <a
+            href="{{ subcategory.url }}"
+            class="mega-menu-sublink mega-menu-link"
+            data-target-list="[data-parent-subcategory='{{ subcategory.handle }}']"
+            data-target-image="[data-subcategory-image='{{ subcategory.handle }}']"
+          >
+            {{ subcategory.title }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endfor %}
+</div>
+
+<!-- Zone 3: Sub-subcategories (dynamically shown/hidden) -->
+<div class="mega-menu-zone-3">
+  {% for category in collections %}
+    {% for subcategory in category.products %}
+      <ul
+        class="mega-menu-sub-subcategories"
+        data-parent-subcategory="{{ subcategory.handle }}"
+        aria-hidden="true"
+      >
+        {% for sub_subcategory in subcategory.variants %}
+          <li>
+            <a
+              href="{{ sub_subcategory.url }}"
+              class="mega-menu-sub-sublink mega-menu-link"
+              data-target-image="[data-sub-subcategory-image='{{ sub_subcategory.handle }}']"
+            >
+              {{ sub_subcategory.title }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endfor %}
+  {% endfor %}
+</div>
+
+<!-- Zone 4: Images (all images in one container, toggled via JS) -->
+<div class="mega-menu-zone-4">
+  <div class="mega-menu-featured-image">
+    <!-- Category Images -->
+    {% for category in collections %}
+      {% if category.featured_image %}
+        <img
+          src="{{ category.featured_image | img_url: '200x200' }}"
+          alt="{{ category.title }}"
+          class="mega-menu-category-image"
+          data-category-image="{{ category.handle }}"
+          loading="lazy"
+        >
+      {% endif %}
+    {% endfor %}
+
+    <!-- Subcategory Images -->
+    {% for category in collections %}
+      {% for subcategory in category.products %}
+        {% if subcategory.featured_image %}
+          <img
+            src="{{ subcategory.featured_image | img_url: '200x200' }}"
+            alt="{{ subcategory.title }}"
+            class="mega-menu-subcategory-image"
+            data-subcategory-image="{{ subcategory.handle }}"
+            loading="lazy"
+          >
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+
+    <!-- Sub-subcategory Images -->
+    {% for category in collections %}
+      {% for subcategory in category.products %}
+        {% for sub_subcategory in subcategory.variants %}
+          {% if sub_subcategory.featured_image %}
+            <img
+              src="{{ sub_subcategory.featured_image | img_url: '200x200' }}"
+              alt="{{ sub_subcategory.title }}"
+              class="mega-menu-sub-subcategory-image"
+              data-sub-subcategory-image="{{ sub_subcategory.handle }}"
+              loading="lazy"
+            >
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+    {% endfor %}
+  </div>
+</div>
+
+{% comment %}
+  IMPORTANT NOTES:
+
+  1. Data Attribute Mapping:
+     - data-target-image values must exactly match the selector for the corresponding image
+     - Use unique handles to avoid conflicts
+     - Format: data-target-image="[data-category-image='handle']"
+
+  2. Image Classes:
+     - .mega-menu-category-image for category images
+     - .mega-menu-subcategory-image for subcategory images
+     - .mega-menu-sub-subcategory-image for sub-subcategory images
+
+  3. Visibility Control:
+     - All images start hidden (CSS default state)
+     - JavaScript adds .is-visible class to show specific images
+     - Only one image visible at a time
+
+  4. No Placeholder Logic:
+     - If no image is mapped, zone4 stays empty
+     - No fallback or placeholder images are shown
+     - Clean, minimal approach
+{% endcomment %}

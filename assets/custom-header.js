@@ -320,16 +320,14 @@ class CustomHeader {
 
   // Universal helper to clear all images before showing a new one
   clearAllImages() {
-    // Hide all real image types using our DRY helper
-    this.resetVisibility(document.querySelectorAll('.mega-menu-category-image, .mega-menu-subcategory-image, .mega-menu-sub-subcategory-image'), false);
+    // Hide all possible images inside the image container only
+    const scope = this.imageContainer || this.megaMenuDropdown || document;
+    this.resetVisibility(scope.querySelectorAll(
+      '.mega-menu-category-image, .mega-menu-subcategory-image, .mega-menu-sub-subcategory-image'
+    ), false);
   }
 
-  // Show default fallback image in column 4 - removed placeholder logic
-  showDefaultImage() {
-    // Clear all images first
-    this.clearAllImages();
-    // No placeholder images shown - only real images are displayed
-  }
+
 
   // Show category image in column 4
   showCategoryImage() {
@@ -339,7 +337,9 @@ class CustomHeader {
     const targetImageSelector = this.currentActiveCategory.getAttribute('data-target-image');
     if (!targetImageSelector) return;
     
-    const categoryImage = document.querySelector(targetImageSelector);
+    // Resolve the target within the image container scope (avoid document.querySelector without scoping)
+    const scope = this.imageContainer || this.megaMenuDropdown || document;
+    const categoryImage = scope.querySelector(targetImageSelector);
     
     if (categoryImage) {
       // Clear all images first to prevent switching bugs
@@ -348,7 +348,7 @@ class CustomHeader {
       // Show target image
       this.showElements([categoryImage]);
     }
-    // No fallback to placeholder images
+    // If not found, do nothing (leave zone4 empty; no fallbacks)
   }
 
   // Show subcategory image in column 4
@@ -362,7 +362,9 @@ class CustomHeader {
       return;
     }
     
-    const subcategoryImage = document.querySelector(targetImageSelector);
+    // Resolve the target within the image container scope (avoid document.querySelector without scoping)
+    const scope = this.imageContainer || this.megaMenuDropdown || document;
+    const subcategoryImage = scope.querySelector(targetImageSelector);
     
     if (subcategoryImage) {
       // Clear all images first to prevent switching bugs
@@ -379,7 +381,7 @@ class CustomHeader {
 
   // Handle category (column 1) hover - show subcategories in column 2
   handleCategoryHover(categoryLink) {
-    // Skip if mega menu is closed
+    // Visibility gate on hover handlers
     if (!this.megaMenuDropdown || this.megaMenuDropdown.getAttribute('aria-hidden') === 'true') return;
     
     // Skip if this is already the active category to prevent unnecessary work
@@ -428,7 +430,7 @@ class CustomHeader {
 
   // Handle subcategory (column 2) hover - show sub-subcategories in column 3
   handleSubcategoryHover(subcategoryLink) {
-    // Skip if mega menu is closed
+    // Visibility gate on hover handlers
     if (!this.megaMenuDropdown || this.megaMenuDropdown.getAttribute('aria-hidden') === 'true') return;
     
     // Update active subcategory using our DRY approach
@@ -461,7 +463,7 @@ class CustomHeader {
 
   // Handle sub-subcategory (column 3) hover - show sub-subcategory image in column 4
   handleSubSubcategoryHover(subSubcategoryLink) {
-    // Skip if mega menu is closed
+    // Visibility gate on hover handlers
     if (!this.megaMenuDropdown || this.megaMenuDropdown.getAttribute('aria-hidden') === 'true') return;
     
     // Update active sub-subcategory using our DRY approach
@@ -476,7 +478,9 @@ class CustomHeader {
     const targetImageSelector = subSubcategoryLink.getAttribute('data-target-image');
     
     if (targetImageSelector) {
-      const subSubcategoryImage = document.querySelector(targetImageSelector);
+      // Resolve the target within the image container scope (avoid document.querySelector without scoping)
+      const scope = this.imageContainer || this.megaMenuDropdown || document;
+      const subSubcategoryImage = scope.querySelector(targetImageSelector);
       
       if (subSubcategoryImage) {
         // Clear all images first to prevent switching bugs
@@ -750,7 +754,7 @@ class CustomHeader {
         }
       })
       .catch(() => {
-        // No fallback placeholder - only real images are shown
+        // Silent fail - no fallback images
       });
   }
 

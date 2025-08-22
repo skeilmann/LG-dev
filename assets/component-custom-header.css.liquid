@@ -202,6 +202,11 @@
 .mega-menu-zone-4 {
     display: flex;
     justify-content: center;
+    z-index: 2;
+}
+
+.mega-menu-default-image {
+    z-index: 1;
 }
 
 /* ===== GLOBAL VISIBILITY CONTROL CLASS =====
@@ -212,10 +217,7 @@
 
 /* Default state for all dynamic content - hidden by default */
 .mega-menu-subcategories,
-.mega-menu-sub-subcategories,
-.mega-menu-category-image,
-.mega-menu-subcategory-image,
-.mega-menu-sub-subcategory-image {
+.mega-menu-sub-subcategories {
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px);
@@ -226,6 +228,19 @@
     left: 0;
     width: 100%;
     height: auto;
+}
+
+/* Base: everything hidden inside zone4 unless .is-visible */
+.mega-menu-featured-image .mega-menu-category-image,
+.mega-menu-featured-image .mega-menu-subcategory-image,
+.mega-menu-featured-image .mega-menu-sub-subcategory-image {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    position: absolute;
+    /* stacked in the same container */
+    inset: 0;
+    transition: opacity .18s ease;
 }
 
 /* Universal visibility class - controls all dynamic content visibility
@@ -239,6 +254,14 @@
     position: relative !important;
 }
 
+.mega-menu-featured-image .is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    position: relative;
+    /* top-most visible */
+}
+
 /* Image visibility control - all images are absolutely positioned and toggled */
 .mega-menu-featured-image {
     position: relative;
@@ -250,8 +273,7 @@
     margin: 0 auto;
 }
 
-.mega-menu-featured-image img,
-.mega-menu-no-image {
+.mega-menu-featured-image img {
     position: absolute;
     top: 0;
     left: 0;
@@ -259,23 +281,6 @@
     height: 200px;
     object-fit: cover;
     transition: opacity 0.3s ease;
-}
-
-/* Default fallback image is visible by default */
-.mega-menu-default-image,
-.mega-menu-no-image {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    position: relative;
-}
-
-/* Images that should be hidden when default is shown */
-.mega-menu-default-image:not(.is-visible),
-.mega-menu-no-image:not(.is-visible) {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
 }
 
 .mega-menu-title {
@@ -334,15 +339,7 @@
     margin: 0 auto;
 }
 
-/* No image fallback styling */
-.mega-menu-no-image {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: rgba(var(--color-foreground), 0.6);
-    font-size: 0.9rem;
-    text-align: center;
-}
+
 
 /* ===== DROPDOWN MENU STYLES ===== */
 
