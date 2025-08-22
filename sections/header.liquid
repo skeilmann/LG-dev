@@ -274,7 +274,7 @@
                                 settings.logo
                                 | image_url: width: 200
                                 | image_tag:
-                                  class: 'mega-menu-default-image is-visible',
+                                  class: 'mega-menu-default-image',
                                   alt: shop.name,
                                   loading: 'lazy',
                                   width: 200,
@@ -289,51 +289,57 @@
                             {%- comment -%} Category level images - shown when category is hovered {%- endcomment -%}
                             {%- for link in catalog_menu.links -%}
                               {%- if link.object and link.object.image -%}
-                                {{
-                                  link.object.image
-                                  | image_url: width: 200
-                                  | image_tag:
-                                    class: 'mega-menu-category-image',
-                                    alt: link.title,
-                                    loading: 'lazy',
-                                    width: 200,
-                                    height: 200,
-                                    data-category-image: link.handle
-                                }}
+                                <a href="{{ link.url }}" class="mega-menu-image-link">
+                                  {{
+                                    link.object.image
+                                    | image_url: width: 200
+                                    | image_tag:
+                                      class: 'mega-menu-category-image',
+                                      alt: link.title,
+                                      loading: 'lazy',
+                                      width: 200,
+                                      height: 200,
+                                      data-category-image: link.handle
+                                  }}
+                                </a>
                               {%- endif -%}
 
                               {%- comment -%} Subcategory level images - shown when subcategory is hovered {%- endcomment -%}
                               {%- if link.links != blank -%}
                                 {%- for sublink in link.links -%}
                                   {%- if sublink.object and sublink.object.image -%}
-                                    {{
-                                      sublink.object.image
-                                      | image_url: width: 200
-                                      | image_tag:
-                                        class: 'mega-menu-subcategory-image',
-                                        alt: sublink.title,
-                                        loading: 'lazy',
-                                        width: 200,
-                                        height: 200,
-                                        data-subcategory-image: sublink.handle
-                                    }}
+                                    <a href="{{ sublink.url }}" class="mega-menu-image-link">
+                                      {{
+                                        sublink.object.image
+                                        | image_url: width: 200
+                                        | image_tag:
+                                          class: 'mega-menu-subcategory-image',
+                                          alt: sublink.title,
+                                          loading: 'lazy',
+                                          width: 200,
+                                          height: 200,
+                                          data-subcategory-image: sublink.handle
+                                      }}
+                                    </a>
                                   {%- endif -%}
 
                                   {%- comment -%} Sub-subcategory level images - shown when sub-subcategory is hovered {%- endcomment -%}
                                   {%- if sublink.links != blank -%}
                                     {%- for sub_sublink in sublink.links -%}
                                       {%- if sub_sublink.object and sub_sublink.object.image -%}
-                                        {{
-                                          sub_sublink.object.image
-                                          | image_url: width: 200
-                                          | image_tag:
-                                            class: 'mega-menu-sub-subcategory-image',
-                                            alt: sub_sublink.title,
-                                            loading: 'lazy',
-                                            width: 200,
-                                            height: 200,
-                                            data-sub-subcategory-image: sub_sublink.handle
-                                        }}
+                                        <a href="{{ sub_sublink.url }}" class="mega-menu-image-link">
+                                          {{
+                                            sub_sublink.object.image
+                                            | image_url: width: 200
+                                            | image_tag:
+                                              class: 'mega-menu-sub-subcategory-image',
+                                              alt: sub_sublink.title,
+                                              loading: 'lazy',
+                                              width: 200,
+                                              height: 200,
+                                              data-sub-subcategory-image: sub_sublink.handle
+                                          }}
+                                        </a>
                                       {%- endif -%}
                                     {%- endfor -%}
                                   {%- endif -%}
