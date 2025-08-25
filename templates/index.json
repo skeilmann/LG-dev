@@ -34,9 +34,7 @@
       "block_order": [
         "slide_VR38xH"
       ],
-      "custom_css": [
-        ".slideshow {border-radius: var(--product-card-corner-radius);}"
-      ],
+      "custom_css": [],
       "settings": {
         "layout": "full_bleed",
         "slide_height": "medium",
