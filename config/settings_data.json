@@ -45,7 +45,7 @@
     "inputs_shadow_vertical_offset": 4,
     "inputs_shadow_blur": 5,
     "card_style": "card",
-    "card_image_padding": 20,
+    "card_image_padding": 10,
     "card_text_alignment": "center",
     "card_color_scheme": "scheme-6",
     "card_border_thickness": 0,
