@@ -206,7 +206,8 @@
       "custom_css": [
         ".card__media {border-radius: 10px;}",
         ".card {border: none !important;}",
-        ".card__information {padding: 0;}"
+        ".card__information {padding: 0;}",
+        " .card__media {border-radius: 0; }"
       ],
       "settings": {
         "title": "КАТАЛОГ",
