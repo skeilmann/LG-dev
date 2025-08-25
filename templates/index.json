@@ -293,8 +293,6 @@
       "settings": {
         "show_filter": true,
         "filter_collections": [
-          "gama-autumn-collection",
-          "gama-art-collection",
           "dark-potal-base",
           "dark-polygel",
           "dark-pink-potal-base",
