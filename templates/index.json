@@ -38,7 +38,7 @@
         ".slideshow {border-radius: var(--product-card-corner-radius);}"
       ],
       "settings": {
-        "layout": "grid",
+        "layout": "full_bleed",
         "slide_height": "medium",
         "slider_visual": "dots",
         "auto_rotate": true,
