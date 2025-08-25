@@ -307,10 +307,13 @@
       <div class="center collection__view-all">
         <a
           href="{{ section.settings.collection.url }}"
-          class="button"
+          class="button animate-arrow"
           aria-label="{{ 'sections.featured_collection.view_all_label' | t: collection_name: section.settings.collection.title }}"
         >
           {{ 'sections.featured_collection.view_all' | t }}
+          <span class="svg-wrapper">
+            <span class="icon-wrap">&nbsp;{{ 'icon-arrow.svg' | inline_asset_content }}</span>
+          </span>
         </a>
       </div>
     {%- endif -%}
