@@ -207,7 +207,7 @@
         ".card__media {border-radius: 10px;}",
         ".card {border: none !important;}",
         ".card__information {padding: 0;}",
-        " .card__media {border-radius: 0; }"
+        ".card__media {border-radius: 0;}"
       ],
       "settings": {
         "title": "КАТАЛОГ",
@@ -231,7 +231,7 @@
           "dark"
         ],
         "title": "<p>НОВИНКИ</p>",
-        "title_alignment": "left",
+        "title_alignment": "center",
         "heading_size": "h2",
         "description": "",
         "show_description": false,
