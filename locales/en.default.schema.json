@@ -142,6 +142,15 @@
         "secondary_button_label": {
           "label": "Outline button"
         },
+        "button_secondary_bg": {
+          "label": "Secondary button background"
+        },
+        "button_secondary_outline": {
+          "label": "Secondary button outline"
+        },
+        "button_secondary_text": {
+          "label": "Secondary button text"
+        },
         "shadow": {
           "label": "Shadow"
         }

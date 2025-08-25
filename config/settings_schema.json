@@ -78,6 +78,24 @@
           },
           {
             "type": "color",
+            "id": "button_secondary_bg",
+            "label": "Secondary button background",
+            "default": "#FFFFFF"
+          },
+          {
+            "type": "color",
+            "id": "button_secondary_outline",
+            "label": "Secondary button outline",
+            "default": "#121212"
+          },
+          {
+            "type": "color",
+            "id": "button_secondary_text",
+            "label": "Secondary button text",
+            "default": "#121212"
+          },
+          {
+            "type": "color",
             "id": "shadow",
             "label": "t:settings_schema.colors.settings.shadow.label",
             "default": "#121212"
