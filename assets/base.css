@@ -1180,11 +1180,11 @@ deferred-media {
   --color-button: var(--color-secondary-button, var(--color-background));
   --color-button-text: var(--color-secondary-button-text, var(--color-secondary-button-label));
   --color-button-outline: var(--color-secondary-button-outline, var(--color-secondary-button-label));
-  transition: background-color, color 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 .button--secondary:hover {
-  background-color: var(--color-secondary-button-text);
+  background-color: black;
   color: white;
 }
 

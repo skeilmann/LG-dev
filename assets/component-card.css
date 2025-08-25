@@ -627,3 +627,42 @@
   background-color: #FF0000;
   box-shadow: 0px 3.23px 12px 1.7px rgba(255, 0, 0, 0.2);
 }
+
+/* Product Card Hover Effects */
+:root {
+  --color-card-hover-glow: 244, 184, 221;
+  /* #F4B8DD - soft pink */
+  --color-card-title-hover: 128, 128, 128;
+  /* #808080 - light grey */
+}
+
+/* Ensure smooth transitions for existing card elements */
+.card--card:after,
+.card--standard .card__inner:after {
+  transition: box-shadow 0.3s ease;
+}
+
+.card__heading a {
+  transition: color 0.3s ease;
+}
+
+/* Performance optimization: only enable hover effects on devices that support them */
+@media (prefers-reduced-motion: no-preference) {
+
+  /* Hover shadow effect for product cards */
+  .card-wrapper:hover .card--card:after,
+  .card-wrapper:hover .card--standard .card__inner:after {
+    box-shadow: 0 8px 25px rgba(var(--color-card-hover-glow), 0.3) !important;
+  }
+
+  /* Product title hover effect */
+  .card-wrapper:hover .card__heading a {
+    color: rgb(var(--color-card-title-hover));
+    text-decoration: none !important;
+  }
+
+  /* Override underline-links-hover for product cards */
+  .card-wrapper:hover .underline-links-hover .card__heading a {
+    text-decoration: none !important;
+  }
+}
