@@ -1,4 +1,9 @@
 <style>
+  .costum-section {
+    padding: 0 !important;
+    height: 60px !important;
+  }
+
   @media (max-width: 1023px) {
     .disclosure__button,
     .localization-form__select,
@@ -20,7 +25,7 @@
   }
 </style>
 
-<div class="custom-section header color-{{ section.settings.color_scheme }}">
+<div class="header custom-section color-{{ section.settings.color_scheme }}">
   {% content_for 'blocks' %}
 
   <div class="header__icons{% if section.settings.enable_country_selector or section.settings.enable_language_selector %} header__icons--localization header-localization{% endif %}">
