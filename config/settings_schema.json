@@ -125,6 +125,20 @@
         "label": "t:settings_schema.typography.settings.heading_scale.label",
         "default": 100
       },
+
+      // font weight for titles in entire theme
+      {
+        "type": "select",
+        "id": "heading_font_weight",
+        "label": "Heading font weight",
+        "default": "700",
+        "options": [
+          { "value": "400", "label": "Regular" },
+          { "value": "500", "label": "Medium" },
+          { "value": "600", "label": "Semi-bold" },
+          { "value": "700", "label": "Bold" }
+        ]
+      },
       {
         "type": "header",
         "content": "t:settings_schema.typography.settings.header__2.content"
