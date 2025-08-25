@@ -34,7 +34,6 @@
       "block_order": [
         "slide_VR38xH"
       ],
-      "disabled": true,
       "custom_css": [
         ".slideshow {border-radius: var(--product-card-corner-radius);}"
       ],
@@ -63,6 +62,7 @@
     },
     "featured_collection": {
       "type": "featured-collection",
+      "disabled": true,
       "settings": {
         "show_filter": false,
         "filter_collections": [],
@@ -204,7 +204,9 @@
         "featured_collection_FWWPgT"
       ],
       "custom_css": [
-        ".card__media {border-radius: 10px;}"
+        ".card__media {border-radius: 10px;}",
+        ".card {border: none !important;}",
+        ".card__information {padding: 0;}"
       ],
       "settings": {
         "title": "КАТАЛОГ",
