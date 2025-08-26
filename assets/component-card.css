@@ -652,7 +652,7 @@
   /* Hover shadow effect for product cards */
   .card-wrapper:hover .card--card:after,
   .card-wrapper:hover .card--standard .card__inner:after {
-    box-shadow: 0 8px 25px rgba(var(--color-card-hover-glow), 0.3) !important;
+    box-shadow: 0 8px 25px rgba(var(--color-card-hover-glow), 0.8) !important;
   }
 
   /* Product title hover effect */

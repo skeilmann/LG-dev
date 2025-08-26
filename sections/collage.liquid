@@ -45,7 +45,8 @@
       }
 
       #shopify-section-{{ section.id }} .title-wrapper {
-        text-align: left;
+        /* text-align: left; */
+        align-items: flex-start;
       }
 
       .section-{{ section.id }} .collage {
@@ -213,7 +214,7 @@
     <div class="page-width isolate">
       <div class="collage{% if section.settings.mobile_layout == 'collage' %} collage--mobile{% endif %}">
         <div class="left-wrapper">
-          <div class="collection__title title-wrapper title-wrapper--no-top-margin page-width title-wrapper--self-padded-tablet-down">
+          <div class="collection__title title-wrapper title-wrapper--no-top-margin title-wrapper--self-padded-tablet-down">
             {%- if section.settings.heading != blank -%}
               <h2 class="collage-wrapper-title {{ section.settings.heading_size }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
                 {{ section.settings.heading }}
