@@ -328,7 +328,8 @@
       "type": "collage",
       "custom_css": [
         "h3 {margin: 0;}",
-        "p {margin: 0;}"
+        "p {margin: 0;}",
+        ".slider--desktop .slider__slide:first-child {margin-left: 0; }"
       ],
       "settings": {
         "heading": "<p>Г О Р Я Ч Е Е  <strong> -   </strong>П Р Е Д Л О Ж Е Н И Е</p>",
