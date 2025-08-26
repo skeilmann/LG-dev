@@ -10,89 +10,91 @@
 {%- endcomment -%}
 
 <div class="instagram-video-section" data-instagram-feed>
-  {% if section.settings.title != blank %}
-    <h2 class="section-title {{ section.settings.title_alignment }}">
-      {{ section.settings.title | escape }}
-    </h2>
-  {% endif %}
-
-  <div class="subtitle-container">
-    {% if section.settings.subtitle != blank %}
-      <p class="section-subtitle">{{ section.settings.subtitle | escape }}</p>
+  <div class="page-width isolate">
+    {% if section.settings.title != blank %}
+      <h2 class="section-title {{ section.settings.title_alignment }}">
+        {{ section.settings.title | escape }}
+      </h2>
     {% endif %}
 
-    {% if section.settings.button_link != blank and section.settings.button_text != blank %}
-      <a href="{{ section.settings.button_link }}" class="button">
-        {{ section.settings.button_text | escape }}
-      </a>
-    {% endif %}
+    <div class="subtitle-container">
+      {% if section.settings.subtitle != blank %}
+        <p class="section-subtitle">{{ section.settings.subtitle | escape }}</p>
+      {% endif %}
+
+      {% if section.settings.button_link != blank and section.settings.button_text != blank %}
+        <a href="{{ section.settings.button_link }}" class="button">
+          {{ section.settings.button_text | escape }}
+        </a>
+      {% endif %}
+    </div>
+
+    <slider-component class="slider-mobile-gutter">
+      <div class="slider-buttons instagram-slider">
+        <button
+          type="button"
+          class="slider-button slider-button--prev"
+          name="previous"
+          aria-label="{{ 'general.slider.previous_slide' | t }}"
+          aria-controls="Slider-{{ section.id }}"
+        >
+          <span class="svg-wrapper">
+            {{- 'icon-caret.svg' | inline_asset_content -}}
+          </span>
+        </button>
+
+        <div
+          class="slider-counter caption video-slider slider slider--mobile"
+          data-slides-to-show="{{ section.settings.slides_to_show }}"
+          data-slider
+          id="Slider-{{ section.id }}"
+        >
+          <div class="loading-spinner">Loading...</div>
+        </div>
+
+        <button
+          type="button"
+          class="slider-button slider-button--next"
+          name="next"
+          aria-label="{{ 'general.slider.next_slide' | t }}"
+          aria-controls="Slider-{{ section.id }}"
+        >
+          <span class="svg-wrapper">
+            {{- 'icon-caret.svg' | inline_asset_content -}}
+          </span>
+        </button>
+      </div>
+
+      <div class="slider-buttons no-js-hidden">
+        <button
+          type="button"
+          class="slider-button slider-button--prev"
+          name="previous"
+          aria-label="{{ 'general.slider.previous_slide' | t }}"
+        >
+          <span class="svg-wrapper">
+            {{- 'icon-caret.svg' | inline_asset_content -}}
+          </span>
+        </button>
+        <div class="slider-counter caption">
+          <span class="slider-counter--current">1</span>
+          <span aria-hidden="true"> / </span>
+          <span class="visually-hidden">{{ 'general.slider.of' | t }}</span>
+          <span class="slider-counter--total">1</span>
+        </div>
+        <button
+          type="button"
+          class="slider-button slider-button--next"
+          name="next"
+          aria-label="{{ 'general.slider.next_slide' | t }}"
+        >
+          <span class="svg-wrapper">
+            {{- 'icon-caret.svg' | inline_asset_content -}}
+          </span>
+        </button>
+      </div>
+    </slider-component>
   </div>
-
-  <slider-component class="slider-mobile-gutter">
-    <div class="slider-buttons instagram-slider">
-      <button
-        type="button"
-        class="slider-button slider-button--prev"
-        name="previous"
-        aria-label="{{ 'general.slider.previous_slide' | t }}"
-        aria-controls="Slider-{{ section.id }}"
-      >
-        <span class="svg-wrapper">
-          {{- 'icon-caret.svg' | inline_asset_content -}}
-        </span>
-      </button>
-
-      <div
-        class="slider-counter caption video-slider slider slider--mobile"
-        data-slides-to-show="{{ section.settings.slides_to_show }}"
-        data-slider
-        id="Slider-{{ section.id }}"
-      >
-        <div class="loading-spinner">Loading...</div>
-      </div>
-
-      <button
-        type="button"
-        class="slider-button slider-button--next"
-        name="next"
-        aria-label="{{ 'general.slider.next_slide' | t }}"
-        aria-controls="Slider-{{ section.id }}"
-      >
-        <span class="svg-wrapper">
-          {{- 'icon-caret.svg' | inline_asset_content -}}
-        </span>
-      </button>
-    </div>
-
-    <div class="slider-buttons no-js-hidden">
-      <button
-        type="button"
-        class="slider-button slider-button--prev"
-        name="previous"
-        aria-label="{{ 'general.slider.previous_slide' | t }}"
-      >
-        <span class="svg-wrapper">
-          {{- 'icon-caret.svg' | inline_asset_content -}}
-        </span>
-      </button>
-      <div class="slider-counter caption">
-        <span class="slider-counter--current">1</span>
-        <span aria-hidden="true"> / </span>
-        <span class="visually-hidden">{{ 'general.slider.of' | t }}</span>
-        <span class="slider-counter--total">1</span>
-      </div>
-      <button
-        type="button"
-        class="slider-button slider-button--next"
-        name="next"
-        aria-label="{{ 'general.slider.next_slide' | t }}"
-      >
-        <span class="svg-wrapper">
-          {{- 'icon-caret.svg' | inline_asset_content -}}
-        </span>
-      </button>
-    </div>
-  </slider-component>
 </div>
 
 {% schema %}
