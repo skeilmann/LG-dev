@@ -307,7 +307,7 @@
         "collection": "акции-недели",
         "products_to_show": 15,
         "columns_desktop": 5,
-        "full_width": false,
+        "full_width": true,
         "show_view_all": true,
         "view_all_style": "solid",
         "enable_desktop_slider": true,
@@ -329,7 +329,7 @@
       "custom_css": [
         "h3 {margin: 0;}",
         "p {margin: 0;}",
-        ".slider--desktop .slider__slide:first-child {margin-left: 0; }"
+        ".slider--desktop .slider__slide:first-child {margin-left: 0;}"
       ],
       "settings": {
         "heading": "<p>Г О Р Я Ч Е Е  <strong> -   </strong>П Р Е Д Л О Ж Е Н И Е</p>",
