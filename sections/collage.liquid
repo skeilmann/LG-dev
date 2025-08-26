@@ -29,188 +29,209 @@
 -%}
 
 {%- style -%}
-  .section-{{ section.id }}-padding {
-    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
-    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
-  }
+      .section-{{ section.id }}-padding {
+        padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+        padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+      }
 
-  #shopify-section-{{ section.id }} .collage-wrapper-title {
-    color: {{ section.settings.heading_color }};
-    font-size: {{ section.settings.heading_font_size }}px;
-  }
+      #shopify-section-{{ section.id }} .collage-wrapper-title {
+        color: {{ section.settings.heading_color }};
+        font-size: {{ section.settings.heading_font_size }}px;
+      }
 
-  #shopify-section-{{ section.id }} .collage-wrapper-subtitle {
-    color: {{ section.settings.subheading_color }};
-    font-size: {{ section.settings.subheading_font_size }}px;
-  }
+      #shopify-section-{{ section.id }} .collage-wrapper-subtitle {
+        color: {{ section.settings.subheading_color }};
+        font-size: {{ section.settings.subheading_font_size }}px;
+      }
 
-  .section-{{ section.id }} .collage {
-    display: grid;
-    grid-template-columns: minmax(300px, 1fr) minmax(300px, 1fr);
-    gap: var(--grid-desktop-horizontal-spacing);
-    align-items: start;
-    height: 100%;
-  }
+      #shopify-section-{{ section.id }} .title-wrapper {
+        text-align: left;
+      }
 
-  .section-{{ section.id }} .collage--mobile {
-  margin: 0;
-  }
+      .section-{{ section.id }} .collage {
+        display: grid;
+        grid-template-columns: minmax(300px, 1fr) minmax(300px, 1fr);
+        gap: var(--grid-desktop-horizontal-spacing);
+        align-items: start;
+        height: 100%;
+      }
 
-  #shopify-section-{{ section.id }} .collection-image {
-    position: relative;
-    display: flex;
-    justify-content: top;
-    width: 100%;
-    height: 500px;
-    overflow: hidden;
-    padding-top: 10px;
-  }
+      .section-{{ section.id }} .collage--mobile {
+      margin: 0;
+      }
 
-  #shopify-section-{{ section.id }} .collection-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
+      #shopify-section-{{ section.id }} .collection-image {
+        position: relative;
+        display: flex;
+        justify-content: top;
+        width: 100%;
+        height: 500px;
+        overflow: hidden;
+        padding-top: 10px;
+      }
 
-  #shopify-section-{{ section.id }} .product-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: var(--grid-desktop-horizontal-spacing);
+      #shopify-section-{{ section.id }} .collection-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      #shopify-section-{{ section.id }} .product-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: var(--grid-desktop-horizontal-spacing);
+        margin: 0;
+      }
+
+      #shopify-section-{{ section.id }} .card .media {
+        min-height: 200px;
+        max-height: 300px;
+      }
+
+      /* Remove the rule that hides all but the first two cards */
+      /* #shopify-section-{{ section.id }} .slider .grid__item:not(:first-child):not(:nth-child(2)) {
+        display: none;
+      } */
+
+      #shopify-section-{{ section.id }} .slider--desktop .grid__item,
+      #shopify-section-{{ section.id }} .slider--mobile .grid__item {
+        display: block;
+        width: calc(50% - var(--grid-desktop-horizontal-spacing) / 2);
+        flex-shrink: 0;
+        scroll-snap-align: start;
+      }
+
+      #shopify-section-{{ section.id }} .slider {
+        display: flex;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+        gap: 15px;
+      }
+
+      #shopify-section-{{ section.id }} .left-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      #shopify-section-{{ section.id }} .right-wrapper {}
+
+      #shopify-section-{{ section.id }} .slider--desktop .slider__slide:first-child {
+      margin-left: 0;
+    }
+
+    #shopify-section-{{ section.id }} h3, p {
     margin: 0;
   }
 
-  #shopify-section-{{ section.id }} .card .media {
-    min-height: 200px;
-    max-height: 300px;
-  }
+      #shopify-section-{{ section.id }} .countdown-box {
+        position: absolute;
+        bottom: 50%;
+        right: 20px;
+        background: #f4f4f4;
+        padding: 10px 20px;
+        border-radius: 10px;
+        display: inline-block;
+        width: 85px;
+        text-align: center;
+        transform: translateY(50%);
+        z-index: 1;
+      }
 
-  /* Remove the rule that hides all but the first two cards */
-  /* #shopify-section-{{ section.id }} .slider .grid__item:not(:first-child):not(:nth-child(2)) {
-    display: none;
-  } */
+      .countdown-box .number {
+        font-size: 30px;
+        font-weight: bold;
+        line-height: 1;
+      }
 
-  #shopify-section-{{ section.id }} .slider--desktop .grid__item,
-  #shopify-section-{{ section.id }} .slider--mobile .grid__item {
-    display: block;
-    width: calc(50% - var(--grid-desktop-horizontal-spacing) / 2);
-    flex-shrink: 0;
-    scroll-snap-align: start;
-  }
+      .countdown-box .text {
+        font-size: 10px;
+        line-height: 1;
+      }
 
-  #shopify-section-{{ section.id }} .slider {
-    display: flex;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
-    gap: 15px;
-  }
+      @media screen and (min-width: 990px) {
+        #shopify-section-{{ section.id }} .slider .grid__item {
+          width: calc(33.333% - 10px);
+          max-width: 300px;
+        }
+      }
 
-  #shopify-section-{{ section.id }} .countdown-box {
-    position: absolute;
-    bottom: 50%;
-    right: 20px;
-    background: #f4f4f4;
-    padding: 10px 20px;
-    border-radius: 10px;
-    display: inline-block;
-    width: 85px;
-    text-align: center;
-    transform: translateY(50%);
-    z-index: 1;
-  }
+      @media screen and (max-width: 989px) {
+        .collage {
+          display: flex;
+          /* flex-direction: column; */
+        }
 
-  .countdown-box .number {
-    font-size: 30px;
-    font-weight: bold;
-    line-height: 1;
-  }
+        #shopify-section-{{ section.id }} .collection-image {
+          height: 400px;
+        }
 
-  .countdown-box .text {
-    font-size: 10px;
-    line-height: 1;
-  }
+        #shopify-section-{{ section.id }} .slider .grid__item:nth-child(n+3) {
+          display: none;
+        }
 
-  @media screen and (min-width: 990px) {
-    #shopify-section-{{ section.id }} .slider .grid__item {
-      width: calc(33.333% - 10px);
-      max-width: 300px;
-    }
-  }
+        #shopify-section-{{ section.id }} .slider .grid__item {
+          width: calc(50% - 7.5px);
+        }
+      }
 
-  @media screen and (max-width: 989px) {
-    .collage {
-      display: flex;
-      flex-direction: column;
-    }
+      @media screen and (max-width: 749px) {
+        #shopify-section-{{ section.id }} .collection-image {
+          position: relative;
+        }
 
-    #shopify-section-{{ section.id }} .collection-image {
-      height: 400px;
-    }
+        #shopify-section-{{ section.id }} .product-grid {
+          grid-template-columns: repeat(2, 1fr) !important;
+        }
 
-    #shopify-section-{{ section.id }} .slider .grid__item:nth-child(n+3) {
-      display: none;
-    }
+        .slider--mobile {
+          scroll-padding-left: 1.5rem;
+        }
 
-    #shopify-section-{{ section.id }} .slider .grid__item {
-      width: calc(50% - 7.5px);
-    }
-  }
+        #shopify-section-{{ section.id }} .slider .grid__item {
+          width: 100%;
+        }
+      }
 
-  @media screen and (max-width: 749px) {
-    #shopify-section-{{ section.id }} .collection-image {
-      position: relative;
-    }
+      @media screen and (min-width: 750px) {
+        .collage {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          overflow: visible;
+        }
 
-    #shopify-section-{{ section.id }} .product-grid {
-      grid-template-columns: repeat(2, 1fr) !important;
-    }
-
-    .slider--mobile {
-      scroll-padding-left: 1.5rem;
-    }
-
-    #shopify-section-{{ section.id }} .slider .grid__item {
-      width: 100%;
-    }
-  }
-
-  @media screen and (min-width: 750px) {
-    .collage {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      overflow: visible;
-    }
-
-    .section-{{ section.id }}-padding {
-      padding-top: {{ section.settings.padding_top }}px;
-      padding-bottom: {{ section.settings.padding_bottom }}px;
-    }
-  }
+        .section-{{ section.id }}-padding {
+          padding-top: {{ section.settings.padding_top }}px;
+          padding-bottom: {{ section.settings.padding_bottom }}px;
+        }
+      }
 {%- endstyle -%}
 
 <div class="color-{{ section.settings.color_scheme }} gradient">
   <div class="section-{{ section.id }}-padding">
-    <div class="collection__title title-wrapper title-wrapper--no-top-margin page-width title-wrapper--self-padded-tablet-down">
-      {%- if section.settings.heading != blank -%}
-        <h2 class="collage-wrapper-title {{ section.settings.heading_size }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
-          {{ section.settings.heading }}
-        </h2>
-      {%- endif -%}
-      {%- if section.settings.subheading != blank -%}
-        <h3 class="collage-wrapper-subtitle{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
-          {{ section.settings.subheading }}
-        </h3>
-      {%- endif -%}
-      {%- if section.settings.text_content != blank -%}
-        <div class="collage-text-content rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
-          {{ section.settings.text_content }}
-        </div>
-      {%- endif -%}
-    </div>
-
     <div class="page-width isolate">
       <div class="collage{% if section.settings.mobile_layout == 'collage' %} collage--mobile{% endif %}">
-        {%- if section.settings.collection != blank -%}
+        <div class="left-wrapper">
+          <div class="collection__title title-wrapper title-wrapper--no-top-margin page-width title-wrapper--self-padded-tablet-down">
+            {%- if section.settings.heading != blank -%}
+              <h2 class="collage-wrapper-title {{ section.settings.heading_size }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+                {{ section.settings.heading }}
+              </h2>
+            {%- endif -%}
+            {%- if section.settings.subheading != blank -%}
+              <h3 class="collage-wrapper-subtitle{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+                {{ section.settings.subheading }}
+              </h3>
+            {%- endif -%}
+            {%- if section.settings.text_content != blank -%}
+              <div class="collage-text-content rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+                {{ section.settings.text_content }}
+              </div>
+            {%- endif -%}
+          </div>
+
+          {% comment %} {%- if section.settings.collection != blank -%} {% endcomment %}
           <div class="collection-image">
             {%- if section.settings.collection.image != blank -%}
               {%- assign end_date = section.settings.collection.metafields.custom.end_of_sale_colection | date: '%s' -%}
@@ -242,6 +263,12 @@
             {%- endif -%}
           </div>
 
+          {% comment %} {%- endif -%} {% endcomment %}
+        </div>
+        <div class="right-wrapper">
+          {%- if section.settings.show_filter -%}
+            {% render 'filter', section: section %}
+          {%- endif -%}
           <slider-component class="slider-mobile-gutter{% if section.settings.full_width %} slider-component-full-width{% endif %}{% if show_mobile_slider == false %} page-width{% endif %}{% if show_desktop_slider == false and section.settings.full_width == false %} page-width-desktop{% endif %}{% if show_desktop_slider %} slider-component-desktop{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
             <ul
               id="Slider-{{ section.id }}"
@@ -267,7 +294,6 @@
                 </li>
               {%- endfor -%}
             </ul>
-
             {%- if show_mobile_slider or show_desktop_slider -%}
               <div class="slider-buttons">
                 <button
@@ -301,24 +327,23 @@
               </div>
             {%- endif -%}
           </slider-component>
-        {%- endif -%}
+          {%- if section.settings.collection != blank and section.settings.show_view_all -%}
+            <div class="center collection__view-all">
+              <a
+                href="{{ section.settings.collection.url }}"
+                class="button animate-arrow"
+                aria-label="{{ 'sections.featured_collection.view_all_label' | t: collection_name: section.settings.collection.title }}"
+              >
+                {{ 'sections.featured_collection.view_all' | t }}
+                <span class="svg-wrapper">
+                  <span class="icon-wrap">&nbsp;{{ 'icon-arrow.svg' | inline_asset_content }}</span>
+                </span>
+              </a>
+            </div>
+          {%- endif -%}
+        </div>
       </div>
     </div>
-
-    {%- if section.settings.collection != blank and section.settings.show_view_all -%}
-      <div class="center collection__view-all">
-        <a
-          href="{{ section.settings.collection.url }}"
-          class="button animate-arrow"
-          aria-label="{{ 'sections.featured_collection.view_all_label' | t: collection_name: section.settings.collection.title }}"
-        >
-          {{ 'sections.featured_collection.view_all' | t }}
-          <span class="svg-wrapper">
-            <span class="icon-wrap">&nbsp;{{ 'icon-arrow.svg' | inline_asset_content }}</span>
-          </span>
-        </a>
-      </div>
-    {%- endif -%}
   </div>
 </div>
 
@@ -331,6 +356,19 @@
     "groups": ["header", "footer"]
   },
   "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_filter",
+      "label": "Show collection filter",
+      "default": false
+    },
+    {
+      "type": "collection_list",
+      "id": "filter_collections",
+      "label": "Filter collections",
+      "info": "Select collections to use as filters",
+      "limit": 5
+    },
     {
       "type": "richtext",
       "id": "heading",
