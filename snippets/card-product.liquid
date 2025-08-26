@@ -147,16 +147,31 @@
             {%- else -%}
               {% assign badge_count = 0 %}
 
-              {% assign created_date = card_product.metafields.custom.dateadded | date: '%s' %}
-              <script>
-                console.log('Product: {{ card_product.title | escape }}', 'Created Date:', '{{ created_date }}', 'Days Old:', {{ days_old }});
-              </script>
+              {% assign created_date = null %}
 
-              {% assign today = 'now' | date: '%s' %}
+              {%- comment -%}
+                First try the Flow metafield (single-line text in ISO format).
+              {%- endcomment -%}
+              {% if card_product.metafields.custom.date_added_to_shopify != blank %}
+                {% assign created_date = card_product.metafields.custom.date_added_to_shopify | date: '%s' | plus: 0 %}
+              {% else %}
+                {%- comment -%}
+                  Fallback: use Shopify’s built-in created_at field.
+                {%- endcomment -%}
+                {% assign created_date = card_product.created_at | date: '%s' | plus: 0 %}
+              {% endif %}
+
+              {% assign today = 'now' | date: '%s' | plus: 0 %}
               {% assign days_old = today | minus: created_date | divided_by: 86400 %}
 
-              {% if days_old < 14 and badge_count < 4 %}
-                {% assign badge_count = badge_count | plus: 1 %}
+              <script>
+                console.log("Product:", "{{ card_product.title }}");
+                console.log("Metafield date:", "{{ card_product.metafields.custom.date_added_to_shopify }}");
+                console.log("Created at:", "{{ card_product.created_at }}");
+                console.log("Epoch:", {{ created_date }}, "Today:", {{ today }}, "Days Old:", {{ days_old }});
+              </script>
+
+              {% if days_old < 14 %}
                 <span class="badge new-badge">{{ 'products.product.new_badge' | t }}</span>
               {% endif %}
 

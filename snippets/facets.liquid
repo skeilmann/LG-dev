@@ -17,7 +17,18 @@
 {{ 'component-swatch.css' | asset_url | stylesheet_tag }}
 
 {%- liquid
+  # Check if collection has manual sorting enabled
+  assign has_manual_sorting = false
+  if results.sort_order == 'MANUAL'
+    assign has_manual_sorting = true
+  endif
+
+  # Use manual sorting as default if available, otherwise fall back to collection default
   assign sort_by = results.sort_by | default: results.default_sort_by
+  if has_manual_sorting and sort_by == results.default_sort_by
+    assign sort_by = 'manual'
+  endif
+
   assign total_active_values = 0
   assign default_presentation = 'text'
   if results.url
@@ -392,7 +403,19 @@
                   <label for="SortBy">{{ 'products.facets.sort_by_label' | t }}</label>
                 </h2>
                 <div class="select">
-                  {%- assign sort_by = results.sort_by | default: results.default_sort_by -%}
+                  {%- liquid
+                    # Check if collection has manual sorting enabled
+                    assign has_manual_sorting = false
+                    if results.sort_order == 'MANUAL'
+                      assign has_manual_sorting = true
+                    endif
+
+                    # Use manual sorting as default if available, otherwise fall back to collection default
+                    assign sort_by = results.sort_by | default: results.default_sort_by
+                    if has_manual_sorting and sort_by == results.default_sort_by
+                      assign sort_by = 'manual'
+                    endif
+                  -%}
                   <select
                     name="sort_by"
                     class="facet-filters__sort select__select caption-large"
@@ -726,6 +749,19 @@
                     <div class="mobile-facets__sort">
                       <label for="SortBy-mobile">{{ 'products.facets.sort_by_label' | t }}</label>
                       <div class="select">
+                        {%- liquid
+                          # Check if collection has manual sorting enabled
+                          assign has_manual_sorting = false
+                          if results.sort_order == 'MANUAL'
+                            assign has_manual_sorting = true
+                          endif
+
+                          # Use manual sorting as default if available, otherwise fall back to collection default
+                          assign sort_by = results.sort_by | default: results.default_sort_by
+                          if has_manual_sorting and sort_by == results.default_sort_by
+                            assign sort_by = 'manual'
+                          endif
+                        -%}
                         <select
                           name="sort_by"
                           class="select__select"
@@ -832,7 +868,19 @@
               <label for="SortBy">{{ 'products.facets.sort_by_label' | t }}</label>
             </h2>
             <div class="select">
-              {%- assign sort_by = results.sort_by | default: results.default_sort_by -%}
+              {%- liquid
+                # Check if collection has manual sorting enabled
+                assign has_manual_sorting = false
+                if results.sort_order == 'MANUAL'
+                  assign has_manual_sorting = true
+                endif
+
+                # Use manual sorting as default if available, otherwise fall back to collection default
+                assign sort_by = results.sort_by | default: results.default_sort_by
+                if has_manual_sorting and sort_by == results.default_sort_by
+                  assign sort_by = 'manual'
+                endif
+              -%}
               <select
                 name="sort_by"
                 class="facet-filters__sort select__select caption-large"
