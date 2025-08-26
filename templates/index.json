@@ -326,12 +326,16 @@
     },
     "collage_3VGjEW": {
       "type": "collage",
-      "custom_css": [
-        "h3 {margin: 0;}",
-        "p {margin: 0;}",
-        ".slider--desktop .slider__slide:first-child {margin-left: 0;}"
-      ],
+      "custom_css": [],
       "settings": {
+        "show_filter": true,
+        "filter_collections": [
+          "dark-cat-eye",
+          "dark-flash-gel-polish",
+          "dark-gel-polish",
+          "dark",
+          "da23"
+        ],
         "heading": "<p>Г О Р Я Ч Е Е  <strong> -   </strong>П Р Е Д Л О Ж Е Н И Е</p>",
         "subheading": "<p><strong>DARK SMART BUILDER GEL </strong>🔥</p>",
         "text_content": "<p>коллекция моделирующих гелей с шиммером</p>",
