@@ -148,6 +148,10 @@
               {% assign badge_count = 0 %}
 
               {% assign created_date = card_product.metafields.custom.dateadded | date: '%s' %}
+              <script>
+                console.log('Product: {{ card_product.title | escape }}', 'Created Date:', '{{ created_date }}', 'Days Old:', {{ days_old }});
+              </script>
+
               {% assign today = 'now' | date: '%s' %}
               {% assign days_old = today | minus: created_date | divided_by: 86400 %}
 
