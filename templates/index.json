@@ -201,6 +201,7 @@
         "featured_collection_RLcdnQ",
         "featured_collection_FWWPgT"
       ],
+      "disabled": true,
       "custom_css": [
         ".card__media {border-radius: 10px;}",
         ".card {border: none !important;}",
