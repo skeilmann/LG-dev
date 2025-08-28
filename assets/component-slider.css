@@ -1,8 +1,6 @@
 slider-component {
-  --desktop-margin-left-first-item: max(
-    5rem,
-    calc((100vw - var(--page-width) + 10rem - var(--grid-desktop-horizontal-spacing)) / 2)
-  );
+  --desktop-margin-left-first-item: max(5rem,
+      calc((100vw - var(--page-width) + 10rem - var(--grid-desktop-horizontal-spacing)) / 2));
   position: relative;
   display: block;
 }
@@ -317,20 +315,22 @@ slider-component.slider-component-full-width {
   justify-content: center;
 }
 
+.slider-buttons button:di {}
+
 @media screen and (min-width: 990px) {
-  .slider:not(.slider--everywhere):not(.slider--desktop) + .slider-buttons {
+  .slider:not(.slider--everywhere):not(.slider--desktop)+.slider-buttons {
     display: none;
   }
 }
 
 @media screen and (max-width: 989px) {
-  .slider--desktop:not(.slider--tablet) + .slider-buttons {
+  .slider--desktop:not(.slider--tablet)+.slider-buttons {
     display: none;
   }
 }
 
 @media screen and (min-width: 750px) {
-  .slider--mobile + .slider-buttons {
+  .slider--mobile+.slider-buttons {
     display: none;
   }
 }
@@ -349,6 +349,19 @@ slider-component.slider-component-full-width {
 
 .slider-button:not([disabled]):hover {
   color: rgb(var(--color-foreground));
+
+}
+
+.slider-button:not([disabled]) svg path {
+  fill: rgb(var(--color-foreground));
+}
+
+.slider-button[disabled] svg path {
+  fill: rgba(var(--color-foreground), 0.3);
+}
+
+.slider-button[disabled] svg {
+  fill: rgba(var(--color-foreground), 0.3);
 }
 
 .slider-button .icon {

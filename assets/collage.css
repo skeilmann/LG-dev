@@ -1,18 +1,28 @@
 .collage-wrapper-title {
   margin-top: 0;
-  margin-bottom: 3rem;
 }
 
 .collage {
   display: grid;
 }
 
-.collage__item > * {
+.collage__item>* {
   width: 100%;
 }
 
 .collage__item .card__content {
   flex-grow: initial;
+}
+
+.countdown-box .number {
+  font-size: 30px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.countdown-box .text {
+  font-size: 10px;
+  line-height: 1;
 }
 
 @media screen and (max-width: 749px) {
@@ -128,8 +138,7 @@
   position: absolute;
   z-index: -1;
   border-radius: var(--border-radius);
-  box-shadow: var(--shadow-horizontal-offset) var(--shadow-vertical-offset) var(--shadow-blur-radius)
-    rgba(var(--color-shadow), var(--shadow-opacity));
+  box-shadow: var(--shadow-horizontal-offset) var(--shadow-vertical-offset) var(--shadow-blur-radius) rgba(var(--color-shadow), var(--shadow-opacity));
   width: calc(var(--border-width) * 2 + 100%);
   height: calc(var(--border-width) * 2 + 100%);
   top: calc(var(--border-width) * -1);

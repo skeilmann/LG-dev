@@ -155,7 +155,7 @@
                   {% if block.settings.show_inventory_label %}
                     <span class="inventory-bar__label">
                       {% if product.selected_or_first_available_variant.inventory_quantity > 0 %}
-                        {{ 'stock.in_stock' | t}}
+                        {{ 'stock.in_stock' | t }}
                         {{ product.selected_or_first_available_variant.inventory_quantity }}
                       {% else %}
                         {{ 'stock.out_of_stock' | t }}
@@ -586,7 +586,7 @@
                                 aria-label="{{ 'general.slider.previous_slide' | t }}"
                               >
                                 <span class="svg-wrapper">
-                                  {{- 'icon-caret.svg' | inline_asset_content -}}
+                                  {{- 'icon-caret1.svg' | inline_asset_content -}}
                                 </span>
                               </button>
                               <div class="slider-counter slider-counter--{{ block.settings.pagination_style }}{% if block.settings.pagination_style == 'counter' or block.settings.pagination_style == 'numbers' %} caption{% endif %}">
@@ -620,7 +620,7 @@
                                 aria-label="{{ 'general.slider.next_slide' | t }}"
                               >
                                 <span class="svg-wrapper">
-                                  {{- 'icon-caret.svg' | inline_asset_content -}}
+                                  {{- 'icon-caret1.svg' | inline_asset_content -}}
                                 </span>
                               </button>
                             </div>

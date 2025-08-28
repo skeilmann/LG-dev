@@ -46,6 +46,7 @@
     text-decoration: none;
     color: inherit;
     text-transform: lowercase;
+    flex-shrink: 0;
   }
 
   .filter-button:hover {
@@ -112,6 +113,31 @@
     .filter-image {
       width: 4rem;
       height: 4rem;
+    }
+
+    .filter-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .filter-wrapper::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-buttons {
+      display: flex;
+      gap: 10px;
+      padding: 20px 20px 20px 0;
+      white-space: nowrap;
+      min-width: max-content;
+    }
+
+    .filter-buttons > * {
+      flex-shrink: 0;
     }
   }
 </style>
