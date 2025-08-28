@@ -14,6 +14,12 @@
   media="print"
   onload="this.media='all'"
 >
+<link
+  rel="stylesheet"
+  href="{{ 'component-cart-quantity.css' | asset_url }}"
+  media="print"
+  onload="this.media='all'"
+>
 
 {%- if settings.predictive_search_enabled -%}
   <link rel="stylesheet" href="{{ 'component-price.css' | asset_url }}" media="print" onload="this.media='all'">
@@ -66,6 +72,7 @@
 
 <script src="{{ 'cart-notification.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'custom-header.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'cart-quantity.js' | asset_url }}" defer="defer"></script>
 
 <script>
   // Pass translations to JavaScript for mega menu functionality
@@ -779,14 +786,8 @@
               <span class="svg-wrapper">{{ 'icon-cart.svg' | inline_asset_content }}</span>
             {% endif %}
             <span class="visually-hidden">{{ 'templates.cart.cart' | t }}</span>
-            {%- if cart != empty -%}
-              <div class="cart-count-bubble">
-                {%- if cart.item_count < 100 -%}
-                  <span aria-hidden="true">{{ cart.item_count }}</span>
-                {%- endif -%}
-                <span class="visually-hidden">{{ 'sections.header.cart_count' | t: count: cart.item_count }}</span>
-              </div>
-            {%- endif -%}
+            {%- comment -%}Cart count bubble{%- endcomment -%}
+            {% render 'header-cart-count' %}
           </a>
 
           {%- if shop.customer_accounts_enabled -%}

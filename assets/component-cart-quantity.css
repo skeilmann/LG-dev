@@ -1,0 +1,105 @@
+/* Cart Quantity Display Styles */
+
+.cart-quantity-display {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 8px;
+    background-color: var(--color-accent);
+    color: var(--color-accent-foreground);
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+    margin-left: 8px;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.cart-quantity-display.hidden {
+    display: none;
+}
+
+/* Product card specific styles */
+.card .cart-quantity-display {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    align-self: flex-start;
+}
+
+/* Header cart count bubble styles */
+.cart-count-bubble {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    background-color: var(--color-accent);
+    color: var(--color-accent-foreground);
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+    border: 2px solid var(--color-background);
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 749px) {
+    .cart-quantity-display {
+        min-width: 20px;
+        height: 20px;
+        font-size: 0.75rem;
+        padding: 0 6px;
+    }
+
+    .cart-count-bubble {
+        min-width: 18px;
+        height: 18px;
+        font-size: 0.7rem;
+        padding: 0 4px;
+    }
+}
+
+/* Animation for quantity changes */
+.cart-quantity-display {
+    animation: quantityPulse 0.3s ease-out;
+}
+
+@keyframes quantityPulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+
+    .cart-quantity-display,
+    .cart-count-bubble {
+        border: 2px solid currentColor;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .cart-quantity-display {
+        animation: none;
+        transition: none;
+    }
+}

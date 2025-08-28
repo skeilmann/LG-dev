@@ -1,0 +1,30 @@
+{% comment %}
+  Cart Quantity Display Snippet
+  Renders the current quantity of a product in the cart
+
+  Accepts:
+  - product_id: {String} The product ID to check quantity for
+  - show_label: {Boolean} Whether to show the "In Cart" label (default: false)
+
+  Usage:
+  {% render 'cart-quantity-display', product_id: card_product.id %}
+{% endcomment %}
+
+{%- liquid
+  assign show_label = show_label | default: false
+  assign product_id = product_id | default: blank
+-%}
+
+{%- if product_id != blank -%}
+  <div
+    class="cart-quantity-display hidden"
+    data-product-id="{{ product_id }}"
+    data-cart-quantity="0"
+    aria-label="{{ 'products.product.quantity.in_cart' | t: count: 0 }}"
+  >
+    {%- if show_label -%}
+      <span class="cart-quantity-label">{{ 'products.product.quantity.in_cart' | t: count: 0 }}</span>
+    {%- endif -%}
+    <span class="cart-quantity-number">0</span>
+  </div>
+{%- endif -%}

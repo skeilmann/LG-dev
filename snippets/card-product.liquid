@@ -591,6 +591,10 @@
             </div>
           {% endif %}
         {% endif %}
+
+        {%- comment -%}Cart quantity display{%- endcomment -%}
+        {% render 'cart-quantity-display', product_id: card_product.id %}
+
         <div class="card__badge {{ settings.badge_position }}">
           {%- if card_product.available == false -%}
             <span
