@@ -14,12 +14,12 @@
   justify-content: center;
 }
 
-.pagination__list > li {
+.pagination__list>li {
   flex: 1 0 4.4rem;
   max-width: 4.4rem;
 }
 
-.pagination__list > li:not(:last-child) {
+.pagination__list>li:not(:last-child) {
   margin-right: 1rem;
 }
 
@@ -61,7 +61,7 @@ a.pagination__item:hover::after {
 
 .pagination__item--next .icon {
   margin-left: -0.2rem;
-  transform: rotate(90deg);
+  transform: rotate(180deg);
 }
 
 .pagination__item--next:hover .icon {
