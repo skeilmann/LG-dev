@@ -30,25 +30,17 @@
     align-self: flex-start;
 }
 
-/* Header cart count bubble styles */
-.cart-count-bubble {
-    position: absolute;
+/* 
+ * Header cart count bubble styles
+ * 
+ * NOTE: Base styles are now defined in base.css under .cart-count-bubble
+ * This section only contains header-specific positioning overrides
+ */
+
+/* Header-specific positioning for cart count bubble */
+.header .cart-count-bubble {
     top: -8px;
     right: -8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 20px;
-    height: 20px;
-    padding: 0 6px;
-    background-color: var(--color-accent);
-    color: var(--color-accent-foreground);
-    border-radius: 10px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    line-height: 1;
-    text-align: center;
-    border: 2px solid var(--color-background);
 }
 
 /* Responsive adjustments */
@@ -60,11 +52,10 @@
         padding: 0 6px;
     }
 
-    .cart-count-bubble {
+    /* Header cart count bubble responsive adjustments */
+    .header .cart-count-bubble {
         min-width: 18px;
         height: 18px;
-        font-size: 0.7rem;
-        padding: 0 4px;
     }
 }
 

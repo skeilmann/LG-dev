@@ -6,6 +6,8 @@
   --focused-base-outline: 0.2rem solid rgba(var(--color-foreground), 0.5);
   --focused-base-outline-offset: 0.3rem;
   --focused-base-box-shadow: 0 0 0 0.3rem rgb(var(--color-background)), 0 0 0.5rem 0.4rem rgba(var(--color-foreground), 0.3);
+  --color-accent: red;
+  --color-accent-foreground: rgb(210, 221, 11);
 }
 
 .product-card-wrapper .card,
@@ -2070,24 +2072,106 @@ input[type='checkbox'] {
 }
 
 /* component-cart-count-bubble */
+/* 
+ * UNIFIED CART COUNT BUBBLE STYLES
+ * 
+ * This is the single source of truth for all cart-count-bubble styling across the theme.
+ * All components (header, cart drawer, notifications, product cards) should use this class.
+ * 
+ * Key features:
+ * - Responsive sizing for mobile/desktop
+ * - Accessible focus states
+ * - High contrast mode support
+ * - Reduced motion support
+ * - Uses Shopify theme color variables
+ */
+
 .cart-count-bubble:empty {
   display: none;
 }
 
 .cart-count-bubble {
+  /* Base positioning and layout */
   position: absolute;
-  background-color: rgb(var(--color-button));
-  color: rgb(var(--color-button-text));
-  height: 1.7rem;
-  width: 1.7rem;
-  border-radius: 100%;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+
+  /* Default sizing (desktop) */
+  min-width: 1.7rem;
+  height: 1.7rem;
+  padding: 0 0.3rem;
+
+  /* Visual styling using Shopify theme variables */
+  background-color: rgb(var(--color-background));
+  color: rgb(var(--color-button-text));
+  border: 2px solid rgb(var(--color-background));
+  border-radius: 50%;
+
+  /* Typography */
   font-size: 0.9rem;
-  bottom: 0.8rem;
-  left: 2.2rem;
-  line-height: calc(1 + 0.1 / var(--font-body-scale));
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+
+  /* Default positioning (can be overridden by parent components) */
+  top: -0.5rem;
+  left: -0.5rem;
+
+  /* Accessibility and performance */
+  z-index: 10;
+  transition: all var(--duration-short) ease;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 749px) {
+  .cart-count-bubble {
+    min-width: 1.8rem;
+    height: 1.8rem;
+    font-size: 0.7rem;
+    padding: 0 0.2rem;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .cart-count-bubble {
+    border: 2px solid currentColor;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .cart-count-bubble {
+    transition: none;
+  }
+}
+
+/* Focus states for accessibility */
+.cart-count-bubble:focus-visible {
+  outline: 2px solid rgb(var(--color-accent));
+  outline-offset: 2px;
+}
+
+/* Animation for quantity changes (only when motion is preferred) */
+@media (prefers-reduced-motion: no-preference) {
+  .cart-count-bubble.animate {
+    animation: quantityPulse 0.3s ease-out;
+  }
+}
+
+@keyframes quantityPulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* utility-bar */
