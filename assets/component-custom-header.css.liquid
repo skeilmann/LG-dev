@@ -3,7 +3,7 @@
 /* Main header layout grid */
 .header__layout {
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
     gap: 2rem;
     width: 100%;
@@ -39,6 +39,17 @@
     .list-menu__item--link {
         padding-bottom: 0.5rem;
         padding-top: 0.5rem;
+    }
+
+    /* Ensure balanced layout and centered logo from 750px up */
+    .header__layout {
+        grid-template-columns: auto 1fr auto;
+    }
+
+    .header__center-logo {
+        justify-self: center;
+        display: flex;
+        justify-content: center;
     }
 }
 
@@ -147,8 +158,10 @@
     visibility: hidden;
     transform: translateX(-50%) translateY(-10px);
     transition: all var(--duration-default) ease;
-    height: 90vh;
-    overflow-y: auto;
+    height: 80vh;
+    max-height: 80vh;
+    overflow: hidden;
+    overscroll-behavior: contain;
 }
 
 /* Show dropdown on hover and when aria-hidden is false */
@@ -170,6 +183,7 @@
 .mega-menu-content {
     padding: 2rem;
     width: 100%;
+    height: 100%;
 }
 
 .mega-menu-columns {
@@ -177,10 +191,16 @@
     grid-template-columns: 200px 220px 220px 1fr;
     gap: 2rem;
     min-height: 300px;
+    height: 100%;
 }
 
 .mega-menu-column {
     min-height: 200px;
+}
+
+/* Allow grid children to shrink so inner scroll areas can work */
+.mega-menu-columns>.mega-menu-column {
+    min-height: 0;
 }
 
 /* Column 1: Categories - always visible */
@@ -190,9 +210,28 @@
     flex-direction: column;
 }
 
+/* Independent scrolling areas inside the dropdown */
+.mega-menu-zone-1 {
+    height: 100%;
+}
+
+.mega-menu-zone-1 .mega-menu-list {
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
 /* Column 2: Subcategories - hidden by default, shown on category hover */
 .mega-menu-zone-2 {
     position: relative;
+}
+
+.mega-menu-subcategory-content {
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* Column 3: Sub-subcategories - hidden by default, shown on subcategory hover */
@@ -200,11 +239,19 @@
     position: relative;
 }
 
+.mega-menu-sub-subcategory-content {
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
 /* Column 4: Images - always visible container, content changes on hover */
 .mega-menu-zone-4 {
     display: flex;
     justify-content: center;
     z-index: 2;
+    overflow: visible;
 }
 
 .mega-menu-default-image {
@@ -595,8 +642,17 @@
 
 @media screen and (max-width: 989px) {
 
-    .header__left-menu,
+    /* Hide left menu entirely on tablet/mobile */
+    .header__left-menu {
+        display: none;
+    }
+
+    /* Keep right container for icons; hide its link list only */
     .header__right-menu {
+        display: flex;
+    }
+
+    .header__right-menu .list-menu {
         display: none;
     }
 
@@ -607,11 +663,35 @@
     .header__layout {
         grid-template-columns: auto 1fr auto;
     }
+
+    /* Remove negative offset so layout stays balanced */
+    header-drawer {
+        margin-left: 0;
+    }
+
+    /* Reinforce logo centering */
+    .header__center-logo {
+        justify-self: center;
+        display: flex;
+        justify-content: center;
+    }
 }
 
 @media screen and (min-width: 990px) {
     .header__mobile-menu-toggle {
         display: none;
+    }
+
+    /* Reinforce centered logo on desktop */
+    .header__layout {
+        grid-template-columns: auto 1fr auto;
+    }
+
+    .header__center-logo {
+        justify-self: center;
+        display: flex;
+        justify-content: center;
+        min-width: 0;
     }
 }
 
