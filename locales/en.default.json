@@ -599,5 +599,10 @@
     "low_stock": "Low stock",
     "out_of_stock": "Out of stock",
     "unavailable": "Unavailable"
+  },
+  "vendor_showcase": {
+    "title": "Our Brands",
+    "view_all_products": "View all {{ vendor }} products",
+    "no_vendors_configured": "No vendors have been configured yet. Add vendor blocks in the theme editor."
   }
 }

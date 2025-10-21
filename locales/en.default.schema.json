@@ -3434,6 +3434,49 @@
       "presets": {
         "name": "Collapsible content"
       }
+    },
+    "vendor_showcase": {
+      "name": "Vendor Showcase",
+      "settings": {
+        "heading": {
+          "label": "Section heading",
+          "default": "Our Brands"
+        },
+        "max_vendors": {
+          "label": "Maximum vendors to display",
+          "info": "Limit the number of vendors shown in the grid"
+        },
+        "desktop_columns": {
+          "label": "Desktop columns"
+        },
+        "mobile_columns": {
+          "label": "Mobile columns"
+        },
+        "logo_height": {
+          "label": "Logo height"
+        },
+        "show_vendor_names": {
+          "label": "Show vendor names",
+          "info": "Display vendor names below logos"
+        }
+      },
+      "blocks": {
+        "vendor": {
+          "name": "Vendor",
+          "settings": {
+            "vendor_name": {
+              "label": "Vendor name",
+              "info": "Must match the exact vendor name from your products"
+            },
+            "enabled": {
+              "label": "Show this vendor"
+            }
+          }
+        }
+      },
+      "presets": {
+        "name": "Vendor Showcase"
+      }
     }
   }
 }
