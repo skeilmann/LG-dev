@@ -1,6 +1,6 @@
 {%- comment -%}
   Filename: vendor-showcase.liquid
-  Purpose: Display vendor logos in grid with links to vendor-filtered pages
+  Purpose: Display collection logos in grid with links to collection pages
   Dependencies: None
   Created: 2025-01-15
 {%- endcomment -%}
@@ -11,11 +11,11 @@
   assign section_id = section.id
   assign heading = section.settings.heading
   assign heading_size = section.settings.heading_size
-  assign max_vendors = section.settings.max_vendors | default: 15
+  assign max_collections = section.settings.max_collections | default: 20
   assign desktop_columns = section.settings.desktop_columns | default: 5
   assign mobile_columns = section.settings.mobile_columns | default: 2
   assign logo_height = section.settings.logo_height | default: 60
-  assign show_vendor_names = section.settings.show_vendor_names
+  assign show_collection_names = section.settings.show_collection_names
   assign color_scheme = section.settings.color_scheme | default: 'scheme-1'
 -%}
 
@@ -36,45 +36,43 @@
           --logo-height: {{ logo_height }}px;
         "
       >
-        {%- for block in section.blocks limit: max_vendors -%}
-          {%- if block.type == 'vendor' and block.settings.vendor_name != blank -%}
+        {%- for block in section.blocks limit: max_collections -%}
+          {%- if block.type == 'collection' and block.settings.collection != blank -%}
             {%- liquid
-              assign vendor_name = block.settings.vendor_name
-              assign vendor_handle = vendor_name | handle
-              assign vendor_collection = collections[vendor_handle]
-              assign vendor_url = '/collections/all?filter.v.vendor=' | append: vendor_name | url_encode
+              assign collection = block.settings.collection
+              assign collection_url = collection.url
             -%}
 
             <div class="vendor-showcase__item" {{ block.shopify_attributes }}>
               <a
-                href="{{ vendor_url }}"
+                href="{{ collection_url }}"
                 class="vendor-showcase__link"
-                aria-label="{{ 'vendor_showcase.view_all_products' | t: vendor: vendor_name }}"
+                aria-label="{{ 'vendor_showcase.view_collection' | t: collection: collection.title }}"
               >
-                {%- if vendor_collection.featured_image != blank -%}
+                {%- if collection.featured_image != blank -%}
                   <div class="vendor-showcase__logo-container">
                     {{
-                      vendor_collection.featured_image
+                      collection.featured_image
                       | image_url: width: 200
                       | image_tag:
                         loading: 'lazy',
-                        alt: vendor_name,
+                        alt: collection.title,
                         class: 'vendor-showcase__logo',
-                        width: vendor_collection.featured_image.width,
-                        height: vendor_collection.featured_image.height
+                        width: collection.featured_image.width,
+                        height: collection.featured_image.height
                     }}
                   </div>
                 {%- else -%}
                   <div class="vendor-showcase__logo-container vendor-showcase__logo-container--placeholder">
                     <div class="vendor-showcase__placeholder">
-                      {{ vendor_name | truncate: 15 }}
+                      {{ collection.title | truncate: 15 }}
                     </div>
                   </div>
                 {%- endif -%}
 
-                {%- if show_vendor_names -%}
+                {%- if show_collection_names -%}
                   <div class="vendor-showcase__name">
-                    {{ vendor_name }}
+                    {{ collection.title }}
                   </div>
                 {%- endif -%}
               </a>
@@ -84,7 +82,7 @@
       </div>
     {%- else -%}
       <div class="vendor-showcase__empty">
-        <p>{{ 'vendor_showcase.no_vendors_configured' | t }}</p>
+        <p>{{ 'vendor_showcase.no_collections_configured' | t }}</p>
       </div>
     {%- endif -%}
   </div>
@@ -127,13 +125,13 @@
     },
     {
       "type": "range",
-      "id": "max_vendors",
+      "id": "max_collections",
       "min": 1,
       "max": 50,
       "step": 1,
-      "default": 15,
-      "label": "t:sections.vendor_showcase.settings.max_vendors.label",
-      "info": "t:sections.vendor_showcase.settings.max_vendors.info"
+      "default": 20,
+      "label": "t:sections.vendor_showcase.settings.max_collections.label",
+      "info": "t:sections.vendor_showcase.settings.max_collections.info"
     },
     {
       "type": "range",
@@ -165,10 +163,10 @@
     },
     {
       "type": "checkbox",
-      "id": "show_vendor_names",
+      "id": "show_collection_names",
       "default": false,
-      "label": "t:sections.vendor_showcase.settings.show_vendor_names.label",
-      "info": "t:sections.vendor_showcase.settings.show_vendor_names.info"
+      "label": "t:sections.vendor_showcase.settings.show_collection_names.label",
+      "info": "t:sections.vendor_showcase.settings.show_collection_names.info"
     },
     {
       "type": "color_scheme",
@@ -203,20 +201,20 @@
   ],
   "blocks": [
     {
-      "type": "vendor",
-      "name": "t:sections.vendor_showcase.blocks.vendor.name",
+      "type": "collection",
+      "name": "t:sections.vendor_showcase.blocks.collection.name",
       "settings": [
         {
-          "type": "text",
-          "id": "vendor_name",
-          "label": "t:sections.vendor_showcase.blocks.vendor.settings.vendor_name.label",
-          "info": "t:sections.vendor_showcase.blocks.vendor.settings.vendor_name.info"
+          "type": "collection",
+          "id": "collection",
+          "label": "t:sections.vendor_showcase.blocks.collection.settings.collection.label",
+          "info": "t:sections.vendor_showcase.blocks.collection.settings.collection.info"
         },
         {
           "type": "checkbox",
           "id": "enabled",
           "default": true,
-          "label": "t:sections.vendor_showcase.blocks.vendor.settings.enabled.label"
+          "label": "t:sections.vendor_showcase.blocks.collection.settings.enabled.label"
         }
       ]
     }
@@ -226,34 +224,19 @@
       "name": "t:sections.vendor_showcase.presets.name",
       "blocks": [
         {
-          "type": "vendor",
-          "settings": {
-            "vendor_name": "Brand 1"
-          }
+          "type": "collection"
         },
         {
-          "type": "vendor",
-          "settings": {
-            "vendor_name": "Brand 2"
-          }
+          "type": "collection"
         },
         {
-          "type": "vendor",
-          "settings": {
-            "vendor_name": "Brand 3"
-          }
+          "type": "collection"
         },
         {
-          "type": "vendor",
-          "settings": {
-            "vendor_name": "Brand 4"
-          }
+          "type": "collection"
         },
         {
-          "type": "vendor",
-          "settings": {
-            "vendor_name": "Brand 5"
-          }
+          "type": "collection"
         }
       ]
     }

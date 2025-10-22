@@ -3442,9 +3442,9 @@
           "label": "Section heading",
           "default": "Our Brands"
         },
-        "max_vendors": {
-          "label": "Maximum vendors to display",
-          "info": "Limit the number of vendors shown in the grid"
+        "max_collections": {
+          "label": "Maximum collections to display",
+          "info": "Limit the number of collections shown in the grid"
         },
         "desktop_columns": {
           "label": "Desktop columns"
@@ -3455,21 +3455,21 @@
         "logo_height": {
           "label": "Logo height"
         },
-        "show_vendor_names": {
-          "label": "Show vendor names",
-          "info": "Display vendor names below logos"
+        "show_collection_names": {
+          "label": "Show collection names",
+          "info": "Display collection names below logos"
         }
       },
       "blocks": {
-        "vendor": {
-          "name": "Vendor",
+        "collection": {
+          "name": "Collection",
           "settings": {
-            "vendor_name": {
-              "label": "Vendor name",
-              "info": "Must match the exact vendor name from your products"
+            "collection": {
+              "label": "Collection",
+              "info": "Select a collection to display as a brand logo"
             },
             "enabled": {
-              "label": "Show this vendor"
+              "label": "Show this collection"
             }
           }
         }

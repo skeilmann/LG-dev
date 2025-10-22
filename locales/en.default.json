@@ -602,7 +602,7 @@
   },
   "vendor_showcase": {
     "title": "Our Brands",
-    "view_all_products": "View all {{ vendor }} products",
-    "no_vendors_configured": "No vendors have been configured yet. Add vendor blocks in the theme editor."
+    "view_collection": "View {{ collection }} collection",
+    "no_collections_configured": "No collections have been configured yet. Add collection blocks in the theme editor."
   }
 }
