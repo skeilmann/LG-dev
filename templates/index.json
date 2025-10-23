@@ -655,6 +655,7 @@
         "desktop_columns": 5,
         "mobile_columns": 2,
         "logo_height": 70,
+        "grid_gap": 3,
         "color_scheme": "",
         "padding_top": 44,
         "padding_bottom": 44
@@ -662,15 +663,21 @@
     },
     "contact_form_f3YMJB": {
       "type": "contact-form",
-      "custom_css": [
-        "input,textarea {background-color: white; }",
-        "input::before {border: 2px red solid; border-radius: 5px; outline: none;}"
-      ],
+      "custom_css": [],
       "name": "t:sections.contact-form.presets.name",
       "settings": {
-        "heading": "Contact form",
-        "heading_size": "h1",
+        "custom_title": "CONTACT US",
+        "custom_subtitle": "<p>Have questions? Leave a request and we will call you back 💖✨</p>",
+        "title_size": "h1",
+        "text_alignment": "center",
+        "show_name_field": true,
+        "show_phone_field": true,
+        "show_email_field": true,
+        "show_comment_field": true,
+        "submit_button_text": "send",
         "color_scheme": "scheme-5",
+        "full_width_background": false,
+        "remove_padding": false,
         "padding_top": 36,
         "padding_bottom": 36
       }
