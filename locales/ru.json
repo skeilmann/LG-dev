@@ -377,7 +377,45 @@
       "taxes_at_checkout_shipping_at_checkout_without_policy": "Налоги, скидки и стоимость доставки рассчитываются при оформлении заказа."
     },
     "footer": {
-      "payment": "Способы оплаты"
+      "payment": "Способы оплаты",
+      "settings": {
+        "header__company": {
+          "content": "Информация о компании"
+        },
+        "company_logo": {
+          "label": "Логотип компании"
+        },
+        "logo_width": {
+          "label": "Ширина логотипа"
+        },
+        "company_name": {
+          "label": "Название компании"
+        },
+        "company_tagline": {
+          "label": "Слоган компании"
+        },
+        "working_hours": {
+          "label": "Часы работы"
+        },
+        "phone_number": {
+          "label": "Номер телефона"
+        },
+        "email": {
+          "label": "Адрес электронной почты"
+        },
+        "company_registration": {
+          "label": "Регистрация компании"
+        },
+        "company_idno": {
+          "label": "Идентификационный номер компании"
+        },
+        "show_payment_icons": {
+          "label": "Показать иконки способов оплаты"
+        },
+        "company_text_alignment": {
+          "label": "Выравнивание текста"
+        }
+      }
     },
     "featured_blog": {
       "view_all": "Посмотреть все",

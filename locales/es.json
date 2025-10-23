@@ -333,7 +333,45 @@
       "taxes_at_checkout_shipping_at_checkout_without_policy": "Impuestos, descuentos y envío calculados en la pantalla de pago."
     },
     "footer": {
-      "payment": "Formas de pago"
+      "payment": "Formas de pago",
+      "settings": {
+        "header__company": {
+          "content": "Información de la empresa"
+        },
+        "company_logo": {
+          "label": "Logo de la empresa"
+        },
+        "logo_width": {
+          "label": "Ancho del logo"
+        },
+        "company_name": {
+          "label": "Nombre de la empresa"
+        },
+        "company_tagline": {
+          "label": "Eslogan de la empresa"
+        },
+        "working_hours": {
+          "label": "Horario de atención"
+        },
+        "phone_number": {
+          "label": "Número de teléfono"
+        },
+        "email": {
+          "label": "Dirección de correo electrónico"
+        },
+        "company_registration": {
+          "label": "Registro de la empresa"
+        },
+        "company_idno": {
+          "label": "Número de identificación de la empresa"
+        },
+        "show_payment_icons": {
+          "label": "Mostrar iconos de pago"
+        },
+        "company_text_alignment": {
+          "label": "Alineación del texto"
+        }
+      }
     },
     "featured_blog": {
       "view_all": "Ver todo",

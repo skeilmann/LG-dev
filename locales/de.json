@@ -322,7 +322,45 @@
       "taxes_at_checkout_shipping_at_checkout_without_policy": "Steuern, Rabatte und Versand werden beim Checkout berechnet."
     },
     "footer": {
-      "payment": "Zahlungsmethoden"
+      "payment": "Zahlungsmethoden",
+      "settings": {
+        "header__company": {
+          "content": "Firmeninformationen"
+        },
+        "company_logo": {
+          "label": "Firmenlogo"
+        },
+        "logo_width": {
+          "label": "Logo-Breite"
+        },
+        "company_name": {
+          "label": "Firmenname"
+        },
+        "company_tagline": {
+          "label": "Firmen-Slogan"
+        },
+        "working_hours": {
+          "label": "Arbeitszeiten"
+        },
+        "phone_number": {
+          "label": "Telefonnummer"
+        },
+        "email": {
+          "label": "E-Mail-Adresse"
+        },
+        "company_registration": {
+          "label": "Firmenregistrierung"
+        },
+        "company_idno": {
+          "label": "Firmen-ID-Nummer"
+        },
+        "show_payment_icons": {
+          "label": "Zahlungsmethoden-Symbole anzeigen"
+        },
+        "company_text_alignment": {
+          "label": "Textausrichtung"
+        }
+      }
     },
     "featured_blog": {
       "view_all": "Alle anzeigen",

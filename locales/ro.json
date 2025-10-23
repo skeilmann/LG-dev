@@ -367,7 +367,45 @@
       "taxes_at_checkout_shipping_at_checkout_without_policy": "Taxele, reducerile și transportul sunt calculate la finalizarea comenzii."
     },
     "footer": {
-      "payment": "Metode de plată"
+      "payment": "Metode de plată",
+      "settings": {
+        "header__company": {
+          "content": "Informații despre companie"
+        },
+        "company_logo": {
+          "label": "Sigla companiei"
+        },
+        "logo_width": {
+          "label": "Lățimea siglei"
+        },
+        "company_name": {
+          "label": "Numele companiei"
+        },
+        "company_tagline": {
+          "label": "Sloganul companiei"
+        },
+        "working_hours": {
+          "label": "Orele de lucru"
+        },
+        "phone_number": {
+          "label": "Numărul de telefon"
+        },
+        "email": {
+          "label": "Adresa de email"
+        },
+        "company_registration": {
+          "label": "Înregistrarea companiei"
+        },
+        "company_idno": {
+          "label": "Numărul de identificare al companiei"
+        },
+        "show_payment_icons": {
+          "label": "Afișează icoanele metodelor de plată"
+        },
+        "company_text_alignment": {
+          "label": "Alinierea textului"
+        }
+      }
     },
     "featured_blog": {
       "view_all": "Afișați tot",

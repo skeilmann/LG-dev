@@ -366,7 +366,45 @@
       }
     },
     "footer": {
-      "payment": "Payment methods"
+      "payment": "Payment methods",
+      "settings": {
+        "header__company": {
+          "content": "Company Information"
+        },
+        "company_logo": {
+          "label": "Company logo"
+        },
+        "logo_width": {
+          "label": "Logo width"
+        },
+        "company_name": {
+          "label": "Company name"
+        },
+        "company_tagline": {
+          "label": "Company tagline"
+        },
+        "working_hours": {
+          "label": "Working hours"
+        },
+        "phone_number": {
+          "label": "Phone number"
+        },
+        "email": {
+          "label": "Email address"
+        },
+        "company_registration": {
+          "label": "Company registration"
+        },
+        "company_idno": {
+          "label": "Company ID number"
+        },
+        "show_payment_icons": {
+          "label": "Show payment icons"
+        },
+        "company_text_alignment": {
+          "label": "Text alignment"
+        }
+      }
     },
     "featured_blog": {
       "view_all": "View all",
