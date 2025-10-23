@@ -9,6 +9,14 @@
 .footer__content-top {
   padding-bottom: 5rem;
   display: block;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* Ensure footer content stays within page width */
+.footer__content-top .page-width {
+  max-width: 100%;
+  overflow: hidden;
 }
 
 /* Force 3 columns on desktop */
@@ -16,14 +24,20 @@
   .footer__blocks-wrapper {
     display: grid !important;
     grid-template-columns: 1fr 1fr 1fr !important;
-    gap: 4rem;
+    gap: 2rem;
     align-items: start;
+    max-width: 100%;
+    width: 100%;
+    overflow: hidden;
   }
 
   .footer-block.grid__item {
     width: 100%;
     margin: 0;
     display: block;
+    min-width: 0;
+    /* Allow content to shrink */
+    overflow-wrap: break-word;
   }
 
   /* Ensure all three columns are visible */
@@ -31,6 +45,34 @@
   .footer-block.grid__item:nth-child(2),
   .footer-block.grid__item:nth-child(3) {
     display: block !important;
+  }
+
+  /* Better spacing for text content */
+  .footer-block__details-content {
+    line-height: 1.6;
+    word-spacing: 0.1em;
+    max-width: 100%;
+    overflow-wrap: break-word;
+  }
+
+  .footer-block__details-content .list-menu__item--link {
+    display: block;
+    padding: 0.8rem 0;
+    line-height: 1.5;
+    word-spacing: 0.05em;
+    max-width: 100%;
+    overflow-wrap: break-word;
+  }
+
+  /* Ensure menu items have proper spacing */
+  .footer-block--menu {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .footer-block--menu .footer-block__heading {
+    margin-bottom: 1.5rem;
+    line-height: 1.4;
   }
 }
 
@@ -474,6 +516,9 @@
 /* Company Information Styles */
 .footer-block--company {
   text-align: left;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: break-word;
 }
 
 .footer-block__logo-wrapper {
@@ -506,6 +551,8 @@
 .footer-block__idno {
   margin-bottom: 1rem;
   font-size: 1.4rem;
+  line-height: 1.5;
+  word-spacing: 0.05em;
 }
 
 .footer-block__working-hours.rte,
@@ -515,6 +562,10 @@
 .footer-block__idno.rte {
   margin-bottom: 1rem;
   font-size: 1.4rem;
+  line-height: 1.5;
+  word-spacing: 0.05em;
+  max-width: 100%;
+  overflow-wrap: break-word;
 }
 
 .footer-block__working-hours.rte p,
@@ -523,6 +574,8 @@
 .footer-block__registration.rte p,
 .footer-block__idno.rte p {
   margin-bottom: 0.5rem;
+  line-height: 1.5;
+  word-spacing: 0.05em;
 }
 
 .footer-block__working-hours.rte p:last-child,
