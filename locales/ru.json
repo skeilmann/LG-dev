@@ -395,13 +395,22 @@
           "label": "Слоган компании"
         },
         "working_hours": {
-          "label": "Часы работы"
+          "label": "Часы работы",
+          "info": "Используйте {{ working_hours_start }} и {{ working_hours_end }} для динамического времени"
+        },
+        "working_hours_start": {
+          "label": "Время начала работы"
+        },
+        "working_hours_end": {
+          "label": "Время окончания работы"
         },
         "phone_number": {
-          "label": "Номер телефона"
+          "label": "Номер телефона",
+          "info": "Используйте {{ phone_number }} для динамического номера телефона"
         },
         "email": {
-          "label": "Адрес электронной почты"
+          "label": "Адрес электронной почты",
+          "info": "Используйте {{ email_address }} для динамического email"
         },
         "company_registration": {
           "label": "Регистрация компании"

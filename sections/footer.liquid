@@ -72,31 +72,31 @@
         {%- endif -%}
 
         {%- if section.settings.working_hours != blank -%}
-          <p class="footer-block__working-hours">{{ section.settings.working_hours | escape }}</p>
+          <div class="footer-block__working-hours rte">
+            {{ section.settings.working_hours | replace: '{{ working_hours_start }}',
+            section.settings.working_hours_start | replace: '{{ working_hours_end }}',
+            section.settings.working_hours_end }}
+          </div>
         {%- endif -%}
 
         {%- if section.settings.phone_number != blank -%}
-          <p class="footer-block__phone">
-            <a href="tel:{{ section.settings.phone_number | escape }}" class="link link--text">
-              {{ section.settings.phone_number | escape }}
-            </a>
-          </p>
+          <div class="footer-block__phone rte">
+            {{ section.settings.phone_number | replace: '{{ phone_number }}', section.settings.phone_number }}
+          </div>
         {%- endif -%}
 
         {%- if section.settings.email != blank -%}
-          <p class="footer-block__email">
-            <a href="mailto:{{ section.settings.email | escape }}" class="link link--text">
-              {{ section.settings.email | escape }}
-            </a>
-          </p>
+          <div class="footer-block__email rte">
+            {{ section.settings.email | replace: '{{ email_address }}', section.settings.email }}
+          </div>
         {%- endif -%}
 
         {%- if section.settings.company_registration != blank -%}
-          <p class="footer-block__registration">{{ section.settings.company_registration | escape }}</p>
+          <div class="footer-block__registration rte">{{ section.settings.company_registration }}</div>
         {%- endif -%}
 
         {%- if section.settings.company_idno != blank -%}
-          <p class="footer-block__idno">{{ section.settings.company_idno | escape }}</p>
+          <div class="footer-block__idno rte">{{ section.settings.company_idno }}</div>
         {%- endif -%}
 
         {%- if section.settings.show_payment_icons -%}
@@ -274,34 +274,49 @@
       "default": "lux shop nails"
     },
     {
-      "type": "text",
+      "type": "richtext",
       "id": "working_hours",
       "label": "t:sections.footer.settings.working_hours.label",
-      "default": "ежедневно с 10:00 до 17:00"
+      "default": "<p>ежедневно с {{ working_hours_start }} до {{ working_hours_end }}</p>",
+      "info": "t:sections.footer.settings.working_hours.info"
     },
     {
       "type": "text",
+      "id": "working_hours_start",
+      "label": "t:sections.footer.settings.working_hours_start.label",
+      "default": "10:00"
+    },
+    {
+      "type": "text",
+      "id": "working_hours_end",
+      "label": "t:sections.footer.settings.working_hours_end.label",
+      "default": "17:00"
+    },
+    {
+      "type": "richtext",
       "id": "phone_number",
       "label": "t:sections.footer.settings.phone_number.label",
-      "default": "+373-68-700-013"
+      "default": "<p><a href=\"tel:{{ phone_number }}\">+373-68-700-013</a></p>",
+      "info": "t:sections.footer.settings.phone_number.info"
     },
     {
-      "type": "text",
+      "type": "richtext",
       "id": "email",
       "label": "t:sections.footer.settings.email.label",
-      "default": "info@vev.md"
+      "default": "<p><a href=\"mailto:{{ email_address }}\">info@vev.md</a></p>",
+      "info": "t:sections.footer.settings.email.info"
     },
     {
-      "type": "text",
+      "type": "richtext",
       "id": "company_registration",
       "label": "t:sections.footer.settings.company_registration.label",
-      "default": "SRL VOLOSANOVSCHI NAILS"
+      "default": "<p><strong>SRL VOLOSANOVSCHI NAILS</strong></p>"
     },
     {
-      "type": "text",
+      "type": "richtext",
       "id": "company_idno",
       "label": "t:sections.footer.settings.company_idno.label",
-      "default": "IDNO 1023602001320"
+      "default": "<p><strong>IDNO 1023602001320</strong></p>"
     },
     {
       "type": "checkbox",

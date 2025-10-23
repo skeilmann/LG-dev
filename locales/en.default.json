@@ -384,13 +384,22 @@
           "label": "Company tagline"
         },
         "working_hours": {
-          "label": "Working hours"
+          "label": "Working hours",
+          "info": "Use {{ working_hours_start }} and {{ working_hours_end }} placeholders for dynamic times"
+        },
+        "working_hours_start": {
+          "label": "Working hours start time"
+        },
+        "working_hours_end": {
+          "label": "Working hours end time"
         },
         "phone_number": {
-          "label": "Phone number"
+          "label": "Phone number",
+          "info": "Use {{ phone_number }} placeholder for dynamic phone number"
         },
         "email": {
-          "label": "Email address"
+          "label": "Email address",
+          "info": "Use {{ email_address }} placeholder for dynamic email"
         },
         "company_registration": {
           "label": "Company registration"

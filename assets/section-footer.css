@@ -14,8 +14,23 @@
 /* Force 3 columns on desktop */
 @media screen and (min-width: 750px) {
   .footer__blocks-wrapper {
-    grid-template-columns: 1fr 1fr 1fr;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1fr !important;
     gap: 4rem;
+    align-items: start;
+  }
+
+  .footer-block.grid__item {
+    width: 100%;
+    margin: 0;
+    display: block;
+  }
+
+  /* Ensure all three columns are visible */
+  .footer-block.grid__item:nth-child(1),
+  .footer-block.grid__item:nth-child(2),
+  .footer-block.grid__item:nth-child(3) {
+    display: block !important;
   }
 }
 
@@ -491,6 +506,31 @@
 .footer-block__idno {
   margin-bottom: 1rem;
   font-size: 1.4rem;
+}
+
+.footer-block__working-hours.rte,
+.footer-block__phone.rte,
+.footer-block__email.rte,
+.footer-block__registration.rte,
+.footer-block__idno.rte {
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+}
+
+.footer-block__working-hours.rte p,
+.footer-block__phone.rte p,
+.footer-block__email.rte p,
+.footer-block__registration.rte p,
+.footer-block__idno.rte p {
+  margin-bottom: 0.5rem;
+}
+
+.footer-block__working-hours.rte p:last-child,
+.footer-block__phone.rte p:last-child,
+.footer-block__email.rte p:last-child,
+.footer-block__registration.rte p:last-child,
+.footer-block__idno.rte p:last-child {
+  margin-bottom: 0;
 }
 
 .footer-block__payment-icons {
