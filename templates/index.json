@@ -663,10 +663,11 @@
     },
     "contact_form_f3YMJB": {
       "type": "contact-form",
-      "custom_css": [],
+      "custom_css": [
+        ".contact-form {padding: 0 50px}"
+      ],
       "name": "t:sections.contact-form.presets.name",
       "settings": {
-        "custom_title": "CONTACT US",
         "custom_subtitle": "<p>Have questions? Leave a request and we will call you back 💖✨</p>",
         "title_size": "h1",
         "text_alignment": "center",
@@ -674,7 +675,6 @@
         "show_phone_field": true,
         "show_email_field": true,
         "show_comment_field": true,
-        "submit_button_text": "send",
         "color_scheme": "scheme-5",
         "full_width_background": true,
         "remove_padding": true,
