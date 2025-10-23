@@ -9,30 +9,27 @@
 .footer__content-top {
   padding-bottom: 5rem;
   display: block;
-  max-width: 100%;
-  overflow: hidden;
 }
 
-/* Ensure footer content stays within page width */
-.footer__content-top .page-width {
-  max-width: 100%;
-  overflow: hidden;
+/* Ensure footer respects page-width container */
+.footer__content-top.page-width,
+.footer__content-bottom-wrapper.page-width {
+  max-width: var(--page-width);
+  margin: 0 auto;
 }
 
 /* Force 3 columns on desktop */
 @media screen and (min-width: 750px) {
   .footer__blocks-wrapper {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr 1fr !important;
+    display: flex !important;
+    flex-direction: row;
     gap: 2rem;
-    align-items: start;
-    max-width: 100%;
+    align-items: flex-start;
     width: 100%;
-    overflow: hidden;
   }
 
   .footer-block.grid__item {
-    width: 100%;
+    flex: 1;
     margin: 0;
     display: block;
     min-width: 0;
@@ -53,6 +50,7 @@
     word-spacing: 0.1em;
     max-width: 100%;
     overflow-wrap: break-word;
+    width: 100%;
   }
 
   .footer-block__details-content .list-menu__item--link {
@@ -78,8 +76,9 @@
 
 /* Mobile: Hide columns 2 and 3, show only company info */
 @media screen and (max-width: 749px) {
-  .footer .grid {
-    display: block;
+  .footer__blocks-wrapper {
+    display: block !important;
+    flex-direction: column;
   }
 
   .footer-block.grid__item:nth-child(n+2) {
@@ -89,6 +88,7 @@
   .footer-block.grid__item:first-child {
     margin: 0;
     width: 100%;
+    flex: none;
   }
 
   .footer__content-top {

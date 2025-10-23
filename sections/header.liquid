@@ -1,25 +1,44 @@
-<link rel="stylesheet" href="{{ 'component-list-menu.css' | asset_url }}" media="print" onload="this.media='all'">
+{%- comment -%}
+  ULTRA-MINIMAL Critical CSS - Only prevent CLS, no FOUC flash
+  Following Shopify best practices: <500 bytes inline, rest in external files
+{%- endcomment -%}
+<style>
+  .header-wrapper {
+    opacity: 1;
+  }
+  .mega-menu-dropdown,
+  .header__dropdown-menu {
+    display: none;
+  }
+</style>
+
+{%- comment -%} Preload critical resources FIRST for render optimization {%- endcomment -%}
+<link rel="preload" href="{{ 'component-custom-header.css' | asset_url }}" as="style">
+<link rel="preload" href="{{ 'custom-header.js' | asset_url }}" as="script">
+{%- if settings.logo -%}
+  <link rel="preload" as="image" href="{{ settings.logo | image_url: width: 600 }}" fetchpriority="high">
+{%- endif -%}
+
+{%- comment -%} Load critical header CSS synchronously - removed media="print" hack {%- endcomment -%}
+<link rel="stylesheet" href="{{ 'component-custom-header.css' | asset_url }}">
+<link rel="stylesheet" href="{{ 'component-list-menu.css' | asset_url }}">
+
+{%- comment -%} Non-critical CSS loaded async with proper fallback {%- endcomment -%}
 <link rel="stylesheet" href="{{ 'component-search.css' | asset_url }}" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="{{ 'component-search.css' | asset_url }}"></noscript>
 <link rel="stylesheet" href="{{ 'component-menu-drawer.css' | asset_url }}" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="{{ 'component-menu-drawer.css' | asset_url }}"></noscript>
 <link rel="stylesheet" href="{{ 'component-favorites.css' | asset_url }}" media="print" onload="this.media='all'">
-<link
-  rel="stylesheet"
-  href="{{ 'component-custom-header.css' | asset_url }}"
-  media="print"
-  onload="this.media='all'"
->
+<noscript><link rel="stylesheet" href="{{ 'component-favorites.css' | asset_url }}"></noscript>
 <link
   rel="stylesheet"
   href="{{ 'component-cart-notification.css' | asset_url }}"
   media="print"
   onload="this.media='all'"
 >
-<link
-  rel="stylesheet"
-  href="{{ 'component-cart-quantity.css' | asset_url }}"
-  media="print"
-  onload="this.media='all'"
->
+<noscript><link rel="stylesheet" href="{{ 'component-cart-notification.css' | asset_url }}"></noscript>
+<link rel="stylesheet" href="{{ 'component-cart-quantity.css' | asset_url }}" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="{{ 'component-cart-quantity.css' | asset_url }}"></noscript>
 
 {%- if settings.predictive_search_enabled -%}
   <link rel="stylesheet" href="{{ 'component-price.css' | asset_url }}" media="print" onload="this.media='all'">

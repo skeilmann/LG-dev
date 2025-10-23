@@ -734,6 +734,10 @@
           "label": "Remove Section Padding",
           "info": "Remove top and bottom padding from the section"
         },
+        "form_padding": {
+          "label": "Form Content Padding",
+          "info": "Add padding to the left and right of form content to make it narrower"
+        },
         "title": {
           "default": "Contact form",
           "label": "Heading"

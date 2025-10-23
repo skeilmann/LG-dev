@@ -144,7 +144,7 @@
     transform: rotate(180deg);
 }
 
-/* Dropdown container - absolute positioning relative to wrapper */
+/* Dropdown container - prevent transition on initial load */
 .mega-menu-dropdown {
     position: absolute;
     top: 100%;
@@ -154,30 +154,36 @@
     border-radius: 0.5rem;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     z-index: 1000;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateX(-50%) translateY(-10px);
-    transition: all var(--duration-default) ease;
+
+    /* START WITH DISPLAY:NONE - NO LAYOUT IMPACT */
+    display: none;
     height: 80vh;
     max-height: 80vh;
     overflow: hidden;
     overscroll-behavior: contain;
 }
 
-/* Show dropdown on hover and when aria-hidden is false */
-.mega-menu-dropdown[aria-hidden="false"],
-.mega-menu-wrapper:hover .mega-menu-dropdown {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
+/* Only add transitions AFTER page load */
+.loaded .mega-menu-dropdown {
+    transition: opacity var(--duration-default) ease;
 }
 
-/* Ensure hover state is maintained across all columns */
-.mega-menu-wrapper:hover .mega-menu-dropdown,
-.mega-menu-dropdown:hover {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
+/* Show dropdown on interaction - swap display for visibility */
+.mega-menu-dropdown[aria-hidden="false"] {
+    display: block;
+    animation: fadeInDown 0.2s ease forwards;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .mega-menu-content {
@@ -264,19 +270,18 @@
  * This approach reduces CSS complexity and makes the system more maintainable.
  */
 
-/* Default state for all dynamic content - hidden by default */
+/* Default state - use display:none instead of opacity for better performance */
 .mega-menu-subcategories,
 .mega-menu-sub-subcategories {
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
-    pointer-events: none;
-    position: absolute;
-    top: 0;
-    left: 0;
+    display: none;
     width: 100%;
     height: auto;
+}
+
+/* Only add transitions after page load */
+.loaded .mega-menu-subcategories,
+.loaded .mega-menu-sub-subcategories {
+    transition: opacity 0.15s ease;
 }
 
 /* Base: everything hidden inside zone4 unless .is-visible */
@@ -292,6 +297,23 @@
     transition: opacity .18s ease;
     z-index: 10;
     object-fit: cover;
+}
+
+/* Visible state - simple display toggle */
+.mega-menu-subcategories.is-visible,
+.mega-menu-sub-subcategories.is-visible {
+    display: block;
+    animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 /* Universal visibility class - controls all dynamic content visibility
@@ -725,19 +747,12 @@
 
 /* ===== PERFORMANCE OPTIMIZATIONS ===== */
 
-/* Use GPU acceleration for transforms */
-.mega-menu-dropdown,
-.mega-menu-subcategories,
-.mega-menu-sub-subcategories,
-.is-visible {
-    transform: translateZ(0);
-    will-change: opacity, visibility, transform;
-}
-
-/* Optimize transitions to avoid layout thrashing */
-.mega-menu-dropdown {
-    backface-visibility: hidden;
-    perspective: 1000px;
+/* Remove will-change and transform3d from initial state */
+/* Only apply during active interactions */
+.mega-menu-dropdown:hover,
+.mega-menu-subcategories:hover,
+.mega-menu-sub-subcategories:hover {
+    will-change: opacity;
 }
 
 /* Preload critical images */

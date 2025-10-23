@@ -896,6 +896,11 @@ class CustomHeader {
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
+  // Mark header as loaded to enable transitions
+  requestAnimationFrame(() => {
+    document.querySelector('.header-wrapper')?.classList.add('loaded');
+  });
+  
   new CustomHeader();
 });
 
