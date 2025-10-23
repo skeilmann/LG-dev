@@ -275,12 +275,13 @@
     },
     "contact": {
       "form": {
-        "title": "Contact form",
+        "title": "CONTACT US",
+        "description": "Have questions? Leave a request and we will call you back",
         "name": "Name",
         "email": "Email",
         "phone": "Phone number",
         "comment": "Comment",
-        "send": "Send",
+        "send": "send",
         "post_success": "Thanks for contacting us. We'll get back to you as soon as possible.",
         "error_heading": "Please adjust the following:"
       }

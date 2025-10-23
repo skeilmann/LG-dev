@@ -152,6 +152,7 @@
         "maximum_of": "Maximum {{ quantity }}",
         "multiples_of": "Incrementuri de {{ quantity }}",
         "in_cart_html": "<span class=\"quantity-cart\">{{ quantity }}</span> în coș",
+        "in_cart": "{{ count }} în coș",
         "note": "Vezi regulile legate de cantitate",
         "min_of": "Minimum {{ quantity }}",
         "max_of": "Maximum {{ quantity }}"
@@ -283,14 +284,15 @@
     },
     "contact": {
       "form": {
+        "title": "CONTACTEAȚI-NE",
+        "description": "Aveți întrebări? Lăsați o cerere și vă vom suna înapoi",
         "name": "Nume",
         "email": "E-mail",
         "phone": "Număr de telefon",
         "comment": "Comentariu",
-        "send": "Trimiteți",
-        "post_success": "Vă mulțumim că ne-ați contactat. Vom lua legătura cu dvs. cât mai curând posibil.",
-        "error_heading": "Vă rugăm să ajustați următoarele:",
-        "title": "Formular de contact"
+        "send": "trimite",
+        "post_success": "Vă mulțumim că ne-ați contactat! Vom lua legătura cu dvs. în cel mai scurt timp.",
+        "error_heading": "Vă rugăm să corectați următoarele erori:"
       }
     },
     "404": {
@@ -315,6 +317,21 @@
         "store": "MAGAZIN",
         "contacts": "CONTACTE",
         "for_studios": "PENTRU STUDII"
+      },
+      "mega_menu": "meniu mega",
+      "categories": "Categorii",
+      "subcategories": "Subcategorii",
+      "sub_subcategories": "Sub-subcategorii",
+      "loading_image": "Se încarcă imaginea...",
+      "no_image": "Imaginea nu este disponibilă",
+      "settings": {
+        "navigation": {
+          "content": "Setări de navigare"
+        },
+        "menu": {
+          "label": "Meniu Legacy",
+          "info": "Acest meniu este păstrat pentru compatibilitatea cu versiunile anterioare"
+        }
       }
     },
     "cart": {
@@ -592,7 +609,12 @@
   "stock": {
     "in_stock": "Stoc",
     "low_stock": "Stoc redus",
-    "out_of_stock": "Out of Stock",
-    "unavailable": "Indisponibil",
+    "out_of_stock": "Stoc epuizat",
+    "unavailable": "Indisponibil"
+  },
+  "vendor_showcase": {
+    "title": "Brandurile noastre",
+    "view_collection": "Vizualizați colecția {{ collection }}",
+    "no_collections_configured": "Colecțiile nu au fost încă configurate. Adăugați blocuri de colecții în editorul de teme."
   }
 }
