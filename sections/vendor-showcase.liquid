@@ -16,6 +16,7 @@
   assign mobile_columns = section.settings.mobile_columns | default: 2
   assign logo_height = section.settings.logo_height | default: 60
   assign show_collection_names = section.settings.show_collection_names
+  assign grid_gap = section.settings.grid_gap | default: 3
   assign color_scheme = section.settings.color_scheme | default: 'scheme-1'
 -%}
 
@@ -34,6 +35,7 @@
           --desktop-columns: {{ desktop_columns }};
           --mobile-columns: {{ mobile_columns }};
           --logo-height: {{ logo_height }}px;
+          --grid-gap: {{ grid_gap }}rem;
         "
       >
         {%- for block in section.blocks limit: max_collections -%}
@@ -162,11 +164,15 @@
       "label": "t:sections.vendor_showcase.settings.logo_height.label"
     },
     {
-      "type": "checkbox",
-      "id": "show_collection_names",
-      "default": false,
-      "label": "t:sections.vendor_showcase.settings.show_collection_names.label",
-      "info": "t:sections.vendor_showcase.settings.show_collection_names.info"
+      "type": "range",
+      "id": "grid_gap",
+      "min": 0.5,
+      "max": 5,
+      "step": 0.5,
+      "unit": "rem",
+      "default": 3,
+      "label": "t:sections.vendor_showcase.settings.grid_gap.label",
+      "info": "t:sections.vendor_showcase.settings.grid_gap.info"
     },
     {
       "type": "color_scheme",

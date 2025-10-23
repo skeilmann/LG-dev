@@ -3455,6 +3455,10 @@
         "logo_height": {
           "label": "Logo height"
         },
+        "grid_gap": {
+          "label": "Spacing between logos",
+          "info": "Adjust the gap between collection logos"
+        },
         "show_collection_names": {
           "label": "Show collection names",
           "info": "Display collection names below logos"
