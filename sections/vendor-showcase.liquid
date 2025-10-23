@@ -9,8 +9,6 @@
 
 {%- liquid
   assign section_id = section.id
-  assign heading = section.settings.heading
-  assign heading_size = section.settings.heading_size
   assign max_collections = section.settings.max_collections | default: 20
   assign desktop_columns = section.settings.desktop_columns | default: 5
   assign mobile_columns = section.settings.mobile_columns | default: 2
@@ -22,11 +20,9 @@
 
 <div class="vendor-showcase color-{{ color_scheme }} gradient section-{{ section_id }}-padding">
   <div class="page-width">
-    {%- if heading != blank -%}
-      <div class="vendor-showcase__header">
-        <h2 class="vendor-showcase__title {{ heading_size }}">{{ heading }}</h2>
-      </div>
-    {%- endif -%}
+    <div class="vendor-showcase__header">
+      <h2 class="vendor-showcase__title h1">{{ 'vendor_showcase.title' | t }}</h2>
+    </div>
 
     {%- if section.blocks.size > 0 -%}
       <div
@@ -99,32 +95,6 @@
     "groups": ["header", "footer"]
   },
   "settings": [
-    {
-      "type": "inline_richtext",
-      "id": "heading",
-      "label": "t:sections.vendor_showcase.settings.heading.label",
-      "default": "t:sections.vendor_showcase.settings.heading.default"
-    },
-    {
-      "type": "select",
-      "id": "heading_size",
-      "options": [
-        {
-          "value": "h2",
-          "label": "t:sections.all.heading_size.options__1.label"
-        },
-        {
-          "value": "h1",
-          "label": "t:sections.all.heading_size.options__2.label"
-        },
-        {
-          "value": "h0",
-          "label": "t:sections.all.heading_size.options__3.label"
-        }
-      ],
-      "default": "h1",
-      "label": "t:sections.all.heading_size.label"
-    },
     {
       "type": "range",
       "id": "max_collections",

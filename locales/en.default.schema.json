@@ -3517,10 +3517,6 @@
     "vendor_showcase": {
       "name": "Vendor Showcase",
       "settings": {
-        "heading": {
-          "label": "Section heading",
-          "default": "Our Brands"
-        },
         "max_collections": {
           "label": "Maximum collections to display",
           "info": "Limit the number of collections shown in the grid"
