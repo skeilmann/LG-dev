@@ -30,7 +30,7 @@
   <div class="{{ wrapper_class }}">
     <div class="contact-form-header contact-form-header--{{ section.settings.text_alignment }}">
       <h2 class="contact-form-title {{ section.settings.title_size }}">
-        {{ section.settings.custom_title | default: 'templates.contact.form.title' | t }}
+        {{ 'templates.contact.form.title' | t }}
       </h2>
       {%- if section.settings.custom_subtitle != blank -%}
         <div class="contact-form-description rte">
@@ -135,7 +135,7 @@
 
       <div class="contact-form-submit">
         <button type="submit" class="contact-form-button">
-          {{ section.settings.submit_button_text | default: 'templates.contact.form.send' | t }}
+          {{ 'templates.contact.form.send' | t }}
         </button>
       </div>
     {%- endform -%}
@@ -154,13 +154,6 @@
     {
       "type": "header",
       "content": "t:sections.contact-form.settings.content_heading"
-    },
-    {
-      "type": "text",
-      "id": "custom_title",
-      "label": "t:sections.contact-form.settings.custom_title.label",
-      "info": "t:sections.contact-form.settings.custom_title.info",
-      "default": "CONTACT US"
     },
     {
       "type": "richtext",
@@ -244,12 +237,6 @@
       "id": "show_comment_field",
       "label": "t:sections.contact-form.settings.show_comment_field.label",
       "default": true
-    },
-    {
-      "type": "text",
-      "id": "submit_button_text",
-      "label": "t:sections.contact-form.settings.submit_button_text.label",
-      "default": "send"
     },
     {
       "type": "color_scheme",

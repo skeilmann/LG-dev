@@ -378,6 +378,7 @@
     },
     "footer": {
       "payment": "Способы оплаты",
+      "working_hours": "ежедневно с 10:00 до 17:00",
       "settings": {
         "header__company": {
           "content": "Информация о компании"
@@ -394,23 +395,11 @@
         "company_tagline": {
           "label": "Слоган компании"
         },
-        "working_hours": {
-          "label": "Часы работы",
-          "info": "Используйте {{ working_hours_start }} и {{ working_hours_end }} для динамического времени"
-        },
-        "working_hours_start": {
-          "label": "Время начала работы"
-        },
-        "working_hours_end": {
-          "label": "Время окончания работы"
-        },
         "phone_number": {
-          "label": "Номер телефона",
-          "info": "Используйте {{ phone_number }} для динамического номера телефона"
+          "label": "Номер телефона"
         },
         "email": {
-          "label": "Адрес электронной почты",
-          "info": "Используйте {{ email_address }} для динамического email"
+          "label": "Адрес электронной почты"
         },
         "company_registration": {
           "label": "Регистрация компании"

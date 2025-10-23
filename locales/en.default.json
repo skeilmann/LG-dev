@@ -367,6 +367,7 @@
     },
     "footer": {
       "payment": "Payment methods",
+      "working_hours": "Daily from 10:00 to 17:00",
       "settings": {
         "header__company": {
           "content": "Company Information"
@@ -383,23 +384,11 @@
         "company_tagline": {
           "label": "Company tagline"
         },
-        "working_hours": {
-          "label": "Working hours",
-          "info": "Use {{ working_hours_start }} and {{ working_hours_end }} placeholders for dynamic times"
-        },
-        "working_hours_start": {
-          "label": "Working hours start time"
-        },
-        "working_hours_end": {
-          "label": "Working hours end time"
-        },
         "phone_number": {
-          "label": "Phone number",
-          "info": "Use {{ phone_number }} placeholder for dynamic phone number"
+          "label": "Phone number"
         },
         "email": {
-          "label": "Email address",
-          "info": "Use {{ email_address }} placeholder for dynamic email"
+          "label": "Email address"
         },
         "company_registration": {
           "label": "Company registration"

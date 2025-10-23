@@ -705,10 +705,6 @@
       },
       "settings": {
         "content_heading": "Content",
-        "custom_title": {
-          "label": "Custom Title",
-          "info": "Override the default contact form title"
-        },
         "custom_subtitle": {
           "label": "Custom Subtitle",
           "info": "Add a custom subtitle with rich text formatting. Leave empty to use default."
@@ -728,9 +724,6 @@
         },
         "show_comment_field": {
           "label": "Show Comment Field"
-        },
-        "submit_button_text": {
-          "label": "Submit Button Text"
         },
         "layout_heading": "Layout",
         "full_width_background": {
@@ -1162,23 +1155,11 @@
         "company_tagline": {
           "label": "Company tagline"
         },
-        "working_hours": {
-          "label": "Working hours",
-          "info": "Use {{ working_hours_start }} and {{ working_hours_end }} placeholders for dynamic times"
-        },
-        "working_hours_start": {
-          "label": "Working hours start time"
-        },
-        "working_hours_end": {
-          "label": "Working hours end time"
-        },
         "phone_number": {
-          "label": "Phone number",
-          "info": "Use {{ phone_number }} placeholder for dynamic phone number"
+          "label": "Phone number"
         },
         "email": {
-          "label": "Email address",
-          "info": "Use {{ email_address }} placeholder for dynamic email"
+          "label": "Email address"
         },
         "company_registration": {
           "label": "Company registration"

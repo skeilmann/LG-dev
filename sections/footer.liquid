@@ -71,34 +71,19 @@
           <p class="footer-block__company-tagline">{{ section.settings.company_tagline | escape }}</p>
         {%- endif -%}
 
-        {%- if section.settings.working_hours != blank -%}
-          <div class="footer-block__working-hours rte">
-            {%- liquid
-              assign working_hours_text = section.settings.working_hours
-              assign working_hours_text = working_hours_text | replace: '{{ working_hours_start }}', section.settings.working_hours_start
-              assign working_hours_text = working_hours_text | replace: '{{ working_hours_end }}', section.settings.working_hours_end
-            -%}
-            {{ working_hours_text }}
-          </div>
-        {%- endif -%}
+        <div class="footer-block__working-hours">
+          {{ 'sections.footer.working_hours' | t }}
+        </div>
 
         {%- if section.settings.phone_number != blank -%}
           <div class="footer-block__phone rte">
-            {%- liquid
-              assign phone_text = section.settings.phone_number
-              assign phone_text = phone_text | replace: '{{ phone_number }}', section.settings.phone_number
-            -%}
-            {{ phone_text }}
+            {{ section.settings.phone_number }}
           </div>
         {%- endif -%}
 
         {%- if section.settings.email != blank -%}
           <div class="footer-block__email rte">
-            {%- liquid
-              assign email_text = section.settings.email
-              assign email_text = email_text | replace: '{{ email_address }}', section.settings.email
-            -%}
-            {{ email_text }}
+            {{ section.settings.email }}
           </div>
         {%- endif -%}
 
@@ -286,36 +271,15 @@
     },
     {
       "type": "richtext",
-      "id": "working_hours",
-      "label": "t:sections.footer.settings.working_hours.label",
-      "default": "<p>ежедневно с {{ working_hours_start }} до {{ working_hours_end }}</p>",
-      "info": "t:sections.footer.settings.working_hours.info"
-    },
-    {
-      "type": "text",
-      "id": "working_hours_start",
-      "label": "t:sections.footer.settings.working_hours_start.label",
-      "default": "10:00"
-    },
-    {
-      "type": "text",
-      "id": "working_hours_end",
-      "label": "t:sections.footer.settings.working_hours_end.label",
-      "default": "17:00"
-    },
-    {
-      "type": "richtext",
       "id": "phone_number",
       "label": "t:sections.footer.settings.phone_number.label",
-      "default": "<p><a href=\"tel:{{ phone_number }}\">+373-68-700-013</a></p>",
-      "info": "t:sections.footer.settings.phone_number.info"
+      "default": "<p><strong>+373-68-700-013</strong></p>"
     },
     {
       "type": "richtext",
       "id": "email",
       "label": "t:sections.footer.settings.email.label",
-      "default": "<p><a href=\"mailto:{{ email_address }}\">info@vev.md</a></p>",
-      "info": "t:sections.footer.settings.email.info"
+      "default": "<p><strong>info@vev.md</strong></p>"
     },
     {
       "type": "richtext",

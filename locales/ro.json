@@ -368,6 +368,7 @@
     },
     "footer": {
       "payment": "Metode de plată",
+      "working_hours": "zilnic de la 10:00 la 17:00",
       "settings": {
         "header__company": {
           "content": "Informații despre companie"
@@ -384,23 +385,11 @@
         "company_tagline": {
           "label": "Sloganul companiei"
         },
-        "working_hours": {
-          "label": "Orele de lucru",
-          "info": "Folosiți {{ working_hours_start }} și {{ working_hours_end }} pentru orele dinamice"
-        },
-        "working_hours_start": {
-          "label": "Ora de începere a programului"
-        },
-        "working_hours_end": {
-          "label": "Ora de încheiere a programului"
-        },
         "phone_number": {
-          "label": "Numărul de telefon",
-          "info": "Folosiți {{ phone_number }} pentru numărul de telefon dinamic"
+          "label": "Numărul de telefon"
         },
         "email": {
-          "label": "Adresa de email",
-          "info": "Folosiți {{ email_address }} pentru email-ul dinamic"
+          "label": "Adresa de email"
         },
         "company_registration": {
           "label": "Înregistrarea companiei"
