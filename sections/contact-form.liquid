@@ -14,14 +14,34 @@
   }
 {%- endstyle -%}
 
-<div class="contact-form-container">
-  <div class="contact-form-wrapper page-width section-{{ section.id }}-padding">
-    <div class="contact-form-header">
-      <h2 class="contact-form-title">{{ 'templates.contact.form.title' | t }}</h2>
-      <p class="contact-form-description">
-        {{ 'templates.contact.form.description' | t }}
-        <span class="contact-form-emojis">💖✨</span>
-      </p>
+{%- liquid
+  assign container_class = 'contact-form-container'
+  if section.settings.full_width_background
+    assign container_class = 'contact-form-container contact-form-container--full-width'
+  endif
+
+  assign wrapper_class = 'contact-form-wrapper page-width section-' | append: section.id | append: '-padding'
+  if section.settings.remove_padding
+    assign wrapper_class = 'contact-form-wrapper page-width'
+  endif
+-%}
+
+<div class="{{ container_class }}">
+  <div class="{{ wrapper_class }}">
+    <div class="contact-form-header contact-form-header--{{ section.settings.text_alignment }}">
+      <h2 class="contact-form-title {{ section.settings.title_size }}">
+        {{ section.settings.custom_title | default: 'templates.contact.form.title' | t }}
+      </h2>
+      {%- if section.settings.custom_subtitle != blank -%}
+        <div class="contact-form-description rte">
+          {{ section.settings.custom_subtitle }}
+        </div>
+      {%- else -%}
+        <p class="contact-form-description">
+          {{ 'templates.contact.form.description' | t }}
+          <span class="contact-form-emojis">💖✨</span>
+        </p>
+      {%- endif -%}
     </div>
     {%- liquid
       assign contact_form_class = 'contact-form'
@@ -52,62 +72,70 @@
 
       <div class="contact-form-fields">
         <div class="contact-form-row">
-          <div class="contact-form-field">
-            <input
-              class="contact-form-input"
-              autocomplete="name"
-              type="text"
-              id="ContactForm-name"
-              name="contact[{{ 'templates.contact.form.name' | t }}]"
-              value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
-              placeholder="{{ 'templates.contact.form.name' | t }}*"
-              required
-            >
-          </div>
-          <div class="contact-form-field">
-            <input
-              type="tel"
-              id="ContactForm-phone"
-              class="contact-form-input"
-              autocomplete="tel"
-              name="contact[{{ 'templates.contact.form.phone' | t }}]"
-              pattern="[0-9\-]*"
-              value="{% if form.phone %}{{ form.phone }}{% elsif customer %}{{ customer.phone }}{% endif %}"
-              placeholder="{{ 'templates.contact.form.phone' | t }}*"
-              required
-            >
-          </div>
-          <div class="contact-form-field">
-            <input
-              autocomplete="email"
-              type="email"
-              id="ContactForm-email"
-              class="contact-form-input"
-              name="contact[email]"
-              spellcheck="false"
-              autocapitalize="off"
-              value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
-              placeholder="{{ 'templates.contact.form.email' | t }}"
-            >
-          </div>
+          {%- if section.settings.show_name_field -%}
+            <div class="contact-form-field">
+              <input
+                class="contact-form-input"
+                autocomplete="name"
+                type="text"
+                id="ContactForm-name"
+                name="contact[{{ 'templates.contact.form.name' | t }}]"
+                value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
+                placeholder="{{ 'templates.contact.form.name' | t }}*"
+                required
+              >
+            </div>
+          {%- endif -%}
+          {%- if section.settings.show_phone_field -%}
+            <div class="contact-form-field">
+              <input
+                type="tel"
+                id="ContactForm-phone"
+                class="contact-form-input"
+                autocomplete="tel"
+                name="contact[{{ 'templates.contact.form.phone' | t }}]"
+                pattern="[0-9\-]*"
+                value="{% if form.phone %}{{ form.phone }}{% elsif customer %}{{ customer.phone }}{% endif %}"
+                placeholder="{{ 'templates.contact.form.phone' | t }}*"
+                required
+              >
+            </div>
+          {%- endif -%}
+          {%- if section.settings.show_email_field -%}
+            <div class="contact-form-field">
+              <input
+                autocomplete="email"
+                type="email"
+                id="ContactForm-email"
+                class="contact-form-input"
+                name="contact[email]"
+                spellcheck="false"
+                autocapitalize="off"
+                value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+                placeholder="{{ 'templates.contact.form.email' | t }}"
+              >
+            </div>
+          {%- endif -%}
         </div>
 
-        <div class="contact-form-row">
-          <div class="contact-form-field contact-form-field--full">
-            <textarea
-              rows="4"
-              id="ContactForm-body"
-              class="contact-form-textarea"
-              name="contact[{{ 'templates.contact.form.comment' | t }}]"
-              placeholder="{{ 'templates.contact.form.comment' | t }}"
-            >{{- form.body -}}</textarea>
+        {%- if section.settings.show_comment_field -%}
+          <div class="contact-form-row">
+            <div class="contact-form-field contact-form-field--full">
+              <textarea
+                rows="4"
+                id="ContactForm-body"
+                class="contact-form-textarea"
+                name="contact[{{ 'templates.contact.form.comment' | t }}]"
+                placeholder="{{ 'templates.contact.form.comment' | t }}"
+              >{{- form.body -}}</textarea>
+            </div>
           </div>
-        </div>
+        {%- endif -%}
       </div>
 
       <div class="contact-form-submit">
         <button type="submit" class="contact-form-button">
-          {{ 'templates.contact.form.send' | t }}
+          {{ section.settings.submit_button_text | default: 'templates.contact.form.send' | t }}
         </button>
       </div>
     {%- endform -%}
@@ -124,14 +152,26 @@
   },
   "settings": [
     {
-      "type": "inline_richtext",
-      "id": "heading",
-      "default": "t:sections.contact-form.settings.title.default",
-      "label": "t:sections.contact-form.settings.title.label"
+      "type": "header",
+      "content": "t:sections.contact-form.settings.content_heading"
+    },
+    {
+      "type": "text",
+      "id": "custom_title",
+      "label": "t:sections.contact-form.settings.custom_title.label",
+      "info": "t:sections.contact-form.settings.custom_title.info",
+      "default": "CONTACT US"
+    },
+    {
+      "type": "richtext",
+      "id": "custom_subtitle",
+      "label": "t:sections.contact-form.settings.custom_subtitle.label",
+      "info": "t:sections.contact-form.settings.custom_subtitle.info",
+      "default": "<p>Have questions? Leave a request and we will call you back 💖✨</p>"
     },
     {
       "type": "select",
-      "id": "heading_size",
+      "id": "title_size",
       "options": [
         {
           "value": "h2",
@@ -155,13 +195,85 @@
         }
       ],
       "default": "h1",
-      "label": "t:sections.all.heading_size.label"
+      "label": "t:sections.contact-form.settings.title_size.label"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.all.text_alignment.options__1.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.all.text_alignment.options__2.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.all.text_alignment.options__3.label"
+        }
+      ],
+      "default": "center",
+      "label": "t:sections.all.text_alignment.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.contact-form.settings.form_heading"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_name_field",
+      "label": "t:sections.contact-form.settings.show_name_field.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_phone_field",
+      "label": "t:sections.contact-form.settings.show_phone_field.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_email_field",
+      "label": "t:sections.contact-form.settings.show_email_field.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_comment_field",
+      "label": "t:sections.contact-form.settings.show_comment_field.label",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "submit_button_text",
+      "label": "t:sections.contact-form.settings.submit_button_text.label",
+      "default": "send"
     },
     {
       "type": "color_scheme",
       "id": "color_scheme",
       "label": "t:sections.all.colors.label",
       "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.contact-form.settings.layout_heading"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width_background",
+      "label": "t:sections.contact-form.settings.full_width_background.label",
+      "info": "t:sections.contact-form.settings.full_width_background.info",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "remove_padding",
+      "label": "t:sections.contact-form.settings.remove_padding.label",
+      "info": "t:sections.contact-form.settings.remove_padding.info",
+      "default": false
     },
     {
       "type": "header",

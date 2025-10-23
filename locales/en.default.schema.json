@@ -692,6 +692,43 @@
         "name": "Contact form"
       },
       "settings": {
+        "content_heading": "Content",
+        "custom_title": {
+          "label": "Custom Title",
+          "info": "Override the default contact form title"
+        },
+        "custom_subtitle": {
+          "label": "Custom Subtitle",
+          "info": "Add a custom subtitle with rich text formatting. Leave empty to use default."
+        },
+        "title_size": {
+          "label": "Title Size"
+        },
+        "form_heading": "Form Fields",
+        "show_name_field": {
+          "label": "Show Name Field"
+        },
+        "show_phone_field": {
+          "label": "Show Phone Field"
+        },
+        "show_email_field": {
+          "label": "Show Email Field"
+        },
+        "show_comment_field": {
+          "label": "Show Comment Field"
+        },
+        "submit_button_text": {
+          "label": "Submit Button Text"
+        },
+        "layout_heading": "Layout",
+        "full_width_background": {
+          "label": "Full Width Background",
+          "info": "Extend the pink background to the edges of the screen"
+        },
+        "remove_padding": {
+          "label": "Remove Section Padding",
+          "info": "Remove top and bottom padding from the section"
+        },
         "title": {
           "default": "Contact form",
           "label": "Heading"
