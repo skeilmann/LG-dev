@@ -73,21 +73,32 @@
 
         {%- if section.settings.working_hours != blank -%}
           <div class="footer-block__working-hours rte">
-            {{ section.settings.working_hours | replace: '{{ working_hours_start }}',
-            section.settings.working_hours_start | replace: '{{ working_hours_end }}',
-            section.settings.working_hours_end }}
+            {%- liquid
+              assign working_hours_text = section.settings.working_hours
+              assign working_hours_text = working_hours_text | replace: '{{ working_hours_start }}', section.settings.working_hours_start
+              assign working_hours_text = working_hours_text | replace: '{{ working_hours_end }}', section.settings.working_hours_end
+            -%}
+            {{ working_hours_text }}
           </div>
         {%- endif -%}
 
         {%- if section.settings.phone_number != blank -%}
           <div class="footer-block__phone rte">
-            {{ section.settings.phone_number | replace: '{{ phone_number }}', section.settings.phone_number }}
+            {%- liquid
+              assign phone_text = section.settings.phone_number
+              assign phone_text = phone_text | replace: '{{ phone_number }}', section.settings.phone_number
+            -%}
+            {{ phone_text }}
           </div>
         {%- endif -%}
 
         {%- if section.settings.email != blank -%}
           <div class="footer-block__email rte">
-            {{ section.settings.email | replace: '{{ email_address }}', section.settings.email }}
+            {%- liquid
+              assign email_text = section.settings.email
+              assign email_text = email_text | replace: '{{ email_address }}', section.settings.email
+            -%}
+            {{ email_text }}
           </div>
         {%- endif -%}
 
