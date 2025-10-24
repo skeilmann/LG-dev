@@ -634,6 +634,17 @@
     }
 }
 
+/* --- Header Button Hiding --- */
+/* Hide header favorites and cart buttons on mobile when bottom nav is enabled */
+
+@media screen and (max-width: 749px) {
+
+    .mobile-hide-favorites,
+    .mobile-hide-cart {
+        display: none !important;
+    }
+}
+
 /* --- Print Styles --- */
 /* Hide bottom navigation in print */
 

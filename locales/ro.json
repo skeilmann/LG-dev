@@ -332,6 +332,18 @@
           "label": "Meniu Legacy",
           "info": "Acest meniu este păstrat pentru compatibilitatea cu versiunile anterioare"
         }
+      },
+      "mobile_bottom_nav": {
+        "title": "Navigare mobilă",
+        "home": "Acasă",
+        "search": "Căutare",
+        "catalog": "Catalog",
+        "favorites": "Favorite",
+        "cart": "Coș",
+        "close_drawer": "Închide catalogul",
+        "swipe_down": "Glisați în jos pentru a închide",
+        "no_menu": "Nu este configurat meniul de catalog",
+        "view_all_collections": "Vedeți toate colecțiile"
       }
     },
     "cart": {
