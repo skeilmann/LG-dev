@@ -1,0 +1,188 @@
+{%- comment -%}
+  Mobile Bottom Navigation Component
+
+  Renders a fixed bottom navigation bar for mobile devices only.
+  Includes Home, Search, Catalog, Favorites, and Cart buttons with
+  iOS-style translucent background and backdrop blur.
+
+  Usage:
+  {% render 'mobile-bottom-nav', section: section %}
+
+  Features:
+  - Fixed positioning with translucent backdrop
+  - 5 navigation buttons with SVG icons
+  - Active state detection
+  - Count badges for cart and favorites
+  - Conditional rendering based on admin settings
+  - Full accessibility support
+{%- endcomment -%}
+
+{%- liquid
+  # Only render on mobile devices and if enabled in settings
+  unless section.settings.enable_mobile_bottom_nav
+    break
+  endunless
+
+  # Get current page type for active state detection
+  assign current_page_type = request.page_type
+  assign is_home = false
+  assign is_collection = false
+  assign is_product = false
+  assign is_cart = false
+  assign is_search = false
+
+  if current_page_type == 'index'
+    assign is_home = true
+  elsif current_page_type == 'collection'
+    assign is_collection = true
+  elsif current_page_type == 'product'
+    assign is_product = true
+  elsif current_page_type == 'cart'
+    assign is_cart = true
+  elsif current_page_type == 'search'
+    assign is_search = true
+  endif
+
+  # Get custom labels or use defaults
+  assign home_label = section.settings.nav_home_label | default: 'sections.header.mobile_bottom_nav.home' | t
+  assign search_label = section.settings.nav_search_label | default: 'sections.header.mobile_bottom_nav.search' | t
+  assign catalog_label = section.settings.nav_catalog_label | default: 'sections.header.mobile_bottom_nav.catalog' | t
+  assign favorites_label = section.settings.nav_favorites_label | default: 'sections.header.mobile_bottom_nav.favorites' | t
+  assign cart_label = section.settings.nav_cart_label | default: 'sections.header.mobile_bottom_nav.cart' | t
+
+  # Get button order setting
+  assign button_order = section.settings.nav_button_order | default: 'default'
+-%}
+
+<mobile-bottom-nav
+  class="mobile-bottom-nav"
+  data-button-order="{{ button_order }}"
+  data-animation-style="{{ section.settings.nav_animation_style | default: 'scale' }}"
+  data-drawer-speed="{{ section.settings.drawer_animation_speed | default: 300 }}"
+  style="
+    --mobile-nav-bg: {{ section.settings.mobile_nav_background | default: '#ffffff' }};
+    --mobile-nav-opacity: {{ section.settings.mobile_nav_opacity | default: 90 }}%;
+    --mobile-nav-icon-color: {{ section.settings.mobile_nav_icon_color | default: '#000000' }};
+    --mobile-nav-icon-active-color: {{ section.settings.mobile_nav_icon_active_color | default: '#0066cc' }};
+    --mobile-nav-badge-color: {{ section.settings.mobile_nav_badge_color | default: '#ff0000' }};
+  "
+>
+  <nav
+    class="mobile-bottom-nav__container"
+    role="navigation"
+    aria-label="{{ 'sections.header.mobile_bottom_nav.title' | t }}"
+  >
+    <div class="mobile-bottom-nav__buttons">
+      {%- comment -%} Home Button {%- endcomment -%}
+      {%- if section.settings.show_nav_home -%}
+        <a
+          href="{{ routes.root_url }}"
+          class="mobile-bottom-nav__button{% if is_home %} mobile-bottom-nav__button--active{% endif %}"
+          data-nav-type="home"
+          {% if is_home %}
+            aria-current="page"
+          {% endif %}
+          aria-label="{{ home_label }}"
+        >
+          <span class="mobile-bottom-nav__icon">
+            {%- if is_home -%}
+              {{ 'icon-home-filled.svg' | inline_asset_content }}
+            {%- else -%}
+              {{ 'icon-home.svg' | inline_asset_content }}
+            {%- endif -%}
+          </span>
+          <span class="mobile-bottom-nav__label">{{ home_label }}</span>
+        </a>
+      {%- endif -%}
+
+      {%- comment -%} Search Button {%- endcomment -%}
+      {%- if section.settings.show_nav_search -%}
+        <button
+          type="button"
+          class="mobile-bottom-nav__button{% if is_search %} mobile-bottom-nav__button--active{% endif %}"
+          data-nav-type="search"
+          data-trigger-search
+          aria-label="{{ search_label }}"
+        >
+          <span class="mobile-bottom-nav__icon">
+            {{ 'icon-search.svg' | inline_asset_content }}
+          </span>
+          <span class="mobile-bottom-nav__label">{{ search_label }}</span>
+        </button>
+      {%- endif -%}
+
+      {%- comment -%} Catalog Button {%- endcomment -%}
+      {%- if section.settings.show_nav_catalog -%}
+        <button
+          type="button"
+          class="mobile-bottom-nav__button{% if is_collection %} mobile-bottom-nav__button--active{% endif %}"
+          data-nav-type="catalog"
+          data-trigger-catalog-drawer
+          aria-label="{{ catalog_label }}"
+          aria-expanded="false"
+          aria-controls="mobile-catalog-drawer"
+        >
+          <span class="mobile-bottom-nav__icon">
+            {{ 'icon-menu.svg' | inline_asset_content }}
+          </span>
+          <span class="mobile-bottom-nav__label">{{ catalog_label }}</span>
+        </button>
+      {%- endif -%}
+
+      {%- comment -%} Favorites Button {%- endcomment -%}
+      {%- if section.settings.show_nav_favorites -%}
+        <a
+          href="{{ routes.account_url }}"
+          class="mobile-bottom-nav__button"
+          data-nav-type="favorites"
+          aria-label="{{ favorites_label }}"
+        >
+          <span class="mobile-bottom-nav__icon">
+            {{ 'icon-heart.svg' | inline_asset_content }}
+          </span>
+          <span class="mobile-bottom-nav__label">{{ favorites_label }}</span>
+          {%- comment -%} Favorites count badge {%- endcomment -%}
+          <span class="mobile-bottom-nav__badge" id="mobile-favorites-count" style="display: none;">
+            <span aria-hidden="true">0</span>
+            <span class="visually-hidden">{{ 'customer.favorites.count' | t: count: 0 }}</span>
+          </span>
+        </a>
+      {%- endif -%}
+
+      {%- comment -%} Cart Button {%- endcomment -%}
+      {%- if section.settings.show_nav_cart -%}
+        <a
+          href="{{ routes.cart_url }}"
+          class="mobile-bottom-nav__button{% if is_cart %} mobile-bottom-nav__button--active{% endif %}"
+          data-nav-type="cart"
+          {% if is_cart %}
+            aria-current="page"
+          {% endif %}
+          aria-label="{{ cart_label }}"
+        >
+          <span class="mobile-bottom-nav__icon">
+            {%- if cart == empty -%}
+              {{ 'icon-cart-empty.svg' | inline_asset_content }}
+            {%- else -%}
+              {{ 'icon-cart.svg' | inline_asset_content }}
+            {%- endif -%}
+          </span>
+          <span class="mobile-bottom-nav__label">{{ cart_label }}</span>
+          {%- comment -%} Cart count badge {%- endcomment -%}
+          {%- if cart.item_count > 0 -%}
+            <span class="mobile-bottom-nav__badge" id="mobile-cart-count">
+              <span aria-hidden="true">{{ cart.item_count }}</span>
+              <span class="visually-hidden">
+                {{- 'templates.cart.cart' | t }}: {{ cart.item_count }}
+                {{ 'sections.header.cart_count' | t: count: cart.item_count -}}
+              </span>
+            </span>
+          {%- endif -%}
+        </a>
+      {%- endif -%}
+    </div>
+  </nav>
+
+  {%- comment -%} Render catalog drawer {%- endcomment -%}
+  {% render 'mobile-catalog-drawer', section: section %}
+</mobile-bottom-nav>

@@ -1,0 +1,209 @@
+{%- comment -%}
+  Mobile Catalog Drawer Component
+
+  Renders a bottom sheet drawer for mobile catalog navigation.
+  Slides up from bottom with backdrop overlay and supports
+  nested accordions for categories and subcategories.
+
+  Usage:
+  {% render 'mobile-catalog-drawer', section: section %}
+
+  Features:
+  - Bottom sheet slide-up animation
+  - Backdrop overlay with click-to-close
+  - Nested accordion structure
+  - Lazy image loading
+  - Swipe down gesture support
+  - Full accessibility with ARIA
+{%- endcomment -%}
+
+{%- liquid
+  # Get catalog menu from section blocks
+  assign catalog_menu = null
+  for block in section.blocks
+    if block.type == 'catalog_menu' and block.settings.catalog_menu != blank
+      assign catalog_menu = block.settings.catalog_menu
+      break
+    endif
+  endfor
+
+  # Fallback to left menu if no catalog menu
+  assign left_menu = null
+  if catalog_menu == null
+    for block in section.blocks
+      if block.type == 'left_menu' and block.settings.left_menu != blank
+        assign left_menu = block.settings.left_menu
+        break
+      endif
+    endfor
+  endif
+
+  # Use catalog menu or fallback to left menu
+  assign menu_to_use = catalog_menu | default: left_menu
+-%}
+
+<div
+  id="mobile-catalog-drawer"
+  class="mobile-catalog-drawer"
+  role="dialog"
+  aria-modal="true"
+  aria-hidden="true"
+  aria-label="{{ 'sections.header.mobile_bottom_nav.catalog' | t }}"
+  data-drawer-content
+>
+  {%- comment -%} Backdrop overlay {%- endcomment -%}
+  <div class="mobile-catalog-drawer__backdrop" data-drawer-backdrop></div>
+
+  {%- comment -%} Drawer content container {%- endcomment -%}
+  <div class="mobile-catalog-drawer__content">
+    {%- comment -%} Handle bar for swipe gesture indication {%- endcomment -%}
+    <div class="mobile-catalog-drawer__handle" data-drawer-handle>
+      <span class="visually-hidden">{{ 'sections.header.mobile_bottom_nav.swipe_down' | t }}</span>
+    </div>
+
+    {%- comment -%} Drawer header {%- endcomment -%}
+    <div class="mobile-catalog-drawer__header">
+      <h2 class="mobile-catalog-drawer__title">{{ 'sections.header.mobile_bottom_nav.catalog' | t }}</h2>
+      <button
+        type="button"
+        class="mobile-catalog-drawer__close"
+        data-drawer-close
+        aria-label="{{ 'sections.header.mobile_bottom_nav.close_drawer' | t }}"
+      >
+        <span class="svg-wrapper">{{ 'icon-close.svg' | inline_asset_content }}</span>
+      </button>
+    </div>
+
+    {%- comment -%} Drawer body with catalog content {%- endcomment -%}
+    <div class="mobile-catalog-drawer__body">
+      {%- if menu_to_use != blank -%}
+        <nav
+          class="mobile-catalog-drawer__nav"
+          role="navigation"
+          aria-label="{{ 'sections.header.mobile_bottom_nav.catalog' | t }}"
+        >
+          {%- for link in menu_to_use.links -%}
+            <div class="mobile-catalog-drawer__category-group">
+              {%- if link.links != blank -%}
+                {%- comment -%} Category with subcategories - accordion {%- endcomment -%}
+                <details class="mobile-catalog-drawer__category-accordion" data-category-handle="{{ link.handle }}">
+                  <summary class="mobile-catalog-drawer__category-title">
+                    <span class="mobile-catalog-drawer__category-link">
+                      {{ link.title | escape }}
+                    </span>
+                    <span class="mobile-catalog-drawer__accordion-icon" aria-hidden="true">
+                      <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+                        <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
+                  </summary>
+
+                  <div class="mobile-catalog-drawer__subcategory-content">
+                    <ul class="mobile-catalog-drawer__subcategory-list" role="list">
+                      {%- for sublink in link.links -%}
+                        <li>
+                          {%- if sublink.links != blank -%}
+                            {%- comment -%} Subcategory with sub-subcategories - nested accordion {%- endcomment -%}
+                            <details
+                              class="mobile-catalog-drawer__subcategory-accordion"
+                              data-subcategory-handle="{{ sublink.handle }}"
+                            >
+                              <summary class="mobile-catalog-drawer__subcategory-title">
+                                <span class="mobile-catalog-drawer__subcategory-link">
+                                  {{ sublink.title | escape }}
+                                </span>
+                                <span class="mobile-catalog-drawer__accordion-icon" aria-hidden="true">
+                                  <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+                                    <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                  </svg>
+                                </span>
+                              </summary>
+
+                              <div class="mobile-catalog-drawer__sub-subcategory-content">
+                                <ul class="mobile-catalog-drawer__sub-subcategory-list" role="list">
+                                  {%- for sub_sublink in sublink.links -%}
+                                    <li>
+                                      <a
+                                        href="{{ sub_sublink.url }}"
+                                        class="mobile-catalog-drawer__sub-subcategory-link"
+                                        {% if sub_sublink.current %}
+                                          aria-current="page"
+                                        {% endif %}
+                                      >
+                                        {{ sub_sublink.title | escape }}
+                                      </a>
+                                    </li>
+                                  {%- endfor -%}
+                                </ul>
+
+                                {%- comment -%} Lazy-loaded image for subcategory {%- endcomment -%}
+                                <div
+                                  class="mobile-catalog-drawer__subcategory-image"
+                                  data-category="{{ sublink.handle }}"
+                                >
+                                  <div class="mobile-catalog-drawer__image-placeholder">
+                                    <span class="mobile-catalog-drawer__loading-text">
+                                      {{- 'sections.header.loading_image' | t -}}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </details>
+                          {%- else -%}
+                            {%- comment -%} Simple subcategory link {%- endcomment -%}
+                            <a
+                              href="{{ sublink.url }}"
+                              class="mobile-catalog-drawer__subcategory-link"
+                              {% if sublink.current %}
+                                aria-current="page"
+                              {% endif %}
+                            >
+                              {{ sublink.title | escape }}
+                            </a>
+                          {%- endif -%}
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+
+                    {%- comment -%} Lazy-loaded image for category {%- endcomment -%}
+                    <div class="mobile-catalog-drawer__category-image" data-category="{{ link.handle }}">
+                      <div class="mobile-catalog-drawer__image-placeholder">
+                        <span class="mobile-catalog-drawer__loading-text">
+                          {{- 'sections.header.loading_image' | t -}}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </details>
+              {%- else -%}
+                {%- comment -%} Simple category link {%- endcomment -%}
+                <a
+                  href="{{ link.url }}"
+                  class="mobile-catalog-drawer__category-single-link"
+                  {% if link.current %}
+                    aria-current="page"
+                  {% endif %}
+                >
+                  {{ link.title | escape }}
+                </a>
+              {%- endif -%}
+            </div>
+          {%- endfor -%}
+        </nav>
+      {%- else -%}
+        {%- comment -%} Fallback when no menu is configured {%- endcomment -%}
+        <div class="mobile-catalog-drawer__empty">
+          <p class="mobile-catalog-drawer__empty-text">
+            {{ 'sections.header.mobile_bottom_nav.no_menu' | t }}
+          </p>
+          <a
+            href="{{ routes.collections_url }}"
+            class="mobile-catalog-drawer__empty-link"
+          >
+            {{ 'sections.header.mobile_bottom_nav.view_all_collections' | t }}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>

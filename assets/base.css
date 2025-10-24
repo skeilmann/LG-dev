@@ -2131,6 +2131,18 @@ input[type='checkbox'] {
     font-size: 0.7rem;
     padding: 0 0.2rem;
   }
+
+  /* Mobile bottom navigation spacing */
+  body {
+    /* Add padding to prevent content from hiding behind fixed bottom nav */
+    /* CSS variable set by JavaScript based on actual nav height */
+    padding-bottom: var(--mobile-bottom-nav-height, 80px);
+  }
+
+  /* Remove padding on pages where nav is not visible */
+  body.mobile-nav-disabled {
+    padding-bottom: 0;
+  }
 }
 
 /* High contrast mode support */

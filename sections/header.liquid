@@ -40,6 +40,9 @@
 <link rel="stylesheet" href="{{ 'component-cart-quantity.css' | asset_url }}" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="{{ 'component-cart-quantity.css' | asset_url }}"></noscript>
 
+{%- comment -%} Mobile bottom navigation - loads async for mobile only {%- endcomment -%}
+<link rel="stylesheet" href="{{ 'component-mobile-bottom-nav.css' | asset_url }}" media="(max-width: 749px)">
+
 {%- if settings.predictive_search_enabled -%}
   <link rel="stylesheet" href="{{ 'component-price.css' | asset_url }}" media="print" onload="this.media='all'">
 {%- endif -%}
@@ -92,6 +95,7 @@
 <script src="{{ 'cart-notification.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'custom-header.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'cart-quantity.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'mobile-bottom-nav.js' | asset_url }}" defer="defer"></script>
 
 <script>
   // Pass translations to JavaScript for mega menu functionality
@@ -1098,6 +1102,9 @@
   </header>
 </div>
 
+{%- comment -%} Mobile Bottom Navigation - Renders only on mobile devices {%- endcomment -%}
+{% render 'mobile-bottom-nav', section: section %}
+
 {%- if settings.cart_type == 'notification' -%}
   {%- render 'cart-notification',
     color_scheme: section.settings.color_scheme,
@@ -1425,6 +1432,161 @@
       "unit": "px",
       "label": "Padding bottom",
       "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Mobile Bottom Navigation"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_mobile_bottom_nav",
+      "default": true,
+      "label": "Enable mobile bottom navigation",
+      "info": "Shows fixed navigation bar at bottom on mobile devices"
+    },
+    {
+      "type": "header",
+      "content": "Button Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_nav_home",
+      "default": true,
+      "label": "Show Home button"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_nav_search",
+      "default": true,
+      "label": "Show Search button"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_nav_catalog",
+      "default": true,
+      "label": "Show Catalog button"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_nav_favorites",
+      "default": true,
+      "label": "Show Favorites button"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_nav_cart",
+      "default": true,
+      "label": "Show Cart button"
+    },
+    {
+      "type": "header",
+      "content": "Custom Labels"
+    },
+    {
+      "type": "text",
+      "id": "nav_home_label",
+      "label": "Home button label",
+      "info": "Leave empty to use default translation"
+    },
+    {
+      "type": "text",
+      "id": "nav_search_label",
+      "label": "Search button label"
+    },
+    {
+      "type": "text",
+      "id": "nav_catalog_label",
+      "label": "Catalog button label"
+    },
+    {
+      "type": "text",
+      "id": "nav_favorites_label",
+      "label": "Favorites button label"
+    },
+    {
+      "type": "text",
+      "id": "nav_cart_label",
+      "label": "Cart button label"
+    },
+    {
+      "type": "header",
+      "content": "Button Order"
+    },
+    {
+      "type": "select",
+      "id": "nav_button_order",
+      "label": "Button arrangement",
+      "options": [
+        { "value": "default", "label": "Home | Search | Catalog | Favorites | Cart" },
+        { "value": "catalog_center", "label": "Home | Search | Catalog | Cart | Favorites" },
+        { "value": "cart_end", "label": "Home | Catalog | Search | Favorites | Cart" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "header",
+      "content": "Visual Settings"
+    },
+    {
+      "type": "color",
+      "id": "mobile_nav_background",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "mobile_nav_opacity",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Background opacity",
+      "default": 90,
+      "info": "Controls translucency (iOS style uses 85-95%)"
+    },
+    {
+      "type": "color",
+      "id": "mobile_nav_icon_color",
+      "label": "Icon color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "mobile_nav_icon_active_color",
+      "label": "Active icon color",
+      "default": "#0066cc"
+    },
+    {
+      "type": "color",
+      "id": "mobile_nav_badge_color",
+      "label": "Badge background color",
+      "default": "#ff0000"
+    },
+    {
+      "type": "header",
+      "content": "Animation Settings"
+    },
+    {
+      "type": "select",
+      "id": "nav_animation_style",
+      "label": "Button animation",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "bounce", "label": "Bounce" },
+        { "value": "scale", "label": "Scale up" },
+        { "value": "slide", "label": "Slide up" }
+      ],
+      "default": "scale"
+    },
+    {
+      "type": "range",
+      "id": "drawer_animation_speed",
+      "min": 200,
+      "max": 600,
+      "step": 50,
+      "unit": "ms",
+      "label": "Drawer animation speed",
+      "default": 300
     }
   ],
   "blocks": [

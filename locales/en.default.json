@@ -331,7 +331,18 @@
           "info": "This menu is kept for backward compatibility"
         }
       },
-
+      "mobile_bottom_nav": {
+        "title": "Mobile Navigation",
+        "home": "Home",
+        "search": "Search",
+        "catalog": "Catalog",
+        "favorites": "Favorites",
+        "cart": "Cart",
+        "close_drawer": "Close catalog",
+        "swipe_down": "Swipe down to close",
+        "no_menu": "No catalog menu configured",
+        "view_all_collections": "View all collections"
+      }
     },
     "cart": {
       "title": "Your cart",
