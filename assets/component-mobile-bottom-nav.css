@@ -9,7 +9,7 @@
 
 .mobile-bottom-nav {
     /* Hide on desktop - only show on mobile */
-    visibility: hidden !important;
+    visibility: hidden;
     display: none;
     position: fixed;
     bottom: 0;
@@ -19,7 +19,7 @@
     /* Above content, below modals */
 
     /* iOS-style translucent background */
-    background: rgba(from var(--mobile-nav-bg) r g b / var(--mobile-nav-opacity));
+    background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     /* Safari support */
@@ -34,7 +34,8 @@
 /* Show only on mobile devices */
 @media screen and (max-width: 749px) {
     .mobile-bottom-nav {
-        display: block;
+        display: block !important;
+        visibility: visible !important;
     }
 }
 
@@ -122,6 +123,7 @@
 
 .mobile-bottom-nav__button--active .mobile-bottom-nav__icon {
     transform: scale(1.1);
+    filter: drop-shadow(0 0 4px rgba(var(--mobile-nav-icon-active-color, 0, 102, 204), 0.3));
 }
 
 /* --- Icon Styles --- */

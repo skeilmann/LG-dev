@@ -18,7 +18,7 @@
 {%- endcomment -%}
 
 {%- liquid
-  # Get catalog menu from section blocks
+  # Get catalog menu from section blocks (this should be the main catalog menu)
   assign catalog_menu = null
   for block in section.blocks
     if block.type == 'catalog_menu' and block.settings.catalog_menu != blank
@@ -27,9 +27,9 @@
     endif
   endfor
 
-  # Fallback to left menu if no catalog menu
+  # If no catalog menu is configured, fallback to left menu
   assign left_menu = null
-  if catalog_menu == null
+  if catalog_menu == blank
     for block in section.blocks
       if block.type == 'left_menu' and block.settings.left_menu != blank
         assign left_menu = block.settings.left_menu
@@ -38,7 +38,7 @@
     endfor
   endif
 
-  # Use catalog menu or fallback to left menu
+  # Use catalog menu first, then fallback to left menu
   assign menu_to_use = catalog_menu | default: left_menu
 -%}
 
@@ -82,6 +82,10 @@
           role="navigation"
           aria-label="{{ 'sections.header.mobile_bottom_nav.catalog' | t }}"
         >
+          {%- comment -%} Debug: Show which menu is being used {%- endcomment -%}
+          {%- if menu_to_use.title -%}
+            <!-- Using menu: {{ menu_to_use.title }} -->
+          {%- endif -%}
           {%- for link in menu_to_use.links -%}
             <div class="mobile-catalog-drawer__category-group">
               {%- if link.links != blank -%}
@@ -195,6 +199,9 @@
         <div class="mobile-catalog-drawer__empty">
           <p class="mobile-catalog-drawer__empty-text">
             {{ 'sections.header.mobile_bottom_nav.no_menu' | t }}
+          </p>
+          <p class="mobile-catalog-drawer__debug-text" style="font-size: 0.8rem; color: #666; margin-top: 1rem;">
+            Debug: No catalog menu configured. Please add a "Catalog Menu" block in the header section settings.
           </p>
           <a
             href="{{ routes.collections_url }}"

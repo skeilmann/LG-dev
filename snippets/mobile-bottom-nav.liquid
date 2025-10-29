@@ -85,11 +85,7 @@
           aria-label="{{ home_label }}"
         >
           <span class="mobile-bottom-nav__icon">
-            {%- if is_home -%}
-              {{ 'icon-home-filled.svg' | inline_asset_content }}
-            {%- else -%}
-              {{ 'icon-home.svg' | inline_asset_content }}
-            {%- endif -%}
+            {{ 'icon-home.svg' | inline_asset_content }}
           </span>
           <span class="mobile-bottom-nav__label">{{ home_label }}</span>
         </a>

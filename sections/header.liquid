@@ -40,8 +40,8 @@
 <link rel="stylesheet" href="{{ 'component-cart-quantity.css' | asset_url }}" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="{{ 'component-cart-quantity.css' | asset_url }}"></noscript>
 
-{%- comment -%} Mobile bottom navigation - loads async for mobile only {%- endcomment -%}
-<link rel="stylesheet" href="{{ 'component-mobile-bottom-nav.css' | asset_url }}" media="(max-width: 749px)">
+{%- comment -%} Mobile bottom navigation - loads for all devices, hidden via CSS on desktop {%- endcomment -%}
+<link rel="stylesheet" href="{{ 'component-mobile-bottom-nav.css' | asset_url }}">
 
 {%- if settings.predictive_search_enabled -%}
   <link rel="stylesheet" href="{{ 'component-price.css' | asset_url }}" media="print" onload="this.media='all'">
