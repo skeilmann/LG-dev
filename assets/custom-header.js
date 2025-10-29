@@ -723,18 +723,59 @@ class CustomHeader {
 
   // ===== MOBILE ACCORDION FUNCTIONALITY =====
   initMobileAccordion() {
+    // Handle subcategory accordions (second level)
     const mobileAccordions = document.querySelectorAll('.mobile-subcategory-accordion');
 
     mobileAccordions.forEach((accordion) => {
       const summary = accordion.querySelector('.mobile-category-title');
-      const imageContainer = accordion.querySelector('.mobile-category-image');
+      const categoryImageContainer = accordion.querySelector('.mobile-category-image--category');
 
       summary?.addEventListener('click', () => {
-        // Lazy load image when accordion opens
+        // Lazy load category image when accordion opens
+        // But only if there are no nested subcategories with their own images
         if (!accordion.hasAttribute('open')) {
           setTimeout(() => {
-            this.loadMobileImage(imageContainer);
+            // Check if there are nested sub-subcategories
+            const nestedAccordions = accordion.querySelectorAll('.mobile-sub-subcategory-accordion');
+            if (nestedAccordions.length === 0 && categoryImageContainer) {
+              // No nested subcategories, load category image
+              this.loadMobileImage(categoryImageContainer);
+            } else if (categoryImageContainer) {
+              // Has nested subcategories, hide category image initially
+              categoryImageContainer.style.display = 'none';
+            }
           }, 300);
+        }
+      });
+    });
+
+    // Handle sub-subcategory accordions (third level - last level)
+    const nestedAccordions = document.querySelectorAll('.mobile-sub-subcategory-accordion');
+
+    nestedAccordions.forEach((accordion) => {
+      const summary = accordion.querySelector('.mobile-sub-subcategory-title');
+      const subcategoryImageContainer = accordion.querySelector('.mobile-category-image--subcategory');
+      const parentCategoryImage = accordion.closest('.mobile-subcategory-content')?.querySelector('.mobile-category-image--category');
+
+      summary?.addEventListener('click', () => {
+        // Lazy load subcategory image when nested accordion opens (last level)
+        if (!accordion.hasAttribute('open')) {
+          setTimeout(() => {
+            // Load image from the last level (sub-subcategory)
+            if (subcategoryImageContainer) {
+              this.loadMobileImage(subcategoryImageContainer);
+            }
+            // Hide parent category image when nested subcategory is open
+            if (parentCategoryImage) {
+              parentCategoryImage.style.display = 'none';
+            }
+          }, 300);
+        } else {
+          // When closing, show category image again if needed
+          if (parentCategoryImage && !parentCategoryImage.querySelector('img')) {
+            parentCategoryImage.style.display = '';
+            this.loadMobileImage(parentCategoryImage);
+          }
         }
       });
     });
@@ -747,14 +788,34 @@ class CustomHeader {
 
     if (!categoryHandle) return;
 
-    // Get first subcategory link to determine collection
-    const firstSublink = container
-      .closest('.mobile-subcategory-content')
-      ?.querySelector('.mobile-subcategory-link[data-collection-handle]');
+    // Priority: Get collection handle from last level (sub-subcategory) first
+    let collectionHandle = null;
+    let firstSublink = null;
 
-    if (!firstSublink) return;
+    // Check if this is a subcategory image container (last level)
+    if (container.classList.contains('mobile-category-image--subcategory')) {
+      // Get first sub-subcategory link (last level)
+      firstSublink = container
+        .closest('.mobile-sub-subcategory-content')
+        ?.querySelector('.mobile-sub-subcategory-link[data-collection-handle]');
+      
+      if (firstSublink) {
+        collectionHandle = firstSublink.getAttribute('data-collection-handle');
+      }
+    }
 
-    const collectionHandle = firstSublink.getAttribute('data-collection-handle');
+    // Fallback: If no sub-subcategory link, get from subcategory link
+    if (!collectionHandle) {
+      firstSublink = container
+        .closest('.mobile-subcategory-content')
+        ?.querySelector('.mobile-subcategory-link[data-collection-handle]');
+
+      if (firstSublink) {
+        collectionHandle = firstSublink.getAttribute('data-collection-handle');
+      }
+    }
+
+    if (!collectionHandle) return;
 
     fetch(`/collections/${collectionHandle}.js`)
       .then((response) => (response.ok ? response.json() : null))
@@ -762,7 +823,7 @@ class CustomHeader {
         if (collection && collection.image) {
           const img = document.createElement('img');
           img.src = collection.image;
-          img.alt = collection.title || firstSublink.textContent.trim();
+          img.alt = collection.title || (firstSublink?.textContent?.trim()) || '';
           img.loading = 'lazy';
 
           img.onload = () => {

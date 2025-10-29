@@ -936,22 +936,73 @@
                               <ul class="mobile-subcategory-list">
                                 {%- for sublink in link.links -%}
                                   <li>
-                                    <a
-                                      href="{{ sublink.url }}"
-                                      class="mobile-subcategory-link"
-                                      data-collection-handle="{{ sublink.handle }}"
-                                      {% if sublink.current %}
-                                        aria-current="page"
-                                      {% endif %}
-                                    >
-                                      {{ sublink.title | escape }}
-                                    </a>
+                                    {%- if sublink.links != blank -%}
+                                      {%- comment -%} Subcategory with sub-subcategories - nested accordion {%- endcomment -%}
+                                      <details
+                                        class="mobile-sub-subcategory-accordion"
+                                        data-subcategory-handle="{{ sublink.handle }}"
+                                      >
+                                        <summary class="mobile-sub-subcategory-title">
+                                          <span class="mobile-sub-subcategory-link">{{ sublink.title | escape }}</span>
+                                          <span class="mobile-accordion-icon">
+                                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+                                              <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                          </span>
+                                        </summary>
+                                        <div class="mobile-sub-subcategory-content">
+                                          <ul class="mobile-sub-subcategory-list">
+                                            {%- for sub_sublink in sublink.links -%}
+                                              <li>
+                                                <a
+                                                  href="{{ sub_sublink.url }}"
+                                                  class="mobile-sub-subcategory-link"
+                                                  data-collection-handle="{{ sub_sublink.handle }}"
+                                                  {% if sub_sublink.current %}
+                                                    aria-current="page"
+                                                  {% endif %}
+                                                >
+                                                  {{ sub_sublink.title | escape }}
+                                                </a>
+                                              </li>
+                                            {%- endfor -%}
+                                          </ul>
+
+                                          {%- comment -%} Lazy-loaded image for last level (sub-subcategory) {%- endcomment -%}
+                                          <div
+                                            class="mobile-category-image mobile-category-image--subcategory"
+                                            data-category="{{ sublink.handle }}"
+                                          >
+                                            <div class="mobile-image-placeholder">
+                                              <span class="mobile-loading-text">
+                                                {{- 'sections.header.loading_image' | t -}}
+                                              </span>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </details>
+                                    {%- else -%}
+                                      {%- comment -%} Simple subcategory link {%- endcomment -%}
+                                      <a
+                                        href="{{ sublink.url }}"
+                                        class="mobile-subcategory-link"
+                                        data-collection-handle="{{ sublink.handle }}"
+                                        {% if sublink.current %}
+                                          aria-current="page"
+                                        {% endif %}
+                                      >
+                                        {{ sublink.title | escape }}
+                                      </a>
+                                    {%- endif -%}
                                   </li>
                                 {%- endfor -%}
                               </ul>
 
-                              <!-- Lazy-loaded image for mobile -->
-                              <div class="mobile-category-image" data-category="{{ link.handle }}">
+                              {%- comment -%} Lazy-loaded image for category (shown only if no nested subcategories) {%- endcomment -%}
+                              <div
+                                class="mobile-category-image mobile-category-image--category"
+                                data-category="{{ link.handle }}"
+                              >
                                 <div class="mobile-image-placeholder">
                                   <span class="mobile-loading-text">{{ 'sections.header.loading_image' | t }}</span>
                                 </div>
@@ -998,20 +1049,75 @@
                                 <ul class="mobile-subcategory-list">
                                   {%- for sublink in link.links -%}
                                     <li>
-                                      <a
-                                        href="{{ sublink.url }}"
-                                        class="mobile-subcategory-link"
-                                        data-collection-handle="{{ sublink.handle }}"
-                                        {% if sublink.current %}
-                                          aria-current="page"
-                                        {% endif %}
-                                      >
-                                        {{ sublink.title | escape }}
-                                      </a>
+                                      {%- if sublink.links != blank -%}
+                                        {%- comment -%} Subcategory with sub-subcategories - nested accordion {%- endcomment -%}
+                                        <details
+                                          class="mobile-sub-subcategory-accordion"
+                                          data-subcategory-handle="{{ sublink.handle }}"
+                                        >
+                                          <summary class="mobile-sub-subcategory-title">
+                                            <span class="mobile-sub-subcategory-link">
+                                              {{- sublink.title | escape -}}
+                                            </span>
+                                            <span class="mobile-accordion-icon">
+                                              <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+                                                <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                              </svg>
+                                            </span>
+                                          </summary>
+                                          <div class="mobile-sub-subcategory-content">
+                                            <ul class="mobile-sub-subcategory-list">
+                                              {%- for sub_sublink in sublink.links -%}
+                                                <li>
+                                                  <a
+                                                    href="{{ sub_sublink.url }}"
+                                                    class="mobile-sub-subcategory-link"
+                                                    data-collection-handle="{{ sub_sublink.handle }}"
+                                                    {% if sub_sublink.current %}
+                                                      aria-current="page"
+                                                    {% endif %}
+                                                  >
+                                                    {{ sub_sublink.title | escape }}
+                                                  </a>
+                                                </li>
+                                              {%- endfor -%}
+                                            </ul>
+
+                                            {%- comment -%} Lazy-loaded image for last level (sub-subcategory) {%- endcomment -%}
+                                            <div
+                                              class="mobile-category-image mobile-category-image--subcategory"
+                                              data-category="{{ sublink.handle }}"
+                                            >
+                                              <div class="mobile-image-placeholder">
+                                                <span class="mobile-loading-text">
+                                                  {{- 'sections.header.loading_image' | t -}}
+                                                </span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </details>
+                                      {%- else -%}
+                                        {%- comment -%} Simple subcategory link {%- endcomment -%}
+                                        <a
+                                          href="{{ sublink.url }}"
+                                          class="mobile-subcategory-link"
+                                          data-collection-handle="{{ sublink.handle }}"
+                                          {% if sublink.current %}
+                                            aria-current="page"
+                                          {% endif %}
+                                        >
+                                          {{ sublink.title | escape }}
+                                        </a>
+                                      {%- endif -%}
                                     </li>
                                   {%- endfor -%}
                                 </ul>
-                                <div class="mobile-category-image" data-category="{{ link.handle }}">
+
+                                {%- comment -%} Lazy-loaded image for category (shown only if no nested subcategories) {%- endcomment -%}
+                                <div
+                                  class="mobile-category-image mobile-category-image--category"
+                                  data-category="{{ link.handle }}"
+                                >
                                   <div class="mobile-image-placeholder">
                                     <span class="mobile-loading-text">{{ 'sections.header.loading_image' | t }}</span>
                                   </div>
