@@ -118,7 +118,7 @@
         "nav_animation_style": "slide",
         "drawer_animation_speed": 300,
         "show_announcement": false,
-        "announcement_text": "Free shipping on orders over $50!",
+        "announcement_text": "",
         "announcement_link": "",
         "announcement_color_scheme": ""
       }
