@@ -105,6 +105,17 @@ class MobileBottomNav extends HTMLElement {
       this.handle?.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: true });
       this.handle?.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: true });
       
+      // Add swipe support to the entire drawer content
+      const drawerContent = this.drawer.querySelector('.mobile-catalog-drawer__content');
+      if (drawerContent) {
+        drawerContent.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: true });
+        drawerContent.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: true });
+        drawerContent.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: true });
+      }
+      
+      // Click outside drawer to close
+      this.drawer.addEventListener('click', this.handleDrawerClick.bind(this));
+      
       // Keyboard navigation
       this.drawer.addEventListener('keydown', this.handleDrawerKeydown.bind(this));
     }
@@ -271,6 +282,17 @@ class MobileBottomNav extends HTMLElement {
   }
 
   /**
+   * Handle clicks inside the drawer
+   * @param {Event} event - Click event
+   */
+  handleDrawerClick(event) {
+    // Only close if clicking on the drawer itself (not its children)
+    if (event.target === this.drawer) {
+      this.closeDrawer();
+    }
+  }
+
+  /**
    * Handle touch start for swipe gestures
    * @param {TouchEvent} event - Touch start event
    */
@@ -280,6 +302,12 @@ class MobileBottomNav extends HTMLElement {
     this.touchStartY = event.touches[0].clientY;
     this.touchStartTime = Date.now();
     this.isDragging = false;
+    
+    // Add swiping class for visual feedback
+    const content = this.drawer.querySelector('.mobile-catalog-drawer__content');
+    if (content) {
+      content.classList.add('swiping');
+    }
   }
 
   /**
@@ -292,8 +320,8 @@ class MobileBottomNav extends HTMLElement {
     const touchY = event.touches[0].clientY;
     const deltaY = touchY - this.touchStartY;
     
-    // Only consider it dragging if moved more than 10px
-    if (Math.abs(deltaY) > 10) {
+    // Only consider it dragging if moved more than 5px
+    if (Math.abs(deltaY) > 5) {
       this.isDragging = true;
     }
     
@@ -301,8 +329,18 @@ class MobileBottomNav extends HTMLElement {
     if (this.isDragging && deltaY > 0) {
       const content = this.drawer.querySelector('.mobile-catalog-drawer__content');
       if (content) {
-        const translateY = Math.min(deltaY * 0.5, 50);
+        // More responsive translation with easing
+        const translateY = Math.min(deltaY * 0.7, 100);
+        const opacity = Math.max(0.3, 1 - (deltaY / 200));
+        
         content.style.transform = `translateY(${translateY}px)`;
+        content.style.opacity = opacity;
+        
+        // Add backdrop opacity change
+        if (this.backdrop) {
+          const backdropOpacity = Math.max(0.1, 0.5 - (deltaY / 300));
+          this.backdrop.style.opacity = backdropOpacity;
+        }
       }
     }
   }
@@ -319,15 +357,40 @@ class MobileBottomNav extends HTMLElement {
     const deltaTime = Date.now() - this.touchStartTime;
     const velocity = deltaY / deltaTime;
     
-    // Reset transform
     const content = this.drawer.querySelector('.mobile-catalog-drawer__content');
+    
+    // Remove swiping class
     if (content) {
-      content.style.transform = '';
+      content.classList.remove('swiping');
     }
     
     // Close drawer if swiped down with sufficient distance or velocity
-    if (deltaY > 100 || velocity > 0.5) {
+    if (deltaY > 80 || velocity > 0.3) {
+      // Close immediately with animation
       this.closeDrawer();
+    } else {
+      // Reset transform with smooth animation
+      if (content) {
+        content.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
+        content.style.transform = '';
+        content.style.opacity = '';
+        
+        // Reset backdrop
+        if (this.backdrop) {
+          this.backdrop.style.transition = 'opacity 0.3s ease-out';
+          this.backdrop.style.opacity = '';
+        }
+        
+        // Remove transition after animation
+        setTimeout(() => {
+          if (content) {
+            content.style.transition = '';
+          }
+          if (this.backdrop) {
+            this.backdrop.style.transition = '';
+          }
+        }, 300);
+      }
     }
     
     this.isDragging = false;

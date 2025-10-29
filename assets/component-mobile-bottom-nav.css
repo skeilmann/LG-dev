@@ -277,8 +277,10 @@
     transform: translateY(100%);
     transition: transform var(--drawer-animation-speed, 300ms) ease;
 
-    /* Enable GPU acceleration */
+    /* Enable GPU acceleration and smooth touch */
     will-change: transform;
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
 }
 
 .mobile-catalog-drawer[aria-hidden="false"] .mobile-catalog-drawer__content {
@@ -293,10 +295,23 @@
     border-radius: 2px;
     margin: 0.75rem auto;
     cursor: grab;
+    transition: all 0.2s ease;
 }
 
 .mobile-catalog-drawer__handle:active {
     cursor: grabbing;
+    background: rgba(var(--color-foreground), 0.5);
+    transform: scale(1.1);
+}
+
+/* Visual feedback for swipe gestures */
+.mobile-catalog-drawer__content.swiping {
+    transition: none !important;
+}
+
+.mobile-catalog-drawer__content.swiping .mobile-catalog-drawer__handle {
+    background: rgba(var(--color-foreground), 0.6);
+    transform: scale(1.1);
 }
 
 /* Drawer header */

@@ -22,6 +22,38 @@
   assign catalog_menu_handle = section.settings.mobile_catalog_menu | default: 'main-menu'
   assign catalog_menu = linklists[catalog_menu_handle]
 
+  # Debug: Show which menu handle is being used
+  assign debug_menu_handle = catalog_menu_handle
+
+  # If the selected menu is empty, try multiple fallbacks
+  if catalog_menu == blank
+    assign catalog_menu = linklists['main-menu']
+    assign debug_menu_handle = 'main-menu (fallback)'
+
+    # If main-menu is also blank, try other common menu names
+    if catalog_menu == blank
+      assign catalog_menu = linklists['catalog-menu']
+      assign debug_menu_handle = 'catalog-menu (fallback)'
+    endif
+
+    # If still blank, try left-menu
+    if catalog_menu == blank
+      assign catalog_menu = linklists['left-menu']
+      assign debug_menu_handle = 'left-menu (fallback)'
+    endif
+
+    # If still blank, try any available menu
+    if catalog_menu == blank
+      for menu in linklists
+        if menu.links.size > 0
+          assign catalog_menu = menu
+          assign debug_menu_handle = menu.handle | append: ' (auto-fallback)'
+          break
+        endif
+      endfor
+    endif
+  endif
+
   # Use the selected catalog menu
   assign menu_to_use = catalog_menu
 -%}
@@ -68,7 +100,9 @@
         >
           {%- comment -%} Debug: Show which menu is being used {%- endcomment -%}
           {%- if menu_to_use.title -%}
-            <!-- Using menu: {{ menu_to_use.title }} -->
+            <!-- Using menu: {{ menu_to_use.title }} (handle: {{ debug_menu_handle }}) -->
+          {%- else -%}
+            <!-- Debug: No menu found for handle: {{ debug_menu_handle }} -->
           {%- endif -%}
           {%- for link in menu_to_use.links -%}
             <div class="mobile-catalog-drawer__category-group">
@@ -186,7 +220,16 @@
           </p>
           <p class="mobile-catalog-drawer__debug-text" style="font-size: 0.8rem; color: #666; margin-top: 1rem;">
             Debug: No catalog menu found. Please select a menu in Theme Settings > Header > "Catalog menu for mobile
-            navigation".
+            navigation".<br>
+            Current setting: {{ section.settings.mobile_catalog_menu | default: 'not set' -}}
+            <br>
+            Debug handle: {{ debug_menu_handle }}
+            <br>
+            Available menus:
+            {%- for menu in linklists -%}
+              {{ menu.handle -}}
+              {%- unless forloop.last %}, {% endunless %}
+            {%- endfor -%}
           </p>
           <a
             href="{{ routes.collections_url }}"

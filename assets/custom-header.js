@@ -64,6 +64,7 @@ class CustomHeader {
   init() {
     this.mobileMenuToggle = document.querySelector('.header__mobile-menu-toggle');
     this.mobileMenu = document.querySelector('.header__mobile-menu');
+    this.mobileMenuBackdrop = document.querySelector('.header__mobile-menu-backdrop');
     this.mobileMenuClose = document.querySelector('.header__mobile-menu-close');
     this.dropdownButtons = document.querySelectorAll('.header__menu-item--dropdown');
     this.dropdownMenus = document.querySelectorAll('.header__dropdown-menu');
@@ -86,6 +87,12 @@ class CustomHeader {
     
     // Performance optimization flags
     this.rafId = null;
+    
+    // Mobile menu swipe state
+    this.isMobileMenuDragging = false;
+    this.touchStartY = 0;
+    this.touchStartX = 0;
+    this.touchStartTime = 0;
 
     this.bindEvents();
     this.initMegaMenu();
@@ -101,12 +108,24 @@ class CustomHeader {
       this.mobileMenuClose.addEventListener('click', this.closeMobileMenu.bind(this));
     }
 
+    // Close mobile menu when clicking on backdrop
+    if (this.mobileMenuBackdrop) {
+      this.mobileMenuBackdrop.addEventListener('click', this.closeMobileMenu.bind(this));
+    }
+
     // Close mobile menu when clicking outside
     document.addEventListener('click', (e) => {
       if (this.mobileMenu && !this.mobileMenu.contains(e.target) && !this.mobileMenuToggle.contains(e.target)) {
         this.closeMobileMenu();
       }
     });
+    
+    // Add touch event listeners for swipe gesture
+    if (this.mobileMenu) {
+      this.mobileMenu.addEventListener('touchstart', this.handleMobileMenuTouchStart.bind(this), { passive: true });
+      this.mobileMenu.addEventListener('touchmove', this.handleMobileMenuTouchMove.bind(this), { passive: true });
+      this.mobileMenu.addEventListener('touchend', this.handleMobileMenuTouchEnd.bind(this), { passive: true });
+    }
 
     // Handle dropdown menus
     this.dropdownButtons.forEach(button => {
@@ -764,6 +783,11 @@ class CustomHeader {
     this.mobileMenu.setAttribute('aria-hidden', !isHidden);
     this.mobileMenuToggle.setAttribute('aria-expanded', isHidden);
     
+    // Show/hide backdrop
+    if (this.mobileMenuBackdrop) {
+      this.mobileMenuBackdrop.setAttribute('aria-hidden', isHidden);
+    }
+    
     if (isHidden) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -774,7 +798,111 @@ class CustomHeader {
   closeMobileMenu() {
     this.mobileMenu.setAttribute('aria-hidden', 'true');
     this.mobileMenuToggle.setAttribute('aria-expanded', 'false');
+    
+    // Hide backdrop
+    if (this.mobileMenuBackdrop) {
+      this.mobileMenuBackdrop.setAttribute('aria-hidden', 'true');
+    }
+    
     document.body.style.overflow = '';
+    
+    // Remove any swipe class and reset transforms
+    this.mobileMenu.classList.remove('swiping');
+    this.mobileMenu.style.transform = '';
+    this.mobileMenu.style.opacity = '';
+    this.mobileMenu.style.transition = '';
+    
+    // Reset backdrop styles
+    if (this.mobileMenuBackdrop) {
+      this.mobileMenuBackdrop.style.opacity = '';
+      this.mobileMenuBackdrop.style.transition = '';
+    }
+  }
+  
+  // ===== MOBILE MENU SWIPE GESTURES =====
+  handleMobileMenuTouchStart(event) {
+    if (!this.mobileMenu || this.mobileMenu.getAttribute('aria-hidden') === 'true') return;
+    
+    this.touchStartY = event.touches[0].clientY;
+    this.touchStartX = event.touches[0].clientX;
+    this.touchStartTime = Date.now();
+    this.isMobileMenuDragging = false;
+    
+    // Add swiping class for visual feedback
+    this.mobileMenu.classList.add('swiping');
+  }
+  
+  handleMobileMenuTouchMove(event) {
+    if (!this.mobileMenu || this.mobileMenu.getAttribute('aria-hidden') === 'true') return;
+    
+    const touchX = event.touches[0].clientX;
+    const touchY = event.touches[0].clientY;
+    const deltaX = touchX - this.touchStartX;
+    const deltaY = touchY - this.touchStartY;
+    
+    // Only consider it dragging if moved more than 5px
+    if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
+      this.isMobileMenuDragging = true;
+    }
+    
+    // If dragging left (swipe left to close), add visual feedback
+    if (this.isMobileMenuDragging && deltaX < 0) {
+      // Calculate opacity and transform based on drag distance
+      const translateX = Math.max(deltaX, -this.mobileMenu.offsetWidth);
+      const opacity = Math.max(0.2, 1 + (deltaX / 300));
+      
+      this.mobileMenu.style.transform = `translateX(${translateX}px)`;
+      this.mobileMenu.style.opacity = opacity;
+      
+      // Update backdrop opacity
+      if (this.mobileMenuBackdrop) {
+        const backdropOpacity = Math.max(0.1, 0.5 + (deltaX / 400));
+        this.mobileMenuBackdrop.style.opacity = backdropOpacity;
+      }
+    }
+  }
+  
+  handleMobileMenuTouchEnd(event) {
+    if (!this.mobileMenu || this.mobileMenu.getAttribute('aria-hidden') === 'true') return;
+    if (!this.isMobileMenuDragging) {
+      this.mobileMenu.classList.remove('swiping');
+      return;
+    }
+    
+    const touchEndX = event.changedTouches[0].clientX;
+    const deltaX = touchEndX - this.touchStartX;
+    const deltaTime = Date.now() - this.touchStartTime;
+    const velocity = Math.abs(deltaX) / deltaTime;
+    
+    // Remove swiping class
+    this.mobileMenu.classList.remove('swiping');
+    
+    // Close menu if swiped left with sufficient distance or velocity
+    if (deltaX < -80 || velocity > 0.3) {
+      // Close immediately
+      this.closeMobileMenu();
+    } else {
+      // Reset transform with smooth animation
+      this.mobileMenu.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
+      this.mobileMenu.style.transform = '';
+      this.mobileMenu.style.opacity = '';
+      
+      // Reset backdrop
+      if (this.mobileMenuBackdrop) {
+        this.mobileMenuBackdrop.style.transition = 'opacity 0.3s ease-out';
+        this.mobileMenuBackdrop.style.opacity = '';
+      }
+      
+      // Remove transition after animation
+      setTimeout(() => {
+        this.mobileMenu.style.transition = '';
+        if (this.mobileMenuBackdrop) {
+          this.mobileMenuBackdrop.style.transition = '';
+        }
+      }, 300);
+    }
+    
+    this.isMobileMenuDragging = false;
   }
 
   // ===== DROPDOWN MENU FUNCTIONALITY =====
