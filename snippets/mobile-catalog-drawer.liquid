@@ -18,28 +18,12 @@
 {%- endcomment -%}
 
 {%- liquid
-  # Get catalog menu from section blocks (this should be the main catalog menu)
-  assign catalog_menu = null
-  for block in section.blocks
-    if block.type == 'catalog_menu' and block.settings.catalog_menu != blank
-      assign catalog_menu = block.settings.catalog_menu
-      break
-    endif
-  endfor
+  # Get the catalog menu from section settings
+  assign catalog_menu_handle = section.settings.mobile_catalog_menu | default: 'main-menu'
+  assign catalog_menu = linklists[catalog_menu_handle]
 
-  # If no catalog menu is configured, fallback to left menu
-  assign left_menu = null
-  if catalog_menu == blank
-    for block in section.blocks
-      if block.type == 'left_menu' and block.settings.left_menu != blank
-        assign left_menu = block.settings.left_menu
-        break
-      endif
-    endfor
-  endif
-
-  # Use catalog menu first, then fallback to left menu
-  assign menu_to_use = catalog_menu | default: left_menu
+  # Use the selected catalog menu
+  assign menu_to_use = catalog_menu
 -%}
 
 <div
@@ -201,7 +185,8 @@
             {{ 'sections.header.mobile_bottom_nav.no_menu' | t }}
           </p>
           <p class="mobile-catalog-drawer__debug-text" style="font-size: 0.8rem; color: #666; margin-top: 1rem;">
-            Debug: No catalog menu configured. Please add a "Catalog Menu" block in the header section settings.
+            Debug: No catalog menu found. Please select a menu in Theme Settings > Header > "Catalog menu for mobile
+            navigation".
           </p>
           <a
             href="{{ routes.collections_url }}"
