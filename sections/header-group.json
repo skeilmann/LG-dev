@@ -19,7 +19,7 @@
           "name": "Text",
           "settings": {
             "text": "",
-            "alignment": "left"
+            "alignment": "center"
           },
           "blocks": {}
         },
@@ -52,7 +52,10 @@
         "text_zbyXqG",
         "lg_progress_bar_qDhzpp"
       ],
-      "custom_css": [],
+      "custom_css": [
+        ".shopify-block {padding: 5px 20px;}",
+        ".page-width {display: none;}"
+      ],
       "settings": {
         "enable_country_selector": true,
         "enable_language_selector": true,
@@ -104,11 +107,6 @@
         "show_nav_catalog": true,
         "show_nav_favorites": true,
         "show_nav_cart": true,
-        "nav_home_label": "",
-        "nav_search_label": "",
-        "nav_catalog_label": "",
-        "nav_favorites_label": "",
-        "nav_cart_label": "",
         "nav_button_order": "default",
         "mobile_nav_background": "#f4b8dd",
         "mobile_nav_opacity": 90,
