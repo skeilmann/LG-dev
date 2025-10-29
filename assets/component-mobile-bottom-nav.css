@@ -9,6 +9,7 @@
 
 .mobile-bottom-nav {
     /* Hide on desktop - only show on mobile */
+    visibility: hidden !important;
     display: none;
     position: fixed;
     bottom: 0;
