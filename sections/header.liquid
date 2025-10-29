@@ -730,6 +730,20 @@
         {%- endif -%}
       </div>
 
+      <!-- Mobile Country Selector (below logo on mobile) -->
+      {%- if section.settings.enable_country_selector and localization.available_countries.size > 1 -%}
+        <div class="mobile-country-selector-wrapper">
+          <localization-form data-prevent-hide>
+            {%- form 'localization', id: 'HeaderCountryMobileForm', class: 'localization-form' -%}
+              <div>
+                <h2 class="visually-hidden" id="HeaderCountryMobileLabel">{{ 'localization.country_label' | t }}</h2>
+                {%- render 'country-localization', localPosition: 'HeaderCountryMobile' -%}
+              </div>
+            {%- endform -%}
+          </localization-form>
+        </div>
+      {%- endif -%}
+
       <!-- Right Menu -->
       <nav class="header__right-menu" role="navigation" aria-label="{{ 'sections.header.menu' | t }}">
         <ul class="list-menu list-menu--inline" role="list">
@@ -789,8 +803,9 @@
         <!-- Utility Icons -->
         <div class="header__icons{% if section.settings.enable_country_selector or section.settings.enable_language_selector %} header__icons--localization header-localization{% endif %}">
           <div class="desktop-localization-wrapper">
+            {%- comment -%}Desktop country selector - hidden on mobile{%- endcomment -%}
             {%- if section.settings.enable_country_selector and localization.available_countries.size > 1 -%}
-              <localization-form data-prevent-hide>
+              <localization-form class="desktop-only" data-prevent-hide>
                 {%- form 'localization', id: 'HeaderCountryForm', class: 'localization-form' -%}
                   <div>
                     <h2 class="visually-hidden" id="HeaderCountryLabel">{{ 'localization.country_label' | t }}</h2>
@@ -800,6 +815,7 @@
               </localization-form>
             {% endif %}
 
+            {%- comment -%}Language selector - visible on both desktop and mobile{%- endcomment -%}
             {%- if section.settings.enable_language_selector and localization.available_languages.size > 1 -%}
               <localization-form data-prevent-hide>
                 {%- form 'localization', id: 'HeaderLanguageForm', class: 'localization-form' -%}
