@@ -116,7 +116,11 @@
         "mobile_nav_icon_active_color": "#0066cc",
         "mobile_nav_badge_color": "#ff0000",
         "nav_animation_style": "slide",
-        "drawer_animation_speed": 300
+        "drawer_animation_speed": 300,
+        "show_announcement": false,
+        "announcement_text": "Free shipping on orders over $50!",
+        "announcement_link": "",
+        "announcement_color_scheme": ""
       }
     },
     "lg_breadcrumps_pUhQyM": {
