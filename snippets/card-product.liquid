@@ -152,12 +152,14 @@
               {% assign today = 'now' | date: '%s' | plus: 0 %}
               {% assign days_old = today | minus: created_date | divided_by: 86400 %}
 
-              <script>
-                console.log("Product:", "{{ card_product.title }}");
-                console.log("Metafield date:", "{{ card_product.metafields.custom.date_added_to_shopify }}");
-                console.log("Created at:", "{{ card_product.created_at }}");
-                console.log("Epoch:", {{ created_date }}, "Today:", {{ today }}, "Days Old:", {{ days_old }});
-              </script>
+              {% comment %}
+                <script>
+                  console.log("Product:", "{{ card_product.title }}");
+                  console.log("Metafield date:", "{{ card_product.metafields.custom.date_added_to_shopify }}");
+                  console.log("Created at:", "{{ card_product.created_at }}");
+                  console.log("Epoch:", {{ created_date }}, "Today:", {{ today }}, "Days Old:", {{ days_old }});
+                </script>
+              {% endcomment %}
 
               {% if days_old < 14 %}
                 <span class="badge new-badge">{{ 'products.product.new_badge' | t }}</span>
