@@ -152,17 +152,15 @@ body:has(.section-header .drawer-menu) .announcement-bar-section .page-width {
   margin-top: var(--spacing-sections-mobile);
 }
 
-@media screen and (min-width: 750px) {
-  .section+.section {
-    margin-top: var(--spacing-sections-desktop);
-  }
-}
-
 .element-margin-top {
   margin-top: 5rem;
 }
 
 @media screen and (min-width: 750px) {
+  .section+.section {
+    margin-top: var(--spacing-sections-desktop);
+  }
+
   .element-margin {
     margin-top: calc(5rem + var(--page-width-margin));
   }
@@ -2430,9 +2428,9 @@ input[type='checkbox'] {
   transition: top 0.15s ease-out;
 }
 
-.shopify-section-group-header-group {
+/* .shopify-section-group-header-group {
   z-index: 4;
-}
+} */
 
 .section-header~.shopify-section-group-header-group {
   z-index: initial;

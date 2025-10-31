@@ -62,6 +62,7 @@
     --header-padding-top: {{ section.settings.padding_top | times: 0.5 | round: 0 }}px;
     --header-padding-bottom: {{ section.settings.padding_bottom | times: 0.5 | round: 0 }}px;
     --header-margin-bottom: {{ section.settings.margin_bottom | times: 0.75 | round: 0 }}px;
+    --icon-caret-url: url('{{ "icon-caret.svg" | asset_url }}');
   }
 
   {%- if section.settings.sticky_header_type == 'reduce-logo-size' -%}
@@ -888,6 +889,49 @@
           {%- endfor -%}
         </div>
       </nav>
+    </div>
+
+    <!-- Mobile-only buttons (outside header__layout) -->
+    <div class="header__mobile-right-buttons">
+      {%- if section.settings.enable_language_selector and localization.available_languages.size > 1 -%}
+        <localization-form data-prevent-hide>
+          {%- form 'localization', id: 'HeaderLanguageMobileForm', class: 'localization-form' -%}
+            <div>
+              <h2 class="visually-hidden" id="HeaderLanguageMobileLabel">{{ 'localization.language_label' | t }}</h2>
+              {%- render 'language-localization', localPosition: 'HeaderLanguageMobile' -%}
+            </div>
+          {%- endform -%}
+        </localization-form>
+      {%- endif -%}
+
+      {%- if shop.customer_accounts_enabled -%}
+        <a
+          href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}"
+          class="header__icon header__icon--account link focus-inset"
+          rel="nofollow"
+        >
+          {%- if section.settings.enable_customer_avatar -%}
+            <account-icon>
+              {%- if customer and customer.has_avatar? -%}
+                {{ customer | avatar }}
+              {%- else -%}
+                <span class="svg-wrapper">{{ 'icon-account.svg' | inline_asset_content }}</span>
+              {%- endif -%}
+            </account-icon>
+          {%- else -%}
+            <span class="svg-wrapper">{{ 'icon-account.svg' | inline_asset_content }}</span>
+          {%- endif -%}
+          <span class="visually-hidden">
+            {%- liquid
+              if customer
+                echo 'customer.account_fallback' | t
+              else
+                echo 'customer.log_in' | t
+              endif
+            -%}
+          </span>
+        </a>
+      {%- endif -%}
     </div>
 
     <!-- Mobile Menu Backdrop -->
