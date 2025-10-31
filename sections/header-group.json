@@ -53,8 +53,7 @@
         "lg_progress_bar_qDhzpp"
       ],
       "custom_css": [
-        ".shopify-block {padding: 5px 20px;}",
-        ".page-width {display: none;}"
+        ".shopify-block {padding: 5px 20px;}"
       ],
       "settings": {
         "enable_country_selector": true,
