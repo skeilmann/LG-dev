@@ -265,7 +265,7 @@ class MobileBottomNav extends HTMLElement {
   }
 
   /**
-   * Open the existing header search modal
+   * Toggle the existing header search modal
    */
   openSearchModal() {
     const searchModalComponent = document.querySelector('details-modal.header__search');
@@ -274,12 +274,10 @@ class MobileBottomNav extends HTMLElement {
     const searchDetails = searchModalComponent.querySelector('details');
     if (!searchDetails) return;
 
-    // If already open, just focus the input
+    // Toggle: if already open, close it
     if (searchDetails.hasAttribute('open')) {
-      const existingInput = searchDetails.querySelector('input[type="search"]');
-      if (existingInput) {
-        existingInput.focus();
-      }
+      searchDetails.removeAttribute('open');
+      document.body.classList.remove('overflow-hidden');
       return;
     }
 
