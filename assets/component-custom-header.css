@@ -170,6 +170,12 @@
     display: block;
 }
 
+/* All header menu items (links and buttons) styling override */
+.header__menu-item {
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
 /* Dropdown functionality */
 .header__menu-item--dropdown {
     cursor: pointer;
@@ -178,6 +184,12 @@
     text-decoration: none;
     display: inline-flex;
     align-items: center;
+    font-size: inherit;
+    font-weight: 600;
+    font-family: inherit;
+    color: inherit;
+    padding: 1.2rem;
+    text-transform: uppercase;
 }
 
 /* Dropdown and mega menu arrow icons */
@@ -214,6 +226,18 @@
     cursor: pointer;
     display: inline-flex;
     align-items: center;
+    font-size: inherit;
+    font-weight: 600;
+    font-family: inherit;
+    color: rgba(var(--color-foreground), 0.75);
+    text-decoration: none;
+    padding: 1.2rem;
+    transition: color var(--duration-short) ease;
+    text-transform: uppercase;
+}
+
+.header__menu-item--mega:hover {
+    color: rgb(var(--color-foreground));
 }
 
 /* Dropdown container - prevent transition on initial load */
@@ -415,12 +439,12 @@
 }
 
 .mega-menu-title {
-    font-size: 1.1rem;
-    font-weight: 600;
     margin-bottom: 1rem;
     color: rgb(var(--color-foreground));
+    font-size: inherit;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: normal;
 }
 
 .mega-menu-list {
@@ -434,9 +458,10 @@
     padding: 0.5rem 0;
     color: rgb(var(--color-foreground));
     text-decoration: none;
-    font-weight: 500;
     transition: all var(--duration-short) ease;
     border-bottom: 1px solid transparent;
+    font-weight: 600;
+    text-transform: uppercase;
 }
 
 /* Hover and active states for all menu links */
@@ -507,8 +532,9 @@
     transform: translateY(0);
 }
 
+.header__menu-item--dropdown:hover,
 .header__menu-item-wrapper:hover .header__menu-item--dropdown[aria-expanded="false"] {
-    color: rgba(var(--color-foreground), 0.8);
+    color: rgb(var(--color-foreground));
 }
 
 .header__dropdown-item {
@@ -518,8 +544,8 @@
     text-decoration: none;
     border-bottom: 1px solid rgba(var(--color-foreground), 0.05);
     transition: background-color var(--duration-short) ease;
-    text-transform: none;
-    font-weight: normal;
+    font-weight: 600;
+    text-transform: uppercase;
 }
 
 .header__dropdown-item:hover {
@@ -645,8 +671,9 @@
     padding: 1rem 0;
     color: rgb(var(--color-foreground));
     text-decoration: none;
-    font-size: 1.2rem;
     border-bottom: 1px solid rgba(var(--color-foreground), 0.1);
+    font-weight: 600;
+    text-transform: uppercase;
 }
 
 .header__mobile-dropdown {
@@ -659,7 +686,8 @@
     padding: 0.75rem 0;
     color: rgba(var(--color-foreground), 0.8);
     text-decoration: none;
-    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
 }
 
 /* ===== MOBILE CATALOG ACCORDION STYLES ===== */
@@ -703,11 +731,12 @@
     justify-content: space-between;
     align-items: center;
     padding: 0.75rem 0;
-    font-weight: 500;
     color: rgb(var(--color-foreground));
     cursor: pointer;
     user-select: none;
     border-bottom: 1px solid rgba(var(--color-foreground), 0.05);
+    font-weight: 600;
+    text-transform: uppercase;
 }
 
 .mobile-category-single-link {
@@ -715,8 +744,9 @@
     padding: 0.75rem 0;
     color: rgb(var(--color-foreground));
     text-decoration: none;
-    font-weight: 500;
     border-bottom: 1px solid rgba(var(--color-foreground), 0.05);
+    font-weight: 600;
+    text-transform: uppercase;
 }
 
 .mobile-subcategory-content {
@@ -739,6 +769,8 @@
     color: rgba(var(--color-foreground), 0.8);
     text-decoration: none;
     transition: color var(--duration-short) ease;
+    font-weight: 600;
+    text-transform: uppercase;
 }
 
 .mobile-subcategory-link:hover {
@@ -757,11 +789,11 @@
     justify-content: space-between;
     padding: 0.5rem 0;
     cursor: pointer;
-    font-size: 0.95rem;
-    font-weight: 500;
     color: rgba(var(--color-foreground), 0.9);
     list-style: none;
     user-select: none;
+    font-weight: 600;
+    text-transform: uppercase;
 }
 
 .mobile-sub-subcategory-title::-webkit-details-marker {
@@ -793,8 +825,9 @@
     padding: 0.4rem 0;
     color: rgba(var(--color-foreground), 0.8);
     text-decoration: none;
-    font-size: 0.95rem;
     transition: color var(--duration-short) ease;
+    font-weight: 600;
+    text-transform: uppercase;
 }
 
 .mobile-sub-subcategory-link:hover {
@@ -827,7 +860,6 @@
 
 .mobile-image-placeholder {
     color: rgba(var(--color-foreground), 0.5);
-    font-size: 0.9rem;
 }
 
 .mobile-category-image img {
@@ -844,7 +876,6 @@
 }
 
 .mobile-loading-text {
-    font-size: 0.8rem;
     color: rgba(var(--color-foreground), 0.5);
 }
 
