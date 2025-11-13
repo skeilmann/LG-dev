@@ -234,8 +234,8 @@ class MobileBottomNav extends HTMLElement {
     // Focus management
     this.closeButton?.focus();
     
-    // Initialize accordion image loading
-    this.initAccordionImageLoading();
+    // Initialize accordion image loading - DISABLED
+    // this.initAccordionImageLoading();
     
     // Announce to screen readers
     this.announceToScreenReader('Catalog menu opened');
@@ -547,10 +547,10 @@ class MobileBottomNav extends HTMLElement {
   }
 
   /**
-   * Initialize accordion image loading
+   * Initialize accordion image loading - DISABLED
    * Sets up listeners for accordion opens to lazy-load category/subcategory images
    */
-  initAccordionImageLoading() {
+  /* initAccordionImageLoading() {
     if (!this.drawer || this.accordionImagesInitialized) return;
 
     // Handle subcategory accordions (nested level)
@@ -615,14 +615,14 @@ class MobileBottomNav extends HTMLElement {
 
     // Mark as initialized to prevent duplicate listeners
     this.accordionImagesInitialized = true;
-  }
+  } */
 
   /**
-   * Load catalog image for a container
+   * Load catalog image for a container - DISABLED
    * Fetches collection image based on collection handle from nearby links
    * @param {HTMLElement} container - Image container element
    */
-  loadCatalogImage(container) {
+  /* loadCatalogImage(container) {
     if (!container || container.querySelector('img')) return;
 
     const categoryHandle = container.getAttribute('data-category');
@@ -701,7 +701,7 @@ class MobileBottomNav extends HTMLElement {
           placeholder.style.display = 'none';
         }
       });
-  }
+  } */
 
   /**
    * Announce message to screen readers

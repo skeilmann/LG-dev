@@ -158,18 +158,6 @@
                                     </li>
                                   {%- endfor -%}
                                 </ul>
-
-                                {%- comment -%} Lazy-loaded image for subcategory {%- endcomment -%}
-                                <div
-                                  class="mobile-catalog-drawer__subcategory-image"
-                                  data-category="{{ sublink.handle }}"
-                                >
-                                  <div class="mobile-catalog-drawer__image-placeholder">
-                                    <span class="mobile-catalog-drawer__loading-text">
-                                      {{- 'sections.header.loading_image' | t -}}
-                                    </span>
-                                  </div>
-                                </div>
                               </div>
                             </details>
                           {%- else -%}
@@ -188,15 +176,6 @@
                         </li>
                       {%- endfor -%}
                     </ul>
-
-                    {%- comment -%} Lazy-loaded image for category {%- endcomment -%}
-                    <div class="mobile-catalog-drawer__category-image" data-category="{{ link.handle }}">
-                      <div class="mobile-catalog-drawer__image-placeholder">
-                        <span class="mobile-catalog-drawer__loading-text">
-                          {{- 'sections.header.loading_image' | t -}}
-                        </span>
-                      </div>
-                    </div>
                   </div>
                 </details>
               {%- else -%}

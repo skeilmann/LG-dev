@@ -71,6 +71,9 @@
     text-decoration: none;
     color: inherit;
 
+    /* Position for badge absolute positioning */
+    position: relative;
+
     /* Flexbox layout for icon + label */
     display: flex;
     flex-direction: column;
@@ -105,13 +108,21 @@
     outline-offset: 2px;
 }
 
-.mobile-bottom-nav__button:hover {
-    color: var(--mobile-nav-icon-active-color, #0066cc);
-    transform: translateY(-1px);
+/* Hover for desktop/mouse users */
+@media (hover: hover) and (pointer: fine) {
+    .mobile-bottom-nav__button:hover {
+        color: var(--mobile-nav-icon-active-color, #0066cc);
+        transform: translateY(-1px);
+    }
 }
 
+/* Touch feedback for mobile devices */
 .mobile-bottom-nav__button:active {
-    transform: translateY(0);
+    color: var(--mobile-nav-icon-active-color, #0066cc);
+    transform: scale(0.95);
+    background: rgba(0, 102, 204, 0.1);
+    border-radius: 0.5rem;
+    transition: all 0.15s ease;
 }
 
 /* --- Active States --- */
@@ -135,12 +146,38 @@
     width: 24px;
     height: 24px;
     transition: transform 0.2s ease;
+    /* Ensure proper sizing */
+    flex-shrink: 0;
 }
 
 .mobile-bottom-nav__icon svg {
-    width: 100%;
-    height: 100%;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 24px;
+    max-height: 24px;
+    /* Ensure color inheritance */
     fill: currentColor;
+    stroke: currentColor;
+    /* Smooth color transition */
+    transition: fill 0.2s ease, stroke 0.2s ease;
+}
+
+/* Icon color transition on state change */
+.mobile-bottom-nav__button:active .mobile-bottom-nav__icon,
+.mobile-bottom-nav__button--active .mobile-bottom-nav__icon {
+    color: var(--mobile-nav-icon-active-color, #0066cc);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .mobile-bottom-nav__button:hover .mobile-bottom-nav__icon {
+        color: var(--mobile-nav-icon-active-color, #0066cc);
+    }
+}
+
+/* Fix for cart icons with larger viewBox (40x40 vs 24x24) */
+.mobile-bottom-nav__icon .icon-cart,
+.mobile-bottom-nav__icon .icon-cart-empty {
+    transform: scale(1.5);
 }
 
 /* --- Label Styles --- */
@@ -164,6 +201,7 @@
     position: absolute;
     top: 0.25rem;
     right: 0.25rem;
+    z-index: 1;
 
     /* Badge styling */
     background: var(--mobile-nav-badge-color, #ff0000);
@@ -504,8 +542,8 @@
     color: var(--mobile-nav-icon-active-color, #0066cc);
 }
 
-/* Image loading */
-.mobile-catalog-drawer__category-image,
+/* Image loading - DISABLED */
+/* .mobile-catalog-drawer__category-image,
 .mobile-catalog-drawer__subcategory-image {
     margin-top: 1rem;
     border-radius: 0.5rem;
@@ -538,7 +576,7 @@
 .mobile-catalog-drawer__category-image img.loaded,
 .mobile-catalog-drawer__subcategory-image img.loaded {
     opacity: 1;
-}
+} */
 
 /* Empty state */
 .mobile-catalog-drawer__empty {
@@ -585,6 +623,17 @@
         width: 20px;
         height: 20px;
     }
+
+    .mobile-bottom-nav__icon svg {
+        max-width: 20px !important;
+        max-height: 20px !important;
+    }
+
+    /* Maintain cart icon scale on small screens */
+    .mobile-bottom-nav__icon .icon-cart,
+    .mobile-bottom-nav__icon .icon-cart-empty {
+        transform: scale(1.4);
+    }
 }
 
 @media screen and (max-height: 500px) and (orientation: landscape) {
@@ -607,6 +656,17 @@
     .mobile-bottom-nav__icon {
         width: 20px;
         height: 20px;
+    }
+
+    .mobile-bottom-nav__icon svg {
+        max-width: 20px !important;
+        max-height: 20px !important;
+    }
+
+    /* Maintain cart icon scale in landscape */
+    .mobile-bottom-nav__icon .icon-cart,
+    .mobile-bottom-nav__icon .icon-cart-empty {
+        transform: scale(1.9);
     }
 }
 
