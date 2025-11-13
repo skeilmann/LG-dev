@@ -268,21 +268,32 @@ class MobileBottomNav extends HTMLElement {
    * Open the existing header search modal
    */
   openSearchModal() {
-    // Find and trigger the existing header search modal
-    const searchModal = document.querySelector('.header__search details');
-    const searchButton = document.querySelector('.header__icon--search');
-    
-    if (searchModal && searchButton) {
-      // Open the modal
-      searchModal.setAttribute('open', '');
-      searchButton.setAttribute('aria-expanded', 'true');
-      
-      // Focus the search input
-      const searchInput = searchModal.querySelector('input[type="search"]');
-      if (searchInput) {
-        setTimeout(() => searchInput.focus(), 100);
+    const searchModalComponent = document.querySelector('details-modal.header__search');
+    if (!searchModalComponent) return;
+
+    const searchDetails = searchModalComponent.querySelector('details');
+    if (!searchDetails) return;
+
+    // If already open, just focus the input
+    if (searchDetails.hasAttribute('open')) {
+      const existingInput = searchDetails.querySelector('input[type="search"]');
+      if (existingInput) {
+        existingInput.focus();
       }
+      return;
     }
+
+    // Open the details element
+    searchDetails.setAttribute('open', '');
+    document.body.classList.add('overflow-hidden');
+
+    // Focus the search input
+    requestAnimationFrame(() => {
+      const searchInput = searchDetails.querySelector('input[type="search"]');
+      if (searchInput) {
+        searchInput.focus();
+      }
+    });
   }
 
   /**

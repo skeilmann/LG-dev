@@ -142,8 +142,8 @@ class FavoritesHandler {
                 this.toggleFavorite(favoriteButton.dataset.productId);
             }
 
-            const favoritesHeaderIcon = e.target.closest('.header__icon');
-            if (favoritesHeaderIcon) {
+            const favoritesHeaderIcon = e.target.closest('.header__icon--favorites, #favorites-icon-bubble');
+            if (favoritesHeaderIcon && !favoritesHeaderIcon.closest('.header__search')) {
                 e.preventDefault();
                 // Get favorites from localStorage (array of {id, handle})
                 let favorites = [];

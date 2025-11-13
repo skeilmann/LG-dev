@@ -67,6 +67,14 @@
         justify-self: right;
     }
 
+    .header__search {
+        display: block !important;
+    }
+
+    .header__icon.header__icon--search.header__icon--summary {
+        display: none !important;
+    }
+
     /* Hide desktop country selector on mobile */
     .desktop-only {
         display: none !important;
