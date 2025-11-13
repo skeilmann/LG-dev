@@ -24,9 +24,10 @@
 
 /* Favorites count bubble positioning */
 .header__icon--favorites .cart-count-bubble {
-    top: -8px;
-    right: -8px;
-    left: auto; /* Unset the default left positioning */
+    top: -4px;
+    right: -4px;
+    left: auto;
+    /* Unset the default left positioning */
 }
 
 .favorite-icon:hover {
