@@ -416,8 +416,7 @@
 
 .disclosure__button.localization-form__select.localization-selector.localization-selector {
   padding: 0 !important;
-  padding-left: 10px !important;
-
+  margin: 0 !important;
 }
 
 .desktop-localization-wrapper .localization-selector+.disclosure__list-wrapper {

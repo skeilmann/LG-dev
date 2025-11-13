@@ -148,6 +148,7 @@
                                       <a
                                         href="{{ sub_sublink.url }}"
                                         class="mobile-catalog-drawer__sub-subcategory-link"
+                                        data-collection-handle="{{ sub_sublink.handle }}"
                                         {% if sub_sublink.current %}
                                           aria-current="page"
                                         {% endif %}
@@ -176,6 +177,7 @@
                             <a
                               href="{{ sublink.url }}"
                               class="mobile-catalog-drawer__subcategory-link"
+                              data-collection-handle="{{ sublink.handle }}"
                               {% if sublink.current %}
                                 aria-current="page"
                               {% endif %}

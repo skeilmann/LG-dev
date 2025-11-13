@@ -38,6 +38,7 @@ class MobileBottomNav extends HTMLElement {
     this.touchStartY = 0;
     this.touchStartTime = 0;
     this.isDragging = false;
+    this.accordionImagesInitialized = false;
     
     // Performance optimization
     this.rafId = null;
@@ -232,6 +233,9 @@ class MobileBottomNav extends HTMLElement {
     
     // Focus management
     this.closeButton?.focus();
+    
+    // Initialize accordion image loading
+    this.initAccordionImageLoading();
     
     // Announce to screen readers
     this.announceToScreenReader('Catalog menu opened');
@@ -531,6 +535,163 @@ class MobileBottomNav extends HTMLElement {
       
       badge.style.display = favoritesCount > 0 ? 'flex' : 'none';
     }
+  }
+
+  /**
+   * Initialize accordion image loading
+   * Sets up listeners for accordion opens to lazy-load category/subcategory images
+   */
+  initAccordionImageLoading() {
+    if (!this.drawer || this.accordionImagesInitialized) return;
+
+    // Handle subcategory accordions (nested level)
+    const subcategoryAccordions = this.drawer.querySelectorAll('.mobile-catalog-drawer__subcategory-accordion');
+
+    subcategoryAccordions.forEach((accordion) => {
+      const summary = accordion.querySelector('.mobile-catalog-drawer__subcategory-title');
+      const subcategoryImageContainer = accordion.querySelector('.mobile-catalog-drawer__subcategory-image');
+      const parentCategoryImage = accordion.closest('.mobile-catalog-drawer__subcategory-content')?.querySelector('.mobile-catalog-drawer__category-image');
+
+      summary?.addEventListener('click', () => {
+        // Use setTimeout to check state after browser toggles the details element
+        setTimeout(() => {
+          const isOpen = accordion.hasAttribute('open');
+          
+          if (isOpen) {
+            // Accordion opened - load subcategory image
+            if (subcategoryImageContainer) {
+              this.loadCatalogImage(subcategoryImageContainer);
+            }
+            // Hide parent category image when nested subcategory is open
+            if (parentCategoryImage) {
+              parentCategoryImage.style.display = 'none';
+            }
+          } else {
+            // Accordion closed - show category image again if needed
+            if (parentCategoryImage && !parentCategoryImage.querySelector('img')) {
+              parentCategoryImage.style.display = '';
+              this.loadCatalogImage(parentCategoryImage);
+            }
+          }
+        }, 100);
+      });
+    });
+
+    // Handle category accordions (top level)
+    const categoryAccordions = this.drawer.querySelectorAll('.mobile-catalog-drawer__category-accordion');
+
+    categoryAccordions.forEach((accordion) => {
+      const summary = accordion.querySelector('.mobile-catalog-drawer__category-title');
+      const categoryImageContainer = accordion.querySelector('.mobile-catalog-drawer__category-image');
+
+      summary?.addEventListener('click', () => {
+        // Use setTimeout to check state after browser toggles the details element
+        setTimeout(() => {
+          const isOpen = accordion.hasAttribute('open');
+          
+          if (isOpen) {
+            // Check if there are nested subcategories
+            const nestedAccordions = accordion.querySelectorAll('.mobile-catalog-drawer__subcategory-accordion');
+            if (nestedAccordions.length === 0 && categoryImageContainer) {
+              // No nested subcategories, load category image
+              this.loadCatalogImage(categoryImageContainer);
+            } else if (categoryImageContainer) {
+              // Has nested subcategories, hide category image initially
+              categoryImageContainer.style.display = 'none';
+            }
+          }
+        }, 100);
+      });
+    });
+
+    // Mark as initialized to prevent duplicate listeners
+    this.accordionImagesInitialized = true;
+  }
+
+  /**
+   * Load catalog image for a container
+   * Fetches collection image based on collection handle from nearby links
+   * @param {HTMLElement} container - Image container element
+   */
+  loadCatalogImage(container) {
+    if (!container || container.querySelector('img')) return;
+
+    const categoryHandle = container.getAttribute('data-category');
+    if (!categoryHandle) return;
+
+    // Priority: Get collection handle from last level (sub-subcategory) first
+    let collectionHandle = null;
+    let firstSublink = null;
+
+    // Check if this is a subcategory image container (nested level)
+    if (container.classList.contains('mobile-catalog-drawer__subcategory-image')) {
+      // Get first sub-subcategory link (last level)
+      firstSublink = container
+        .closest('.mobile-catalog-drawer__sub-subcategory-content')
+        ?.querySelector('.mobile-catalog-drawer__sub-subcategory-link[data-collection-handle]');
+      
+      if (firstSublink) {
+        collectionHandle = firstSublink.getAttribute('data-collection-handle');
+      }
+    }
+
+    // Fallback: If no sub-subcategory link, get from subcategory link
+    if (!collectionHandle) {
+      firstSublink = container
+        .closest('.mobile-catalog-drawer__subcategory-content')
+        ?.querySelector('.mobile-catalog-drawer__subcategory-link[data-collection-handle]');
+
+      if (firstSublink) {
+        collectionHandle = firstSublink.getAttribute('data-collection-handle');
+      }
+    }
+
+    // Fallback: Try to get from category level links
+    if (!collectionHandle) {
+      const categoryGroup = container.closest('.mobile-catalog-drawer__category-group');
+      firstSublink = categoryGroup?.querySelector('.mobile-catalog-drawer__subcategory-link[data-collection-handle]');
+      
+      if (firstSublink) {
+        collectionHandle = firstSublink.getAttribute('data-collection-handle');
+      }
+    }
+
+    if (!collectionHandle) return;
+
+    fetch(`/collections/${collectionHandle}.js`)
+      .then((response) => (response.ok ? response.json() : null))
+      .then((collection) => {
+        if (collection && collection.image) {
+          const img = document.createElement('img');
+          img.src = collection.image;
+          img.alt = collection.title || (firstSublink?.textContent?.trim()) || '';
+          img.loading = 'lazy';
+
+          img.onload = () => {
+            img.classList.add('loaded');
+            // Hide placeholder when image loads
+            const placeholder = container.querySelector('.mobile-catalog-drawer__image-placeholder');
+            if (placeholder) {
+              placeholder.style.display = 'none';
+            }
+          };
+
+          container.appendChild(img);
+        } else {
+          // No image found, hide placeholder
+          const placeholder = container.querySelector('.mobile-catalog-drawer__image-placeholder');
+          if (placeholder) {
+            placeholder.style.display = 'none';
+          }
+        }
+      })
+      .catch(() => {
+        // Silent fail - hide placeholder on error
+        const placeholder = container.querySelector('.mobile-catalog-drawer__image-placeholder');
+        if (placeholder) {
+          placeholder.style.display = 'none';
+        }
+      });
   }
 
   /**
