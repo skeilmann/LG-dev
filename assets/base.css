@@ -2705,7 +2705,7 @@ menu-drawer+.header__search {
 }
 
 .header:not(.header--has-menu) *>.header__search {
-  display: none;
+  /* display: none; */
 }
 
 .header__search {

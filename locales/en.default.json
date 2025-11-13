@@ -640,7 +640,8 @@
     "add": "Add to Favorites",
     "remove": "Remove from Favorites",
     "login_message": "Log in to sync your favorites across devices",
-    "added": "Added to Favorites"
+    "added": "Added to Favorites",
+    "browse_products": "Browse Products"
   },
   "stock": {
     "in_stock": "In stock",

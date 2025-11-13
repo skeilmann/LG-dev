@@ -790,6 +790,9 @@
         "name": "Blog posts"
       }
     },
+    "favorites": {
+      "name": "Favorites"
+    },
     "featured-collection": {
       "name": "Featured collection",
       "settings": {

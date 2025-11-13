@@ -1,103 +1,237 @@
+{%- comment -%}
+Filename: LG-favorites.liquid
+Purpose: Display user's favorite products from localStorage
+Dependencies: card-product snippet, favorites-page.js, slider-component
+Created: 2025-01-15
+Updated: 2025-11-13
+{%- endcomment -%}
+
 {{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
 {{ 'component-slider.css' | asset_url | stylesheet_tag }}
+{{ 'component-favorites.css' | asset_url | stylesheet_tag }}
 
-{%- assign columns = section.settings.columns_desktop | default: 4 -%}
-{%- assign enable_slider = section.settings.enable_desktop_slider -%}
+<script src="{{ 'favorites-page.js' | asset_url }}" defer="defer"></script>
 
-<div class="lg-favorites-section">
+{%- liquid
+  assign columns_desktop = section.settings.columns_desktop | default: 4
+  assign columns_mobile = section.settings.columns_mobile | default: 2
+  assign enable_slider = section.settings.enable_desktop_slider
+  assign show_vendor = section.settings.show_vendor
+  assign show_rating = section.settings.show_rating
+  assign image_ratio = section.settings.image_ratio | default: 'square'
+  assign image_shape = section.settings.image_shape | default: 'default'
+-%}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="section-{{ section.id }}-padding gradient color-{{ section.settings.color_scheme }}">
   <div class="page-width">
-    <div class="lg-favorites__header">
-      <h1 class="h2">Your Favorite Products</h1>
+    <div class="title-wrapper center">
+      <h1 class="title title--primary">
+        {{ 'favorites.title' | t }}
+      </h1>
     </div>
+
     <slider-component class="{% if enable_slider %}slider-component-desktop{% else %}page-width-desktop{% endif %}">
       <ul
-        id="Slider-{{ section.id }}"
-        class="grid product-grid contains-card contains-card--product grid--{{ columns }}-col-desktop{% if enable_slider %} slider slider--desktop{% endif %}"
+        id="Favorites-Grid-{{ section.id }}"
+        class="grid product-grid contains-card contains-card--product grid--{{ columns_mobile }}-col-tablet-down grid--{{ columns_desktop }}-col-desktop{% if enable_slider %} slider slider--desktop{% endif %}"
         role="list"
-        aria-label="Your favorite products slider"
-      ></ul>
+        aria-label="{{ 'favorites.title' | t }}"
+        data-section-id="{{ section.id }}"
+        data-show-vendor="{{ show_vendor }}"
+        data-show-rating="{{ show_rating }}"
+        data-image-ratio="{{ image_ratio }}"
+        data-image-shape="{{ image_shape }}"
+        data-enable-slider="{{ enable_slider }}"
+      >
+        {%- comment -%}Products will be loaded dynamically via JavaScript{%- endcomment -%}
+        <li class="grid__item grid__item--full-width">
+          <div class="favorites-loading">
+            {% render 'loading-spinner' %}
+          </div>
+        </li>
+      </ul>
+
       {% if enable_slider %}
-        <div class="slider-buttons">
+        <div class="slider-buttons no-js-hidden">
           <button
             type="button"
             class="slider-button slider-button--prev"
             name="previous"
-            aria-label="Previous slide"
-            aria-controls="Slider-{{ section.id }}"
+            aria-label="{{ 'general.slider.previous_slide' | t }}"
+            aria-controls="Favorites-Grid-{{ section.id }}"
           >
-            <span class="svg-wrapper">{{ 'icon-caret1.svg' | inline_asset_content }}</span>
+            <span class="svg-wrapper">
+              {{- 'icon-caret.svg' | inline_asset_content -}}
+            </span>
           </button>
           <div class="slider-counter caption">
             <span class="slider-counter--current">1</span>
             <span aria-hidden="true"> / </span>
-            <span class="visually-hidden">of</span>
+            <span class="visually-hidden">{{ 'general.slider.of' | t }}</span>
             <span class="slider-counter--total">1</span>
           </div>
           <button
             type="button"
             class="slider-button slider-button--next"
             name="next"
-            aria-label="Next slide"
-            aria-controls="Slider-{{ section.id }}"
+            aria-label="{{ 'general.slider.next_slide' | t }}"
+            aria-controls="Favorites-Grid-{{ section.id }}"
           >
-            <span class="svg-wrapper">{{ 'icon-caret1.svg' | inline_asset_content }}</span>
+            <span class="svg-wrapper">
+              {{- 'icon-caret.svg' | inline_asset_content -}}
+            </span>
           </button>
         </div>
       {% endif %}
     </slider-component>
+
+    {%- comment -%}Empty state template{%- endcomment -%}
+    <template id="favorites-empty-template">
+      <li class="grid__item grid__item--full-width">
+        <div class="collection collection--empty">
+          <div class="title-wrapper center">
+            <h2 class="title">{{ 'favorites.empty' | t }}</h2>
+            <a href="{{ routes.collections_url }}" class="button">
+              {{ 'favorites.browse_products' | t }}
+            </a>
+          </div>
+        </div>
+      </li>
+    </template>
   </div>
 </div>
 
-<script>
-  const productList = document.getElementById('Slider-{{ section.id }}');
-
-  async function displayProductsFromLocalStorage() {
-    const guestFavorites = JSON.parse(localStorage.getItem('guestFavorites')) || [];
-    const productHandles = guestFavorites.map((fav) => fav.handle).filter(Boolean);
-    if (productHandles.length === 0) {
-      productList.innerHTML = '<li><p>No recently viewed products.</p></li>';
-      return;
-    }
-    productList.innerHTML = '';
-    let slideIndex = 1;
-    for (const handle of productHandles) {
-      try {
-        const response = await fetch(`/products/${handle}?section_id=card-product-standalone`);
-        if (!response.ok) continue;
-        const productCardHTML = await response.text();
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = productCardHTML;
-        const card = tempDiv.querySelector('.card-wrapper');
-        if (card) {
-          const li = document.createElement('li');
-          li.className = 'grid__item{% if enable_slider %} slider__slide{% endif %}';
-          {% if enable_slider %}
-          li.id = 'Slide-{{ section.id }}-' + slideIndex;
-          slideIndex++;
-          {% endif %}
-          li.appendChild(card);
-          productList.appendChild(li);
-        }
-      } catch (error) {
-        // skip
-      }
-    }
-    {% if enable_slider %}
-    const sliderComponent = productList.closest('slider-component');
-    if (sliderComponent && typeof sliderComponent.resetPages === 'function') {
-      sliderComponent.resetPages();
-    } else if (sliderComponent) {
-      window.dispatchEvent(new Event('resize'));
-    }
-    {% endif %}
-  }
-  displayProductsFromLocalStorage();
-</script>
-
 {% schema %}
 {
-  "name": "Favorites",
+  "name": "t:sections.favorites.name",
+  "tag": "section",
+  "class": "section",
   "settings": [
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "options": [
+        {
+          "value": "background-1",
+          "label": "t:sections.all.colors.background_1.label"
+        },
+        {
+          "value": "background-2",
+          "label": "t:sections.all.colors.background_2.label"
+        },
+        {
+          "value": "inverse",
+          "label": "t:sections.all.colors.inverse.label"
+        },
+        {
+          "value": "accent-1",
+          "label": "t:sections.all.colors.accent_1.label"
+        },
+        {
+          "value": "accent-2",
+          "label": "t:sections.all.colors.accent_2.label"
+        }
+      ],
+      "default": "background-1",
+      "label": "t:sections.all.colors.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.product_card.header"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "t:sections.all.product_card.image_ratio.options__1.label"
+        },
+        {
+          "value": "portrait",
+          "label": "t:sections.all.product_card.image_ratio.options__2.label"
+        },
+        {
+          "value": "square",
+          "label": "t:sections.all.product_card.image_ratio.options__3.label"
+        }
+      ],
+      "default": "square",
+      "label": "t:sections.all.product_card.image_ratio.label"
+    },
+    {
+      "type": "select",
+      "id": "image_shape",
+      "options": [
+        {
+          "value": "default",
+          "label": "t:sections.all.product_card.image_shape.options__1.label"
+        },
+        {
+          "value": "arch",
+          "label": "t:sections.all.product_card.image_shape.options__2.label"
+        },
+        {
+          "value": "blob",
+          "label": "t:sections.all.product_card.image_shape.options__3.label"
+        },
+        {
+          "value": "chevronleft",
+          "label": "t:sections.all.product_card.image_shape.options__4.label"
+        },
+        {
+          "value": "chevronright",
+          "label": "t:sections.all.product_card.image_shape.options__5.label"
+        },
+        {
+          "value": "diamond",
+          "label": "t:sections.all.product_card.image_shape.options__6.label"
+        },
+        {
+          "value": "parallelogram",
+          "label": "t:sections.all.product_card.image_shape.options__7.label"
+        },
+        {
+          "value": "round",
+          "label": "t:sections.all.product_card.image_shape.options__8.label"
+        }
+      ],
+      "default": "default",
+      "label": "t:sections.all.product_card.image_shape.label",
+      "info": "t:sections.all.product_card.image_shape.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "default": false,
+      "label": "t:sections.all.product_card.show_vendor.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "default": false,
+      "label": "t:sections.all.product_card.show_rating.label",
+      "info": "t:sections.all.product_card.show_rating.info"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.grid.header"
+    },
     {
       "type": "range",
       "id": "columns_desktop",
@@ -105,18 +239,58 @@
       "max": 6,
       "step": 1,
       "default": 4,
-      "label": "Products per row"
+      "label": "t:sections.all.grid.columns_desktop"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "options": [
+        {
+          "value": "1",
+          "label": "t:sections.all.grid.columns_mobile.options__1.label"
+        },
+        {
+          "value": "2",
+          "label": "t:sections.all.grid.columns_mobile.options__2.label"
+        }
+      ],
+      "default": "2",
+      "label": "t:sections.all.grid.columns_mobile"
     },
     {
       "type": "checkbox",
       "id": "enable_desktop_slider",
-      "label": "Enable desktop slider",
-      "default": false
+      "default": false,
+      "label": "t:sections.all.slider.enable_desktop_slider"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.header"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
     }
   ],
   "presets": [
     {
-      "name": "Favorites section"
+      "name": "t:sections.favorites.name"
     }
   ]
 }

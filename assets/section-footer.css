@@ -2,6 +2,10 @@
   border-top: 0.1rem solid rgba(var(--color-foreground), 0.08);
 }
 
+footer .page-width {
+  padding: 1.5rem;
+}
+
 .footer:not(.color-scheme-1) {
   border-top: none;
 }
@@ -107,7 +111,7 @@
 
 .footer__content-bottom {
   border-top: solid 0.1rem rgba(var(--color-foreground), 0.08);
-  padding-top: 3rem;
+  /* padding-top: 3rem; */
 }
 
 .footer__content-bottom:only-child {
