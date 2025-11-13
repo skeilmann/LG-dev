@@ -2101,9 +2101,9 @@ input[type='checkbox'] {
   padding: 0 0.3rem;
 
   /* Visual styling using Shopify theme variables */
-  background-color: rgb(var(--color-background));
-  color: rgb(var(--color-button-text));
-  border: 2px solid rgb(var(--color-background));
+  background-color: rgb(var(--color-foreground));
+  color: rgb(var(--color-background));
+  border: 2px solid rgb(var(--color-foreground));
   border-radius: 50%;
 
   /* Typography */

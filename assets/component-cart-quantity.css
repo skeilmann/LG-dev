@@ -41,6 +41,7 @@
 .header .cart-count-bubble {
     top: -8px;
     right: -8px;
+    left: auto; /* Unset the default left positioning */
 }
 
 /* Responsive adjustments */
