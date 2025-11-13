@@ -10,15 +10,19 @@
     min-height: 60px;
 }
 
+.header__right-menu {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.header__right-menu .desktop-localization-wrapper {
+    display: none;
+}
+
 /* Mobile responsive adjustments */
 @media screen and (max-width: 749px) {
     .header__layout {
-        /* display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap; */
-        display: grid;
         gap: 0;
         grid-template-columns: 1fr 1fr;
         /* two columns */
@@ -44,6 +48,10 @@
     /* Mobile country selector - positioned below logo in header grid */
     .header__icons {
         gap: 0;
+    }
+
+    .header__right-menu .desktop-localization-wrapper {
+        display: block;
     }
 
     .mobile-country-selector-wrapper {
@@ -91,6 +99,20 @@
     align-items: center;
     min-width: 0;
     /* Allow shrinking if needed */
+}
+
+/* Remove bullet points and make list items horizontal */
+.list-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.list-menu--inline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0;
 }
 
 .header__center-logo {
@@ -800,11 +822,16 @@
 }
 
 /* ===== RESPONSIVE ADJUSTMENTS ===== */
+@media screen and (max-width: 1279px) {
+    .header__right-menu .list-menu {
+        display: none;
+    }
+}
 
 @media screen and (max-width: 989px) {
 
     /* Hide left menu entirely on tablet/mobile */
-    .header__left-menu {
+    .header__left-menu .list-menu {
         display: none;
     }
 
@@ -815,9 +842,6 @@
         min-width: 0;
     }
 
-    .header__right-menu .list-menu {
-        display: none;
-    }
 
     .header__mobile-menu-toggle {
         display: block;
@@ -830,9 +854,9 @@
 
 }
 
-@media screen and (min-width: 990px) {
-    .header__mobile-menu-toggle {
-        display: none;
+@media screen and (min-width: 750px) {
+    .page-width {
+        padding: 0;
     }
 
     .header__center-logo {
@@ -841,6 +865,7 @@
         justify-content: center;
         min-width: 0;
     }
+
 }
 
 @media screen and (max-width: 989px) {
@@ -911,7 +936,7 @@ header-drawer {
 /* Only custom padding overrides for this layout */
 .header-wrapper .header {
     display: flex;
-    padding: var(--header-padding-top, 20px) 3rem var(--header-padding-bottom, 20px) 3rem;
+    /* padding: var(--header-padding-top, 20px) 3rem var(--header-padding-bottom, 20px) 3rem; */
 }
 
 .section-header {
@@ -924,12 +949,12 @@ header-drawer {
     }
 }
 
-@media screen and (min-width: 990px) {
+/* @media screen and (min-width: 990px) {
     .header-wrapper .header {
         padding-top: var(--header-padding-top, 20px);
         padding-bottom: var(--header-padding-bottom, 20px);
     }
-}
+} */
 
 /* ===== UTILITY ICONS SPACING ===== */
 /* Note: Base .header__icons and .header__icon styles from base.css are used */

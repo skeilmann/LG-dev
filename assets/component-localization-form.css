@@ -410,8 +410,14 @@
 /* Header icons (desktop) */
 .desktop-localization-wrapper {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
+  /* flex-wrap: wrap; */
+  /* justify-content: flex-end; */
+}
+
+.disclosure__button.localization-form__select.localization-selector.localization-selector {
+  padding: 0 !important;
+  padding-left: 10px !important;
+
 }
 
 .desktop-localization-wrapper .localization-selector+.disclosure__list-wrapper {
