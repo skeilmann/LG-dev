@@ -21,6 +21,17 @@
   text-decoration: none;
 }
 
+.card-wrapper.product-card-wrapper {
+  min-width: 170px;
+  max-width: 390px;
+}
+
+@media screen and (min-width: px) {
+  .card-wrapper.product-card-wrapper {
+    width: 360px;
+  }
+}
+
 .card {
   text-decoration: none;
   text-align: var(--text-alignment);
@@ -597,12 +608,12 @@
 
 .badge {
   display: inline-block;
-  border-radius: 9px;
-  padding: 2px 8px;
+  border-radius: 0.5625rem;
+  padding: 0.125rem 0.5rem;
   color: rgb(255, 255, 255);
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
-  line-height: 22px;
+  line-height: 1.375rem;
   white-space: nowrap;
   border: none;
 }

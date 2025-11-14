@@ -15,13 +15,13 @@
 }
 
 .countdown-box .number {
-  font-size: 30px;
+  font-size: 1.875rem;
   font-weight: bold;
   line-height: 1;
 }
 
 .countdown-box .text {
-  font-size: 10px;
+  font-size: 0.625rem;
   line-height: 1;
 }
 

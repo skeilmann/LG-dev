@@ -55,8 +55,8 @@
 /* Loading state indicator */
 .loading-spinner {
     text-align: center;
-    padding: 40px;
-    font-size: 16px;
+    padding: 2.5rem;
+    font-size: 1rem;
     color: #666;
 }
 

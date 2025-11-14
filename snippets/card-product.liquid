@@ -408,16 +408,29 @@
                     aria-labelledby="{{ product_form_id }}-submit title-{{ section_id }}-{{ card_product.id }}"
                     aria-live="polite"
                     data-sold-out-message="true"
+                    data-product-id="{{ card_product.id }}"
                     {% if card_product.selected_or_first_available_variant.available == false %}
                       disabled
                     {% endif %}
                   >
-                    <span>
-                      {%- if card_product.selected_or_first_available_variant.available -%}
-                        {{ 'products.product.add_to_cart' | t }}
-                      {%- else -%}
-                        {{ 'products.product.sold_out' | t }}
-                      {%- endif -%}
+                    <span class="button__content">
+                      <span class="icon-wrap button__icon">
+                        {{- 'icon-cart-empty.svg' | inline_asset_content -}}
+                      </span>
+                      <span class="button__text">
+                        {%- if card_product.selected_or_first_available_variant.available -%}
+                          {{ 'products.product.add_to_cart' | t }}
+                        {%- else -%}
+                          {{ 'products.product.sold_out' | t }}
+                        {%- endif -%}
+                      </span>
+                      <span
+                        class="button__cart-count btn-cart-count hidden"
+                        data-cart-count="0"
+                        aria-hidden="true"
+                      >
+                        <span class="cart-count-number">0</span>
+                      </span>
                     </span>
                     <span class="sold-out-message hidden">
                       {{ 'products.product.sold_out' | t }}
