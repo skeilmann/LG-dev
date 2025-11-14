@@ -46,14 +46,14 @@
         "email": "<p>info@vev.md</p>",
         "company_registration": "<p>SRL VOLOSANOVSCHI NAILS</p>",
         "company_idno": "<p>IDNO 1023602001320</p>",
-        "show_payment_icons": true,
-        "show_social": true,
+        "show_payment_icons": false,
+        "show_social": false,
         "company_text_alignment": "left",
         "enable_country_selector": false,
         "enable_language_selector": false,
-        "payment_enable": true,
+        "payment_enable": false,
         "margin_top": 0,
-        "padding_top": 48,
+        "padding_top": 12,
         "padding_bottom": 12
       }
     }
