@@ -21,17 +21,6 @@
   text-decoration: none;
 }
 
-.card-wrapper.product-card-wrapper {
-  min-width: 170px;
-  max-width: 390px;
-}
-
-@media screen and (min-width: px) {
-  .card-wrapper.product-card-wrapper {
-    width: 360px;
-  }
-}
-
 .card {
   text-decoration: none;
   text-align: var(--text-alignment);

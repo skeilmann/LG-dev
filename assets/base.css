@@ -1026,6 +1026,35 @@ summary::-webkit-details-marker {
   }
 }
 
+/* Product card width constraints applied through grid system */
+.product-grid .grid__item,
+.contains-card--product .grid__item {
+  min-width: 170px;
+  max-width: 310px;
+}
+
+/* Ensure minimum width is respected on very small screens */
+@media screen and (max-width: 474px) {
+
+  .product-grid .grid__item,
+  .contains-card--product .grid__item {
+    min-width: 170px !important;
+    max-width: 310px;
+    flex-shrink: 0;
+  }
+
+
+}
+
+@media screen and (min-width: 750px) {
+
+  .product-grid .grid__item,
+  .contains-card--product .grid__item {
+    min-width: 300px;
+    max-width: 310px;
+  }
+}
+
 @media screen and (min-width: 990px) {
   .grid--1-col-desktop {
     flex: 0 0 100%;
