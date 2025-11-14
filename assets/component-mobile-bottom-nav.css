@@ -49,18 +49,11 @@
 }
 
 .mobile-bottom-nav__buttons {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 0;
+    display: flex;
     width: 100%;
-    padding: 0.5rem 0;
-
-    /* Ensure buttons fill available space */
-    min-height: 60px;
+    justify-content: space-around;
+    min-height: 50px;
 }
-
-/* --- Individual Buttons --- */
-/* Icon + label vertical stack */
 
 .mobile-bottom-nav__button {
     /* Reset button styles */
@@ -182,7 +175,7 @@
 
 /* --- Label Styles --- */
 
-.mobile-bottom-nav__label {
+/* .mobile-bottom-nav__label {
     font-size: 0.625rem;
     font-weight: 500;
     line-height: 1;
@@ -192,7 +185,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
-}
+} */
 
 /* --- Count Badges --- */
 /* Cart and favorites counters */
@@ -604,20 +597,14 @@
 
 @media screen and (max-width: 374px) {
 
-    /* Very small screens - reduce padding */
-    .mobile-bottom-nav__buttons {
-        padding: 0.25rem 0;
-        min-height: 50px;
-    }
-
     .mobile-bottom-nav__button {
         padding: 0.25rem 0.125rem;
         min-height: 40px;
     }
 
-    .mobile-bottom-nav__label {
+    /* .mobile-bottom-nav__label {
         font-size: 0.5rem;
-    }
+    } */
 
     .mobile-bottom-nav__icon {
         width: 20px;
@@ -649,9 +636,9 @@
         min-height: 40px;
     }
 
-    .mobile-bottom-nav__label {
+    /* .mobile-bottom-nav__label {
         font-size: 0.5rem;
-    }
+    } */
 
     .mobile-bottom-nav__icon {
         width: 20px;

@@ -87,7 +87,7 @@
           <span class="mobile-bottom-nav__icon">
             {{ 'icon-home.svg' | inline_asset_content }}
           </span>
-          <span class="mobile-bottom-nav__label">{{ home_label }}</span>
+          {% comment %} <span class="mobile-bottom-nav__label">{{ home_label }}</span> {% endcomment %}
         </a>
       {%- endif -%}
 
@@ -103,7 +103,7 @@
           <span class="mobile-bottom-nav__icon">
             {{ 'icon-search.svg' | inline_asset_content }}
           </span>
-          <span class="mobile-bottom-nav__label">{{ search_label }}</span>
+          {% comment %} <span class="mobile-bottom-nav__label">{{ search_label }}</span> {% endcomment %}
         </button>
       {%- endif -%}
 
@@ -121,7 +121,7 @@
           <span class="mobile-bottom-nav__icon">
             {{ 'icon-menu.svg' | inline_asset_content }}
           </span>
-          <span class="mobile-bottom-nav__label">{{ catalog_label }}</span>
+          {% comment %} <span class="mobile-bottom-nav__label">{{ catalog_label }}</span> {% endcomment %}
         </button>
       {%- endif -%}
 
@@ -136,7 +136,7 @@
           <span class="mobile-bottom-nav__icon">
             {{ 'icon-heart.svg' | inline_asset_content }}
           </span>
-          <span class="mobile-bottom-nav__label">{{ favorites_label }}</span>
+          {% comment %} <span class="mobile-bottom-nav__label">{{ favorites_label }}</span> {% endcomment %}
           {%- comment -%} Favorites count badge {%- endcomment -%}
           <span class="mobile-bottom-nav__badge" id="mobile-favorites-count" style="display: none;">
             <span aria-hidden="true">0</span>
@@ -163,7 +163,7 @@
               {{ 'icon-cart.svg' | inline_asset_content }}
             {%- endif -%}
           </span>
-          <span class="mobile-bottom-nav__label">{{ cart_label }}</span>
+          {% comment %} <span class="mobile-bottom-nav__label">{{ cart_label }}</span> {% endcomment %}
           {%- comment -%} Cart count badge {%- endcomment -%}
           {%- if cart.item_count > 0 -%}
             <span class="mobile-bottom-nav__badge" id="mobile-cart-count">
