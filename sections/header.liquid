@@ -32,6 +32,13 @@
 <noscript><link rel="stylesheet" href="{{ 'component-favorites.css' | asset_url }}"></noscript>
 <link
   rel="stylesheet"
+  href="{{ 'component-notification.css' | asset_url }}"
+  media="print"
+  onload="this.media='all'"
+>
+<noscript><link rel="stylesheet" href="{{ 'component-notification.css' | asset_url }}"></noscript>
+<link
+  rel="stylesheet"
   href="{{ 'component-cart-notification.css' | asset_url }}"
   media="print"
   onload="this.media='all'"
@@ -93,7 +100,9 @@
   }
 {%- endstyle -%}
 
+<script src="{{ 'base-notification.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'cart-notification.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'favorites-notification.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'custom-header.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'cart-quantity.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'mobile-bottom-nav.js' | asset_url }}" defer="defer"></script>
@@ -1305,6 +1314,11 @@
     desktop_menu_type: section.settings.menu_type_desktop
   -%}
 {%- endif -%}
+
+{%- render 'favorites-notification',
+  color_scheme: section.settings.color_scheme,
+  desktop_menu_type: section.settings.menu_type_desktop
+-%}
 
 {% javascript %}
   class StickyHeader extends HTMLElement {

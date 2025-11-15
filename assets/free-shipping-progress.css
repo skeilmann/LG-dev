@@ -41,7 +41,6 @@
 }
 
 .fs-success-container {
-    margin-top: 12px;
     opacity: 0;
     transform: translateY(-10px);
     transition: all 0.3s ease;
@@ -61,10 +60,9 @@
 
 .fs-success-message {
     text-align: center;
-    font-weight: 600;
+    font-weight: 400;
     color: var(--fs-success-color, #28a745);
     margin: 0;
-    padding: 8px 16px;
     background-color: var(--fs-success-bg, #d4edda);
     border: 1px solid var(--fs-success-border, #c3e6cb);
     border-radius: 4px;

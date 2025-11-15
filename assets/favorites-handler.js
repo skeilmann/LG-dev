@@ -190,8 +190,9 @@ class FavoritesHandler {
      */
     toggleFavorite(productId) {
         const id = parseInt(productId, 10);
+        const wasFavorite = this.favorites.has(id);
         
-        if (this.favorites.has(id)) {
+        if (wasFavorite) {
             // Remove from favorites
             this.favorites.delete(id);
             if (this.isLoggedIn) {
@@ -209,6 +210,9 @@ class FavoritesHandler {
             if (this.isLoggedIn) {
                 this.addFavoriteToServer(id);
             }
+            
+            // Show notification when adding to favorites
+            this.showFavoritesNotification(id, handle);
         }
         
         this.saveFavorites();
@@ -414,6 +418,139 @@ class FavoritesHandler {
         }
         
         return value || fallback;
+    }
+
+    /**
+     * Shows favorites notification when product is added to favorites
+     * @param {number} productId - Product ID
+     * @param {string} handle - Product handle
+     * @private
+     */
+    async showFavoritesNotification(productId, handle) {
+        // Wait for notification element to be available
+        let notification = document.querySelector('favorites-notification');
+        if (!notification) {
+            // Wait a bit for custom element to be defined
+            await new Promise(resolve => setTimeout(resolve, 200));
+            notification = document.querySelector('favorites-notification');
+        }
+        if (!notification) {
+            console.warn('Favorites notification element not found in DOM');
+            return;
+        }
+
+        // Ensure the custom element is defined
+        if (!customElements.get('favorites-notification')) {
+            console.warn('Favorites notification custom element not defined');
+            return;
+        }
+
+        try {
+            // Try to get product data from Shopify object first (fastest)
+            let productData = null;
+            if (window.Shopify?.product && Number(window.Shopify.product.id) === productId) {
+                productData = window.Shopify.product;
+            }
+
+            // If we have product data, use it directly
+            if (productData) {
+                const productHtml = this.buildProductNotificationHTML(productData);
+                notification.renderContents({
+                    id: productId,
+                    html: `<div class="shopify-section">${productHtml}</div>`
+                });
+                return;
+            }
+
+            // Otherwise, fetch from server using handle
+            if (!handle) {
+                console.warn('Cannot show notification: missing product handle');
+                return;
+            }
+
+            const response = await fetch(
+                `/products/${handle}?section_id=favorites-notification-product`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'text/html'
+                    }
+                }
+            );
+
+            if (!response.ok) {
+                console.warn('Failed to fetch product data for notification');
+                return;
+            }
+
+            const html = await response.text();
+            notification.renderContents({
+                id: productId,
+                html: html
+            });
+        } catch (error) {
+            console.error('Error showing favorites notification:', error);
+        }
+    }
+
+    /**
+     * Builds product notification HTML from Shopify product object
+     * @param {Object} product - Shopify product object
+     * @returns {string} HTML string
+     * @private
+     */
+    buildProductNotificationHTML(product) {
+        const image = product.featured_image || product.images?.[0];
+        // Resize image URL to 70px width if it's a Shopify CDN URL
+        let imageUrl = '';
+        if (image) {
+            if (typeof image === 'string') {
+                // If it's already a URL string, try to resize it
+                if (image.includes('cdn.shopify.com') || image.includes('/cdn/shop/')) {
+                    // Replace existing size or add new size
+                    imageUrl = image.replace(/_(\d+x\d+|\d+x|x\d+)?\.(jpg|jpeg|png|gif|webp)/i, '_70x.$2') || image.replace(/\.(jpg|jpeg|png|gif|webp)/i, '_70x.$1');
+                } else {
+                    imageUrl = image;
+                }
+            } else if (image.src) {
+                // If it's an object with src property
+                imageUrl = image.src;
+                if (imageUrl.includes('cdn.shopify.com') || imageUrl.includes('/cdn/shop/')) {
+                    imageUrl = imageUrl.replace(/_(\d+x\d+|\d+x|x\d+)?\.(jpg|jpeg|png|gif|webp)/i, '_70x.$2') || imageUrl.replace(/\.(jpg|jpeg|png|gif|webp)/i, '_70x.$1');
+                }
+            }
+        }
+        const imageAlt = (product.title || '').replace(/"/g, '&quot;');
+        const vendor = product.vendor || '';
+        const showVendor = window.theme?.settings?.show_vendor !== false;
+        const productTitle = (product.title || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const vendorEscaped = vendor.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+        return `
+            <div id="favorites-notification-product-${product.id}" class="favorites-item">
+                ${imageUrl ? `
+                <div class="favorites-notification-product__image global-media-settings">
+                    <img
+                        src="${imageUrl}"
+                        alt="${imageAlt}"
+                        width="70"
+                        height="70"
+                        loading="lazy"
+                    >
+                </div>
+                ` : ''}
+                <div>
+                    ${showVendor && vendor ? `
+                    <p class="caption-with-letter-spacing light">${vendorEscaped}</p>
+                    ` : ''}
+                    <h3 class="favorites-notification-product__name h4">
+                        <a href="/products/${product.handle}" class="link">
+                            ${productTitle}
+                        </a>
+                    </h3>
+                </div>
+            </div>
+        `;
     }
 }
 

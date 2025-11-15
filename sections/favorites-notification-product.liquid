@@ -1,0 +1,33 @@
+{%- comment -%}
+  Renders product information for favorites notification
+  
+  Accepts:
+  - product: {Object} Product object
+{%- endcomment -%}
+
+{%- if product != blank -%}
+  <div id="favorites-notification-product-{{ product.id }}" class="favorites-item">
+    {%- if product.featured_image -%}
+      <div class="favorites-notification-product__image global-media-settings">
+        <img
+          src="{{ product.featured_image | image_url: width: 140 }}"
+          alt="{{ product.featured_image.alt | escape }}"
+          width="70"
+          height="{{ 70 | divided_by: product.featured_image.aspect_ratio | ceil }}"
+          loading="lazy"
+        >
+      </div>
+    {%- endif -%}
+    <div>
+      {%- if settings.show_vendor -%}
+        <p class="caption-with-letter-spacing light">{{ product.vendor }}</p>
+      {%- endif -%}
+      <h3 class="favorites-notification-product__name h4">
+        <a href="{{ product.url }}" class="link">
+          {{ product.title | escape }}
+        </a>
+      </h3>
+    </div>
+  </div>
+{%- endif -%}
+

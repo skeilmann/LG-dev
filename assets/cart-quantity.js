@@ -35,13 +35,22 @@ class CartQuantityManager {
   }
 
   updateCartQuantities(cartData) {
+    if (!cartData) return;
+    
     this.cartData = cartData;
     
-    // Update header cart count
-    this.updateHeaderCartCount(cartData.item_count);
+    // Update header cart count from item_count (always available and reliable)
+    const itemCount = cartData?.item_count ?? 0;
+    this.updateHeaderCartCount(itemCount);
     
-    // Update product card quantities
-    this.updateProductCardQuantities(cartData.items);
+    // Update product card quantities only if we have complete items array
+    // If items array is missing, skip the update to preserve optimistic updates
+    // The quantities will be corrected on the next full cart fetch or natural update
+    if (Array.isArray(cartData.items) && cartData.items.length > 0) {
+      this.updateProductCardQuantities(cartData.items);
+    }
+    // Note: We don't fetch full cart data here to avoid overwriting optimistic updates
+    // The cart will be synced naturally through other cart operations
   }
 
   updateHeaderCartCount(itemCount) {
@@ -67,6 +76,11 @@ class CartQuantityManager {
   }
 
   updateProductCardQuantities(cartItems) {
+    // Safety check: ensure cartItems is an array
+    if (!Array.isArray(cartItems)) {
+      return;
+    }
+    
     // Find all product cards on the page
     const productCards = document.querySelectorAll('[data-product-id]');
     
@@ -75,7 +89,7 @@ class CartQuantityManager {
       const quantityDisplay = card.querySelector('.cart-quantity-display');
       
       if (productId) {
-        const cartItem = cartItems.find(item => item.product_id.toString() === productId);
+        const cartItem = cartItems.find(item => item?.product_id?.toString() === productId);
         const quantity = cartItem ? cartItem.quantity : 0;
         
         // Update button badge
@@ -102,7 +116,7 @@ class CartQuantityManager {
     buttons.forEach(button => {
       const productId = button.dataset.productId;
       if (productId) {
-        const cartItem = cartItems.find(item => item.product_id.toString() === productId);
+        const cartItem = cartItems.find(item => item?.product_id?.toString() === productId);
         const quantity = cartItem ? cartItem.quantity : 0;
         this.updateButtonBadge(null, productId, quantity, button);
       }

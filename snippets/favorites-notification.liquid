@@ -1,0 +1,56 @@
+{%- comment -%}
+  Renders favorites notification
+
+  Accepts:
+  - color_scheme: {String} sets the color scheme of the notification (optional)
+  - desktop_menu_type: {String} passes the desktop menu type which allows us to use the right css class (optional)
+
+  Usage:
+  {% render 'favorites-notification' %}
+{%- endcomment -%}
+
+<favorites-notification>
+  <div class="favorites-notification-wrapper{% if desktop_menu_type != 'drawer' %} page-width{% endif %}">
+    <div
+      id="favorites-notification"
+      class="favorites-notification focus-inset{% if color_scheme %} color-{{ color_scheme }} gradient{% endif %}"
+      aria-modal="true"
+      aria-label="{{ 'favorites.added' | t }}"
+      role="dialog"
+      tabindex="-1"
+    >
+      <div class="favorites-notification__header">
+        <h2 class="favorites-notification__heading caption-large text-body">
+          {{- 'icon-checkmark.svg' | inline_asset_content -}}
+          {{ 'favorites.added' | t }}
+        </h2>
+        <button
+          type="button"
+          class="favorites-notification__close modal__close-button link link--text focus-inset"
+          aria-label="{{ 'accessibility.close' | t }}"
+        >
+          <span class="svg-wrapper">
+            {{- 'icon-close.svg' | inline_asset_content -}}
+          </span>
+        </button>
+      </div>
+      <div id="favorites-notification-product" class="favorites-notification-product"></div>
+      <div class="favorites-notification__links">
+        <a
+          href="{{ routes.root_url }}pages/favorites"
+          id="favorites-notification-button"
+          class="button button--secondary button--full-width"
+        >
+          {{ 'favorites.title' | t }}
+        </a>
+        <button type="button" class="link button-label">{{ 'general.continue_shopping' | t }}</button>
+      </div>
+    </div>
+  </div>
+</favorites-notification>
+{% style %}
+  #favorites-notification:not(.active) {
+    display: none;
+  }
+{% endstyle %}
+

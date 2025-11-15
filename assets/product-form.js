@@ -23,6 +23,9 @@ if (!customElements.get('product-form')) {
 
         this.handleErrorMessage();
 
+        // Optimistically update cart count immediately
+        this.updateCartCountOptimistically();
+
         this.submitButton.setAttribute('aria-disabled', true);
         this.submitButton.classList.add('loading');
         this.querySelector('.loading__spinner').classList.remove('hidden');
@@ -46,6 +49,9 @@ if (!customElements.get('product-form')) {
           .then((response) => response.json())
           .then((response) => {
             if (response.status) {
+              // Revert optimistic update on error
+              this.revertCartCountOptimistically();
+              
               publish(PUB_SUB_EVENTS.cartError, {
                 source: 'product-form',
                 productVariantId: formData.get('id'),
@@ -91,6 +97,8 @@ if (!customElements.get('product-form')) {
           })
           .catch((e) => {
             console.error(e);
+            // Revert optimistic update on fetch error
+            this.revertCartCountOptimistically();
           })
           .finally(() => {
             this.submitButton.classList.remove('loading');
@@ -127,6 +135,140 @@ if (!customElements.get('product-form')) {
 
       get variantIdInput() {
         return this.form.querySelector('[name=id]');
+      }
+
+      /**
+       * Optimistically update cart count immediately on button click
+       * The server response will correct any discrepancies
+       */
+      updateCartCountOptimistically() {
+        // Get quantity from form (default to 1 if not specified)
+        const quantityInput = this.form.querySelector('[name="quantity"]');
+        const quantity = quantityInput ? parseInt(quantityInput.value) || 1 : 1;
+        
+        // Store quantity for potential revert
+        this._optimisticQuantity = quantity;
+
+        // Update button badge count
+        const buttonBadge = this.submitButton.querySelector('.btn-cart-count');
+        if (buttonBadge) {
+          const countNumber = buttonBadge.querySelector('.cart-count-number');
+          if (countNumber) {
+            const currentCount = parseInt(countNumber.textContent) || 0;
+            const newCount = currentCount + quantity;
+            countNumber.textContent = newCount;
+            buttonBadge.setAttribute('data-cart-count', newCount);
+            buttonBadge.classList.remove('hidden');
+          }
+        }
+
+        // Update header cart count
+        const cartIcon = document.getElementById('cart-icon-bubble');
+        if (cartIcon) {
+          let cartCountBubble = cartIcon.querySelector('.cart-count-bubble');
+          if (cartCountBubble) {
+            const currentCount = parseInt(cartCountBubble.textContent.trim()) || 0;
+            const newCount = currentCount + quantity;
+            cartCountBubble.innerHTML = `
+              <span aria-hidden="true">${newCount}</span>
+              <span class="visually-hidden">${newCount === 1 ? '1 item' : `${newCount} items`}</span>
+            `;
+          } else {
+            // Create cart count bubble if it doesn't exist
+            cartCountBubble = document.createElement('div');
+            cartCountBubble.className = 'cart-count-bubble';
+            cartCountBubble.innerHTML = `
+              <span aria-hidden="true">${quantity}</span>
+              <span class="visually-hidden">${quantity === 1 ? '1 item' : `${quantity} items`}</span>
+            `;
+            cartIcon.appendChild(cartCountBubble);
+          }
+        }
+
+        // Update mobile bottom nav cart count
+        const mobileBottomNav = document.querySelector('mobile-bottom-nav');
+        if (mobileBottomNav) {
+          const cartButton = mobileBottomNav.querySelector('[data-nav-type="cart"]');
+          const badge = cartButton?.querySelector('.mobile-bottom-nav__badge');
+          if (badge) {
+            const countSpan = badge.querySelector('span[aria-hidden="true"]');
+            if (countSpan) {
+              const currentCount = parseInt(countSpan.textContent) || 0;
+              const newCount = currentCount + quantity;
+              countSpan.textContent = newCount;
+              const screenReaderSpan = badge.querySelector('.visually-hidden');
+              if (screenReaderSpan) {
+                screenReaderSpan.textContent = `Cart: ${newCount} items`;
+              }
+              badge.style.display = newCount > 0 ? 'flex' : 'none';
+            }
+          }
+        }
+      }
+
+      /**
+       * Revert optimistic cart count update on error
+       */
+      revertCartCountOptimistically() {
+        if (!this._optimisticQuantity) return;
+        const quantity = this._optimisticQuantity;
+        this._optimisticQuantity = null;
+
+        // Revert button badge count
+        const buttonBadge = this.submitButton.querySelector('.btn-cart-count');
+        if (buttonBadge) {
+          const countNumber = buttonBadge.querySelector('.cart-count-number');
+          if (countNumber) {
+            const currentCount = parseInt(countNumber.textContent) || 0;
+            const newCount = Math.max(0, currentCount - quantity);
+            if (newCount > 0) {
+              countNumber.textContent = newCount;
+              buttonBadge.setAttribute('data-cart-count', newCount);
+            } else {
+              buttonBadge.classList.add('hidden');
+              countNumber.textContent = '0';
+              buttonBadge.setAttribute('data-cart-count', '0');
+            }
+          }
+        }
+
+        // Revert header cart count
+        const cartIcon = document.getElementById('cart-icon-bubble');
+        if (cartIcon) {
+          const cartCountBubble = cartIcon.querySelector('.cart-count-bubble');
+          if (cartCountBubble) {
+            const currentCount = parseInt(cartCountBubble.textContent.trim()) || 0;
+            const newCount = Math.max(0, currentCount - quantity);
+            if (newCount > 0) {
+              cartCountBubble.innerHTML = `
+                <span aria-hidden="true">${newCount}</span>
+                <span class="visually-hidden">${newCount === 1 ? '1 item' : `${newCount} items`}</span>
+              `;
+            } else {
+              cartCountBubble.remove();
+            }
+          }
+        }
+
+        // Revert mobile bottom nav cart count
+        const mobileBottomNav = document.querySelector('mobile-bottom-nav');
+        if (mobileBottomNav) {
+          const cartButton = mobileBottomNav.querySelector('[data-nav-type="cart"]');
+          const badge = cartButton?.querySelector('.mobile-bottom-nav__badge');
+          if (badge) {
+            const countSpan = badge.querySelector('span[aria-hidden="true"]');
+            if (countSpan) {
+              const currentCount = parseInt(countSpan.textContent) || 0;
+              const newCount = Math.max(0, currentCount - quantity);
+              countSpan.textContent = newCount;
+              const screenReaderSpan = badge.querySelector('.visually-hidden');
+              if (screenReaderSpan) {
+                screenReaderSpan.textContent = `Cart: ${newCount} items`;
+              }
+              badge.style.display = newCount > 0 ? 'flex' : 'none';
+            }
+          }
+        }
       }
     }
   );
