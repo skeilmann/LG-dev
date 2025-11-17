@@ -173,29 +173,53 @@ class CustomHeader {
   initMegaMenu() {
     if (!this.megaMenuWrapper || !this.megaMenuDropdown) return;
 
-    // Hover events for mega menu wrapper - controls dropdown visibility
-    this.megaMenuWrapper.addEventListener('mouseenter', () => {
+    // Unified hover handler - prevents blinking when moving between trigger and dropdown
+    const handleMouseEnter = () => {
       clearTimeout(this.hoverTimeout);
-      this.openMegaMenu();
-    });
+      // Only open if not already open to prevent unnecessary state changes
+      if (this.megaMenuDropdown.getAttribute('aria-hidden') === 'true') {
+        this.openMegaMenu();
+      }
+    };
 
-    this.megaMenuWrapper.addEventListener('mouseleave', () => {
+    const handleMouseLeave = (e) => {
+      // Check if mouse is moving to a related element within the mega menu
+      const relatedTarget = e.relatedTarget;
+      if (
+        relatedTarget &&
+        (this.megaMenuWrapper.contains(relatedTarget) ||
+         this.megaMenuDropdown.contains(relatedTarget) ||
+         relatedTarget.closest('.mega-menu-wrapper') ||
+         relatedTarget.closest('.mega-menu-dropdown'))
+      ) {
+        // Mouse is moving within the mega menu area, don't close
+        return;
+      }
+
+      // Use a small delay to verify mouse truly left (handles edge cases)
+      // The CSS overlap (top: calc(100% - 1px)) should prevent most gap issues
       this.hoverTimeout = setTimeout(() => {
+        // Double-check mouse position before closing
+        const mouseElement = document.elementFromPoint(e.clientX, e.clientY);
+        if (
+          mouseElement &&
+          (this.megaMenuWrapper.contains(mouseElement) ||
+           this.megaMenuDropdown.contains(mouseElement))
+        ) {
+          // Mouse is still within mega menu, cancel close
+          return;
+        }
         this.closeMegaMenu();
-      }, 300); // Increased delay for better UX
-    });
+      }, 150); // Reduced delay since CSS overlap handles the gap
+    };
 
-    // Also handle hover events on the dropdown itself to prevent closing
+    // Apply unified handlers to both wrapper and dropdown
+    this.megaMenuWrapper.addEventListener('mouseenter', handleMouseEnter);
+    this.megaMenuWrapper.addEventListener('mouseleave', handleMouseLeave);
+
     if (this.megaMenuDropdown) {
-      this.megaMenuDropdown.addEventListener('mouseenter', () => {
-        clearTimeout(this.hoverTimeout);
-      });
-
-      this.megaMenuDropdown.addEventListener('mouseleave', () => {
-        this.hoverTimeout = setTimeout(() => {
-          this.closeMegaMenu();
-        }, 200);
-      });
+      this.megaMenuDropdown.addEventListener('mouseenter', handleMouseEnter);
+      this.megaMenuDropdown.addEventListener('mouseleave', handleMouseLeave);
     }
 
     // Initialize hover events for all menu levels

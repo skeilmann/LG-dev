@@ -229,6 +229,11 @@
     position: relative;
 }
 
+/* Ensure smooth hover transition - extend wrapper hover area to include dropdown */
+.mega-menu-wrapper:hover .mega-menu-dropdown[aria-hidden="false"] {
+    display: block;
+}
+
 /* Mega menu trigger button styling */
 .header__menu-item--mega {
     background: none;
@@ -254,7 +259,8 @@
 /* Dropdown container - prevent transition on initial load */
 .mega-menu-dropdown {
     position: absolute;
-    top: 100%;
+    /* Use calc to create 1px overlap - eliminates gap for smooth hover transitions */
+    top: calc(100% - 1px);
     left: 0;
     background: rgb(var(--color-background));
     border: 1px solid rgba(var(--color-foreground), 0.1);
