@@ -125,6 +125,7 @@
 .contact-form-input::placeholder,
 .contact-form-textarea::placeholder {
   color: #999;
+  font-size: 1.125rem;
 }
 
 .contact-form-textarea {
@@ -212,6 +213,11 @@
   .contact-form-input,
   .contact-form-textarea {
     padding: 1rem 1.25rem;
+  }
+
+  .contact-form-input::placeholder,
+  .contact-form-textarea::placeholder {
+    font-size: 1.25rem;
   }
 
   .contact-form-button {
