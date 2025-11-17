@@ -110,7 +110,12 @@
 .quick-add__submit .button__icon {
     flex-shrink: 0;
     order: 1;
-    transform: translateY(15%);
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 }
 
 .quick-add__submit .button__content .button__text {
@@ -141,10 +146,15 @@
     justify-content: space-between;
 }
 
-.quick-add__submit .button__icon .icon {
+.quick-add__submit .button__icon .icon,
+.quick-add__submit .button__icon svg {
     width: 2rem;
     height: 2rem;
-    scale: 1.5;
+    max-width: 2rem;
+    max-height: 2rem;
+    transform: scale(1.5);
+    display: block;
+    flex-shrink: 0;
 }
 
 .btn-cart-count {
@@ -174,9 +184,17 @@
 }
 
 @media screen and (max-width: 480px) {
-    .quick-add__submit .button__icon .icon {
+    .quick-add__submit .button__icon {
+        width: 2.1rem;
+        height: 2.1rem;
+    }
+
+    .quick-add__submit .button__icon .icon,
+    .quick-add__submit .button__icon svg {
         width: 1.4rem;
         height: 1.4rem;
+        max-width: 1.4rem;
+        max-height: 1.4rem;
     }
 
     .quick-add__submit .btn-cart-count {
