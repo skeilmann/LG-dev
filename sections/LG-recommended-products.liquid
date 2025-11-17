@@ -74,7 +74,10 @@
         id="Slide-{{ section.id }}-{{ forloop.index }}"
       {% endif %}
     >
-      {% render 'card-product', product: product %}
+      {% render 'card-product',
+        card_product: product,
+        section_id: section.id
+      %}
     </li>
   {%- endfor -%}
 {%- else -%}
