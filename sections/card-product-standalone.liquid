@@ -1,15 +1,42 @@
+{%- liquid
+  # Get settings from query parameters or use defaults
+  assign show_vendor_param = request.params.show_vendor | default: 'false'
+  assign show_rating_param = request.params.show_rating | default: 'false'
+  assign show_secondary_image_param = request.params.show_secondary_image | default: 'false'
+  assign image_ratio_param = request.params.image_ratio | default: 'square'
+  assign image_shape_param = request.params.image_shape | default: 'default'
+  assign quick_add_param = request.params.quick_add | default: 'standard'
+  assign section_id_param = request.params.section_id_param | default: section.id
+  
+  assign show_vendor = false
+  if show_vendor_param == 'true'
+    assign show_vendor = true
+  endif
+  
+  assign show_rating = false
+  if show_rating_param == 'true'
+    assign show_rating = true
+  endif
+  
+  assign show_secondary_image = false
+  if show_secondary_image_param == 'true'
+    assign show_secondary_image = true
+  endif
+-%}
+
 {% render 'card-product',
   card_product: product,
-  section_id: section.id,
-  show_vendor: true,
-  show_rating: true,
+  section_id: section_id_param,
+  show_vendor: show_vendor,
+  show_rating: show_rating,
+  show_secondary_image: show_secondary_image,
   extend_height: true,
   lazy_load: true,
   skip_styles: false,
-  quick_add: 'standard',
+  quick_add: quick_add_param,
   horizontal_class: false,
   horizontal_quick_add: false,
   placeholder_image: 'product-apparel-2',
-  media_aspect_ratio: 'square',
-  image_shape: 'default'
+  media_aspect_ratio: image_ratio_param,
+  image_shape: image_shape_param
 %}

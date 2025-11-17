@@ -6,21 +6,44 @@ Created: 2025-01-15
 Updated: 2025-11-13
 {%- endcomment -%}
 
+{{ 'template-collection.css' | asset_url | stylesheet_tag }}
 {{ 'component-card.css' | asset_url | stylesheet_tag }}
 {{ 'component-price.css' | asset_url | stylesheet_tag }}
 {{ 'component-slider.css' | asset_url | stylesheet_tag }}
 {{ 'component-favorites.css' | asset_url | stylesheet_tag }}
 
+{% if section.settings.image_shape == 'blob' %}
+  {{ 'mask-blobs.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
+
+{%- unless section.settings.quick_add == 'none' -%}
+  {{ 'quick-add.css' | asset_url | stylesheet_tag }}
+{%- endunless -%}
+
+{%- if section.settings.quick_add == 'standard' -%}
+  <script src="{{ 'quick-add.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+
+{%- if section.settings.quick_add == 'bulk' -%}
+  <script src="{{ 'quick-add-bulk.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'quantity-popover.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'price-per-item.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'quick-order-list.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+
 <script src="{{ 'favorites-page.js' | asset_url }}" defer="defer"></script>
 
-{%- liquid
+  {%- liquid
   assign columns_desktop = section.settings.columns_desktop | default: 4
   assign columns_mobile = section.settings.columns_mobile | default: 2
   assign enable_slider = section.settings.enable_desktop_slider
   assign show_vendor = section.settings.show_vendor
   assign show_rating = section.settings.show_rating
+  assign show_secondary_image = section.settings.show_secondary_image
   assign image_ratio = section.settings.image_ratio | default: 'square'
   assign image_shape = section.settings.image_shape | default: 'default'
+  assign quick_add = section.settings.quick_add | default: 'standard'
 -%}
 
 {%- style -%}
@@ -45,19 +68,24 @@ Updated: 2025-11-13
       </h1>
     </div>
 
-    <slider-component class="{% if enable_slider %}slider-component-desktop{% else %}page-width-desktop{% endif %}">
-      <ul
-        id="Favorites-Grid-{{ section.id }}"
-        class="grid product-grid contains-card contains-card--product grid--{{ columns_mobile }}-col-tablet-down grid--{{ columns_desktop }}-col-desktop{% if enable_slider %} slider slider--desktop{% endif %}"
-        role="list"
-        aria-label="{{ 'favorites.title' | t }}"
-        data-section-id="{{ section.id }}"
-        data-show-vendor="{{ show_vendor }}"
-        data-show-rating="{{ show_rating }}"
-        data-image-ratio="{{ image_ratio }}"
-        data-image-shape="{{ image_shape }}"
-        data-enable-slider="{{ enable_slider }}"
-      >
+    <div class="collection">
+      <div class="loading-overlay gradient"></div>
+      <slider-component class="{% if enable_slider %}slider-component-desktop{% else %}page-width-desktop{% endif %}">
+        <ul
+          id="Slider-{{ section.id }}"
+          data-id="{{ section.id }}"
+          class="grid product-grid contains-card contains-card--product grid--{{ columns_mobile }}-col-tablet-down grid--{{ columns_desktop }}-col-desktop{% if enable_slider %} slider slider--desktop{% endif %}{% if quick_add == 'bulk' %} collection-quick-add-bulk{% endif %}"
+          role="list"
+          aria-label="{{ 'favorites.title' | t }}"
+          data-section-id="{{ section.id }}"
+          data-show-vendor="{{ show_vendor }}"
+          data-show-rating="{{ show_rating }}"
+          data-show-secondary-image="{{ show_secondary_image }}"
+          data-image-ratio="{{ image_ratio }}"
+          data-image-shape="{{ image_shape }}"
+          data-quick-add="{{ quick_add }}"
+          data-enable-slider="{{ enable_slider }}"
+        >
         {%- comment -%}Products will be loaded dynamically via JavaScript{%- endcomment -%}
         <li class="grid__item grid__item--full-width">
           <div class="favorites-loading">
@@ -73,7 +101,7 @@ Updated: 2025-11-13
             class="slider-button slider-button--prev"
             name="previous"
             aria-label="{{ 'general.slider.previous_slide' | t }}"
-            aria-controls="Favorites-Grid-{{ section.id }}"
+            aria-controls="Slider-{{ section.id }}"
           >
             <span class="svg-wrapper">
               {{- 'icon-caret.svg' | inline_asset_content -}}
@@ -90,7 +118,7 @@ Updated: 2025-11-13
             class="slider-button slider-button--next"
             name="next"
             aria-label="{{ 'general.slider.next_slide' | t }}"
-            aria-controls="Favorites-Grid-{{ section.id }}"
+            aria-controls="Slider-{{ section.id }}"
           >
             <span class="svg-wrapper">
               {{- 'icon-caret.svg' | inline_asset_content -}}
@@ -98,7 +126,8 @@ Updated: 2025-11-13
           </button>
         </div>
       {% endif %}
-    </slider-component>
+      </slider-component>
+    </div>
 
     {%- comment -%}Empty state template{%- endcomment -%}
     <template id="favorites-empty-template">
@@ -114,6 +143,9 @@ Updated: 2025-11-13
       </li>
     </template>
   </div>
+  {% if section.settings.image_shape == 'arch' %}
+    {{ 'mask-arch.svg' | inline_asset_content }}
+  {%- endif -%}
 </div>
 
 {% schema %}
@@ -227,6 +259,33 @@ Updated: 2025-11-13
       "default": false,
       "label": "t:sections.all.product_card.show_rating.label",
       "info": "t:sections.all.product_card.show_rating.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_secondary_image",
+      "default": false,
+      "label": "t:sections.main-collection-product-grid.settings.show_secondary_image.label"
+    },
+    {
+      "type": "select",
+      "id": "quick_add",
+      "default": "standard",
+      "label": "t:sections.main-collection-product-grid.settings.quick_add.label",
+      "info": "t:sections.main-collection-product-grid.settings.quick_add.info",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:sections.main-collection-product-grid.settings.quick_add.options.option_1"
+        },
+        {
+          "value": "standard",
+          "label": "t:sections.main-collection-product-grid.settings.quick_add.options.option_2"
+        },
+        {
+          "value": "bulk",
+          "label": "t:sections.main-collection-product-grid.settings.quick_add.options.option_3"
+        }
+      ]
     },
     {
       "type": "header",

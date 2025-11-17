@@ -11,7 +11,7 @@ class FavoritesPage extends HTMLElement {
 
     connectedCallback() {
       // Query for elements after the element is connected to DOM
-      this.grid = this.querySelector('[id^="Favorites-Grid-"]');
+      this.grid = this.querySelector('[id^="Slider-"]');
       
       if (!this.grid) {
         console.error('Favorites grid not found');
@@ -26,8 +26,10 @@ class FavoritesPage extends HTMLElement {
       this.settings = {
         showVendor: this.grid.dataset.showVendor === 'true',
         showRating: this.grid.dataset.showRating === 'true',
+        showSecondaryImage: this.grid.dataset.showSecondaryImage === 'true',
         imageRatio: this.grid.dataset.imageRatio || 'square',
-        imageShape: this.grid.dataset.imageShape || 'default'
+        imageShape: this.grid.dataset.imageShape || 'default',
+        quickAdd: this.grid.dataset.quickAdd || 'standard'
       };
 
       // Initialize only once
@@ -121,14 +123,17 @@ class FavoritesPage extends HTMLElement {
         return;
       }
 
-      // Initialize slider if enabled
-      if (this.enableSlider) {
-        this.initializeSlider();
-      }
-
       // Update favorite buttons state
       if (window.favoritesHandler) {
         window.favoritesHandler.updateButtons(this);
+      }
+
+      // Initialize slider if enabled - wait a bit for DOM to settle
+      if (this.enableSlider) {
+        // Use setTimeout to ensure DOM is fully updated
+        setTimeout(() => {
+          this.initializeSlider();
+        }, 100);
       }
     }
 
@@ -139,8 +144,20 @@ class FavoritesPage extends HTMLElement {
      */
     async fetchProductCard(handle) {
       try {
+        // Build query parameters with section settings
+        const params = new URLSearchParams({
+          section_id: 'card-product-standalone',
+          show_vendor: this.settings.showVendor ? 'true' : 'false',
+          show_rating: this.settings.showRating ? 'true' : 'false',
+          show_secondary_image: this.settings.showSecondaryImage ? 'true' : 'false',
+          image_ratio: this.settings.imageRatio || 'square',
+          image_shape: this.settings.imageShape || 'default',
+          quick_add: this.settings.quickAdd || 'standard',
+          section_id_param: this.sectionId || ''
+        });
+
         const response = await fetch(
-          `/products/${handle}?section_id=card-product-standalone`,
+          `/products/${handle}?${params.toString()}`,
           {
             method: 'GET',
             headers: {
@@ -175,9 +192,11 @@ class FavoritesPage extends HTMLElement {
       const li = document.createElement('li');
       li.className = 'grid__item';
       
+      // Always add Slide ID for slider component compatibility
+      li.id = `Slide-${this.sectionId}-${slideIndex}`;
+      
       if (this.enableSlider) {
         li.classList.add('slider__slide');
-        li.id = `Slide-${this.sectionId}-${slideIndex}`;
       }
       
       li.innerHTML = cardHTML;
@@ -215,15 +234,36 @@ class FavoritesPage extends HTMLElement {
     initializeSlider() {
       const sliderComponent = this.grid.closest('slider-component');
       
-      if (!sliderComponent) return;
-
-      // Reset slider pages if method exists
-      if (typeof sliderComponent.resetPages === 'function') {
-        sliderComponent.resetPages();
-      } else {
-        // Fallback: trigger resize event to recalculate slider
-        window.dispatchEvent(new Event('resize'));
+      if (!sliderComponent) {
+        console.warn('Slider component not found');
+        return;
       }
+
+      // Ensure slider element exists and has items
+      if (!this.grid || this.grid.children.length === 0) {
+        console.warn('Slider grid has no items');
+        return;
+      }
+
+      // Wait for next frame to ensure DOM is updated
+      requestAnimationFrame(() => {
+        // Check if slider component has been initialized
+        if (!sliderComponent.slider) {
+          // Slider component hasn't initialized yet, wait a bit more
+          setTimeout(() => {
+            this.initializeSlider();
+          }, 50);
+          return;
+        }
+
+        // Reset slider pages if method exists
+        if (typeof sliderComponent.resetPages === 'function') {
+          sliderComponent.resetPages();
+        } else {
+          // Fallback: trigger resize event to recalculate slider
+          window.dispatchEvent(new Event('resize'));
+        }
+      });
     }
 
     /**
@@ -252,10 +292,10 @@ if (!customElements.get('favorites-page')) {
 
 // Initialize favorites page
 function initializeFavoritesPage() {
-  // Find the favorites grid
-  const grid = document.querySelector('[id^="Favorites-Grid-"]');
+  // Find the favorites grid (now uses Slider- prefix for compatibility)
+  const grid = document.querySelector('[id^="Slider-"]');
   
-  if (!grid) {
+  if (!grid || !grid.dataset.sectionId) {
     return;
   }
   
@@ -269,8 +309,10 @@ function initializeFavoritesPage() {
   favoritesPage.settings = {
     showVendor: grid.dataset.showVendor === 'true',
     showRating: grid.dataset.showRating === 'true',
+    showSecondaryImage: grid.dataset.showSecondaryImage === 'true',
     imageRatio: grid.dataset.imageRatio || 'square',
-    imageShape: grid.dataset.imageShape || 'default'
+    imageShape: grid.dataset.imageShape || 'default',
+    quickAdd: grid.dataset.quickAdd || 'standard'
   };
   
   // Load favorites
