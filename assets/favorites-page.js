@@ -1,12 +1,13 @@
 /**
  * Favorites Page Component
- * Handles displaying favorite products from localStorage
+ * Handles displaying favorite products from localStorage (guests) or customer metafields (logged-in users)
  * Uses existing card-product-standalone section for consistent rendering
  */
 class FavoritesPage extends HTMLElement {
     constructor() {
       super();
       this.initialized = false;
+      this.isLoggedIn = !!(window.Shopify && window.Shopify.customerId);
     }
 
     connectedCallback() {
@@ -45,7 +46,7 @@ class FavoritesPage extends HTMLElement {
     }
 
     /**
-     * Load favorites from localStorage and render products
+     * Load favorites from localStorage (guests) or customer metafields (logged-in users) and render products
      */
     async loadFavorites() {
       if (!this.grid) {
@@ -53,7 +54,7 @@ class FavoritesPage extends HTMLElement {
         return;
       }
 
-      const favorites = this.getFavoritesFromStorage();
+      const favorites = this.getFavorites();
       
       if (!favorites || favorites.length === 0) {
         this.renderEmptyState();
@@ -64,11 +65,55 @@ class FavoritesPage extends HTMLElement {
     }
 
     /**
-     * Get favorites from localStorage
+     * Get favorites from favorites handler (most up-to-date), customer metafields (logged-in users), or localStorage (guests)
      * @returns {Array} Array of favorite objects with {id, handle}
      */
-    getFavoritesFromStorage() {
+    getFavorites() {
       try {
+        // First, try to get from favorites handler (most up-to-date, includes real-time changes)
+        if (window.favoritesHandler && window.favoritesHandler.favorites && window.favoritesHandler.favorites.size > 0) {
+          const handlerFavorites = Array.from(window.favoritesHandler.favorites.values());
+          if (handlerFavorites.length > 0) {
+            return handlerFavorites
+              .filter(fav => fav && fav.handle)
+              .map(fav => ({
+                ...fav,
+                handle: fav.handle.includes('%') ? decodeURIComponent(fav.handle) : fav.handle
+              }));
+          }
+        }
+        
+        // For logged-in users, fall back to customer metafields
+        if (this.isLoggedIn && window.Shopify && window.Shopify.favorites) {
+          const metafieldFavorites = window.Shopify.favorites;
+          
+          // Handle different metafield formats
+          if (Array.isArray(metafieldFavorites)) {
+            // Filter out favorites without handles and normalize data
+            return metafieldFavorites
+              .filter(fav => fav && (fav.handle || fav.id))
+              .map(fav => {
+                // Normalize: ensure id is a number and handle is a string
+                const normalized = {
+                  id: typeof fav.id === 'number' ? fav.id : parseInt(fav.id, 10),
+                  handle: fav.handle || ''
+                };
+                
+                // Decode URL-encoded handles if needed
+                if (normalized.handle && normalized.handle.includes('%')) {
+                  normalized.handle = decodeURIComponent(normalized.handle);
+                }
+                
+                return normalized;
+              })
+              .filter(fav => fav.id && fav.handle); // Only return items with both id and handle
+          }
+          
+          // If metafield is not an array, return empty array
+          return [];
+        }
+        
+        // For guests, use localStorage
         const stored = localStorage.getItem('guestFavorites');
         if (!stored) return [];
         
@@ -83,7 +128,7 @@ class FavoritesPage extends HTMLElement {
             handle: fav.handle.includes('%') ? decodeURIComponent(fav.handle) : fav.handle
           }));
       } catch (error) {
-        console.error('Error reading favorites from localStorage:', error);
+        console.error('Error reading favorites:', error);
         return [];
       }
     }

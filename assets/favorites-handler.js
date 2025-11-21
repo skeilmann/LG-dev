@@ -81,16 +81,42 @@ class FavoritesHandler {
     }
 
     /**
-     * Loads favorites from localStorage or Shopify customer data
+     * Loads favorites from customer metafields (logged-in users) or localStorage (guests)
      * @returns {Promise<Map>} Map of favorite products
      */
     async loadFavorites() {
         try {
             if (this.isLoggedIn) {
-                // For logged-in users, could load from customer metafields in the future
+                // For logged-in users, load from customer metafields
+                if (window.Shopify && window.Shopify.favorites) {
+                    const metafieldFavorites = window.Shopify.favorites;
+                    
+                    // Handle different metafield formats
+                    if (Array.isArray(metafieldFavorites)) {
+                        const favorites = new Map();
+                        metafieldFavorites.forEach(obj => {
+                            if (obj && obj.id) {
+                                const id = typeof obj.id === 'number' ? obj.id : parseInt(obj.id, 10);
+                                const handle = obj.handle || '';
+                                
+                                // Only add if we have both id and handle
+                                if (id && handle) {
+                                    favorites.set(id, { 
+                                        id: id, 
+                                        handle: handle.includes('%') ? decodeURIComponent(handle) : handle
+                                    });
+                                }
+                            }
+                        });
+                        return favorites;
+                    }
+                }
+                
+                // If metafield is not available or not an array, return empty Map
                 return new Map();
             }
             
+            // For guests, use localStorage
             const stored = localStorage.getItem('guestFavorites');
             if (!stored) return new Map();
             
@@ -378,7 +404,8 @@ class FavoritesHandler {
             .filter(Boolean);
 
         try {
-            const response = await fetch('https://vev-app.onrender.com/api/sync-favorites', {
+            const response = await fetch('http://31.97.184.19:3000/api/sync-favorites', {
+            // const response = await fetch('https://vev-app.onrender.com/api/sync-favorites', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
