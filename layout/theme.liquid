@@ -35,7 +35,23 @@
       <script>
         window.Shopify = window.Shopify || {};
         window.Shopify.customerId = {{ customer.id }};
-        window.Shopify.favorites = {{ customer.metafields.custom.fav_prod | json }};
+        {%- comment -%}Load metafield value safely - handle cases where json filter might fail{%- endcomment -%}
+        {%- if customer.metafields.custom.fav_prod.value != blank -%}
+          {%- assign fav_metafield = customer.metafields.custom.fav_prod.value -%}
+          {%- if fav_metafield contains '{' or fav_metafield contains '[' -%}
+            {%- comment -%}Metafield appears to already be a JSON string{%- endcomment -%}
+            window.Shopify.favorites = {{ fav_metafield }};
+          {%- else -%}
+            {%- comment -%}Try to serialize the metafield value{%- endcomment -%}
+            window.Shopify.favorites = {{ fav_metafield | json }};
+          {%- endif -%}
+        {%- else -%}
+          window.Shopify.favorites = null;
+        {%- endif -%}
+        {%- comment -%}Debug: log metafield value in development{%- endcomment -%}
+        {% if request.host contains 'myshopify.com' or request.host contains 'preview' %}
+          console.log('Favorites metafield loaded:', window.Shopify.favorites);
+        {% endif %}
       </script>
     {% endif %}
     <script src="{{ 'global.js' | asset_url }}" defer="defer"></script>

@@ -1,7 +1,7 @@
 /**
  * Favorites Page Component
  * Handles displaying favorite products from localStorage (guests) or customer metafields (logged-in users)
- * Uses existing card-product-standalone section for consistent rendering
+ * Expected format: {saved: [{id, handle}, ...]}
  */
 class FavoritesPage extends HTMLElement {
     constructor() {
@@ -11,7 +11,6 @@ class FavoritesPage extends HTMLElement {
     }
 
     connectedCallback() {
-      // Query for elements after the element is connected to DOM
       this.grid = this.querySelector('[id^="Slider-"]');
       
       if (!this.grid) {
@@ -23,7 +22,6 @@ class FavoritesPage extends HTMLElement {
       this.enableSlider = this.grid.dataset.enableSlider === 'true';
       this.emptyTemplate = document.getElementById('favorites-empty-template');
       
-      // Get settings from data attributes
       this.settings = {
         showVendor: this.grid.dataset.showVendor === 'true',
         showRating: this.grid.dataset.showRating === 'true',
@@ -33,12 +31,10 @@ class FavoritesPage extends HTMLElement {
         quickAdd: this.grid.dataset.quickAdd || 'standard'
       };
 
-      // Initialize only once
       if (!this.initialized) {
         this.initialized = true;
         this.loadFavorites();
         
-        // Listen for favorites changes
         window.addEventListener('favorites:changed', () => {
           this.loadFavorites();
         });
@@ -46,7 +42,7 @@ class FavoritesPage extends HTMLElement {
     }
 
     /**
-     * Load favorites from localStorage (guests) or customer metafields (logged-in users) and render products
+     * Load favorites and render products
      */
     async loadFavorites() {
       if (!this.grid) {
@@ -65,12 +61,13 @@ class FavoritesPage extends HTMLElement {
     }
 
     /**
-     * Get favorites from favorites handler (most up-to-date), customer metafields (logged-in users), or localStorage (guests)
+     * Get favorites from handler, metafield, or localStorage
+     * Expected format: {saved: [{id, handle}, ...]}
      * @returns {Array} Array of favorite objects with {id, handle}
      */
     getFavorites() {
       try {
-        // First, try to get from favorites handler (most up-to-date, includes real-time changes)
+        // First, try to get from favorites handler (most up-to-date)
         if (window.favoritesHandler && window.favoritesHandler.favorites && window.favoritesHandler.favorites.size > 0) {
           const handlerFavorites = Array.from(window.favoritesHandler.favorites.values());
           if (handlerFavorites.length > 0) {
@@ -83,50 +80,13 @@ class FavoritesPage extends HTMLElement {
           }
         }
         
-        // For logged-in users, fall back to customer metafields
+        // For logged-in users, fall back to customer metafield
         if (this.isLoggedIn && window.Shopify && window.Shopify.favorites) {
-          const metafieldFavorites = window.Shopify.favorites;
-          
-          // Handle different metafield formats
-          if (Array.isArray(metafieldFavorites)) {
-            // Filter out favorites without handles and normalize data
-            return metafieldFavorites
-              .filter(fav => fav && (fav.handle || fav.id))
-              .map(fav => {
-                // Normalize: ensure id is a number and handle is a string
-                const normalized = {
-                  id: typeof fav.id === 'number' ? fav.id : parseInt(fav.id, 10),
-                  handle: fav.handle || ''
-                };
-                
-                // Decode URL-encoded handles if needed
-                if (normalized.handle && normalized.handle.includes('%')) {
-                  normalized.handle = decodeURIComponent(normalized.handle);
-                }
-                
-                return normalized;
-              })
-              .filter(fav => fav.id && fav.handle); // Only return items with both id and handle
-          }
-          
-          // If metafield is not an array, return empty array
-          return [];
+          return this.getFavoritesFromMetafield();
         }
         
         // For guests, use localStorage
-        const stored = localStorage.getItem('guestFavorites');
-        if (!stored) return [];
-        
-        const favorites = JSON.parse(stored);
-        if (!Array.isArray(favorites)) return [];
-        
-        // Filter out favorites without handles and decode any URL-encoded handles
-        return favorites
-          .filter(fav => fav && fav.handle)
-          .map(fav => ({
-            ...fav,
-            handle: fav.handle.includes('%') ? decodeURIComponent(fav.handle) : fav.handle
-          }));
+        return this.getFavoritesFromLocalStorage();
       } catch (error) {
         console.error('Error reading favorites:', error);
         return [];
@@ -134,18 +94,95 @@ class FavoritesPage extends HTMLElement {
     }
 
     /**
+     * Get favorites from metafield
+     * Expected format: {saved: [{id, handle}, ...]}
+     * @returns {Array} Array of favorite objects
+     * @private
+     */
+    getFavoritesFromMetafield() {
+      let metafieldData = window.Shopify.favorites;
+      
+      if (!metafieldData || metafieldData === 'null' || metafieldData === '') {
+        return [];
+      }
+      
+      if (typeof metafieldData === 'string') {
+        try {
+          metafieldData = JSON.parse(metafieldData);
+        } catch (e) {
+          console.error('Error parsing favorites metafield:', e);
+          return [];
+        }
+      }
+      
+      // Handle expected format: {saved: [{id, handle}, ...]}
+      if (metafieldData && typeof metafieldData === 'object' && metafieldData.saved && Array.isArray(metafieldData.saved)) {
+        return metafieldData.saved
+          .filter(fav => fav && fav.id && fav.handle)
+          .map(fav => {
+            const normalized = {
+              id: typeof fav.id === 'number' ? fav.id : parseInt(fav.id, 10),
+              handle: fav.handle || ''
+            };
+            
+            if (normalized.handle && normalized.handle.includes('%')) {
+              normalized.handle = decodeURIComponent(normalized.handle);
+            }
+            
+            return normalized;
+          })
+          .filter(fav => fav.id && fav.handle);
+      }
+      
+      return [];
+    }
+
+    /**
+     * Get favorites from localStorage
+     * Expected format: {saved: [{id, handle}, ...]}
+     * @returns {Array} Array of favorite objects
+     * @private
+     */
+    getFavoritesFromLocalStorage() {
+      try {
+        const stored = localStorage.getItem('guestFavorites');
+        if (!stored) return [];
+        
+        const parsed = JSON.parse(stored);
+        if (!parsed || !parsed.saved || !Array.isArray(parsed.saved)) {
+          return [];
+        }
+        
+        return parsed.saved
+          .filter(fav => fav && fav.id && fav.handle)
+          .map(fav => ({
+            ...fav,
+            handle: fav.handle.includes('%') ? decodeURIComponent(fav.handle) : fav.handle
+          }));
+      } catch (error) {
+        console.error('Error reading favorites from localStorage:', error);
+        return [];
+      }
+    }
+
+    /**
      * Render favorite products
-     * @param {Array} favorites - Array of favorite products
+     * @param {Array} favorites - Array of favorite products with {id, handle}
      */
     async renderProducts(favorites) {
-      // Clear current content
       this.grid.innerHTML = '';
+      
+      const favoritesWithHandles = favorites.filter(fav => fav && fav.handle);
+      
+      if (favoritesWithHandles.length === 0) {
+        this.renderEmptyState();
+        return;
+      }
       
       let successCount = 0;
       let slideIndex = 1;
 
-      // Fetch products in parallel for better performance
-      const productPromises = favorites.map(fav => 
+      const productPromises = favoritesWithHandles.map(fav => 
         this.fetchProductCard(fav.handle)
       );
 
@@ -158,24 +195,20 @@ class FavoritesPage extends HTMLElement {
           successCount++;
           if (this.enableSlider) slideIndex++;
         } else if (result.status === 'rejected') {
-          console.error('Failed to fetch product:', favorites[index].handle, result.reason);
+          console.error('Failed to fetch product:', favoritesWithHandles[index].handle, result.reason);
         }
       });
 
-      // If no products were successfully loaded, show empty state
       if (successCount === 0) {
         this.renderEmptyState();
         return;
       }
 
-      // Update favorite buttons state
       if (window.favoritesHandler) {
         window.favoritesHandler.updateButtons(this);
       }
 
-      // Initialize slider if enabled - wait a bit for DOM to settle
       if (this.enableSlider) {
-        // Use setTimeout to ensure DOM is fully updated
         setTimeout(() => {
           this.initializeSlider();
         }, 100);
@@ -189,7 +222,6 @@ class FavoritesPage extends HTMLElement {
      */
     async fetchProductCard(handle) {
       try {
-        // Build query parameters with section settings
         const params = new URLSearchParams({
           section_id: 'card-product-standalone',
           show_vendor: this.settings.showVendor ? 'true' : 'false',
@@ -236,8 +268,6 @@ class FavoritesPage extends HTMLElement {
     createListItem(cardHTML, slideIndex) {
       const li = document.createElement('li');
       li.className = 'grid__item';
-      
-      // Always add Slide ID for slider component compatibility
       li.id = `Slide-${this.sectionId}-${slideIndex}`;
       
       if (this.enableSlider) {
@@ -284,28 +314,22 @@ class FavoritesPage extends HTMLElement {
         return;
       }
 
-      // Ensure slider element exists and has items
       if (!this.grid || this.grid.children.length === 0) {
         console.warn('Slider grid has no items');
         return;
       }
 
-      // Wait for next frame to ensure DOM is updated
       requestAnimationFrame(() => {
-        // Check if slider component has been initialized
         if (!sliderComponent.slider) {
-          // Slider component hasn't initialized yet, wait a bit more
           setTimeout(() => {
             this.initializeSlider();
           }, 50);
           return;
         }
 
-        // Reset slider pages if method exists
         if (typeof sliderComponent.resetPages === 'function') {
           sliderComponent.resetPages();
         } else {
-          // Fallback: trigger resize event to recalculate slider
           window.dispatchEvent(new Event('resize'));
         }
       });
@@ -337,14 +361,12 @@ if (!customElements.get('favorites-page')) {
 
 // Initialize favorites page
 function initializeFavoritesPage() {
-  // Find the favorites grid (now uses Slider- prefix for compatibility)
   const grid = document.querySelector('[id^="Slider-"]');
   
   if (!grid || !grid.dataset.sectionId) {
     return;
   }
   
-  // Create instance and initialize directly
   const favoritesPage = new FavoritesPage();
   favoritesPage.grid = grid;
   favoritesPage.sectionId = grid.dataset.sectionId;
@@ -360,10 +382,8 @@ function initializeFavoritesPage() {
     quickAdd: grid.dataset.quickAdd || 'standard'
   };
   
-  // Load favorites
   favoritesPage.loadFavorites();
   
-  // Listen for favorites changes
   window.addEventListener('favorites:changed', () => {
     favoritesPage.loadFavorites();
   });
@@ -373,7 +393,5 @@ function initializeFavoritesPage() {
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initializeFavoritesPage);
 } else {
-  // DOM is already loaded (script with defer attribute)
   initializeFavoritesPage();
 }
-
