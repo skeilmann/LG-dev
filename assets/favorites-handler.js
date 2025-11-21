@@ -37,34 +37,13 @@ class FavoritesHandler {
      * @param {HTMLElement} [root=document] - Root element to search from
      */
     updateButtons(root = document) {
-        // Show .heart-icon for logged-in users
-        root.querySelectorAll('.heart-icon').forEach(icon => {
-            icon.style.removeProperty('display');
-            icon.classList.toggle('hidden', !this.isLoggedIn);
-        });
-
-        // Show .header__icon containing .heart-empty for logged-in users
-        root.querySelectorAll('.header__icon').forEach(headerIcon => {
-            const heartEmpty = headerIcon.querySelector('.heart-empty');
-            const favIcon = headerIcon.classList.contains('header__icon--favorites')
-                ? headerIcon
-                : headerIcon.querySelector('.header__icon--favorites');
-            if (heartEmpty) {
-                headerIcon.style.removeProperty('display');
-                headerIcon.classList.toggle('hidden', !this.isLoggedIn);
-            }
-            if (favIcon) {
-                favIcon.style.removeProperty('display');
-                favIcon.classList.toggle('hidden', this.isLoggedIn);
-            }
-        });
-
-        // Handle favorite icons for non-logged-in users
+        // Handle favorite icons for all users (logged-in and guests)
         root.querySelectorAll('.favorite-icon').forEach(icon => {
             icon.style.removeProperty('display');
-            icon.classList.toggle('hidden', this.isLoggedIn);
+            // Always show favorite icons for all users
+            icon.classList.remove('hidden');
 
-            if (!this.isLoggedIn && icon.dataset.productId) {
+            if (icon.dataset.productId) {
                 const id = parseInt(icon.dataset.productId, 10);
                 const isFavorite = this.favorites.has(id);
                 icon.classList.toggle('active', isFavorite);
@@ -141,18 +120,23 @@ class FavoritesHandler {
     }
 
     /**
-     * Saves favorites to localStorage for non-logged-in users
+     * Saves favorites to localStorage (for guests) or syncs to server (for logged-in users)
      * @private
      */
     saveFavorites() {
-        if (!this.isLoggedIn) {
-            try {
-                // Save array of {id, handle} - only essential data
-                const favoritesArray = Array.from(this.favorites.values());
-                localStorage.setItem('guestFavorites', JSON.stringify(favoritesArray));
-            } catch (e) {
-                console.warn('localStorage is not available:', e);
-            }
+        if (this.isLoggedIn) {
+            // For logged-in users, favorites are synced to metafield via the app
+            // The app handles the sync, so we don't need to do anything here
+            return;
+        }
+        
+        // For guests, save to localStorage
+        try {
+            // Save array of {id, handle} - only essential data
+            const favoritesArray = Array.from(this.favorites.values());
+            localStorage.setItem('guestFavorites', JSON.stringify(favoritesArray));
+        } catch (e) {
+            console.warn('localStorage is not available:', e);
         }
     }
 
@@ -161,9 +145,7 @@ class FavoritesHandler {
      * @private
      */
     setupEventListeners() {
-        if (this.isLoggedIn) return;
-
-        // Handle favorite toggle and navigation to favorites page
+        // Handle favorite toggle and navigation to favorites page for all users
         document.addEventListener('click', (e) => {
             // Toggle favorite
             const favoriteButton = e.target.closest('.favorite-icon');
@@ -221,9 +203,6 @@ class FavoritesHandler {
         if (wasFavorite) {
             // Remove from favorites
             this.favorites.delete(id);
-            if (this.isLoggedIn) {
-                this.removeFavoriteFromServer(id);
-            }
         } else {
             // Add to favorites - only store essential data (id and handle)
             const handle = this.extractProductHandle(id);
@@ -233,12 +212,14 @@ class FavoritesHandler {
             }
             
             this.favorites.set(id, { id, handle });
-            if (this.isLoggedIn) {
-                this.addFavoriteToServer(id);
-            }
             
             // Show notification when adding to favorites
             this.showFavoritesNotification(id, handle);
+        }
+        
+        // Sync to server/metafield for logged-in users
+        if (this.isLoggedIn) {
+            this.syncFavoritesToServer();
         }
         
         this.saveFavorites();
@@ -305,42 +286,40 @@ class FavoritesHandler {
     }
 
     /**
-     * Add favorite to server (for logged-in users)
-     * @param {number} productId - Product ID
+     * Sync favorites to server/metafield (for logged-in users)
+     * Syncs the entire favorites array to match the app's sync pattern
      * @private
      */
-    async addFavoriteToServer(productId) {
-        try {
-            await fetch('/api/favorites', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    customerId: window.Shopify.customerId, 
-                    productId 
-                })
-            });
-        } catch (e) {
-            console.error('Error adding favorite to server:', e);
+    async syncFavoritesToServer() {
+        if (!this.isLoggedIn || !window.Shopify?.customerId) {
+            return;
         }
-    }
 
-    /**
-     * Remove favorite from server (for logged-in users)
-     * @param {number} productId - Product ID
-     * @private
-     */
-    async removeFavoriteFromServer(productId) {
         try {
-            await fetch('/api/favorites', {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    customerId: window.Shopify.customerId, 
-                    productId 
+            // Map to IDs array for server sync (same format as migration)
+            const ids = Array.from(this.favorites.keys())
+                .map(id => id.toString())
+                .filter(Boolean);
+
+            const response = await fetch('http://31.97.184.19:3000/api/sync-favorites', {
+            // const response = await fetch('https://vev-app.onrender.com/api/sync-favorites', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': 'Gheorghe2025VeV'
+                },
+                body: JSON.stringify({
+                    customerId: window.Shopify.customerId,
+                    favorites: ids
                 })
             });
-        } catch (e) {
-            console.error('Error removing favorite from server:', e);
+            
+            if (!response.ok) {
+                const text = await response.text();
+                console.error('Failed to sync favorites:', text);
+            }
+        } catch (error) {
+            console.error('Error syncing favorites to server:', error);
         }
     }
 

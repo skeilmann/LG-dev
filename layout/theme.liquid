@@ -35,7 +35,7 @@
       <script>
         window.Shopify = window.Shopify || {};
         window.Shopify.customerId = {{ customer.id }};
-        window.Shopify.favorites = {{ customer.metafields.custom.favorites | json }};
+        window.Shopify.favorites = {{ customer.metafields.custom.fav_prod | json }};
       </script>
     {% endif %}
     <script src="{{ 'global.js' | asset_url }}" defer="defer"></script>
