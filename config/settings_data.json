@@ -9,9 +9,9 @@
  */
 {
   "current": {
-    "logo": "shopify://shop_images/logo-vev_2.png",
+    "logo": "shopify://shop_images/logo-vev-new_1.png",
     "logo_width": 90,
-    "favicon": "shopify://shop_images/logo-vev_2.png",
+    "favicon": "shopify://shop_images/logo-vev-new_1.png",
     "type_header_font": "assistant_n4",
     "heading_scale": 100,
     "heading_font_weight": "600",
@@ -146,30 +146,6 @@
     },
     "content_for_index": [],
     "blocks": {
-      "12645029315662244871": {
-        "type": "shopify://apps/meteor-mega-menu/blocks/app_embed/9412d6a7-f8f8-4d65-b9ae-2737c2f0f45b",
-        "disabled": false,
-        "settings": {
-          "navigation_link_caret_style": "outline",
-          "navigation_link_spacing": 16,
-          "menu_vertical_padding": 0,
-          "menu_justify_content": "flex-start",
-          "menu_font_size": 16,
-          "menu_font_weight": "400",
-          "menu_text_transform": "none",
-          "menu_center_in_viewport": false,
-          "menu_vertical_offset": 10,
-          "menu_display_action": "hover",
-          "menu_display_delay": "0",
-          "menu_display_animation": "none",
-          "disable_desktop": false,
-          "mobile_breakpoint": 0,
-          "disable_mobile": false,
-          "desktop_nav_selector": "",
-          "mobile_nav_selector": "",
-          "addons_enabled": false
-        }
-      },
       "2367010369087667184": {
         "type": "shopify://apps/deluxe-accounts/blocks/cad/b059626d-05f0-44bc-b55f-d2fc6d268902",
         "disabled": true,
@@ -185,7 +161,7 @@
           "button": "#121212",
           "button_label": "#ffffff",
           "secondary_button_label": "#121212",
-          "button_secondary_bg": "#FFFFFF",
+          "button_secondary_bg": "#ffffff",
           "button_secondary_outline": "#121212",
           "button_secondary_text": "#121212",
           "shadow": "#121212"
@@ -199,7 +175,7 @@
           "button": "#121212",
           "button_label": "#f3f3f3",
           "secondary_button_label": "#121212",
-          "button_secondary_bg": "#FFFFFF",
+          "button_secondary_bg": "#ffffff",
           "button_secondary_outline": "#121212",
           "button_secondary_text": "#121212",
           "shadow": "#121212"
@@ -213,7 +189,7 @@
           "button": "#ffffff",
           "button_label": "#000000",
           "secondary_button_label": "#ffffff",
-          "button_secondary_bg": "#FFFFFF",
+          "button_secondary_bg": "#ffffff",
           "button_secondary_outline": "#121212",
           "button_secondary_text": "#121212",
           "shadow": "#121212"
@@ -227,7 +203,7 @@
           "button": "#ffffff",
           "button_label": "#121212",
           "secondary_button_label": "#ffffff",
-          "button_secondary_bg": "#FFFFFF",
+          "button_secondary_bg": "#ffffff",
           "button_secondary_outline": "#121212",
           "button_secondary_text": "#121212",
           "shadow": "#121212"
@@ -241,7 +217,7 @@
           "button": "#ffffff",
           "button_label": "#334fb4",
           "secondary_button_label": "#ffffff",
-          "button_secondary_bg": "#FFFFFF",
+          "button_secondary_bg": "#ffffff",
           "button_secondary_outline": "#121212",
           "button_secondary_text": "#121212",
           "shadow": "#121212"

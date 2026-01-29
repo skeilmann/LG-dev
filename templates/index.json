@@ -12,6 +12,25 @@
     "slideshow_kHzFpH": {
       "type": "slideshow",
       "blocks": {
+        "slide_JEmngQ": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/Iconic_Gel.png",
+            "heading": "<p>DARK ICONIC GEL</p>",
+            "heading_size": "h1",
+            "subheading": "новые моделирующие гели",
+            "button_label": "смотреть коллекцию",
+            "link": "",
+            "button_style_secondary": false,
+            "box_align": "middle-right",
+            "show_text_box": false,
+            "text_alignment": "left",
+            "image_overlay_opacity": 0,
+            "color_scheme": "scheme-1",
+            "text_alignment_mobile": "center",
+            "box_align_mobile": "middle-center"
+          }
+        },
         "slide_VR38xH": {
           "type": "slide",
           "settings": {
@@ -27,11 +46,13 @@
             "text_alignment": "left",
             "image_overlay_opacity": 0,
             "color_scheme": "scheme-4",
-            "text_alignment_mobile": "center"
+            "text_alignment_mobile": "center",
+            "box_align_mobile": "middle-center"
           }
         }
       },
       "block_order": [
+        "slide_JEmngQ",
         "slide_VR38xH"
       ],
       "custom_css": [],
@@ -649,8 +670,6 @@
       ],
       "name": "t:sections.vendor_showcase.presets.name",
       "settings": {
-        "heading": "Our Brands",
-        "heading_size": "h1",
         "max_collections": 20,
         "desktop_columns": 5,
         "mobile_columns": 3,
