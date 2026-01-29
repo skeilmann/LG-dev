@@ -178,9 +178,13 @@
                   {% else %}
                     role="link" aria-disabled="true"
                   {% endif %}
-                  class="button {% if block.settings.button_style_secondary %}button--secondary{% else %}button--primary{% endif %}"
+                  class="button {% if block.settings.button_style_secondary %}button--secondary{% else %}button--primary{% endif %}{% if block.settings.button_icon != 'none' %} button--with-icon{% endif %}"
                 >
                   {{- block.settings.button_label | escape -}}
+                  {%- if block.settings.button_icon != 'none' -%}
+                    {%- assign icon_file = block.settings.button_icon | replace: '_', '-' | prepend: 'icon-' | append: '.svg' -%}
+                    <span class="button__icon svg-wrapper">{{ icon_file | inline_asset_content }}</span>
+                  {%- endif -%}
                 </a>
               </div>
             {%- endif -%}
@@ -456,6 +460,35 @@
           "id": "button_style_secondary",
           "label": "t:sections.slideshow.blocks.slide.settings.secondary_style.label",
           "default": false
+        },
+        {
+          "type": "select",
+          "id": "button_icon",
+          "options": [
+            { "value": "none", "label": "None" },
+            { "value": "arrow", "label": "Arrow" },
+            { "value": "caret", "label": "Caret" },
+            { "value": "heart", "label": "Heart" },
+            { "value": "cart", "label": "Cart" },
+            { "value": "check_mark", "label": "Check mark" },
+            { "value": "star", "label": "Star" },
+            { "value": "eye", "label": "Eye" },
+            { "value": "fire", "label": "Fire" },
+            { "value": "leaf", "label": "Leaf" },
+            { "value": "lightning_bolt", "label": "Lightning bolt" },
+            { "value": "lock", "label": "Lock" },
+            { "value": "map_pin", "label": "Map pin" },
+            { "value": "plane", "label": "Plane" },
+            { "value": "price_tag", "label": "Price tag" },
+            { "value": "question_mark", "label": "Question mark" },
+            { "value": "recycle", "label": "Recycle" },
+            { "value": "return", "label": "Return" },
+            { "value": "ruler", "label": "Ruler" },
+            { "value": "stopwatch", "label": "Stopwatch" },
+            { "value": "truck", "label": "Truck" }
+          ],
+          "default": "none",
+          "label": "Button icon"
         },
         {
           "type": "select",

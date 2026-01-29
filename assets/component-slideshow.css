@@ -247,3 +247,24 @@ slideshow-component:not(.page-width) .slider-buttons {
     justify-content: flex-end;
   }
 }
+
+/* Button with icon */
+.slideshow__text .button--with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.slideshow__text .button__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  flex-shrink: 0;
+}
+
+.slideshow__text .button__icon svg {
+  width: 100%;
+  height: 100%;
+}
