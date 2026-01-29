@@ -1398,6 +1398,30 @@
     ]
   },
   {
+    "name": "Instagram feed",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Configure default settings for Instagram video feeds. Individual sections can override these."
+      },
+      {
+        "type": "text",
+        "id": "instagram_api_token",
+        "label": "Instagram access token",
+        "info": "Get this from Instagram Graph API. Required for Instagram feed to work."
+      },
+      {
+        "type": "range",
+        "id": "instagram_default_video_count",
+        "min": 3,
+        "max": 20,
+        "step": 1,
+        "label": "Default videos to load",
+        "default": 8
+      }
+    ]
+  },
+  {
     "name": "t:settings_schema.search_input.name",
     "settings": [
       {

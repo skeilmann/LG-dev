@@ -20,6 +20,14 @@
   <script src="{{ 'product-favorite-button.js' | asset_url }}" defer="defer"></script>
   <script src="{{ 'inventory-bar.js' | asset_url }}" defer="defer"></script>
 
+  {%- for block in section.blocks -%}
+    {%- if block.type == 'instagram_feed' -%}
+      {{ 'instagram-circles.css' | asset_url | stylesheet_tag }}
+      <script src="{{ 'instagram-circles.js' | asset_url }}" defer="defer"></script>
+      {%- break -%}
+    {%- endif -%}
+  {%- endfor -%}
+
   {% unless product.has_only_default_variant %}
     {{ 'component-product-variant-picker.css' | asset_url | stylesheet_tag }}
     {{ 'component-swatch-input.css' | asset_url | stylesheet_tag }}
@@ -641,6 +649,24 @@
                 </product-recommendations>
               {%- when 'icon-with-text' -%}
                 {% render 'icon-with-text', block: block %}
+              {%- when 'instagram_feed' -%}
+                <div class="product__instagram-feed" {{ block.shopify_attributes }}>
+                  {%- if block.settings.heading != blank -%}
+                    <p class="product__instagram-heading h4">{{ block.settings.heading | escape }}</p>
+                  {%- endif -%}
+                  {% render 'instagram-circles',
+                    unique_id: block.id,
+                    token: block.settings.instagram_token,
+                    video_count: block.settings.video_count,
+                    circle_size: block.settings.circle_size,
+                    desktop_count: 4,
+                    mobile_count: 3,
+                    circle_gap: 8,
+                    show_nav_buttons: false,
+                    compact_mode: true,
+                    block: block
+                  %}
+                </div>
             {%- endcase -%}
           {%- endfor -%}
           <a href="{{ product.url }}" class="link product__view-details animate-arrow">
@@ -2127,6 +2153,44 @@
           "default": "t:sections.main-product.blocks.icon_with_text.settings.heading_3.default",
           "label": "t:sections.main-product.blocks.icon_with_text.settings.heading_3.label",
           "info": "t:sections.main-product.blocks.icon_with_text.settings.heading.info"
+        }
+      ]
+    },
+    {
+      "type": "instagram_feed",
+      "name": "Instagram videos",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "See it in action"
+        },
+        {
+          "type": "text",
+          "id": "instagram_token",
+          "label": "Instagram token (optional)",
+          "info": "Override global token. Leave blank to use theme settings."
+        },
+        {
+          "type": "range",
+          "id": "video_count",
+          "min": 3,
+          "max": 12,
+          "step": 1,
+          "label": "Videos to load",
+          "default": 6
+        },
+        {
+          "type": "range",
+          "id": "circle_size",
+          "min": 48,
+          "max": 96,
+          "step": 4,
+          "unit": "px",
+          "label": "Circle size",
+          "default": 64
         }
       ]
     }

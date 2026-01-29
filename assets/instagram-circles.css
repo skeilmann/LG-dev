@@ -1,0 +1,251 @@
+/**
+ * Instagram Circles Component Styles
+ * Uses BEM naming and Dawn CSS custom properties
+ */
+
+instagram-circles {
+  display: block;
+  --ig-circle-size: 96px;
+  --ig-circle-gap: 12px;
+  --ig-circle-border: 0px;
+  --ig-circle-bg: #f6f6f6;
+  --ig-circle-hover-bg: #ececec;
+  --ig-circle-border-color: #e0e0e0;
+  --ig-slides: 6;
+}
+
+.instagram-circles__container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Navigation buttons */
+.instagram-circles__btn {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(var(--color-foreground), 0.1);
+  border-radius: 50%;
+  background: rgb(var(--color-background));
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.instagram-circles__btn:hover,
+.instagram-circles__btn:focus-visible {
+  border-color: rgba(var(--color-foreground), 0.3);
+  background: rgba(var(--color-foreground), 0.03);
+  outline: none;
+}
+
+.instagram-circles__btn--prev .svg-wrapper {
+  transform: rotate(90deg);
+}
+
+.instagram-circles__btn--next .svg-wrapper {
+  transform: rotate(-90deg);
+}
+
+.instagram-circles__btn .svg-wrapper {
+  width: 12px;
+  height: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Track / slider */
+.instagram-circles__track {
+  display: flex;
+  gap: var(--ig-circle-gap);
+  padding: 0.25rem 0;
+  flex: 1;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.instagram-circles__track::-webkit-scrollbar {
+  display: none;
+}
+
+/* Individual circle item */
+.instagram-circles__item {
+  flex: 0 0 var(--ig-circle-size);
+  width: var(--ig-circle-size);
+  height: var(--ig-circle-size);
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  border: var(--ig-circle-border) solid var(--ig-circle-border-color);
+  background: var(--ig-circle-bg);
+  cursor: pointer;
+  scroll-snap-align: start;
+  transition: transform 150ms ease, background-color 150ms ease, border-color 150ms ease;
+  padding: 0;
+}
+
+.instagram-circles__item:hover,
+.instagram-circles__item:focus-visible {
+  background: var(--ig-circle-hover-bg);
+  transform: translateY(-2px);
+  border-color: rgb(var(--color-foreground));
+  outline: none;
+}
+
+/* Thumbnail image */
+.instagram-circles__thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Play overlay */
+.instagram-circles__overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.35));
+  pointer-events: none;
+}
+
+.instagram-circles__play {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  border-radius: 50%;
+  position: relative;
+}
+
+.instagram-circles__play::before {
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 6px 0 6px 10px;
+  border-color: transparent transparent transparent #fff;
+  margin-left: 2px;
+}
+
+/* Status messages */
+.instagram-circles__status,
+.instagram-circles__empty,
+.instagram-circles__error {
+  width: 100%;
+  text-align: center;
+  padding: 1.5rem 0;
+  color: rgb(var(--color-foreground));
+  opacity: 0.7;
+  font-size: 0.875rem;
+}
+
+/* Modal styles */
+.instagram-circles__modal {
+  border: none;
+  padding: 0;
+  width: min(480px, 90vw);
+  max-width: 100%;
+  background: rgb(var(--color-background));
+  border-radius: var(--popup-corner-radius, 0);
+}
+
+.instagram-circles__modal::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.instagram-circles__modal-body {
+  position: relative;
+  aspect-ratio: 9 / 16;
+  max-height: 80vh;
+  background: #000;
+}
+
+.instagram-circles__modal video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+
+.instagram-circles__modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  border-radius: 50%;
+  border: 0;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.instagram-circles__modal-close:hover,
+.instagram-circles__modal-close:focus-visible {
+  background: rgba(0, 0, 0, 0.75);
+  outline: none;
+}
+
+.instagram-circles__modal-close svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Compact mode for inline embedding */
+.instagram-circles--compact .instagram-circles__btn {
+  width: 32px;
+  height: 32px;
+}
+
+.instagram-circles--compact .instagram-circles__play {
+  width: 28px;
+  height: 28px;
+}
+
+.instagram-circles--compact .instagram-circles__play::before {
+  border-width: 5px 0 5px 8px;
+}
+
+/* Mobile adjustments */
+@media screen and (max-width: 749px) {
+  .instagram-circles__item {
+    flex: 0 0 calc(var(--ig-circle-size) * 0.85);
+    width: calc(var(--ig-circle-size) * 0.85);
+    height: calc(var(--ig-circle-size) * 0.85);
+  }
+
+  .instagram-circles__btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .instagram-circles__container {
+    gap: 0.25rem;
+  }
+
+  .instagram-circles__play {
+    width: 28px;
+    height: 28px;
+  }
+
+  .instagram-circles__play::before {
+    border-width: 5px 0 5px 8px;
+  }
+}

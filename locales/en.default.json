@@ -446,6 +446,14 @@
       "carousel": "Carousel",
       "slide": "Slide"
     },
+    "instagram_feed": {
+      "name": "Instagram video feed",
+      "loading": "Loading videos...",
+      "empty": "No videos available",
+      "error": "Error loading feed",
+      "token_required": "Instagram access token required",
+      "play_video": "Play video {{ index }}"
+    },
     "page": {
       "title": "Page title"
     },

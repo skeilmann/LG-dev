@@ -1,0 +1,124 @@
+{%- comment -%}
+  Filename: instagram-circles.liquid
+  Purpose: Shared Instagram circular video feed component
+
+  Parameters:
+  - unique_id: (required) Unique identifier for this instance
+  - token: Instagram API token (falls back to settings.instagram_api_token)
+  - video_count: Number of videos to fetch (default: 8)
+  - desktop_count: Visible circles on desktop (default: 6)
+  - mobile_count: Visible circles on mobile (default: 3)
+  - circle_size: Circle diameter in px (default: 96)
+  - circle_gap: Gap between circles in px (default: 12)
+  - circle_border: Border width in px (default: 0)
+  - circle_bg: Background color (default: #f6f6f6)
+  - circle_hover_bg: Hover background color (default: #ececec)
+  - circle_border_color: Border color (default: #e0e0e0)
+  - show_nav_buttons: Show slider navigation (default: true)
+  - compact_mode: Reduced size for inline embedding (default: false)
+  - block: Optional block reference for shopify_attributes
+
+  Dependencies: instagram-circles.js, instagram-circles.css
+  Created: 2025-01-29
+{%- endcomment -%}
+
+{%- liquid
+  assign resolved_token = token | default: settings.instagram_api_token
+  assign resolved_video_count = video_count | default: settings.instagram_default_video_count | default: 8
+  assign resolved_desktop_count = desktop_count | default: 6
+  assign resolved_mobile_count = mobile_count | default: 3
+  assign resolved_circle_size = circle_size | default: 96
+  assign resolved_circle_gap = circle_gap | default: 12
+  assign resolved_circle_border = circle_border | default: 0
+  assign resolved_circle_bg = circle_bg | default: '#f6f6f6'
+  assign resolved_circle_hover_bg = circle_hover_bg | default: '#ececec'
+  assign resolved_circle_border_color = circle_border_color | default: '#e0e0e0'
+  assign resolved_show_nav = show_nav_buttons | default: true
+  assign resolved_compact = compact_mode | default: false
+
+  if resolved_compact
+    assign resolved_circle_size = resolved_circle_size | times: 0.75 | round
+    assign resolved_circle_gap = resolved_circle_gap | times: 0.75 | round
+  endif
+-%}
+
+<instagram-circles
+  class="instagram-circles{% if resolved_compact %} instagram-circles--compact{% endif %}"
+  data-instagram-token="{{ resolved_token | escape }}"
+  data-video-count="{{ resolved_video_count }}"
+  data-desktop-count="{{ resolved_desktop_count }}"
+  data-mobile-count="{{ resolved_mobile_count }}"
+  data-label-loading="{{ 'sections.instagram_feed.loading' | t | default: 'Loading...' | escape }}"
+  data-label-empty="{{ 'sections.instagram_feed.empty' | t | default: 'No videos available' | escape }}"
+  data-label-error="{{ 'sections.instagram_feed.error' | t | default: 'Error loading feed' | escape }}"
+  data-label-token="{{ 'sections.instagram_feed.token_required' | t | default: 'Instagram access token required' | escape }}"
+  style="
+    --ig-circle-size: {{ resolved_circle_size }}px;
+    --ig-circle-gap: {{ resolved_circle_gap }}px;
+    --ig-circle-border: {{ resolved_circle_border }}px;
+    --ig-circle-bg: {{ resolved_circle_bg }};
+    --ig-circle-hover-bg: {{ resolved_circle_hover_bg }};
+    --ig-circle-border-color: {{ resolved_circle_border_color }};
+  "
+  {% if block %}{{ block.shopify_attributes }}{% endif %}
+>
+  <div class="instagram-circles__container">
+    {%- if resolved_show_nav -%}
+      <button
+        type="button"
+        class="instagram-circles__btn instagram-circles__btn--prev"
+        aria-label="{{ 'general.slider.previous_slide' | t }}"
+        data-instagram-prev
+      >
+        <span class="svg-wrapper">
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </span>
+      </button>
+    {%- endif -%}
+
+    <div
+      class="instagram-circles__track"
+      id="InstagramTrack-{{ unique_id }}"
+      data-instagram-track
+    >
+      <div class="instagram-circles__status" data-instagram-status>
+        {{ 'sections.instagram_feed.loading' | t | default: 'Loading...' }}
+      </div>
+    </div>
+
+    {%- if resolved_show_nav -%}
+      <button
+        type="button"
+        class="instagram-circles__btn instagram-circles__btn--next"
+        aria-label="{{ 'general.slider.next_slide' | t }}"
+        data-instagram-next
+      >
+        <span class="svg-wrapper">
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </span>
+      </button>
+    {%- endif -%}
+  </div>
+
+  <dialog class="instagram-circles__modal" data-instagram-modal>
+    <button
+      type="button"
+      class="instagram-circles__modal-close"
+      aria-label="{{ 'accessibility.close' | t }}"
+      data-instagram-modal-close
+    >
+      <span class="svg-wrapper">
+        {{- 'icon-close.svg' | inline_asset_content -}}
+      </span>
+    </button>
+    <div class="instagram-circles__modal-body">
+      <video
+        playsinline
+        controls
+        muted
+        preload="metadata"
+        data-instagram-video
+      ></video>
+    </div>
+  </dialog>
+</instagram-circles>
