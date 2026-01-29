@@ -110,6 +110,10 @@
         #Slide-{{ section.id }}-{{ forloop.index }} .banner__media::after {
           opacity: {{ block.settings.image_overlay_opacity | divided_by: 100.0 }};
         }
+        #Slide-{{ section.id }}-{{ forloop.index }} .slideshow__media img {
+          object-fit: {{ block.settings.image_fit }};
+          object-position: {{ block.settings.image_position_x }} {{ block.settings.image_position_y }};
+        }
       </style>
       <div
         class="slideshow__slide grid__item grid--1-col slider__slide"
@@ -402,6 +406,38 @@
           "type": "image_picker",
           "id": "image",
           "label": "t:sections.slideshow.blocks.slide.settings.image.label"
+        },
+        {
+          "type": "select",
+          "id": "image_fit",
+          "options": [
+            { "value": "cover", "label": "Cover (fill & crop)" },
+            { "value": "contain", "label": "Contain (show full image)" }
+          ],
+          "default": "cover",
+          "label": "Image fit"
+        },
+        {
+          "type": "select",
+          "id": "image_position_x",
+          "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "center",
+          "label": "Image horizontal position"
+        },
+        {
+          "type": "select",
+          "id": "image_position_y",
+          "options": [
+            { "value": "top", "label": "Top" },
+            { "value": "center", "label": "Center" },
+            { "value": "bottom", "label": "Bottom" }
+          ],
+          "default": "center",
+          "label": "Image vertical position"
         },
         {
           "type": "richtext",
