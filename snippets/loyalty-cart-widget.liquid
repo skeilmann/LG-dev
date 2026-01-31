@@ -1,0 +1,80 @@
+{%- comment -%}
+  Loyalty Cart Widget
+  Shows loyalty points and redemption option in cart drawer/page
+  Requires: loyalty-handler.js
+{%- endcomment -%}
+
+<div class="loyalty-cart-widget">
+  {%- if customer -%}
+    <div class="loyalty-loading">{{ 'customer.loyalty.loading' | t | default: 'Loading rewards...' }}</div>
+  {%- else -%}
+    <div class="loyalty-guest-message">
+      <p>
+        <a href="{{ routes.account_login_url }}">{{ 'customer.log_in' | t | default: 'Log in' }}</a>
+        {{ 'customer.loyalty.or' | t | default: 'or' }}
+        <a href="{{ routes.account_register_url }}">{{ 'customer.register.title' | t | default: 'create an account' }}</a>
+        {{ 'customer.loyalty.to_earn' | t | default: 'to earn rewards on every purchase!' }}
+      </p>
+    </div>
+  {%- endif -%}
+</div>
+
+<style>
+  .loyalty-cart-widget {
+    padding: 1.5rem;
+    margin: 1rem 0;
+    background-color: rgb(var(--color-background));
+    border: 1px solid rgba(var(--color-foreground), 0.1);
+    border-radius: var(--buttons-radius, 0);
+  }
+
+  .loyalty-cart-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .loyalty-cart-balance {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.4rem;
+  }
+
+  .loyalty-icon {
+    font-size: 1.6rem;
+  }
+
+  .loyalty-balance-text strong {
+    color: rgb(var(--color-foreground));
+  }
+
+  .loyalty-redeem-btn {
+    width: 100%;
+    cursor: pointer;
+  }
+
+  .loyalty-earn-more {
+    font-size: 1.2rem;
+    color: rgba(var(--color-foreground), 0.7);
+    margin: 0;
+    text-align: center;
+  }
+
+  .loyalty-guest-message {
+    text-align: center;
+    font-size: 1.3rem;
+  }
+
+  .loyalty-guest-message a {
+    color: rgb(var(--color-link));
+    text-decoration: underline;
+    text-underline-offset: 0.3rem;
+  }
+
+  .loyalty-loading {
+    text-align: center;
+    color: rgba(var(--color-foreground), 0.6);
+    font-style: italic;
+  }
+</style>

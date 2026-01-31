@@ -1,0 +1,136 @@
+/**
+ * Loyalty Component Styles
+ * Modal, notifications, and shared loyalty UI styles
+ */
+
+/* Discount Modal */
+.loyalty-discount-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1.5rem;
+}
+
+.loyalty-discount-modal-content {
+  background-color: rgb(var(--color-background));
+  padding: 3rem;
+  border-radius: var(--buttons-radius, 0);
+  max-width: 40rem;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.loyalty-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 2.4rem;
+  cursor: pointer;
+  color: rgba(var(--color-foreground), 0.5);
+  line-height: 1;
+  padding: 0.5rem;
+}
+
+.loyalty-modal-close:hover {
+  color: rgb(var(--color-foreground));
+}
+
+.loyalty-modal-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.loyalty-discount-modal-content h3 {
+  font-size: 2.4rem;
+  margin: 0 0 1rem;
+}
+
+.loyalty-discount-modal-content p {
+  font-size: 1.4rem;
+  margin: 0 0 1.5rem;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+.loyalty-discount-code {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background-color: rgba(var(--color-foreground), 0.05);
+  padding: 1.5rem;
+  border-radius: var(--buttons-radius, 0);
+  margin-bottom: 1.5rem;
+}
+
+.loyalty-discount-code code {
+  font-size: 1.8rem;
+  font-weight: 600;
+  letter-spacing: 0.2rem;
+  color: rgb(var(--color-foreground));
+}
+
+.loyalty-copy-btn {
+  padding: 0.8rem 1.5rem;
+  background-color: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  border: none;
+  border-radius: var(--buttons-radius, 0);
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+
+.loyalty-copy-btn:hover {
+  opacity: 0.9;
+}
+
+.loyalty-modal-note {
+  font-size: 1.2rem !important;
+  color: rgba(var(--color-foreground), 0.6) !important;
+}
+
+/* Redemption Button States */
+.loyalty-redeem-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Loading State */
+.loyalty-loading {
+  text-align: center;
+  padding: 1rem;
+  color: rgba(var(--color-foreground), 0.6);
+  font-style: italic;
+}
+
+/* Mobile Adjustments */
+@media screen and (max-width: 749px) {
+  .loyalty-discount-modal-content {
+    padding: 2rem;
+  }
+
+  .loyalty-discount-modal-content h3 {
+    font-size: 2rem;
+  }
+
+  .loyalty-discount-code {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .loyalty-discount-code code {
+    font-size: 1.6rem;
+  }
+}

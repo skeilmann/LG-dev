@@ -481,6 +481,15 @@
       "min_error": "This item has a minimum of {{ min }}",
       "max_error": "This item has a maximum of {{ max }}",
       "step_error": "You can only add this item in increments of {{ step }}"
+    },
+    "recently_viewed": {
+      "name": "Recently Viewed",
+      "heading": "Recently Viewed",
+      "clear_history": "Clear History",
+      "no_products": "No recently viewed products"
+    },
+    "lg-recommended-products": {
+      "name": "Recommended Products"
     }
   },
   "localization": {
@@ -499,6 +508,32 @@
         "one": "{{ count }} favorite",
         "other": "{{ count }} favorites"
       }
+    },
+    "loyalty": {
+      "title": "Rewards",
+      "points": "points",
+      "view_rewards": "View rewards",
+      "loading": "Loading rewards...",
+      "or": "or",
+      "to_earn": "to earn rewards on every purchase!",
+      "login_required": "Please log in to view your rewards.",
+      "join_title": "Join Our Rewards Program",
+      "join_description": "Create an account to start earning points on every purchase!",
+      "tiers_title": "Membership Tiers",
+      "how_it_works": "How It Works",
+      "points_balance": "Points Balance",
+      "your_tier": "Your Tier",
+      "redeem": "Redeem",
+      "redeem_for": "Redeem {{ points }} pts for ${{ value }} off",
+      "earn_more": "Earn {{ points }} more points to redeem",
+      "max_tier": "You've reached the highest tier!",
+      "spend_to_next": "Spend ${{ amount }} more to reach {{ tier }}",
+      "recent_activity": "Recent Activity",
+      "no_activity": "No activity yet. Start shopping to earn points!",
+      "earned": "Earned from order",
+      "redeemed": "Redeemed for discount",
+      "reversed": "Points reversed",
+      "welcome_bonus": "Welcome bonus"
     },
     "account": {
       "title": "Account",

@@ -1,0 +1,60 @@
+{%- comment -%}
+  Loyalty Points Badge
+  Displays customer's loyalty points in header
+  Requires: loyalty-handler.js
+{%- endcomment -%}
+
+<a
+  href="{{ routes.account_url }}"
+  class="header__icon header__icon--loyalty"
+  id="loyalty-points-badge"
+  style="display: none;"
+  aria-label="{{ 'customer.loyalty.view_rewards' | t | default: 'View rewards' }}"
+>
+  <span class="loyalty-badge-icon">⭐</span>
+  <span class="loyalty-badge-count" id="loyalty-points-balance">0</span>
+  <span class="visually-hidden">{{ 'customer.loyalty.points' | t | default: 'loyalty points' }}</span>
+</a>
+
+<style>
+  .header__icon--loyalty {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.5rem;
+    text-decoration: none;
+    color: rgb(var(--color-foreground));
+    font-size: 1.3rem;
+    position: relative;
+  }
+
+  .header__icon--loyalty:hover {
+    opacity: 0.8;
+  }
+
+  .loyalty-badge-icon {
+    font-size: 1.4rem;
+    line-height: 1;
+  }
+
+  .loyalty-badge-count {
+    font-size: 1.2rem;
+    font-weight: 600;
+    min-width: 1.5rem;
+    text-align: center;
+  }
+
+  @media screen and (max-width: 749px) {
+    .header__icon--loyalty {
+      font-size: 1.1rem;
+    }
+
+    .loyalty-badge-icon {
+      font-size: 1.2rem;
+    }
+
+    .loyalty-badge-count {
+      font-size: 1rem;
+    }
+  }
+</style>

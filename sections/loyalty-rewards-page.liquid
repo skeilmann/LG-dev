@@ -1,0 +1,522 @@
+{%- comment -%}
+  Loyalty Rewards Page Section
+  Full rewards page with tiers, balance, redemption, and history
+{%- endcomment -%}
+
+{{ 'component-loyalty.css' | asset_url | stylesheet_tag }}
+
+<div class="loyalty-rewards-page page-width section-{{ section.id }}-padding">
+  <div class="loyalty-rewards-header">
+    <h1 class="loyalty-rewards-title">{{ section.settings.title | default: 'Rewards Program' }}</h1>
+    {% if section.settings.subtitle != blank %}
+      <p class="loyalty-rewards-subtitle">{{ section.settings.subtitle }}</p>
+    {% endif %}
+  </div>
+
+  {%- if customer -%}
+    <div class="loyalty-rewards-content" id="loyalty-rewards-content">
+      <div class="loyalty-loading">Loading your rewards...</div>
+    </div>
+  {%- else -%}
+    <div class="loyalty-rewards-guest">
+      <div class="loyalty-guest-card">
+        <h2>{{ 'customer.loyalty.join_title' | t | default: 'Join Our Rewards Program' }}</h2>
+        <p>{{ 'customer.loyalty.join_description' | t | default: 'Create an account to start earning points on every purchase!' }}</p>
+
+        <div class="loyalty-tiers-preview">
+          <h3>{{ 'customer.loyalty.tiers_title' | t | default: 'Membership Tiers' }}</h3>
+          <div class="loyalty-tiers-grid">
+            <div class="loyalty-tier-card loyalty-tier-bronze">
+              <span class="loyalty-tier-icon">🥉</span>
+              <h4>Bronze</h4>
+              <p>1 point per $1</p>
+              <span class="loyalty-tier-threshold">$0+</span>
+            </div>
+            <div class="loyalty-tier-card loyalty-tier-silver">
+              <span class="loyalty-tier-icon">🥈</span>
+              <h4>Silver</h4>
+              <p>1.5 points per $1</p>
+              <span class="loyalty-tier-threshold">$500+</span>
+            </div>
+            <div class="loyalty-tier-card loyalty-tier-gold">
+              <span class="loyalty-tier-icon">🥇</span>
+              <h4>Gold</h4>
+              <p>2 points per $1</p>
+              <span class="loyalty-tier-threshold">$2,000+</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="loyalty-how-it-works">
+          <h3>{{ 'customer.loyalty.how_it_works' | t | default: 'How It Works' }}</h3>
+          <div class="loyalty-steps">
+            <div class="loyalty-step">
+              <span class="loyalty-step-number">1</span>
+              <h4>Shop</h4>
+              <p>Earn points on every purchase</p>
+            </div>
+            <div class="loyalty-step">
+              <span class="loyalty-step-number">2</span>
+              <h4>Earn</h4>
+              <p>Points add up based on your tier</p>
+            </div>
+            <div class="loyalty-step">
+              <span class="loyalty-step-number">3</span>
+              <h4>Redeem</h4>
+              <p>100 points = $5 off</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="loyalty-cta-buttons">
+          <a href="{{ routes.account_register_url }}" class="button">{{ 'customer.register.title' | t | default: 'Create Account' }}</a>
+          <a href="{{ routes.account_login_url }}" class="button button--secondary">{{ 'customer.log_in' | t | default: 'Log In' }}</a>
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    if (!window.loyaltyHandler || !window.Shopify?.customerId) return;
+
+    const content = document.getElementById('loyalty-rewards-content');
+    if (!content) return;
+
+    // Wait for loyalty data to load
+    const checkLoaded = setInterval(function() {
+      if (!window.loyaltyHandler.isLoading) {
+        clearInterval(checkLoaded);
+        renderRewardsPage(content);
+      }
+    }, 100);
+
+    function renderRewardsPage(container) {
+      const handler = window.loyaltyHandler;
+      const tierLabels = { bronze: 'Bronze', silver: 'Silver', gold: 'Gold' };
+
+      container.innerHTML = `
+        <div class="loyalty-dashboard">
+          <div class="loyalty-balance-card">
+            <div class="loyalty-balance-main">
+              <span class="loyalty-balance-icon">⭐</span>
+              <div class="loyalty-balance-info">
+                <span class="loyalty-balance-points">${handler.balance.toLocaleString()}</span>
+                <span class="loyalty-balance-label">Points Available</span>
+              </div>
+            </div>
+            ${handler.redemption && handler.balance >= handler.redemption.points_required ? `
+              <button class="loyalty-redeem-btn button" id="rewards-page-redeem" data-points="${handler.redemption.points_required}">
+                Redeem ${handler.redemption.points_required} pts for $${handler.redemption.discount_value} off
+              </button>
+            ` : `
+              <p class="loyalty-redeem-info">
+                ${handler.redemption ? `Earn ${Math.max(0, handler.redemption.points_required - handler.balance)} more points to redeem $${handler.redemption.discount_value} off` : ''}
+              </p>
+            `}
+          </div>
+
+          <div class="loyalty-tier-card-current">
+            <h3>Your Status</h3>
+            <div class="loyalty-current-tier loyalty-tier-${handler.tier}">
+              <span class="loyalty-tier-badge">${tierLabels[handler.tier] || handler.tier}</span>
+              ${handler.tierConfig ? `<span class="loyalty-tier-rate">${handler.tierConfig.points_per_dollar}x points per $1</span>` : ''}
+            </div>
+            ${handler.nextTier ? `
+              <div class="loyalty-tier-progress">
+                <div class="loyalty-progress-bar">
+                  <div class="loyalty-progress-fill" style="width: ${Math.min(100, 100 - (handler.spendToNextTier / 500 * 100))}%"></div>
+                </div>
+                <p>Spend $${handler.spendToNextTier.toFixed(0)} more to reach ${tierLabels[handler.nextTier]}</p>
+              </div>
+            ` : `<p class="loyalty-max-tier">🎉 You've reached the highest tier!</p>`}
+          </div>
+        </div>
+
+        <div class="loyalty-history-section">
+          <h3>Recent Activity</h3>
+          ${handler.history && handler.history.length > 0 ? `
+            <div class="loyalty-history-list">
+              ${handler.history.slice(0, 10).map(entry => `
+                <div class="loyalty-history-item loyalty-history-${entry.type}">
+                  <div class="loyalty-history-icon">
+                    ${entry.type === 'earn' ? '➕' : entry.type === 'redeem' ? '🎁' : entry.type === 'reverse' ? '↩️' : '⭐'}
+                  </div>
+                  <div class="loyalty-history-details">
+                    <span class="loyalty-history-action">
+                      ${entry.type === 'earn' ? 'Earned from order' : entry.type === 'redeem' ? 'Redeemed for discount' : entry.type === 'reverse' ? 'Points reversed' : entry.type === 'bonus' ? 'Welcome bonus' : entry.type}
+                    </span>
+                    <span class="loyalty-history-date">${new Date(entry.date).toLocaleDateString()}</span>
+                  </div>
+                  <span class="loyalty-history-points ${entry.points >= 0 ? 'positive' : 'negative'}">
+                    ${entry.points >= 0 ? '+' : ''}${entry.points}
+                  </span>
+                </div>
+              `).join('')}
+            </div>
+          ` : `
+            <p class="loyalty-no-history">No activity yet. Start shopping to earn points!</p>
+          `}
+        </div>
+      `;
+
+      // Attach redeem handler
+      const redeemBtn = container.querySelector('#rewards-page-redeem');
+      if (redeemBtn) {
+        redeemBtn.addEventListener('click', async function(e) {
+          e.preventDefault();
+          const points = parseInt(this.dataset.points, 10);
+          await handler.redeemPoints(points, this);
+          renderRewardsPage(container); // Re-render after redemption
+        });
+      }
+    }
+  });
+</script>
+
+<style>
+  .loyalty-rewards-page {
+    padding-top: calc(var(--page-width-margin) * 2);
+    padding-bottom: calc(var(--page-width-margin) * 2);
+  }
+
+  .loyalty-rewards-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .loyalty-rewards-title {
+    font-size: 3.6rem;
+    margin: 0 0 1rem;
+  }
+
+  .loyalty-rewards-subtitle {
+    font-size: 1.6rem;
+    color: rgba(var(--color-foreground), 0.7);
+    margin: 0;
+  }
+
+  /* Dashboard */
+  .loyalty-dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
+    gap: 2rem;
+    margin-bottom: 4rem;
+  }
+
+  .loyalty-balance-card,
+  .loyalty-tier-card-current {
+    padding: 2.5rem;
+    background-color: rgb(var(--color-background));
+    border: 1px solid rgba(var(--color-foreground), 0.1);
+    border-radius: var(--buttons-radius, 0);
+  }
+
+  .loyalty-balance-main {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .loyalty-balance-icon {
+    font-size: 4rem;
+  }
+
+  .loyalty-balance-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .loyalty-balance-points {
+    font-size: 3.6rem;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .loyalty-balance-label {
+    font-size: 1.4rem;
+    color: rgba(var(--color-foreground), 0.6);
+  }
+
+  .loyalty-redeem-info {
+    font-size: 1.3rem;
+    color: rgba(var(--color-foreground), 0.7);
+    margin: 0;
+  }
+
+  /* Tier Card */
+  .loyalty-tier-card-current h3 {
+    font-size: 1.6rem;
+    margin: 0 0 1.5rem;
+    color: rgba(var(--color-foreground), 0.7);
+  }
+
+  .loyalty-current-tier {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .loyalty-tier-badge {
+    font-size: 2.4rem;
+    font-weight: 700;
+  }
+
+  .loyalty-tier-rate {
+    font-size: 1.4rem;
+    color: rgba(var(--color-foreground), 0.6);
+  }
+
+  .loyalty-tier-bronze .loyalty-tier-badge { color: #cd7f32; }
+  .loyalty-tier-silver .loyalty-tier-badge { color: #a8a8a8; }
+  .loyalty-tier-gold .loyalty-tier-badge { color: #ffd700; }
+
+  /* History */
+  .loyalty-history-section {
+    background-color: rgb(var(--color-background));
+    border: 1px solid rgba(var(--color-foreground), 0.1);
+    border-radius: var(--buttons-radius, 0);
+    padding: 2.5rem;
+  }
+
+  .loyalty-history-section h3 {
+    font-size: 1.8rem;
+    margin: 0 0 2rem;
+  }
+
+  .loyalty-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .loyalty-history-item {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background-color: rgba(var(--color-foreground), 0.02);
+    border-radius: var(--buttons-radius, 0);
+  }
+
+  .loyalty-history-icon {
+    font-size: 2rem;
+  }
+
+  .loyalty-history-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .loyalty-history-action {
+    font-size: 1.4rem;
+    font-weight: 500;
+  }
+
+  .loyalty-history-date {
+    font-size: 1.2rem;
+    color: rgba(var(--color-foreground), 0.5);
+  }
+
+  .loyalty-history-points {
+    font-size: 1.6rem;
+    font-weight: 600;
+  }
+
+  .loyalty-history-points.positive { color: #28a745; }
+  .loyalty-history-points.negative { color: #dc3545; }
+
+  .loyalty-no-history {
+    text-align: center;
+    color: rgba(var(--color-foreground), 0.5);
+    font-style: italic;
+  }
+
+  /* Guest View */
+  .loyalty-rewards-guest {
+    max-width: 80rem;
+    margin: 0 auto;
+  }
+
+  .loyalty-guest-card {
+    text-align: center;
+    padding: 4rem;
+    background-color: rgb(var(--color-background));
+    border: 1px solid rgba(var(--color-foreground), 0.1);
+    border-radius: var(--buttons-radius, 0);
+  }
+
+  .loyalty-guest-card h2 {
+    font-size: 2.4rem;
+    margin: 0 0 1rem;
+  }
+
+  .loyalty-guest-card > p {
+    font-size: 1.6rem;
+    color: rgba(var(--color-foreground), 0.7);
+    margin: 0 0 3rem;
+  }
+
+  .loyalty-tiers-preview,
+  .loyalty-how-it-works {
+    margin-bottom: 3rem;
+  }
+
+  .loyalty-tiers-preview h3,
+  .loyalty-how-it-works h3 {
+    font-size: 1.8rem;
+    margin: 0 0 2rem;
+  }
+
+  .loyalty-tiers-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .loyalty-tier-card {
+    padding: 2rem;
+    border: 1px solid rgba(var(--color-foreground), 0.1);
+    border-radius: var(--buttons-radius, 0);
+  }
+
+  .loyalty-tier-card .loyalty-tier-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .loyalty-tier-card h4 {
+    font-size: 1.6rem;
+    margin: 0 0 0.5rem;
+  }
+
+  .loyalty-tier-card p {
+    font-size: 1.3rem;
+    margin: 0 0 0.5rem;
+    color: rgba(var(--color-foreground), 0.7);
+  }
+
+  .loyalty-tier-threshold {
+    font-size: 1.2rem;
+    color: rgba(var(--color-foreground), 0.5);
+  }
+
+  .loyalty-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .loyalty-step {
+    text-align: center;
+  }
+
+  .loyalty-step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 4rem;
+    height: 4rem;
+    background-color: rgb(var(--color-button));
+    color: rgb(var(--color-button-text));
+    border-radius: 50%;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .loyalty-step h4 {
+    font-size: 1.6rem;
+    margin: 0 0 0.5rem;
+  }
+
+  .loyalty-step p {
+    font-size: 1.3rem;
+    color: rgba(var(--color-foreground), 0.7);
+    margin: 0;
+  }
+
+  .loyalty-cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  /* Mobile */
+  @media screen and (max-width: 749px) {
+    .loyalty-rewards-title {
+      font-size: 2.8rem;
+    }
+
+    .loyalty-dashboard {
+      grid-template-columns: 1fr;
+    }
+
+    .loyalty-tiers-grid,
+    .loyalty-steps {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .loyalty-cta-buttons {
+      flex-direction: column;
+    }
+
+    .loyalty-guest-card {
+      padding: 2rem;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Loyalty Rewards Page",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Rewards Program"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Earn points on every purchase and redeem for discounts"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "Loyalty Rewards Page"
+    }
+  ]
+}
+{% endschema %}

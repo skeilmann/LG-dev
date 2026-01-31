@@ -1,0 +1,14 @@
+{
+  "sections": {
+    "main": {
+      "type": "loyalty-rewards-page",
+      "settings": {
+        "title": "Rewards Program",
+        "subtitle": "Earn points on every purchase and redeem for discounts",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    }
+  },
+  "order": ["main"]
+}

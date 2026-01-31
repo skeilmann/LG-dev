@@ -1,0 +1,122 @@
+{%- comment -%}
+  Loyalty Account Section
+  Shows loyalty summary on customer account page
+  Requires: loyalty-handler.js
+{%- endcomment -%}
+
+<div class="loyalty-account-section">
+  {%- if customer -%}
+    <div class="loyalty-loading">{{ 'customer.loyalty.loading' | t | default: 'Loading your rewards...' }}</div>
+  {%- else -%}
+    <div class="loyalty-guest-message">
+      <p>{{ 'customer.loyalty.login_required' | t | default: 'Please log in to view your rewards.' }}</p>
+    </div>
+  {%- endif -%}
+</div>
+
+<style>
+  .loyalty-account-section {
+    padding: 2rem;
+    margin: 2rem 0;
+    background-color: rgb(var(--color-background));
+    border: 1px solid rgba(var(--color-foreground), 0.1);
+    border-radius: var(--buttons-radius, 0);
+  }
+
+  .loyalty-account-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .loyalty-account-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .loyalty-account-header h3 {
+    margin: 0;
+    font-size: 1.8rem;
+  }
+
+  .loyalty-view-all {
+    font-size: 1.3rem;
+    color: rgb(var(--color-link));
+    text-decoration: underline;
+    text-underline-offset: 0.3rem;
+  }
+
+  .loyalty-account-stats {
+    display: flex;
+    gap: 3rem;
+  }
+
+  .loyalty-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .loyalty-stat-value {
+    font-size: 2.4rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .loyalty-stat-label {
+    font-size: 1.2rem;
+    color: rgba(var(--color-foreground), 0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+  }
+
+  .loyalty-tier-bronze { color: #cd7f32; }
+  .loyalty-tier-silver { color: #a8a8a8; }
+  .loyalty-tier-gold { color: #ffd700; }
+
+  .loyalty-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .loyalty-progress-bar {
+    height: 0.8rem;
+    background-color: rgba(var(--color-foreground), 0.1);
+    border-radius: 0.4rem;
+    overflow: hidden;
+  }
+
+  .loyalty-progress-fill {
+    height: 100%;
+    background-color: rgb(var(--color-button));
+    transition: width 0.3s ease;
+  }
+
+  .loyalty-progress-text {
+    font-size: 1.2rem;
+    color: rgba(var(--color-foreground), 0.7);
+    margin: 0;
+  }
+
+  .loyalty-max-tier {
+    font-size: 1.4rem;
+    text-align: center;
+    margin: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .loyalty-account-section {
+      padding: 1.5rem;
+    }
+
+    .loyalty-account-stats {
+      gap: 2rem;
+    }
+
+    .loyalty-stat-value {
+      font-size: 2rem;
+    }
+  }
+</style>
