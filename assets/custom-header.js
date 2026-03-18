@@ -99,96 +99,113 @@ class CustomHeader {
     this.touchStartX = 0;
     this.touchStartTime = 0;
 
+    // Create all bound handlers as named references for proper cleanup
+    this._boundToggleMobileMenu = this.toggleMobileMenu.bind(this);
+    this._boundCloseMobileMenu = this.closeMobileMenu.bind(this);
+    this._boundHandleTouchStart = this.handleMobileMenuTouchStart.bind(this);
+    this._boundHandleTouchMove = this.handleMobileMenuTouchMove.bind(this);
+    this._boundHandleTouchEnd = this.handleMobileMenuTouchEnd.bind(this);
+    this._boundHandleAnchorDropdown = this.handleAnchorDropdown.bind(this);
+    this._boundToggleDropdown = this.toggleDropdown.bind(this);
+    this._boundHandleDropdownKeydown = this.handleDropdownKeydown.bind(this);
+    this._boundHandleDropdownFocusIn = this.handleDropdownFocusIn.bind(this);
+    this._boundHandleDropdownFocusOut = this.handleDropdownFocusOut.bind(this);
+    this._boundHandleResize = debounce(this.handleResize.bind(this), 150);
+    this._boundDocumentClick = this._handleDocumentClick.bind(this);
+    this._boundDocumentKeydown = this._handleDocumentKeydown.bind(this);
+
+    // AbortController for fetch requests
+    this.fetchController = new AbortController();
+
     this.bindEvents();
     this.initMegaMenu();
     this.initMobileAccordion();
   }
 
+  // Centralized document click handler (replaces multiple anonymous listeners)
+  _handleDocumentClick(e) {
+    // Close mobile menu when clicking outside
+    if (this.mobileMenu && this.mobileMenu.getAttribute('aria-hidden') === 'false' &&
+        !this.mobileMenu.contains(e.target) && !this.mobileMenuToggle.contains(e.target)) {
+      this.closeMobileMenu();
+    }
+    // Close dropdowns when clicking outside
+    if (!e.target.closest('.header__menu-item-wrapper')) {
+      this.closeAllDropdowns();
+    }
+  }
+
+  // Centralized document keydown handler (replaces multiple anonymous listeners)
+  _handleDocumentKeydown(e) {
+    if (e.key === 'Escape') {
+      this.closeMobileMenu();
+      this.closeAllDropdowns();
+      if (this.megaMenuDropdown && this.megaMenuDropdown.getAttribute('aria-hidden') === 'false') {
+        this.closeMegaMenu();
+        this.megaMenuTrigger?.focus();
+      }
+    }
+  }
+
   bindEvents() {
     if (this.mobileMenuToggle) {
-      this.mobileMenuToggle.addEventListener('click', this.toggleMobileMenu.bind(this));
+      this.mobileMenuToggle.addEventListener('click', this._boundToggleMobileMenu);
     }
 
     if (this.mobileMenuClose) {
-      this.mobileMenuClose.addEventListener('click', this.closeMobileMenu.bind(this));
+      this.mobileMenuClose.addEventListener('click', this._boundCloseMobileMenu);
     }
 
-    // Close mobile menu when clicking on backdrop
     if (this.mobileMenuBackdrop) {
-      this.mobileMenuBackdrop.addEventListener('click', this.closeMobileMenu.bind(this));
+      this.mobileMenuBackdrop.addEventListener('click', this._boundCloseMobileMenu);
     }
 
-    // Close mobile menu when clicking outside
-    document.addEventListener('click', (e) => {
-      if (this.mobileMenu && !this.mobileMenu.contains(e.target) && !this.mobileMenuToggle.contains(e.target)) {
-        this.closeMobileMenu();
-      }
-    });
-    
+    // Single document click handler for all outside-click behaviors
+    document.addEventListener('click', this._boundDocumentClick);
+
     // Add touch event listeners for swipe gesture
     if (this.mobileMenu) {
-      this.mobileMenu.addEventListener('touchstart', this.handleMobileMenuTouchStart.bind(this), { passive: true });
-      this.mobileMenu.addEventListener('touchmove', this.handleMobileMenuTouchMove.bind(this), { passive: true });
-      this.mobileMenu.addEventListener('touchend', this.handleMobileMenuTouchEnd.bind(this), { passive: true });
+      this.mobileMenu.addEventListener('touchstart', this._boundHandleTouchStart, { passive: true });
+      this.mobileMenu.addEventListener('touchmove', this._boundHandleTouchMove, { passive: true });
+      this.mobileMenu.addEventListener('touchend', this._boundHandleTouchEnd, { passive: true });
     }
 
     // Handle dropdown menus
     this.dropdownButtons.forEach(button => {
-      // For anchor-based dropdowns, prevent default navigation and show dropdown
       if (button.tagName === 'A') {
-        button.addEventListener('click', this.handleAnchorDropdown.bind(this));
+        button.addEventListener('click', this._boundHandleAnchorDropdown);
       } else {
-        button.addEventListener('click', this.toggleDropdown.bind(this));
+        button.addEventListener('click', this._boundToggleDropdown);
       }
-      
-      // Add keyboard support for dropdowns
-      button.addEventListener('keydown', this.handleDropdownKeydown.bind(this));
-    });
-
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.header__menu-item-wrapper')) {
-        this.closeAllDropdowns();
-      }
+      button.addEventListener('keydown', this._boundHandleDropdownKeydown);
     });
 
     // Handle focus management for dropdowns
     this.dropdownMenus.forEach(menu => {
-      menu.addEventListener('focusin', this.handleDropdownFocusIn.bind(this));
-      menu.addEventListener('focusout', this.handleDropdownFocusOut.bind(this));
+      menu.addEventListener('focusin', this._boundHandleDropdownFocusIn);
+      menu.addEventListener('focusout', this._boundHandleDropdownFocusOut);
     });
 
-    // Handle escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        this.closeMobileMenu();
-        this.closeAllDropdowns();
-        if (this.megaMenuDropdown && this.megaMenuDropdown.getAttribute('aria-hidden') === 'false') {
-          this.closeMegaMenu();
-          this.megaMenuTrigger?.focus();
-        }
-      }
-    });
+    // Single document keydown handler for Escape
+    document.addEventListener('keydown', this._boundDocumentKeydown);
 
-    // Handle window resize (debounced to avoid excessive calls during drag)
-    window.addEventListener('resize', debounce(this.handleResize.bind(this), 150));
+    // Handle window resize
+    window.addEventListener('resize', this._boundHandleResize);
   }
 
   // ===== MEGA MENU FUNCTIONALITY =====
   initMegaMenu() {
     if (!this.megaMenuWrapper || !this.megaMenuDropdown) return;
 
-    // Unified hover handler - prevents blinking when moving between trigger and dropdown
-    const handleMouseEnter = () => {
+    // Store mega menu handlers for cleanup
+    this._boundMegaMenuEnter = () => {
       clearTimeout(this.menuLeaveTimeout);
-      // Only open if not already open to prevent unnecessary state changes
       if (this.megaMenuDropdown.getAttribute('aria-hidden') === 'true') {
         this.openMegaMenu();
       }
     };
 
-    const handleMouseLeave = (e) => {
-      // Check if mouse is moving to a related element within the mega menu
+    this._boundMegaMenuLeave = (e) => {
       const relatedTarget = e.relatedTarget;
       if (
         relatedTarget &&
@@ -197,34 +214,28 @@ class CustomHeader {
          relatedTarget.closest('.mega-menu-wrapper') ||
          relatedTarget.closest('.mega-menu-dropdown'))
       ) {
-        // Mouse is moving within the mega menu area, don't close
         return;
       }
 
-      // Use a small delay to verify mouse truly left (handles edge cases)
-      // The CSS overlap (top: calc(100% - 1px)) should prevent most gap issues
       this.menuLeaveTimeout = setTimeout(() => {
-        // Double-check mouse position before closing
         const mouseElement = document.elementFromPoint(e.clientX, e.clientY);
         if (
           mouseElement &&
           (this.megaMenuWrapper.contains(mouseElement) ||
            this.megaMenuDropdown.contains(mouseElement))
         ) {
-          // Mouse is still within mega menu, cancel close
           return;
         }
         this.closeMegaMenu();
-      }, 75); // CSS overlap handles gap; 75ms filters accidental exits
+      }, 75);
     };
 
-    // Apply unified handlers to both wrapper and dropdown
-    this.megaMenuWrapper.addEventListener('mouseenter', handleMouseEnter);
-    this.megaMenuWrapper.addEventListener('mouseleave', handleMouseLeave);
+    this.megaMenuWrapper.addEventListener('mouseenter', this._boundMegaMenuEnter);
+    this.megaMenuWrapper.addEventListener('mouseleave', this._boundMegaMenuLeave);
 
     if (this.megaMenuDropdown) {
-      this.megaMenuDropdown.addEventListener('mouseenter', handleMouseEnter);
-      this.megaMenuDropdown.addEventListener('mouseleave', handleMouseLeave);
+      this.megaMenuDropdown.addEventListener('mouseenter', this._boundMegaMenuEnter);
+      this.megaMenuDropdown.addEventListener('mouseleave', this._boundMegaMenuLeave);
     }
 
     // Initialize hover events for all menu levels
@@ -236,86 +247,86 @@ class CustomHeader {
     this.initKeyboardNavigation();
   }
 
-  // Initialize Category (Column 1) hover events
+  // Initialize Category (Column 1) hover events using event delegation
   initCategoryHovers() {
     if (!this.zone1) return;
 
-    const categoryLinks = this.zone1.querySelectorAll('.mega-menu-category');
+    // Event delegation: single listener on zone1 instead of per-category listeners
+    this._boundZone1MouseOver = (e) => {
+      const categoryLink = e.target.closest('.mega-menu-category');
+      if (!categoryLink) return;
+      clearTimeout(this.hoverIntentTimeout);
+      this.hoverIntentTimeout = setTimeout(() => {
+        this.handleCategoryHover(categoryLink);
+      }, this.HOVER_INTENT_DELAY);
+    };
 
-    // Hover intent pattern: 50ms delay filters accidental hovers
-    categoryLinks.forEach((link) => {
-      link.addEventListener('mouseenter', () => {
+    this._boundZone1MouseOut = (e) => {
+      const categoryLink = e.target.closest('.mega-menu-category');
+      if (!categoryLink) return;
+      // Only clear if mouse is leaving the category (not entering a child)
+      if (!categoryLink.contains(e.relatedTarget)) {
         clearTimeout(this.hoverIntentTimeout);
-        this.hoverIntentTimeout = setTimeout(() => {
-          this.handleCategoryHover(link);
-        }, this.HOVER_INTENT_DELAY);
-      });
+      }
+    };
 
-      link.addEventListener('mouseleave', () => {
-        clearTimeout(this.hoverIntentTimeout);
-      });
-    });
-
-    // Reset to default state when leaving column 1 (double RAF for smooth transition)
-    this.zone1.addEventListener('mouseleave', () => {
+    this._boundZone1Leave = () => {
       cancelAnimationFrame(this.zone1LeaveRAF);
       this.zone1LeaveRAF = requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          // Only reset if mouse hasn't moved to another zone
-          if (!this.zone2.matches(':hover') && !this.zone3.matches(':hover') && !this.zone4.matches(':hover')) {
-            this.resetToDefaultState();
-          }
-        });
+        if (!this.zone2?.matches(':hover') && !this.zone3?.matches(':hover') && !this.zone4?.matches(':hover')) {
+          this.resetToDefaultState();
+        }
       });
-    });
+    };
+
+    this.zone1.addEventListener('mouseover', this._boundZone1MouseOver);
+    this.zone1.addEventListener('mouseout', this._boundZone1MouseOut);
+    this.zone1.addEventListener('mouseleave', this._boundZone1Leave);
   }
 
-  // Initialize Subcategory (Column 2) hover events  
+  // Initialize Subcategory (Column 2) hover events
   initSubcategoryHovers() {
     if (!this.zone2) return;
 
-    // Use event delegation since subcategory content is dynamically shown/hidden
-    this.zone2.addEventListener('mouseover', (e) => {
+    this._boundZone2MouseOver = (e) => {
       if (e.target.classList.contains('mega-menu-sublink')) {
         this.handleSubcategoryHover(e.target);
       }
-    });
+    };
 
-    // When leaving column 2, hide column 3 and reset images to category level (double RAF)
-    this.zone2.addEventListener('mouseleave', () => {
+    this._boundZone2Leave = () => {
       cancelAnimationFrame(this.zone2LeaveRAF);
       this.zone2LeaveRAF = requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          // Only hide if mouse hasn't moved to column 3
-          if (!this.zone3.matches(':hover')) {
-            this.resetVisibility(document.querySelectorAll('.mega-menu-sub-subcategories'));
-            this.showCategoryImage();
-          }
-        });
+        if (!this.zone3?.matches(':hover')) {
+          this.resetVisibility(document.querySelectorAll('.mega-menu-sub-subcategories'));
+          this.showCategoryImage();
+        }
       });
-    });
+    };
+
+    this.zone2.addEventListener('mouseover', this._boundZone2MouseOver);
+    this.zone2.addEventListener('mouseleave', this._boundZone2Leave);
   }
 
   // Initialize Sub-subcategory (Column 3) hover events
   initSubSubcategoryHovers() {
     if (!this.zone3) return;
 
-    // Use event delegation since sub-subcategory content is dynamically shown/hidden
-    this.zone3.addEventListener('mouseover', (e) => {
+    this._boundZone3MouseOver = (e) => {
       if (e.target.classList.contains('mega-menu-sub-sublink')) {
         this.handleSubSubcategoryHover(e.target);
       }
-    });
+    };
 
-    // When leaving column 3, reset image to subcategory level (double RAF)
-    this.zone3.addEventListener('mouseleave', () => {
+    this._boundZone3Leave = () => {
       cancelAnimationFrame(this.zone3LeaveRAF);
       this.zone3LeaveRAF = requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          this.showSubcategoryImage();
-        });
+        this.showSubcategoryImage();
       });
-    });
+    };
+
+    this.zone3.addEventListener('mouseover', this._boundZone3MouseOver);
+    this.zone3.addEventListener('mouseleave', this._boundZone3Leave);
   }
 
   openMegaMenu() {
@@ -569,18 +580,15 @@ class CustomHeader {
 
     // Mega menu trigger keyboard support
     if (this.megaMenuTrigger) {
-      this.megaMenuTrigger.addEventListener('keydown', (e) => {
+      this._boundTriggerKeydown = (e) => {
         switch (e.key) {
           case 'Enter':
           case ' ':
             e.preventDefault();
             if (this.megaMenuDropdown.getAttribute('aria-hidden') === 'true') {
               this.openMegaMenu();
-              // Focus first category link
-              const firstCategory = this.zone1?.querySelector('.mega-menu-category');
-              if (firstCategory) {
-                setTimeout(() => firstCategory.focus(), 100);
-              }
+              const firstCat = this.zone1?.querySelector('.mega-menu-category');
+              if (firstCat) setTimeout(() => firstCat.focus(), 100);
             } else {
               this.closeMegaMenu();
             }
@@ -589,34 +597,21 @@ class CustomHeader {
             e.preventDefault();
             this.openMegaMenu();
             const firstCategory = this.zone1?.querySelector('.mega-menu-category');
-            if (firstCategory) {
-              setTimeout(() => firstCategory.focus(), 100);
-            }
+            if (firstCategory) setTimeout(() => firstCategory.focus(), 100);
             break;
         }
-      });
+      };
+      this.megaMenuTrigger.addEventListener('keydown', this._boundTriggerKeydown);
     }
 
-    // Category navigation (Column 1)
-    if (this.zone1) {
-      this.zone1.addEventListener('keydown', (e) => {
-        this.handleCategoryKeyNavigation(e);
-      });
-    }
+    // Zone keyboard navigation (event delegation)
+    this._boundZone1Keydown = this.handleCategoryKeyNavigation.bind(this);
+    this._boundZone2Keydown = this.handleSubcategoryKeyNavigation.bind(this);
+    this._boundZone3Keydown = this.handleSubSubcategoryKeyNavigation.bind(this);
 
-    // Subcategory navigation (Column 2)
-    if (this.zone2) {
-      this.zone2.addEventListener('keydown', (e) => {
-        this.handleSubcategoryKeyNavigation(e);
-      });
-    }
-
-    // Sub-subcategory navigation (Column 3)
-    if (this.zone3) {
-      this.zone3.addEventListener('keydown', (e) => {
-        this.handleSubSubcategoryKeyNavigation(e);
-      });
-    }
+    if (this.zone1) this.zone1.addEventListener('keydown', this._boundZone1Keydown);
+    if (this.zone2) this.zone2.addEventListener('keydown', this._boundZone2Keydown);
+    if (this.zone3) this.zone3.addEventListener('keydown', this._boundZone3Keydown);
   }
 
   // Handle keyboard navigation within categories (Column 1)
@@ -763,62 +758,56 @@ class CustomHeader {
 
   // ===== MOBILE ACCORDION FUNCTIONALITY =====
   initMobileAccordion() {
-    // Handle subcategory accordions (second level)
-    const mobileAccordions = document.querySelectorAll('.mobile-subcategory-accordion');
+    // Use event delegation on the mobile menu to handle all accordion clicks
+    // This prevents duplicate listeners when initMobileAccordion is called multiple times
+    if (!this.mobileMenu) return;
 
-    mobileAccordions.forEach((accordion) => {
-      const summary = accordion.querySelector('.mobile-category-title');
-      const categoryImageContainer = accordion.querySelector('.mobile-category-image--category');
-
-      summary?.addEventListener('click', () => {
-        // Lazy load category image when accordion opens
-        // But only if there are no nested subcategories with their own images
-        if (!accordion.hasAttribute('open')) {
+    this._boundAccordionClick = (e) => {
+      // Handle subcategory accordion clicks (second level)
+      const categoryTitle = e.target.closest('.mobile-category-title');
+      if (categoryTitle) {
+        const accordion = categoryTitle.closest('.mobile-subcategory-accordion');
+        if (accordion && !accordion.hasAttribute('open')) {
+          const categoryImageContainer = accordion.querySelector('.mobile-category-image--category');
           setTimeout(() => {
-            // Check if there are nested sub-subcategories
             const nestedAccordions = accordion.querySelectorAll('.mobile-sub-subcategory-accordion');
             if (nestedAccordions.length === 0 && categoryImageContainer) {
-              // No nested subcategories, load category image
               this.loadMobileImage(categoryImageContainer);
             } else if (categoryImageContainer) {
-              // Has nested subcategories, hide category image initially
               categoryImageContainer.style.display = 'none';
             }
           }, 300);
         }
-      });
-    });
+        return;
+      }
 
-    // Handle sub-subcategory accordions (third level - last level)
-    const nestedAccordions = document.querySelectorAll('.mobile-sub-subcategory-accordion');
+      // Handle sub-subcategory accordion clicks (third level)
+      const subTitle = e.target.closest('.mobile-sub-subcategory-title');
+      if (subTitle) {
+        const accordion = subTitle.closest('.mobile-sub-subcategory-accordion');
+        if (!accordion) return;
+        const subcategoryImageContainer = accordion.querySelector('.mobile-category-image--subcategory');
+        const parentCategoryImage = accordion.closest('.mobile-subcategory-content')?.querySelector('.mobile-category-image--category');
 
-    nestedAccordions.forEach((accordion) => {
-      const summary = accordion.querySelector('.mobile-sub-subcategory-title');
-      const subcategoryImageContainer = accordion.querySelector('.mobile-category-image--subcategory');
-      const parentCategoryImage = accordion.closest('.mobile-subcategory-content')?.querySelector('.mobile-category-image--category');
-
-      summary?.addEventListener('click', () => {
-        // Lazy load subcategory image when nested accordion opens (last level)
         if (!accordion.hasAttribute('open')) {
           setTimeout(() => {
-            // Load image from the last level (sub-subcategory)
             if (subcategoryImageContainer) {
               this.loadMobileImage(subcategoryImageContainer);
             }
-            // Hide parent category image when nested subcategory is open
             if (parentCategoryImage) {
               parentCategoryImage.style.display = 'none';
             }
           }, 300);
         } else {
-          // When closing, show category image again if needed
           if (parentCategoryImage && !parentCategoryImage.querySelector('img')) {
             parentCategoryImage.style.display = '';
             this.loadMobileImage(parentCategoryImage);
           }
         }
-      });
-    });
+      }
+    };
+
+    this.mobileMenu.addEventListener('click', this._boundAccordionClick);
   }
 
   loadMobileImage(container) {
@@ -857,7 +846,7 @@ class CustomHeader {
 
     if (!collectionHandle) return;
 
-    fetch(`/collections/${collectionHandle}.js`)
+    fetch(`/collections/${collectionHandle}.js`, { signal: this.fetchController.signal })
       .then((response) => (response.ok ? response.json() : null))
       .then((collection) => {
         if (collection && collection.image) {
@@ -873,7 +862,8 @@ class CustomHeader {
           container.appendChild(img);
         }
       })
-      .catch(() => {
+      .catch((error) => {
+        if (error?.name === 'AbortError') return;
         // Silent fail - no fallback images
       });
   }
@@ -883,29 +873,65 @@ class CustomHeader {
     const isHidden = this.mobileMenu.getAttribute('aria-hidden') === 'true';
     this.mobileMenu.setAttribute('aria-hidden', !isHidden);
     this.mobileMenuToggle.setAttribute('aria-expanded', isHidden);
-    
+
     // Show/hide backdrop
     if (this.mobileMenuBackdrop) {
       this.mobileMenuBackdrop.setAttribute('aria-hidden', isHidden);
     }
-    
+
     if (isHidden) {
       document.body.style.overflow = 'hidden';
+      this._enableFocusTrap();
     } else {
       document.body.style.overflow = '';
+      this._disableFocusTrap();
+    }
+  }
+
+  _enableFocusTrap() {
+    this._boundFocusTrap = (e) => {
+      if (e.key !== 'Tab') return;
+      const focusableElements = this.mobileMenu.querySelectorAll(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusableElements.length === 0) return;
+
+      const firstFocusable = focusableElements[0];
+      const lastFocusable = focusableElements[focusableElements.length - 1];
+
+      if (e.shiftKey) {
+        if (document.activeElement === firstFocusable) {
+          e.preventDefault();
+          lastFocusable.focus();
+        }
+      } else {
+        if (document.activeElement === lastFocusable) {
+          e.preventDefault();
+          firstFocusable.focus();
+        }
+      }
+    };
+    this.mobileMenu.addEventListener('keydown', this._boundFocusTrap);
+  }
+
+  _disableFocusTrap() {
+    if (this._boundFocusTrap) {
+      this.mobileMenu.removeEventListener('keydown', this._boundFocusTrap);
+      this._boundFocusTrap = null;
     }
   }
 
   closeMobileMenu() {
     this.mobileMenu.setAttribute('aria-hidden', 'true');
     this.mobileMenuToggle.setAttribute('aria-expanded', 'false');
-    
+
     // Hide backdrop
     if (this.mobileMenuBackdrop) {
       this.mobileMenuBackdrop.setAttribute('aria-hidden', 'true');
     }
-    
+
     document.body.style.overflow = '';
+    this._disableFocusTrap();
     
     // Remove any swipe class and reset transforms
     this.mobileMenu.classList.remove('swiping');
@@ -1106,15 +1132,81 @@ class CustomHeader {
 
   // Cleanup method to prevent memory leaks
   destroy() {
-    // Cancel any pending timeouts
+    // Cancel any pending timeouts and RAFs
     clearTimeout(this.menuLeaveTimeout);
     clearTimeout(this.hoverIntentTimeout);
-
-    // Cancel any pending RAF calls
     cancelAnimationFrame(this.rafId);
     cancelAnimationFrame(this.zone1LeaveRAF);
     cancelAnimationFrame(this.zone2LeaveRAF);
     cancelAnimationFrame(this.zone3LeaveRAF);
+
+    // Abort pending fetch requests
+    this.fetchController?.abort();
+
+    // Remove document-level listeners
+    document.removeEventListener('click', this._boundDocumentClick);
+    document.removeEventListener('keydown', this._boundDocumentKeydown);
+    window.removeEventListener('resize', this._boundHandleResize);
+
+    // Remove mobile menu listeners
+    if (this.mobileMenuToggle) {
+      this.mobileMenuToggle.removeEventListener('click', this._boundToggleMobileMenu);
+    }
+    if (this.mobileMenuClose) {
+      this.mobileMenuClose.removeEventListener('click', this._boundCloseMobileMenu);
+    }
+    if (this.mobileMenuBackdrop) {
+      this.mobileMenuBackdrop.removeEventListener('click', this._boundCloseMobileMenu);
+    }
+    if (this.mobileMenu) {
+      this.mobileMenu.removeEventListener('touchstart', this._boundHandleTouchStart);
+      this.mobileMenu.removeEventListener('touchmove', this._boundHandleTouchMove);
+      this.mobileMenu.removeEventListener('touchend', this._boundHandleTouchEnd);
+      this.mobileMenu.removeEventListener('click', this._boundAccordionClick);
+    }
+    this._disableFocusTrap();
+
+    // Remove dropdown listeners
+    this.dropdownButtons.forEach(button => {
+      button.removeEventListener('click', this._boundHandleAnchorDropdown);
+      button.removeEventListener('click', this._boundToggleDropdown);
+      button.removeEventListener('keydown', this._boundHandleDropdownKeydown);
+    });
+    this.dropdownMenus.forEach(menu => {
+      menu.removeEventListener('focusin', this._boundHandleDropdownFocusIn);
+      menu.removeEventListener('focusout', this._boundHandleDropdownFocusOut);
+    });
+
+    // Remove mega menu listeners
+    if (this.megaMenuWrapper) {
+      this.megaMenuWrapper.removeEventListener('mouseenter', this._boundMegaMenuEnter);
+      this.megaMenuWrapper.removeEventListener('mouseleave', this._boundMegaMenuLeave);
+    }
+    if (this.megaMenuDropdown) {
+      this.megaMenuDropdown.removeEventListener('mouseenter', this._boundMegaMenuEnter);
+      this.megaMenuDropdown.removeEventListener('mouseleave', this._boundMegaMenuLeave);
+    }
+    if (this.megaMenuTrigger) {
+      this.megaMenuTrigger.removeEventListener('keydown', this._boundTriggerKeydown);
+    }
+
+    // Remove zone listeners
+    if (this.zone1) {
+      this.zone1.removeEventListener('mouseover', this._boundZone1MouseOver);
+      this.zone1.removeEventListener('mouseout', this._boundZone1MouseOut);
+      this.zone1.removeEventListener('mouseleave', this._boundZone1Leave);
+      this.zone1.removeEventListener('keydown', this._boundZone1Keydown);
+    }
+    if (this.zone2) {
+      this.zone2.removeEventListener('mouseover', this._boundZone2MouseOver);
+      this.zone2.removeEventListener('mouseleave', this._boundZone2Leave);
+      this.zone2.removeEventListener('keydown', this._boundZone2Keydown);
+    }
+    if (this.zone3) {
+      this.zone3.removeEventListener('mouseover', this._boundZone3MouseOver);
+      this.zone3.removeEventListener('mouseleave', this._boundZone3Leave);
+      this.zone3.removeEventListener('keydown', this._boundZone3Keydown);
+    }
 
     // Reset state
     this.currentActiveCategory = null;
