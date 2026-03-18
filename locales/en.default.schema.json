@@ -3005,6 +3005,14 @@
         "name": "Quick order list"
       }
     },
+    "lg-recommended-products": {
+      "name": "LG Recommended Products",
+      "settings": {
+        "enable_slider": {
+          "label": "Enable slider"
+        }
+      }
+    },
     "related-products": {
       "name": "Related products",
       "settings": {

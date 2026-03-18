@@ -1,117 +1,274 @@
 {{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
 {{ 'component-slider.css' | asset_url | stylesheet_tag }}
 
-{%- assign product = product | default: null -%}
-{%- assign collection = collection | default: null -%}
-{%- assign enable_slider = section.settings.enable_slider -%}
-{%- assign product_limit = section.settings.product_limit | default: 4 -%}
-{%- assign fallback_collection = section.settings.fallback_collection -%}
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
 
-<div class="recommended-products-section">
-  <div class="page-width isolate">
-    <div class="recommended-products__header">
-      <h2 class="h3">Recommended for you</h2>
-    </div>
-    <slider-component
-      class="{% if enable_slider %}slider-component-desktop{% else %}page-width-desktop{% endif %}"
-      style="overflow:visible;"
-    >
-      <ul
-        id="RecommendedSlider-{{ section.id }}"
-        class="grid product-grid contains-card contains-card--product grid--{{ product_limit }}-col-desktop{% if enable_slider %} slider slider--desktop{% endif %}"
-        role="list"
-        aria-label="Recommended products slider"
-        style="margin:0;padding:0;list-style:none;"
-      ></ul>
-      <div id="recommended-slider-buttons-{{ section.id }}" style="display:none;">
-        <div class="slider-buttons">
-          <button
-            type="button"
-            class="slider-button slider-button--prev"
-            name="previous"
-            aria-label="Previous slide"
-            aria-controls="RecommendedSlider-{{ section.id }}"
-          >
-            <span class="svg-wrapper">{{ 'icon-caret.svg' | inline_asset_content }}</span>
-          </button>
-          <div class="slider-counter caption">
-            <span class="slider-counter--current">1</span>
-            <span aria-hidden="true"> / </span>
-            <span class="visually-hidden">of</span>
-            <span class="slider-counter--total">1</span>
-          </div>
-          <button
-            type="button"
-            class="slider-button slider-button--next"
-            name="next"
-            aria-label="Next slide"
-            aria-controls="RecommendedSlider-{{ section.id }}"
-          >
-            <span class="svg-wrapper">{{ 'icon-caret.svg' | inline_asset_content }}</span>
-          </button>
-        </div>
-      </div>
-    </slider-component>
-  </div>
-</div>
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
 
-{%- assign product_limit = section.settings.product_limit | default: 4 -%}
+{%- assign product_limit = section.settings.products_to_show | default: 4 -%}
 {%- assign fallback_collection = section.settings.fallback_collection -%}
 {%- assign products = fallback_collection.products | slice: 0, product_limit -%}
+{%- assign enable_slider = section.settings.enable_slider -%}
 
 {%- if products.size > 0 -%}
-  {%- assign show_slider_buttons = false -%}
-  {%- if section.settings.enable_slider and products.size > 1 -%}
-    {%- assign show_slider_buttons = true -%}
-  {%- endif -%}
-  <script>
-    document.getElementById('recommended-slider-buttons-{{ section.id }}').style.display = {{ show_slider_buttons | json }} ? '' : 'none';
-  </script>
-  {%- for product in products -%}
-    <li
-      class="grid__item{% if section.settings.enable_slider %} slider__slide{% endif %}"
-      {% if section.settings.enable_slider %}
-        id="Slide-{{ section.id }}-{{ forloop.index }}"
-      {% endif %}
-    >
-      {% render 'card-product',
-        card_product: product,
-        section_id: section.id
-      %}
-    </li>
-  {%- endfor -%}
-{%- else -%}
-  <li><p>No recommendations available.</p></li>
+  <div class="color-{{ section.settings.color_scheme }} gradient">
+    <div class="recommended-products-section page-width section-{{ section.id }}-padding isolate{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="recommended-products__heading inline-richtext {{ section.settings.heading_size }}">
+          {{ section.settings.heading }}
+        </h2>
+      {%- endif -%}
+
+      {%- if enable_slider -%}
+        <slider-component class="slider-mobile-gutter">
+          <ul
+            id="Slider-{{ section.id }}"
+            class="grid product-grid contains-card contains-card--product grid--{{ section.settings.columns_desktop }}-col-desktop grid--{{ section.settings.columns_mobile }}-col-tablet-down slider slider--desktop slider--tablet grid--peek"
+            role="list"
+          >
+            {%- assign skip_card_product_styles = false -%}
+            {%- for product in products -%}
+              <li
+                id="Slide-{{ section.id }}-{{ forloop.index }}"
+                class="grid__item slider__slide"
+              >
+                {% render 'card-product',
+                  card_product: product,
+                  media_aspect_ratio: section.settings.image_ratio,
+                  show_secondary_image: section.settings.show_secondary_image,
+                  show_vendor: section.settings.show_vendor,
+                  show_rating: section.settings.show_rating,
+                  section_id: section.id,
+                  skip_styles: skip_card_product_styles
+                %}
+              </li>
+              {%- assign skip_card_product_styles = true -%}
+            {%- endfor -%}
+          </ul>
+
+          <div class="slider-buttons no-js-hidden">
+            <button
+              type="button"
+              class="slider-button slider-button--prev"
+              name="previous"
+              aria-label="{{ 'general.slider.previous_slide' | t }}"
+              aria-controls="Slider-{{ section.id }}"
+            >
+              {% render 'icon-caret' %}
+            </button>
+            <div class="slider-counter caption">
+              <span class="slider-counter--current">1</span>
+              <span aria-hidden="true"> / </span>
+              <span class="visually-hidden">{{ 'general.slider.of' | t }}</span>
+              <span class="slider-counter--total">{{ products.size }}</span>
+            </div>
+            <button
+              type="button"
+              class="slider-button slider-button--next"
+              name="next"
+              aria-label="{{ 'general.slider.next_slide' | t }}"
+              aria-controls="Slider-{{ section.id }}"
+            >
+              {% render 'icon-caret' %}
+            </button>
+          </div>
+        </slider-component>
+      {%- else -%}
+        <ul
+          class="grid product-grid contains-card contains-card--product grid--{{ section.settings.columns_desktop }}-col-desktop grid--{{ section.settings.columns_mobile }}-col-tablet-down"
+          role="list"
+        >
+          {%- assign skip_card_product_styles = false -%}
+          {%- for product in products -%}
+            <li class="grid__item">
+              {% render 'card-product',
+                card_product: product,
+                media_aspect_ratio: section.settings.image_ratio,
+                show_secondary_image: section.settings.show_secondary_image,
+                show_vendor: section.settings.show_vendor,
+                show_rating: section.settings.show_rating,
+                section_id: section.id,
+                skip_styles: skip_card_product_styles
+              %}
+            </li>
+            {%- assign skip_card_product_styles = true -%}
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  </div>
 {%- endif -%}
 
 {% schema %}
 {
-  "name": "Recommended Products",
+  "name": "t:sections.lg-recommended-products.name",
+  "tag": "section",
+  "class": "section",
   "settings": [
     {
-      "type": "range",
-      "id": "product_limit",
-      "min": 2,
-      "max": 12,
-      "step": 1,
-      "default": 4,
-      "label": "Number of products to show"
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "Recommended for you",
+      "label": "t:sections.related-products.settings.heading.label"
     },
     {
-      "type": "checkbox",
-      "id": "enable_slider",
-      "label": "Show as slider",
-      "default": false
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "h2",
+          "label": "t:sections.all.heading_size.options__1.label"
+        },
+        {
+          "value": "h1",
+          "label": "t:sections.all.heading_size.options__2.label"
+        },
+        {
+          "value": "h0",
+          "label": "t:sections.all.heading_size.options__3.label"
+        }
+      ],
+      "default": "h1",
+      "label": "t:sections.all.heading_size.label"
     },
     {
       "type": "collection",
       "id": "fallback_collection",
-      "label": "Fallback collection (if no product/collection)"
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 4,
+      "label": "t:sections.related-products.settings.products_to_show.label"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 4,
+      "label": "t:sections.related-products.settings.columns_desktop.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_slider",
+      "default": false,
+      "label": "t:sections.lg-recommended-products.settings.enable_slider.label"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "info": "t:sections.all.colors.has_cards_info",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.related-products.settings.header__2.content"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "t:sections.related-products.settings.image_ratio.options__1.label"
+        },
+        {
+          "value": "portrait",
+          "label": "t:sections.related-products.settings.image_ratio.options__2.label"
+        },
+        {
+          "value": "square",
+          "label": "t:sections.related-products.settings.image_ratio.options__3.label"
+        }
+      ],
+      "default": "adapt",
+      "label": "t:sections.related-products.settings.image_ratio.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_secondary_image",
+      "default": false,
+      "label": "t:sections.related-products.settings.show_secondary_image.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "default": false,
+      "label": "t:sections.related-products.settings.show_vendor.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "default": false,
+      "label": "t:sections.related-products.settings.show_rating.label",
+      "info": "t:sections.related-products.settings.show_rating.info"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.related-products.settings.header_mobile.content"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "default": "2",
+      "label": "t:sections.related-products.settings.columns_mobile.label",
+      "options": [
+        {
+          "value": "1",
+          "label": "t:sections.related-products.settings.columns_mobile.options__1.label"
+        },
+        {
+          "value": "2",
+          "label": "t:sections.related-products.settings.columns_mobile.options__2.label"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
     }
   ],
   "presets": [
     {
-      "name": "Recommended Products"
+      "name": "t:sections.lg-recommended-products.name"
     }
   ]
 }

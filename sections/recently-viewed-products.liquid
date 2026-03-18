@@ -1,0 +1,372 @@
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-slider.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  .recently-viewed__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .recently-viewed__clear-btn {
+    background: none;
+    border: none;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 1.4rem;
+    color: rgb(var(--color-foreground));
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+  }
+
+  .recently-viewed__clear-btn:hover {
+    opacity: 1;
+  }
+
+  .recently-viewed__empty {
+    text-align: center;
+    padding: 2rem;
+    color: rgb(var(--color-foreground));
+    opacity: 0.6;
+  }
+
+  .recently-viewed-products[data-loading="true"] .recently-viewed__grid {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+{%- endstyle -%}
+
+<recently-viewed-products
+  class="recently-viewed-products color-{{ section.settings.color_scheme }} gradient"
+  data-section-id="{{ section.id }}"
+  data-products-to-show="{{ section.settings.products_to_show }}"
+  data-exclude-current="{{ section.settings.exclude_current_product }}"
+  data-current-product-id="{{ product.id }}"
+  style="display: block;"
+>
+  <div class="page-width section-{{ section.id }}-padding isolate{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+    <div class="recently-viewed__header">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="recently-viewed__heading inline-richtext {{ section.settings.heading_size }}">
+          {{ section.settings.heading }}
+        </h2>
+      {%- endif -%}
+
+      {%- if section.settings.show_clear_history -%}
+        <button type="button" class="recently-viewed__clear-btn" data-recently-viewed-clear hidden>
+          {{ 'sections.recently_viewed.clear_history' | t }}
+        </button>
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.enable_slider -%}
+      <slider-component class="slider-mobile-gutter recently-viewed__slider" data-recently-viewed-container>
+        <ul
+          id="RecentlyViewedSlider-{{ section.id }}"
+          class="grid product-grid contains-card contains-card--product grid--{{ section.settings.columns_desktop }}-col-desktop grid--{{ section.settings.columns_mobile }}-col-tablet-down slider slider--desktop slider--tablet grid--peek recently-viewed__grid"
+          role="list"
+          data-recently-viewed-grid
+        >
+          <!-- Products will be rendered here by JavaScript -->
+        </ul>
+
+        <div class="slider-buttons no-js-hidden" data-slider-buttons hidden>
+          <button
+            type="button"
+            class="slider-button slider-button--prev"
+            name="previous"
+            aria-label="{{ 'general.slider.previous_slide' | t }}"
+            aria-controls="RecentlyViewedSlider-{{ section.id }}"
+          >
+            {% render 'icon-caret' %}
+          </button>
+          <div class="slider-counter caption">
+            <span class="slider-counter--current">1</span>
+            <span aria-hidden="true"> / </span>
+            <span class="visually-hidden">{{ 'general.slider.of' | t }}</span>
+            <span class="slider-counter--total">1</span>
+          </div>
+          <button
+            type="button"
+            class="slider-button slider-button--next"
+            name="next"
+            aria-label="{{ 'general.slider.next_slide' | t }}"
+            aria-controls="RecentlyViewedSlider-{{ section.id }}"
+          >
+            {% render 'icon-caret' %}
+          </button>
+        </div>
+      </slider-component>
+    {%- else -%}
+      <div data-recently-viewed-container>
+        <ul
+          class="grid product-grid contains-card contains-card--product grid--{{ section.settings.columns_desktop }}-col-desktop grid--{{ section.settings.columns_mobile }}-col-tablet-down recently-viewed__grid"
+          role="list"
+          data-recently-viewed-grid
+        >
+          <!-- Products will be rendered here by JavaScript -->
+        </ul>
+      </div>
+    {%- endif -%}
+
+    <p class="recently-viewed__empty" data-recently-viewed-empty hidden>
+      {{ 'sections.recently_viewed.no_products' | t }}
+    </p>
+  </div>
+</recently-viewed-products>
+
+{%- comment -%}
+  Template for rendering product cards via JavaScript
+  This hidden template is cloned and populated with product data
+{%- endcomment -%}
+<template id="recently-viewed-card-template-{{ section.id }}">
+  <li class="grid__item{% if section.settings.enable_slider %} slider__slide{% endif %}">
+    <div class="card-wrapper product-card-wrapper underline-links-hover">
+      <div class="card card--card card--media" style="--ratio-percent: 100%;">
+        <div class="card__inner color-scheme-1 gradient ratio" style="--ratio-percent: 100%;">
+          <div class="card__media">
+            <div class="media media--transparent media--hover-effect">
+              <a href="" class="recently-viewed-card__link" tabindex="-1">
+                <img
+                  src=""
+                  alt=""
+                  class="motion-reduce recently-viewed-card__image"
+                  loading="lazy"
+                  width="300"
+                  height="300"
+                />
+                {%- if section.settings.show_secondary_image -%}
+                  <img
+                    src=""
+                    alt=""
+                    class="motion-reduce recently-viewed-card__image-secondary"
+                    loading="lazy"
+                    width="300"
+                    height="300"
+                    hidden
+                  />
+                {%- endif -%}
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="card__content">
+          <div class="card__information">
+            {%- if section.settings.show_vendor -%}
+              <span class="visually-hidden">{{ 'accessibility.vendor' | t }}</span>
+              <div class="caption-with-letter-spacing light recently-viewed-card__vendor"></div>
+            {%- endif -%}
+            <h3 class="card__heading h5">
+              <a href="" class="full-unstyled-link recently-viewed-card__title-link"></a>
+            </h3>
+            <div class="card-information">
+              <span class="price-item price-item--regular recently-viewed-card__price"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </li>
+</template>
+
+{%- comment -%}
+  Expose current product data for tracking (only on product pages)
+{%- endcomment -%}
+{%- if product != blank -%}
+  <script type="application/json" data-recently-viewed-product-data>
+    {
+      "id": {{ product.id | json }},
+      "handle": {{ product.handle | json }},
+      "title": {{ product.title | json }},
+      "url": {{ product.url | json }},
+      "vendor": {{ product.vendor | json }},
+      "price": {{ product.price | json }},
+      "priceMin": {{ product.price_min | json }},
+      "priceVaries": {{ product.price_varies | json }},
+      "image": {{ product.featured_image | image_url: width: 600 | json }},
+      "secondaryImage": {% if product.images[1] %}{{ product.images[1] | image_url: width: 600 | json }}{% else %}null{% endif %}
+    }
+  </script>
+{%- endif -%}
+
+<script src="{{ 'recently-viewed.js' | asset_url }}" defer="defer"></script>
+
+{% schema %}
+{
+  "name": "t:sections.recently_viewed.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "Recently Viewed",
+      "label": "t:sections.related-products.settings.heading.label"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "h2",
+          "label": "t:sections.all.heading_size.options__1.label"
+        },
+        {
+          "value": "h1",
+          "label": "t:sections.all.heading_size.options__2.label"
+        },
+        {
+          "value": "h0",
+          "label": "t:sections.all.heading_size.options__3.label"
+        }
+      ],
+      "default": "h1",
+      "label": "t:sections.all.heading_size.label"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 4,
+      "label": "t:sections.related-products.settings.products_to_show.label"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 4,
+      "label": "t:sections.related-products.settings.columns_desktop.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_slider",
+      "default": false,
+      "label": "Enable slider"
+    },
+    {
+      "type": "checkbox",
+      "id": "exclude_current_product",
+      "default": true,
+      "label": "Exclude current product"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_clear_history",
+      "default": false,
+      "label": "Show clear history button"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "info": "t:sections.all.colors.has_cards_info",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.related-products.settings.header__2.content"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "t:sections.related-products.settings.image_ratio.options__1.label"
+        },
+        {
+          "value": "portrait",
+          "label": "t:sections.related-products.settings.image_ratio.options__2.label"
+        },
+        {
+          "value": "square",
+          "label": "t:sections.related-products.settings.image_ratio.options__3.label"
+        }
+      ],
+      "default": "adapt",
+      "label": "t:sections.related-products.settings.image_ratio.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_secondary_image",
+      "default": false,
+      "label": "t:sections.related-products.settings.show_secondary_image.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "default": false,
+      "label": "t:sections.related-products.settings.show_vendor.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.related-products.settings.header_mobile.content"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "default": "2",
+      "label": "t:sections.related-products.settings.columns_mobile.label",
+      "options": [
+        {
+          "value": "1",
+          "label": "t:sections.related-products.settings.columns_mobile.options__1.label"
+        },
+        {
+          "value": "2",
+          "label": "t:sections.related-products.settings.columns_mobile.options__2.label"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.recently_viewed.name"
+    }
+  ]
+}
+{% endschema %}

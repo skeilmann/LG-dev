@@ -12,12 +12,26 @@ class PredictiveSearch extends SearchForm {
   }
 
   setupEventListeners() {
-    this.input.form.addEventListener('submit', this.onFormSubmit.bind(this));
+    this.boundOnFormSubmit = this.onFormSubmit.bind(this);
+    this.boundOnFocus = this.onFocus.bind(this);
+    this.boundOnFocusOut = this.onFocusOut.bind(this);
+    this.boundOnKeyup = this.onKeyup.bind(this);
+    this.boundOnKeydown = this.onKeydown.bind(this);
 
-    this.input.addEventListener('focus', this.onFocus.bind(this));
-    this.addEventListener('focusout', this.onFocusOut.bind(this));
-    this.addEventListener('keyup', this.onKeyup.bind(this));
-    this.addEventListener('keydown', this.onKeydown.bind(this));
+    this.input.form.addEventListener('submit', this.boundOnFormSubmit);
+    this.input.addEventListener('focus', this.boundOnFocus);
+    this.addEventListener('focusout', this.boundOnFocusOut);
+    this.addEventListener('keyup', this.boundOnKeyup);
+    this.addEventListener('keydown', this.boundOnKeydown);
+  }
+
+  disconnectedCallback() {
+    this.input?.form?.removeEventListener('submit', this.boundOnFormSubmit);
+    this.input?.removeEventListener('focus', this.boundOnFocus);
+    this.removeEventListener('focusout', this.boundOnFocusOut);
+    this.removeEventListener('keyup', this.boundOnKeyup);
+    this.removeEventListener('keydown', this.boundOnKeydown);
+    this.abortController?.abort();
   }
 
   getQuery() {
@@ -168,7 +182,7 @@ class PredictiveSearch extends SearchForm {
   }
 
   getSearchResults(searchTerm) {
-    const queryKey = searchTerm.replace(' ', '-').toLowerCase();
+    const queryKey = searchTerm.replaceAll(' ', '-').toLowerCase();
     this.setLiveRegionLoadingState();
 
     if (this.cachedResults[queryKey]) {
@@ -176,7 +190,7 @@ class PredictiveSearch extends SearchForm {
       return;
     }
 
-    fetch(`${routes.predictive_search_url}?q=${encodeURIComponent(searchTerm)}&section_id=predictive-search`, {
+    fetch(`${routes.predictive_search_url}?q=${encodeURIComponent(searchTerm)}&resources[type]=product,collection,page,article,query&resources[options][fields]=title,product_type,variants.title,vendor,tag&section_id=predictive-search`, {
       signal: this.abortController.signal,
     })
       .then((response) => {
@@ -199,8 +213,7 @@ class PredictiveSearch extends SearchForm {
         this.renderSearchResults(resultsMarkup);
       })
       .catch((error) => {
-        if (error?.code === 20) {
-          // Code 20 means the call was aborted
+        if (error?.name === 'AbortError') {
           return;
         }
         this.close();

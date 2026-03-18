@@ -80,13 +80,18 @@ class CustomHeader {
     this.imageContainer = document.querySelector('.mega-menu-featured-image');
 
     // State variables for mega menu management
-    this.hoverTimeout = null;
     this.currentActiveCategory = null;
     this.currentActiveSubcategory = null;
-    this.imageCache = new Map();
-    
     // Performance optimization flags
     this.rafId = null;
+
+    // Separate timeout IDs to prevent race conditions between zones
+    this.menuLeaveTimeout = null;
+    this.zone1LeaveRAF = null;
+    this.zone2LeaveRAF = null;
+    this.zone3LeaveRAF = null;
+    this.hoverIntentTimeout = null;
+    this.HOVER_INTENT_DELAY = 50; // ms - imperceptible but filters accidental hovers
     
     // Mobile menu swipe state
     this.isMobileMenuDragging = false;
@@ -165,8 +170,8 @@ class CustomHeader {
       }
     });
 
-    // Handle window resize
-    window.addEventListener('resize', this.handleResize.bind(this));
+    // Handle window resize (debounced to avoid excessive calls during drag)
+    window.addEventListener('resize', debounce(this.handleResize.bind(this), 150));
   }
 
   // ===== MEGA MENU FUNCTIONALITY =====
@@ -175,7 +180,7 @@ class CustomHeader {
 
     // Unified hover handler - prevents blinking when moving between trigger and dropdown
     const handleMouseEnter = () => {
-      clearTimeout(this.hoverTimeout);
+      clearTimeout(this.menuLeaveTimeout);
       // Only open if not already open to prevent unnecessary state changes
       if (this.megaMenuDropdown.getAttribute('aria-hidden') === 'true') {
         this.openMegaMenu();
@@ -198,7 +203,7 @@ class CustomHeader {
 
       // Use a small delay to verify mouse truly left (handles edge cases)
       // The CSS overlap (top: calc(100% - 1px)) should prevent most gap issues
-      this.hoverTimeout = setTimeout(() => {
+      this.menuLeaveTimeout = setTimeout(() => {
         // Double-check mouse position before closing
         const mouseElement = document.elementFromPoint(e.clientX, e.clientY);
         if (
@@ -210,7 +215,7 @@ class CustomHeader {
           return;
         }
         this.closeMegaMenu();
-      }, 150); // Reduced delay since CSS overlap handles the gap
+      }, 75); // CSS overlap handles gap; 75ms filters accidental exits
     };
 
     // Apply unified handlers to both wrapper and dropdown
@@ -235,22 +240,33 @@ class CustomHeader {
   initCategoryHovers() {
     if (!this.zone1) return;
 
-      const categoryLinks = this.zone1.querySelectorAll('.mega-menu-category');
-      
-      categoryLinks.forEach((link) => {
-        link.addEventListener('mouseenter', () => {
+    const categoryLinks = this.zone1.querySelectorAll('.mega-menu-category');
+
+    // Hover intent pattern: 50ms delay filters accidental hovers
+    categoryLinks.forEach((link) => {
+      link.addEventListener('mouseenter', () => {
+        clearTimeout(this.hoverIntentTimeout);
+        this.hoverIntentTimeout = setTimeout(() => {
           this.handleCategoryHover(link);
-        });
+        }, this.HOVER_INTENT_DELAY);
       });
 
-    // Reset to default state when leaving column 1 (with delay)
-      this.zone1.addEventListener('mouseleave', () => {
-      this.hoverTimeout = setTimeout(() => {
-        // Only reset if mouse hasn't moved to another zone
-        if (!this.zone2.matches(':hover') && !this.zone3.matches(':hover') && !this.zone4.matches(':hover')) {
-          this.resetToDefaultState();
-        }
-      }, 100);
+      link.addEventListener('mouseleave', () => {
+        clearTimeout(this.hoverIntentTimeout);
+      });
+    });
+
+    // Reset to default state when leaving column 1 (double RAF for smooth transition)
+    this.zone1.addEventListener('mouseleave', () => {
+      cancelAnimationFrame(this.zone1LeaveRAF);
+      this.zone1LeaveRAF = requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          // Only reset if mouse hasn't moved to another zone
+          if (!this.zone2.matches(':hover') && !this.zone3.matches(':hover') && !this.zone4.matches(':hover')) {
+            this.resetToDefaultState();
+          }
+        });
+      });
     });
   }
 
@@ -265,15 +281,18 @@ class CustomHeader {
       }
     });
 
-    // When leaving column 2, hide column 3 and reset images to category level (with delay)
-      this.zone2.addEventListener('mouseleave', () => {
-      this.hoverTimeout = setTimeout(() => {
-        // Only hide if mouse hasn't moved to column 3
-        if (!this.zone3.matches(':hover')) {
-          this.resetVisibility(document.querySelectorAll('.mega-menu-sub-subcategories'));
-          this.showCategoryImage();
-        }
-      }, 100);
+    // When leaving column 2, hide column 3 and reset images to category level (double RAF)
+    this.zone2.addEventListener('mouseleave', () => {
+      cancelAnimationFrame(this.zone2LeaveRAF);
+      this.zone2LeaveRAF = requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          // Only hide if mouse hasn't moved to column 3
+          if (!this.zone3.matches(':hover')) {
+            this.resetVisibility(document.querySelectorAll('.mega-menu-sub-subcategories'));
+            this.showCategoryImage();
+          }
+        });
+      });
     });
   }
 
@@ -288,11 +307,14 @@ class CustomHeader {
       }
     });
 
-    // When leaving column 3, reset image to subcategory level (with delay)
+    // When leaving column 3, reset image to subcategory level (double RAF)
     this.zone3.addEventListener('mouseleave', () => {
-      this.hoverTimeout = setTimeout(() => {
-        this.showSubcategoryImage();
-      }, 100);
+      cancelAnimationFrame(this.zone3LeaveRAF);
+      this.zone3LeaveRAF = requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          this.showSubcategoryImage();
+        });
+      });
     });
   }
 
@@ -543,13 +565,7 @@ class CustomHeader {
 
   // ===== KEYBOARD NAVIGATION =====
   initKeyboardNavigation() {
-    // Global escape key handler
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && this.megaMenuDropdown.getAttribute('aria-hidden') === 'false') {
-        this.closeMegaMenu();
-        this.megaMenuTrigger?.focus();
-      }
-    });
+    // Note: Escape key is handled globally in bindEvents()
 
     // Mega menu trigger keyboard support
     if (this.megaMenuTrigger) {
@@ -1078,7 +1094,7 @@ class CustomHeader {
   // ===== UTILITY FUNCTIONS =====
   handleResize() {
     // Close mobile menu on resize to desktop
-    if (window.innerWidth >= 990 && this.mobileMenu.getAttribute('aria-hidden') === 'false') {
+    if (window.innerWidth >= 990 && this.mobileMenu?.getAttribute('aria-hidden') === 'false') {
       this.closeMobileMenu();
     }
     
@@ -1090,17 +1106,16 @@ class CustomHeader {
 
   // Cleanup method to prevent memory leaks
   destroy() {
-    // Cancel any pending timeouts or RAF calls
-    if (this.hoverTimeout) {
-      clearTimeout(this.hoverTimeout);
-    }
-    if (this.rafId) {
-      cancelAnimationFrame(this.rafId);
-    }
-    
-    // Clear image cache
-    this.imageCache.clear();
-    
+    // Cancel any pending timeouts
+    clearTimeout(this.menuLeaveTimeout);
+    clearTimeout(this.hoverIntentTimeout);
+
+    // Cancel any pending RAF calls
+    cancelAnimationFrame(this.rafId);
+    cancelAnimationFrame(this.zone1LeaveRAF);
+    cancelAnimationFrame(this.zone2LeaveRAF);
+    cancelAnimationFrame(this.zone3LeaveRAF);
+
     // Reset state
     this.currentActiveCategory = null;
     this.currentActiveSubcategory = null;
