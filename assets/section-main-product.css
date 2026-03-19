@@ -2131,3 +2131,182 @@ a.product__text {
     overflow: hidden;
   }
 }
+
+/* ============================================================
+   Full-Width Product Description (Figma design)
+   ============================================================ */
+
+.product-description-fullwidth {
+  margin-top: 4rem;
+  padding-top: 2rem;
+}
+
+.product-description-fullwidth__heading {
+  font-size: 4rem;
+  font-weight: 600;
+  color: var(--color-brand-text);
+  margin: 0 0 2rem;
+  letter-spacing: -0.04rem;
+}
+
+.product-description-fullwidth__body {
+  position: relative;
+}
+
+.product-description-fullwidth__content {
+  font-size: 2.4rem;
+  line-height: 1.6;
+  color: var(--color-brand-text);
+  letter-spacing: -0.024rem;
+}
+
+.product-description-fullwidth__content p {
+  margin-bottom: 0.5em;
+}
+
+.product-description-fullwidth__content strong,
+.product-description-fullwidth__content b {
+  font-weight: 600;
+}
+
+/* Hidden paragraphs beyond the visible threshold */
+.product-description__hidden {
+  display: none;
+}
+
+.product-description-fullwidth__body--expanded .product-description__hidden {
+  display: block;
+}
+
+/* Fade gradient on the last visible paragraph — fades last ~3 lines */
+.product-description__fade-paragraph {
+  -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+}
+
+/* "Читать полностью" link */
+.product-description-fullwidth__toggle {
+  display: inline-block;
+  margin-top: 1.5rem;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 2.4rem;
+  color: var(--color-brand-pink);
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+  letter-spacing: -0.024rem;
+  transition: color 0.2s ease;
+}
+
+.product-description-fullwidth__toggle:hover {
+  color: var(--color-brand-pink-dark);
+}
+
+@media screen and (max-width: 749px) {
+  .product-description-fullwidth__heading {
+    font-size: 2.8rem;
+  }
+
+  .product-description-fullwidth__content {
+    font-size: 1.8rem;
+  }
+
+  .product-description-fullwidth__toggle {
+    font-size: 1.8rem;
+  }
+
+}
+
+/* ============================================================
+   Delivery & Payment Card (Figma design)
+   ============================================================ */
+
+.delivery-payment-card {
+  display: flex;
+  background: var(--color-background, #fff);
+  border-radius: 3.1857rem;
+  box-shadow: 0 0.3261rem 2.4461rem 0.1631rem rgba(0, 0, 0, 0.1);
+  padding: 3rem 4rem;
+  margin-top: 3rem;
+  gap: 0;
+}
+
+.delivery-payment-card__col {
+  flex: 1;
+  padding: 0 3rem;
+}
+
+.delivery-payment-card__col:first-child {
+  padding-left: 0;
+}
+
+.delivery-payment-card__col:last-child {
+  padding-right: 0;
+}
+
+.delivery-payment-card__divider {
+  width: 1px;
+  background-color: var(--color-brand-gray-hover);
+  flex-shrink: 0;
+  align-self: stretch;
+}
+
+.delivery-payment-card__heading {
+  font-size: 2.8rem;
+  font-weight: 600;
+  color: var(--color-brand-text);
+  margin: 0 0 1.5rem;
+  letter-spacing: -0.028rem;
+}
+
+.delivery-payment-card__list {
+  list-style: disc;
+  padding-left: 2.7rem;
+  margin: 0;
+  font-size: 1.8rem;
+  line-height: 1.7;
+  color: var(--color-brand-text);
+  letter-spacing: -0.018rem;
+}
+
+.delivery-payment-card__list li {
+  margin-bottom: 0.6rem;
+}
+
+.delivery-payment-card__list li:last-child {
+  margin-bottom: 0;
+}
+
+.delivery-payment-card__highlight {
+  color: var(--color-brand-pink-dark);
+  font-weight: 500;
+}
+
+@media screen and (max-width: 749px) {
+  .delivery-payment-card {
+    flex-direction: column;
+    padding: 2rem 2.5rem;
+    border-radius: 2rem;
+    gap: 2rem;
+  }
+
+  .delivery-payment-card__col {
+    padding: 0;
+  }
+
+  .delivery-payment-card__divider {
+    width: 100%;
+    height: 1px;
+    align-self: auto;
+  }
+
+  .delivery-payment-card__heading {
+    font-size: 2.2rem;
+  }
+
+  .delivery-payment-card__list {
+    font-size: 1.5rem;
+  }
+}

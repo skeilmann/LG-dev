@@ -263,11 +263,8 @@
                   {%- endif -%}
                 </div>
               {%- when 'description' -%}
-                {%- if product.description != blank -%}
-                  <div class="product__description rte quick-add-hidden" {{ block.shopify_attributes }}>
-                    {{ product.description }}
-                  </div>
-                {%- endif -%}
+                {%- comment -%} Description rendered full-width below the 2-column grid {%- endcomment -%}
+                {%- assign render_description_below = true -%}
               {%- when 'sku' -%}
                 {%- if sku_rating_row and sku_rating_row_open == false -%}
                   <div class="product__sku-rating-row">
@@ -784,6 +781,74 @@
         </section>
       </div>
     </div>
+
+    {%- comment -%} Full-width product description (Figma design) {%- endcomment -%}
+    {%- if render_description_below and product.description != blank -%}
+      <div class="product-description-fullwidth">
+        <h2 class="product-description-fullwidth__heading">{{ 'products.product.description' | t }}</h2>
+        <div class="product-description-fullwidth__body">
+          <div class="product-description-fullwidth__content rte">
+            {{ product.description }}
+          </div>
+        </div>
+        <button type="button" class="product-description-fullwidth__toggle" data-description-toggle>
+          <span class="product-description-fullwidth__toggle-more">{{ 'products.product.read_more' | t | default: 'Читать полностью' }}</span>
+          <span class="product-description-fullwidth__toggle-less hidden">{{ 'products.product.read_less' | t | default: 'Свернуть' }}</span>
+        </button>
+      </div>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          var content = document.querySelector('.product-description-fullwidth__content');
+          var toggle = document.querySelector('[data-description-toggle]');
+          var body = document.querySelector('.product-description-fullwidth__body');
+          if (!content || !toggle) return;
+
+          var MAX_VISIBLE = 2;
+          var children = content.children;
+          var visibleCount = 0;
+          var hiddenCount = 0;
+          var lastVisibleEl = null;
+
+          for (var i = 0; i < children.length; i++) {
+            /* Skip empty/whitespace-only elements */
+            if (!children[i].textContent || !children[i].textContent.trim()) continue;
+            visibleCount++;
+            if (visibleCount > MAX_VISIBLE) {
+              children[i].classList.add('product-description__hidden');
+              hiddenCount++;
+            } else {
+              lastVisibleEl = children[i];
+            }
+          }
+
+          /* Add fade to last visible paragraph */
+          if (hiddenCount > 0 && lastVisibleEl) {
+            lastVisibleEl.classList.add('product-description__fade-paragraph');
+          }
+
+          /* Hide toggle if nothing was hidden */
+          if (hiddenCount === 0) {
+            toggle.style.display = 'none';
+            return;
+          }
+
+          var moreText = toggle.querySelector('.product-description-fullwidth__toggle-more');
+          var lessText = toggle.querySelector('.product-description-fullwidth__toggle-less');
+          var expanded = false;
+
+          toggle.addEventListener('click', function() {
+            expanded = !expanded;
+            body.classList.toggle('product-description-fullwidth__body--expanded', expanded);
+            if (lastVisibleEl) lastVisibleEl.classList.toggle('product-description__fade-paragraph', !expanded);
+            moreText.classList.toggle('hidden', expanded);
+            lessText.classList.toggle('hidden', !expanded);
+          });
+        });
+      </script>
+    {%- endif -%}
+
+    {%- comment -%} Delivery & Payment info card (Figma design) {%- endcomment -%}
+    {% render 'delivery-payment-info' %}
 
     {% render 'product-media-modal', variant_images: variant_images %}
 
