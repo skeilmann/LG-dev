@@ -1,0 +1,48 @@
+{%- comment -%}
+  Account Favorites Block
+  Renders a grid of the customer's favorite products on the account page.
+  JS (account-favorites.js) fetches product cards via Section Rendering API.
+  Parameters:
+    - block: The block object with settings (heading, max_products, columns_desktop, show_view_all, image_ratio, show_vendor)
+  Usage: {% render 'account-favorites', block: block %}
+  Dependencies: account-favorites.js, favorites-handler.js
+{%- endcomment -%}
+
+<div class="account-block account-block--favorites" {{ block.shopify_attributes }}>
+  <div class="account-block__header">
+    {%- assign default_fav_heading = 'customer.account.my_favorites' | t -%}
+    <h2 class="account-block__heading">
+      {{ block.settings.heading | default: default_fav_heading }}
+    </h2>
+    {%- if block.settings.show_view_all -%}
+      <a href="/pages/favorites" class="account-block__view-all link underlined-link">
+        {{ 'customer.account.view_all_favorites' | t | default: 'View All' }}
+      </a>
+    {%- endif -%}
+  </div>
+
+  <account-favorites
+    data-max-products="{{ block.settings.max_products | default: 6 }}"
+    data-show-vendor="{{ block.settings.show_vendor }}"
+    data-image-ratio="{{ block.settings.image_ratio | default: 'adapt' }}"
+  >
+    <div class="account-favorites__loading">
+      <p>{{ 'accessibility.loading' | t }}</p>
+    </div>
+
+    <ul
+      class="account-favorites__grid grid grid--{{ block.settings.columns_desktop | default: 3 }}-col-desktop"
+      role="list"
+    >
+    </ul>
+
+    <div class="account-favorites__empty" style="display: none;">
+      <p>{{ 'customer.account.favorites_empty' | t | default: "You haven't added any favorites yet." }}</p>
+      <a href="{{ routes.collections_url }}" class="button button--secondary">
+        {{ 'customer.account.favorites_browse' | t | default: 'Browse products' }}
+      </a>
+    </div>
+  </account-favorites>
+</div>
+
+<script src="{{ 'account-favorites.js' | asset_url }}" defer="defer"></script>

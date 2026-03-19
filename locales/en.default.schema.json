@@ -875,6 +875,87 @@
     "favorites": {
       "name": "Favorites"
     },
+    "main-account": {
+      "name": "Customer account",
+      "settings": {
+        "heading": {
+          "label": "Heading"
+        },
+        "show_logout": {
+          "label": "Show logout button"
+        }
+      },
+      "blocks": {
+        "order_history": {
+          "name": "Order History",
+          "settings": {
+            "heading": {
+              "label": "Heading"
+            },
+            "orders_per_page": {
+              "label": "Orders per page"
+            }
+          }
+        },
+        "favorites": {
+          "name": "Favorites",
+          "settings": {
+            "heading": {
+              "label": "Heading"
+            },
+            "max_products": {
+              "label": "Maximum products to show"
+            },
+            "columns_desktop": {
+              "label": "Desktop columns"
+            },
+            "show_view_all": {
+              "label": "Show 'View All' link"
+            },
+            "image_ratio": {
+              "label": "Image ratio",
+              "options__1": {
+                "label": "Adapt to image"
+              },
+              "options__2": {
+                "label": "Portrait"
+              },
+              "options__3": {
+                "label": "Square"
+              }
+            },
+            "show_vendor": {
+              "label": "Show vendor"
+            }
+          }
+        },
+        "loyalty_points": {
+          "name": "Loyalty Points",
+          "settings": {
+            "heading": {
+              "label": "Heading"
+            },
+            "show_tier_progress": {
+              "label": "Show tier progress bar"
+            },
+            "show_redeem_button": {
+              "label": "Show redeem button"
+            },
+            "rewards_page_url": {
+              "label": "Rewards page URL"
+            }
+          }
+        },
+        "account_details": {
+          "name": "Account Details",
+          "settings": {
+            "heading": {
+              "label": "Heading"
+            }
+          }
+        }
+      }
+    },
     "featured-collection": {
       "name": "Featured collection",
       "settings": {

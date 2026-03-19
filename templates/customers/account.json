@@ -1,12 +1,3 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "main": {
@@ -14,7 +5,48 @@
       "settings": {
         "padding_top": 36,
         "padding_bottom": 36
-      }
+      },
+      "blocks": {
+        "loyalty_points_block": {
+          "type": "loyalty_points",
+          "settings": {
+            "heading": "My Rewards",
+            "show_tier_progress": true,
+            "show_redeem_button": true,
+            "rewards_page_url": "/pages/rewards"
+          }
+        },
+        "order_history_block": {
+          "type": "order_history",
+          "settings": {
+            "heading": "Order History",
+            "orders_per_page": 20
+          }
+        },
+        "favorites_block": {
+          "type": "favorites",
+          "settings": {
+            "heading": "My Favorites",
+            "max_products": 6,
+            "columns_desktop": 3,
+            "show_view_all": true,
+            "image_ratio": "adapt",
+            "show_vendor": false
+          }
+        },
+        "account_details_block": {
+          "type": "account_details",
+          "settings": {
+            "heading": "Account Details"
+          }
+        }
+      },
+      "block_order": [
+        "loyalty_points_block",
+        "order_history_block",
+        "favorites_block",
+        "account_details_block"
+      ]
     }
   },
   "order": [

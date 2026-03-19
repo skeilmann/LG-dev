@@ -137,7 +137,9 @@
       "add_to_cart": "добавить в корзину",
       "buy_now": "купить в один клик",
       "add_to_favorites": "Добавить в избранное",
-      "description": "Описание",
+      "description": "Описание товара",
+      "read_more": "Читать полностью",
+      "read_less": "Свернуть",
       "on_sale": "Распродажа",
       "share": "Поделиться этим продуктом",
       "sold_out": "Продано",
@@ -533,7 +535,12 @@
       "title": "Учетная запись",
       "details": "Сведения учетной записи",
       "view_addresses": "Посмотреть адреса",
-      "return": "Вернуться к сведениям учетной записи"
+      "return": "Вернуться к сведениям учетной записи",
+      "my_favorites": "Избранное",
+      "view_all_favorites": "Показать все",
+      "favorites_empty": "Вы ещё не добавили товары в избранное.",
+      "favorites_browse": "Перейти к товарам",
+      "my_rewards": "Мои награды"
     },
     "account_fallback": "Учетная запись",
     "log_in": "Войти",
@@ -690,5 +697,23 @@
     "title": "Наши бренды",
     "view_collection": "Посмотреть коллекцию {{ collection }}",
     "no_collections_configured": "Коллекции еще не настроены. Добавьте блоки коллекций в редакторе темы."
+  },
+  "shipping": {
+    "delivery_heading": "Доставка",
+    "courier_service": "Курьерской службой",
+    "courier_details": "Nova Post по Молдове (1-3 дня), бесплатно от 1500 MDL;",
+    "pickup_prefix": "Самовывоз с магазина",
+    "pickup_store": "VEV LUX SHOP",
+    "pickup_suffix": "в г. Бельцы;",
+    "local_courier": "Курьером по г. Бельцы, бесплатно от 300 MDL;",
+    "international": "Курьерской службой по Европе и странам ЕС.",
+    "payment_heading": "Оплата",
+    "cash": "Наличкой",
+    "cash_details": "при получении;",
+    "card_payment": "Картой при получении;",
+    "invoice_prefix": "Перечисление по е-фактуре (",
+    "invoice_legal": "для юр. лиц",
+    "invoice_suffix": ");",
+    "online_payment": "Онлайн-оплата"
   }
 }

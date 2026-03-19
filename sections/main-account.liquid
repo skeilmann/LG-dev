@@ -14,146 +14,61 @@
   }
 {%- endstyle -%}
 
-<div class="customer account section-{{ section.id }}-padding">
-  <div>
-    <h1 class="customer__title">{{ 'customer.account.title' | t }}</h1>
-    <a href="{{ routes.account_logout_url }}">
-      <span class="svg-wrapper">
-        {{- 'icon-account.svg' | inline_asset_content -}}
-      </span>
-      {{ 'customer.log_out' | t }}
-    </a>
+<div class="customer account section-{{ section.id }}-padding color-{{ section.settings.color_scheme }}">
+  <div class="account__header">
+    {%- assign default_account_heading = 'customer.account.title' | t -%}
+    <h1 class="customer__title">
+      {{ section.settings.heading | default: default_account_heading }}
+    </h1>
+    {%- if section.settings.show_logout -%}
+      <a href="{{ routes.account_logout_url }}" class="account__logout-link">
+        <span class="svg-wrapper">
+          {{- 'icon-account.svg' | inline_asset_content -}}
+        </span>
+        {{ 'customer.log_out' | t }}
+      </a>
+    {%- endif -%}
   </div>
 
-  <div>
-    <div>
-      <h2>{{ 'customer.orders.title' | t }}</h2>
-
-      {% paginate customer.orders by 20 %}
-        {%- if customer.orders.size > 0 -%}
-          <table role="table" class="order-history">
-            <caption class="visually-hidden">
-              {{ 'customer.orders.title' | t }}
-            </caption>
-            <thead role="rowgroup">
-              <tr role="row">
-                <th id="ColumnOrder" scope="col" role="columnheader">{{ 'customer.orders.order_number' | t }}</th>
-                <th id="ColumnDate" scope="col" role="columnheader">{{ 'customer.orders.date' | t }}</th>
-                <th id="ColumnPayment" scope="col" role="columnheader">{{ 'customer.orders.payment_status' | t }}</th>
-                <th id="ColumnFulfillment" scope="col" role="columnheader">
-                  {{ 'customer.orders.fulfillment_status' | t }}
-                </th>
-                <th id="ColumnTotal" scope="col" role="columnheader">{{ 'customer.orders.total' | t }}</th>
-              </tr>
-            </thead>
-            <tbody role="rowgroup">
-              {%- for order in customer.orders -%}
-                <tr role="row">
-                  <td
-                    id="RowOrder"
-                    role="cell"
-                    headers="ColumnOrder"
-                    data-label="{{ 'customer.orders.order_number' | t }}"
-                  >
-                    <a
-                      href="{{ order.customer_url }}"
-                      aria-label="{{ 'customer.orders.order_number_link' | t: number: order.name }}"
-                    >
-                      {{ order.name }}
-                    </a>
-                  </td>
-                  <td headers="RowOrder ColumnDate" role="cell" data-label="{{ 'customer.orders.date' | t }}">
-                    {{ order.created_at | time_tag: format: 'date' }}
-                  </td>
-                  <td
-                    headers="RowOrder ColumnPayment"
-                    role="cell"
-                    data-label="{{ 'customer.orders.payment_status' | t }}"
-                  >
-                    {{ order.financial_status_label }}
-                  </td>
-                  <td
-                    headers="RowOrder ColumnFulfillment"
-                    role="cell"
-                    data-label="{{ 'customer.orders.fulfillment_status' | t }}"
-                  >
-                    {{ order.fulfillment_status_label }}
-                  </td>
-                  <td headers="RowOrder ColumnTotal" role="cell" data-label="{{ 'customer.orders.total' | t }}">
-                    {{ order.total_net_amount | money_with_currency }}
-                  </td>
-                </tr>
-              {%- endfor -%}
-            </tbody>
-          </table>
-        {%- else -%}
-          <p>{{ 'customer.orders.none' | t }}</p>
-        {%- endif -%}
-
-        {%- if paginate.pages > 1 -%}
-          {%- if paginate.parts.size > 0 -%}
-            <nav class="pagination" role="navigation" aria-label="{{ 'general.pagination.label' | t }}">
-              <ul role="list">
-                {%- if paginate.previous -%}
-                  <li>
-                    <a href="{{ paginate.previous.url }}" aria-label="{{ 'general.pagination.previous' | t }}">
-                      <span class="svg-wrapper">
-                        {{- 'icon-caret.svg' | inline_asset_content -}}
-                      </span>
-                    </a>
-                  </li>
-                {%- endif -%}
-
-                {%- for part in paginate.parts -%}
-                  <li>
-                    {%- if part.is_link -%}
-                      <a href="{{ part.url }}" aria-label="{{ 'general.pagination.page' | t: number: part.title }}">
-                        {{- part.title -}}
-                      </a>
-                    {%- else -%}
-                      {%- if part.title == paginate.current_page -%}
-                        <span aria-current="page" aria-label="{{ 'general.pagination.page' | t: number: part.title }}">
-                          {{- part.title -}}
-                        </span>
-                      {%- else -%}
-                        <span>{{ part.title }}</span>
-                      {%- endif -%}
-                    {%- endif -%}
-                  </li>
-                {%- endfor -%}
-
-                {%- if paginate.next -%}
-                  <li>
-                    <a href="{{ paginate.next.url }}" aria-label="{{ 'general.pagination.next' | t }}">
-                      <span class="svg-wrapper">
-                        {{- 'icon-caret.svg' | inline_asset_content -}}
-                      </span>
-                    </a>
-                  </li>
-                {%- endif -%}
-              </ul>
-            </nav>
-          {%- endif -%}
-        {%- endif -%}
-      {% endpaginate %}
-    </div>
-
-    <div>
-      <h2>{{ 'customer.account.details' | t }}</h2>
-
-      {{ customer.default_address | format_address }}
-
-      <a href="{{ routes.account_addresses_url }}">
-        {{ 'customer.account.view_addresses' | t }} ({{ customer.addresses_count }})
-      </a>
-    </div>
+  <div class="account__blocks">
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when 'order_history' -%}
+          {% render 'account-order-history', block: block %}
+        {%- when 'favorites' -%}
+          {% render 'account-favorites', block: block %}
+        {%- when 'loyalty_points' -%}
+          {% render 'account-loyalty-points', block: block %}
+        {%- when 'account_details' -%}
+          {% render 'account-details', block: block %}
+      {%- endcase -%}
+    {%- endfor -%}
   </div>
 </div>
 
 {% schema %}
 {
   "name": "t:sections.main-account.name",
+  "tag": "section",
   "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:sections.main-account.settings.heading.label",
+      "default": "My Account"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_logout",
+      "label": "t:sections.main-account.settings.show_logout.label",
+      "default": true
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
     {
       "type": "header",
       "content": "t:sections.all.padding.section_padding_heading"
@@ -177,6 +92,137 @@
       "unit": "px",
       "label": "t:sections.all.padding.padding_bottom",
       "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "loyalty_points",
+      "name": "t:sections.main-account.blocks.loyalty_points.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "t:sections.main-account.blocks.loyalty_points.settings.heading.label",
+          "default": "My Rewards"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_tier_progress",
+          "label": "t:sections.main-account.blocks.loyalty_points.settings.show_tier_progress.label",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_redeem_button",
+          "label": "t:sections.main-account.blocks.loyalty_points.settings.show_redeem_button.label",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "rewards_page_url",
+          "label": "t:sections.main-account.blocks.loyalty_points.settings.rewards_page_url.label",
+          "default": "/pages/rewards"
+        }
+      ]
+    },
+    {
+      "type": "order_history",
+      "name": "t:sections.main-account.blocks.order_history.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "t:sections.main-account.blocks.order_history.settings.heading.label",
+          "default": "Order History"
+        },
+        {
+          "type": "range",
+          "id": "orders_per_page",
+          "min": 5,
+          "max": 50,
+          "step": 5,
+          "label": "t:sections.main-account.blocks.order_history.settings.orders_per_page.label",
+          "default": 20
+        }
+      ]
+    },
+    {
+      "type": "favorites",
+      "name": "t:sections.main-account.blocks.favorites.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "t:sections.main-account.blocks.favorites.settings.heading.label",
+          "default": "My Favorites"
+        },
+        {
+          "type": "range",
+          "id": "max_products",
+          "min": 2,
+          "max": 12,
+          "step": 1,
+          "label": "t:sections.main-account.blocks.favorites.settings.max_products.label",
+          "default": 6
+        },
+        {
+          "type": "range",
+          "id": "columns_desktop",
+          "min": 2,
+          "max": 6,
+          "step": 1,
+          "label": "t:sections.main-account.blocks.favorites.settings.columns_desktop.label",
+          "default": 3
+        },
+        {
+          "type": "checkbox",
+          "id": "show_view_all",
+          "label": "t:sections.main-account.blocks.favorites.settings.show_view_all.label",
+          "default": true
+        },
+        {
+          "type": "select",
+          "id": "image_ratio",
+          "label": "t:sections.main-account.blocks.favorites.settings.image_ratio.label",
+          "options": [
+            {
+              "value": "adapt",
+              "label": "t:sections.main-account.blocks.favorites.settings.image_ratio.options__1.label"
+            },
+            {
+              "value": "portrait",
+              "label": "t:sections.main-account.blocks.favorites.settings.image_ratio.options__2.label"
+            },
+            {
+              "value": "square",
+              "label": "t:sections.main-account.blocks.favorites.settings.image_ratio.options__3.label"
+            }
+          ],
+          "default": "adapt"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_vendor",
+          "label": "t:sections.main-account.blocks.favorites.settings.show_vendor.label",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "account_details",
+      "name": "t:sections.main-account.blocks.account_details.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "t:sections.main-account.blocks.account_details.settings.heading.label",
+          "default": "Account Details"
+        }
+      ]
     }
   ]
 }

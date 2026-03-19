@@ -1,0 +1,21 @@
+{%- comment -%}
+  Account Details Block
+  Renders default address and link to address management.
+  Parameters:
+    - block: The block object with settings (heading)
+  Usage: {% render 'account-details', block: block %}
+  Dependencies: customer.css
+{%- endcomment -%}
+
+<div class="account-block account-block--details" {{ block.shopify_attributes }}>
+  {%- assign default_details_heading = 'customer.account.details' | t -%}
+  <h2 class="account-block__heading">
+    {{ block.settings.heading | default: default_details_heading }}
+  </h2>
+
+  {{ customer.default_address | format_address }}
+
+  <a href="{{ routes.account_addresses_url }}">
+    {{ 'customer.account.view_addresses' | t }} ({{ customer.addresses_count }})
+  </a>
+</div>

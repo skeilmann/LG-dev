@@ -138,6 +138,8 @@
       "choose_options": "Choose options",
       "choose_product_options": "Choose options for {{ product_name }}",
       "description": "Description",
+      "read_more": "Read more",
+      "read_less": "Collapse",
       "inventory_in_stock": "In stock",
       "inventory_in_stock_show_count": "{{ quantity }} in stock",
       "inventory_low_stock": "Low stock",
@@ -547,7 +549,12 @@
       "title": "Account",
       "details": "Account details",
       "view_addresses": "View addresses",
-      "return": "Return to Account details"
+      "return": "Return to Account details",
+      "my_favorites": "My Favorites",
+      "view_all_favorites": "View All",
+      "favorites_empty": "You haven't added any favorites yet.",
+      "favorites_browse": "Browse products",
+      "my_rewards": "My Rewards"
     },
     "account_fallback": "Account",
     "activate_account": {
@@ -704,5 +711,23 @@
     "title": "Our Brands",
     "view_collection": "View {{ collection }} collection",
     "no_collections_configured": "No collections have been configured yet. Add collection blocks in the theme editor."
+  },
+  "shipping": {
+    "delivery_heading": "Delivery",
+    "courier_service": "By courier service",
+    "courier_details": "Nova Post across Moldova (1-3 days), free from 1500 MDL;",
+    "pickup_prefix": "Pickup from store",
+    "pickup_store": "VEV LUX SHOP",
+    "pickup_suffix": "in Balti;",
+    "local_courier": "Local courier in Balti, free from 300 MDL;",
+    "international": "Courier service to Europe and EU countries.",
+    "payment_heading": "Payment",
+    "cash": "Cash",
+    "cash_details": "on delivery;",
+    "card_payment": "Card payment on delivery;",
+    "invoice_prefix": "Bank transfer via e-invoice (",
+    "invoice_legal": "for legal entities",
+    "invoice_suffix": ");",
+    "online_payment": "Online payment"
   }
 }

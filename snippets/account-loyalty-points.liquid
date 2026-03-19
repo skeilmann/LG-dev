@@ -1,0 +1,31 @@
+{%- comment -%}
+  Account Loyalty Points Block
+  Renders loyalty points summary on the account page.
+  JS (loyalty-handler.js) populates this container with real data from the VPS API.
+  Parameters:
+    - block: The block object with settings (heading, show_tier_progress, show_redeem_button, rewards_page_url)
+  Usage: {% render 'account-loyalty-points', block: block %}
+  Dependencies: loyalty-handler.js, component-loyalty.css
+{%- endcomment -%}
+
+<div
+  class="account-block account-block--loyalty loyalty-account-section"
+  data-show-tier-progress="{{ block.settings.show_tier_progress }}"
+  data-show-redeem="{{ block.settings.show_redeem_button }}"
+  data-rewards-url="{{ block.settings.rewards_page_url | default: '/pages/rewards' }}"
+  {{ block.shopify_attributes }}
+>
+  {%- if customer -%}
+    <div class="loyalty-loading">
+      {%- assign default_loyalty_heading = 'customer.loyalty.title' | t -%}
+      <h2 class="account-block__heading">
+        {{ block.settings.heading | default: default_loyalty_heading }}
+      </h2>
+      <p class="loyalty-loading__text">{{ 'customer.loyalty.loading' | t | default: 'Loading your rewards...' }}</p>
+    </div>
+  {%- else -%}
+    <div class="loyalty-guest-message">
+      <p>{{ 'customer.loyalty.login_required' | t | default: 'Please log in to view your rewards.' }}</p>
+    </div>
+  {%- endif -%}
+</div>

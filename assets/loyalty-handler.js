@@ -142,6 +142,7 @@ class LoyaltyHandler {
 
   /**
    * Update account page section
+   * Reads data attributes from the container to respect Theme Editor block settings
    */
   updateAccountSection() {
     const section = document.querySelector('.loyalty-account-section');
@@ -157,7 +158,15 @@ class LoyaltyHandler {
       return;
     }
 
-    section.innerHTML = this.renderAccountSection();
+    // Read Theme Editor settings from data attributes
+    const sectionSettings = {
+      showTierProgress: section.dataset.showTierProgress !== 'false',
+      showRedeem: section.dataset.showRedeem !== 'false',
+      rewardsUrl: section.dataset.rewardsUrl || '/pages/rewards',
+    };
+
+    section.innerHTML = this.renderAccountSection(sectionSettings);
+    this.attachRedeemHandler(section);
   }
 
   /**
@@ -196,8 +205,13 @@ class LoyaltyHandler {
 
   /**
    * Render account section HTML
+   * @param {Object} settings - Theme Editor block settings
    */
-  renderAccountSection() {
+  renderAccountSection(settings = {}) {
+    const showTierProgress = settings.showTierProgress !== false;
+    const showRedeem = settings.showRedeem !== false;
+    const rewardsUrl = settings.rewardsUrl || '/pages/rewards';
+
     const tierLabels = {
       bronze: 'Bronze',
       silver: 'Silver',
@@ -208,11 +222,35 @@ class LoyaltyHandler {
       ? Math.min(100, ((this.tierConfig?.min_spend || 0) / (this.tierConfig?.min_spend + this.spendToNextTier)) * 100)
       : 100;
 
+    let tierProgressHtml = '';
+    if (showTierProgress) {
+      tierProgressHtml = this.nextTier
+        ? `
+          <div class="loyalty-progress">
+            <div class="loyalty-progress-bar">
+              <div class="loyalty-progress-fill" style="width: ${progressPercent}%"></div>
+            </div>
+            <p class="loyalty-progress-text">
+              Spend $${this.spendToNextTier.toFixed(0)} more to reach ${tierLabels[this.nextTier]}
+            </p>
+          </div>
+        `
+        : `<p class="loyalty-max-tier">You've reached the highest tier!</p>`;
+    }
+
+    let redeemHtml = '';
+    if (showRedeem && this.redemption && this.balance >= this.redemption.points_required) {
+      redeemHtml = `
+        <button class="loyalty-redeem-btn button" data-points="${this.redemption.points_required}">
+          Redeem ${this.redemption.points_required} pts for $${this.redemption.discount_value} off
+        </button>
+      `;
+    }
+
     return `
       <div class="loyalty-account-content">
         <div class="loyalty-account-header">
-          <h3>My Rewards</h3>
-          <a href="/pages/rewards" class="loyalty-view-all">View Details →</a>
+          <a href="${rewardsUrl}" class="loyalty-view-all">View Details &rarr;</a>
         </div>
 
         <div class="loyalty-account-stats">
@@ -226,32 +264,8 @@ class LoyaltyHandler {
           </div>
         </div>
 
-        ${
-          this.nextTier
-            ? `
-          <div class="loyalty-progress">
-            <div class="loyalty-progress-bar">
-              <div class="loyalty-progress-fill" style="width: ${progressPercent}%"></div>
-            </div>
-            <p class="loyalty-progress-text">
-              Spend $${this.spendToNextTier.toFixed(0)} more to reach ${tierLabels[this.nextTier]}
-            </p>
-          </div>
-        `
-            : `
-          <p class="loyalty-max-tier">🎉 You've reached the highest tier!</p>
-        `
-        }
-
-        ${
-          this.redemption && this.balance >= this.redemption.points_required
-            ? `
-          <button class="loyalty-redeem-btn button" data-points="${this.redemption.points_required}">
-            Redeem ${this.redemption.points_required} pts for $${this.redemption.discount_value} off
-          </button>
-        `
-            : ''
-        }
+        ${tierProgressHtml}
+        ${redeemHtml}
       </div>
     `;
   }
@@ -287,7 +301,8 @@ class LoyaltyHandler {
             if (node.classList?.contains('loyalty-cart-widget')) {
               this.updateCartWidget();
             }
-            if (node.classList?.contains('loyalty-account-section')) {
+            if (node.classList?.contains('loyalty-account-section') && !node.dataset.loyaltyInitialized) {
+              node.dataset.loyaltyInitialized = 'true';
               this.updateAccountSection();
             }
           }

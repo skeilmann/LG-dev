@@ -404,6 +404,121 @@
   }
 }
 
+/* Account Blocks */
+.account__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+
+.account__logout-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.account__logout-link .svg-wrapper {
+  width: 1.5rem;
+}
+
+.account__blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+.account-block {
+  width: 100%;
+}
+
+.account-block__heading {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+.account-block__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.account-block__header .account-block__heading {
+  margin-bottom: 0;
+}
+
+.account-block__view-all {
+  font-size: 1.4rem;
+}
+
+/* Account Favorites Grid */
+.account-favorites__grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media screen and (min-width: 750px) {
+  .account-favorites__grid.grid--2-col-desktop {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .account-favorites__grid.grid--3-col-desktop {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .account-favorites__grid.grid--4-col-desktop {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .account-favorites__grid.grid--5-col-desktop {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+  .account-favorites__grid.grid--6-col-desktop {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+.account-favorites__empty {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  border: 1px dashed rgba(var(--color-foreground), 0.15);
+  border-radius: var(--buttons-radius, 0);
+}
+
+.account-favorites__empty p {
+  margin-bottom: 1.5rem;
+  color: rgba(var(--color-foreground), 0.7);
+}
+
+.account-favorites__loading {
+  text-align: center;
+  padding: 2rem;
+  color: rgba(var(--color-foreground), 0.5);
+}
+
+/* Account Loyalty Block */
+.account-block--loyalty {
+  padding: 2rem;
+  background-color: rgb(var(--color-background));
+  border: 1px solid rgba(var(--color-foreground), 0.1);
+  border-radius: var(--buttons-radius, 0);
+}
+
+.account-block--loyalty .loyalty-loading__text {
+  color: rgba(var(--color-foreground), 0.5);
+  margin: 0;
+}
+
+@media screen and (max-width: 749px) {
+  .account-block--loyalty {
+    padding: 1.5rem;
+  }
+}
+
 /* Account/Order */
 :is(.account, .order) {
   margin: 0 auto;
