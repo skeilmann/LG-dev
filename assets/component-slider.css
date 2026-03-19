@@ -386,3 +386,7 @@ slider-component.slider-component-full-width {
 .slider-button--prev:not([disabled]):hover .icon {
   transform: rotate(180deg) scale(1.1);
 }
+
+slideshow-component .slider--everywhere {
+  margin-bottom: 0;
+}

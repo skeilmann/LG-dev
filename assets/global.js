@@ -728,15 +728,15 @@ class SliderComponent extends HTMLElement {
     this.prevButton = this.querySelector('button[name="previous"]');
     this.nextButton = this.querySelector('button[name="next"]');
 
-    if (!this.slider || !this.nextButton) return;
+    if (!this.slider) return;
 
     this.initPages();
     const resizeObserver = new ResizeObserver((entries) => this.initPages());
     resizeObserver.observe(this.slider);
 
     this.slider.addEventListener('scroll', this.update.bind(this));
-    this.prevButton.addEventListener('click', this.onButtonClick.bind(this));
-    this.nextButton.addEventListener('click', this.onButtonClick.bind(this));
+    if (this.prevButton) this.prevButton.addEventListener('click', this.onButtonClick.bind(this));
+    if (this.nextButton) this.nextButton.addEventListener('click', this.onButtonClick.bind(this));
   }
 
   initPages() {
@@ -758,7 +758,7 @@ class SliderComponent extends HTMLElement {
   update() {
     // Temporarily prevents unneeded updates resulting from variant changes
     // This should be refactored as part of https://github.com/Shopify/dawn/issues/2057
-    if (!this.slider || !this.nextButton) return;
+    if (!this.slider) return;
 
     const previousPage = this.currentPage;
     this.currentPage = Math.round(this.slider.scrollLeft / this.sliderItemOffset) + 1;
@@ -781,16 +781,18 @@ class SliderComponent extends HTMLElement {
 
     if (this.enableSliderLooping) return;
 
-    if (this.isSlideVisible(this.sliderItemsToShow[0]) && this.slider.scrollLeft === 0) {
-      this.prevButton.setAttribute('disabled', 'disabled');
-    } else {
-      this.prevButton.removeAttribute('disabled');
-    }
+    if (this.prevButton && this.nextButton) {
+      if (this.isSlideVisible(this.sliderItemsToShow[0]) && this.slider.scrollLeft === 0) {
+        this.prevButton.setAttribute('disabled', 'disabled');
+      } else {
+        this.prevButton.removeAttribute('disabled');
+      }
 
-    if (this.isSlideVisible(this.sliderItemsToShow[this.sliderItemsToShow.length - 1])) {
-      this.nextButton.setAttribute('disabled', 'disabled');
-    } else {
-      this.nextButton.removeAttribute('disabled');
+      if (this.isSlideVisible(this.sliderItemsToShow[this.sliderItemsToShow.length - 1])) {
+        this.nextButton.setAttribute('disabled', 'disabled');
+      } else {
+        this.nextButton.removeAttribute('disabled');
+      }
     }
   }
 
@@ -846,7 +848,7 @@ class SlideshowComponent extends SliderComponent {
         if (this.slider.getAttribute('data-autoplay') === 'true') this.setAutoPlay();
       });
 
-      [this.prevButton, this.nextButton].forEach((button) => {
+      [this.prevButton, this.nextButton].filter(Boolean).forEach((button) => {
         button.addEventListener(
           'click',
           () => {
@@ -857,7 +859,44 @@ class SlideshowComponent extends SliderComponent {
       });
     }
 
+    // Crossfade mode
+    this.crossfadeMode = this.slider.dataset.transition === 'crossfade';
+    if (this.crossfadeMode) {
+      this.slider.classList.add('slideshow--crossfade');
+      this.initCrossfade();
+    }
+
     if (this.slider.getAttribute('data-autoplay') === 'true') this.setAutoPlay();
+  }
+
+  initCrossfade() {
+    this.sliderItemsToShow.forEach((slide, index) => {
+      if (index === 0) {
+        slide.setAttribute('aria-hidden', 'false');
+      } else {
+        slide.setAttribute('aria-hidden', 'true');
+      }
+    });
+    this.currentPage = 1;
+    this.update();
+  }
+
+  crossfadeTo(targetIndex) {
+    const prevIndex = this.currentPage - 1;
+    const totalSlides = this.sliderItemsToShow.length;
+
+    // Normalize target index
+    targetIndex = ((targetIndex % totalSlides) + totalSlides) % totalSlides;
+    if (targetIndex === prevIndex) return;
+
+    // Update aria-hidden to drive CSS opacity transitions
+    this.sliderItemsToShow.forEach((slide, index) => {
+      slide.setAttribute('aria-hidden', index === targetIndex ? 'false' : 'true');
+    });
+
+    this.currentPage = targetIndex + 1;
+    this.update();
+    this.setSlideVisibility();
   }
 
   setAutoPlay() {
@@ -872,8 +911,11 @@ class SlideshowComponent extends SliderComponent {
       this.sliderAutoplayButton.addEventListener('click', this.autoPlayToggle.bind(this));
       this.autoplayButtonIsSetToPlay = true;
       this.play();
-    } else {
+    } else if (this.announcementBarSlider) {
       this.reducedMotion.matches || this.announcementBarArrowButtonWasClicked ? this.pause() : this.play();
+    } else {
+      // Slideshow without autoplay button — just play
+      this.play();
     }
   }
 
@@ -902,6 +944,7 @@ class SlideshowComponent extends SliderComponent {
   }
 
   setSlidePosition(position) {
+    if (this.crossfadeMode) return;
     if (this.setPositionTimeout) clearTimeout(this.setPositionTimeout);
     this.setPositionTimeout = setTimeout(() => {
       this.slider.scrollTo({
@@ -911,9 +954,12 @@ class SlideshowComponent extends SliderComponent {
   }
 
   update() {
-    super.update();
+    // In crossfade mode, skip scroll-based currentPage recalculation from parent
+    if (!this.crossfadeMode) {
+      super.update();
+    }
     this.sliderControlButtons = this.querySelectorAll('.slider-counter__link');
-    this.prevButton.removeAttribute('disabled');
+    if (this.prevButton) this.prevButton.removeAttribute('disabled');
 
     if (!this.sliderControlButtons.length) return;
 
@@ -921,8 +967,10 @@ class SlideshowComponent extends SliderComponent {
       link.classList.remove('slider-counter__link--active');
       link.removeAttribute('aria-current');
     });
-    this.sliderControlButtons[this.currentPage - 1].classList.add('slider-counter__link--active');
-    this.sliderControlButtons[this.currentPage - 1].setAttribute('aria-current', true);
+    if (this.sliderControlButtons[this.currentPage - 1]) {
+      this.sliderControlButtons[this.currentPage - 1].classList.add('slider-counter__link--active');
+      this.sliderControlButtons[this.currentPage - 1].setAttribute('aria-current', true);
+    }
   }
 
   autoPlayToggle() {
@@ -937,7 +985,11 @@ class SlideshowComponent extends SliderComponent {
         event.target === this.sliderAutoplayButton || this.sliderAutoplayButton.contains(event.target);
       if (!this.autoplayButtonIsSetToPlay || focusedOnAutoplayButton) return;
       this.play();
-    } else if (!this.reducedMotion.matches && !this.announcementBarArrowButtonWasClicked) {
+    } else if (this.announcementBarSlider) {
+      if (!this.reducedMotion.matches && !this.announcementBarArrowButtonWasClicked) {
+        this.play();
+      }
+    } else {
       this.play();
     }
   }
@@ -951,7 +1003,11 @@ class SlideshowComponent extends SliderComponent {
       } else if (this.autoplayButtonIsSetToPlay) {
         this.pause();
       }
-    } else if (this.announcementBarSlider.contains(event.target)) {
+    } else if (this.announcementBarSlider) {
+      if (this.announcementBarSlider.contains(event.target)) {
+        this.pause();
+      }
+    } else {
       this.pause();
     }
   }
@@ -978,6 +1034,11 @@ class SlideshowComponent extends SliderComponent {
   }
 
   autoRotateSlides() {
+    if (this.crossfadeMode) {
+      const nextIndex = this.currentPage % this.sliderItemsToShow.length;
+      this.crossfadeTo(nextIndex);
+      return;
+    }
     const slideScrollPosition =
       this.currentPage === this.sliderItems.length ? 0 : this.slider.scrollLeft + this.sliderItemOffset;
 
@@ -1040,6 +1101,11 @@ class SlideshowComponent extends SliderComponent {
 
   linkToSlide(event) {
     event.preventDefault();
+    if (this.crossfadeMode) {
+      const targetIndex = this.sliderControlLinksArray.indexOf(event.currentTarget);
+      this.crossfadeTo(targetIndex);
+      return;
+    }
     const slideScrollPosition =
       this.slider.scrollLeft +
       this.sliderFirstItemNode.clientWidth *
