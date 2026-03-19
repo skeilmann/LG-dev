@@ -97,6 +97,33 @@
         >
           {%- assign product_form_id = 'product-form-' | append: section.id -%}
 
+          {%- comment -%} Check if both SKU and rating blocks exist to render them on the same row {%- endcomment -%}
+          {%- liquid
+            assign has_sku_block = false
+            assign has_rating_block = false
+            for b in section.blocks
+              if b.type == 'sku'
+                assign has_sku_block = true
+              endif
+              if b.type == 'rating'
+                assign has_rating_block = true
+              endif
+            endfor
+            assign sku_rating_row = false
+            if has_sku_block and has_rating_block
+              assign sku_rating_row = true
+            endif
+            assign sku_rating_row_open = false
+
+            assign has_quantity_block = false
+            for b in section.blocks
+              if b.type == 'quantity_selector'
+                assign has_quantity_block = true
+              endif
+            endfor
+            assign skip_quantity_block = false
+          -%}
+
           {%- for block in section.blocks -%}
             {%- case block.type -%}
               {%- when '@app' -%}
@@ -118,13 +145,59 @@
                   </a>
                 </div>
               {%- when 'price' -%}
-                <div id="price-{{ section.id }}" role="status" {{ block.shopify_attributes }}>
-                  {%- render 'price',
-                    product: product,
-                    use_variant: true,
-                    show_badges: true,
-                    price_class: 'price--large'
-                  -%}
+                <div class="product__price-qty-row">
+                  <div id="price-{{ section.id }}" role="status" {{ block.shopify_attributes }}>
+                    {%- render 'price',
+                      product: product,
+                      use_variant: true,
+                      show_badges: true,
+                      price_class: 'price--large'
+                    -%}
+                  </div>
+                  {%- comment -%} Quantity input rendered inline with price {%- endcomment -%}
+                  {%- if has_quantity_block -%}
+                    {%- assign skip_quantity_block = true -%}
+                    {% # theme-check-disable %}
+                    {%- assign cart_qty = cart
+                      | item_count_for_variant: product.selected_or_first_available_variant.id
+                    -%}
+                    {% # theme-check-enable %}
+                    <quantity-input class="product-qty-picker" data-url="{{ product.url }}" data-section="{{ section.id }}">
+                      <button class="product-qty-picker__btn product-qty-picker__btn--minus quantity__button" name="minus" type="button">
+                        <span class="visually-hidden">
+                          {{- 'products.product.quantity.decrease' | t: product: product.title | escape -}}
+                        </span>
+                        <svg width="14" height="3" viewBox="0 0 14 3" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                          <line x1="0" y1="1.5" x2="14" y2="1.5" stroke="currentColor" stroke-width="3"/>
+                        </svg>
+                      </button>
+                      <input
+                        class="product-qty-picker__input quantity__input"
+                        type="number"
+                        name="quantity"
+                        id="Quantity-{{ section.id }}"
+                        data-cart-quantity="{{ cart_qty }}"
+                        data-min="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
+                        min="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
+                        {% if product.selected_or_first_available_variant.quantity_rule.max != null %}
+                          data-max="{{ product.selected_or_first_available_variant.quantity_rule.max }}"
+                          max="{{ product.selected_or_first_available_variant.quantity_rule.max }}"
+                        {% endif %}
+                        step="{{ product.selected_or_first_available_variant.quantity_rule.increment }}"
+                        value="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
+                        form="{{ product_form_id }}"
+                      >
+                      <button class="product-qty-picker__btn product-qty-picker__btn--plus quantity__button" name="plus" type="button">
+                        <span class="visually-hidden">
+                          {{- 'products.product.quantity.increase' | t: product: product.title | escape -}}
+                        </span>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                          <line x1="10" y1="0" x2="10" y2="20" stroke="currentColor" stroke-width="2.5"/>
+                          <line x1="0" y1="10" x2="20" y2="10" stroke="currentColor" stroke-width="2.5"/>
+                        </svg>
+                      </button>
+                    </quantity-input>
+                  {%- endif -%}
                 </div>
                 {%- if product.quantity_price_breaks_configured? -%}
                   <div class="volume-pricing-note" id="Volume-Note-{{ section.id }}">
@@ -154,30 +227,40 @@
                 </div>
               {%- when 'inventory' -%}
                 <div
-                  class="product-form__buttons inventory-bar__wrapper"
-                  style="--inventory-bar-height: {{ block.settings.bar_height }}px; --inventory-bar-width: {{ block.settings.bar_width }}px;"
+                  class="product-pills-row"
                   {{ block.shopify_attributes }}
                   id="Inventory-{{ section.id }}"
                   role="status"
                 >
-                  {% if block.settings.show_inventory_label %}
-                    <span class="inventory-bar__label">
-                      {% if product.selected_or_first_available_variant.inventory_quantity > 0 %}
-                        {{ 'stock.in_stock' | t }}
-                        {{ product.selected_or_first_available_variant.inventory_quantity }}
-                      {% else %}
-                        {{ 'stock.out_of_stock' | t }}
-                      {% endif %}
-                    </span>
-                  {% endif %}
-                  <div
-                    class="inventory-bar"
-                    data-inventory="{{ product.selected_or_first_available_variant.inventory_quantity }}"
-                  >
-                    {% for i in (1..3) %}
-                      <span class="inventory-bar__section"></span>
-                    {% endfor %}
-                  </div>
+                  {%- comment -%} Availability pill {%- endcomment -%}
+                  {%- if product.selected_or_first_available_variant.inventory_quantity > 0 -%}
+                    <div class="product-pill product-pill--availability">
+                      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <circle cx="14" cy="14" r="14" fill="#4CE065"/>
+                        <path d="M8 14.5L12 18.5L20 10.5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                      <span>{{ 'stock.in_stock' | t }}</span>
+                    </div>
+                  {%- else -%}
+                    <div class="product-pill product-pill--out-of-stock">
+                      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <circle cx="14" cy="14" r="14" fill="#ccc"/>
+                        <path d="M10 10L18 18M18 10L10 18" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                      </svg>
+                      <span>{{ 'stock.out_of_stock' | t }}</span>
+                    </div>
+                  {%- endif -%}
+
+                  {%- comment -%} Cashback/loyalty points pill {%- endcomment -%}
+                  {%- assign cashback_points = product.price | divided_by: 100 | times: 5 | round -%}
+                  {%- if cashback_points > 0 -%}
+                    <div class="product-pill product-pill--cashback" data-loyalty-product-points>
+                      <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M11.5 1L14.5 7.5L21.5 8.5L16.5 13.5L17.5 20.5L11.5 17.5L5.5 20.5L6.5 13.5L1.5 8.5L8.5 7.5L11.5 1Z" fill="#F1C40F" stroke="#F1C40F" stroke-width="1"/>
+                      </svg>
+                      <span>+ <span data-loyalty-points-value>{{ cashback_points }}</span> {{ 'customer.loyalty.points' | t }} <span class="product-pill__pink">{{ 'customer.loyalty.cashback' | t }}</span></span>
+                    </div>
+                  {%- endif -%}
                 </div>
               {%- when 'description' -%}
                 {%- if product.description != blank -%}
@@ -186,6 +269,10 @@
                   </div>
                 {%- endif -%}
               {%- when 'sku' -%}
+                {%- if sku_rating_row and sku_rating_row_open == false -%}
+                  <div class="product__sku-rating-row">
+                  {%- assign sku_rating_row_open = true -%}
+                {%- endif -%}
                 <p
                   class="product__sku{% if block.settings.text_style == 'uppercase' %} caption-with-letter-spacing{% elsif block.settings.text_style == 'subtitle' %} subtitle{% endif %}{% if product.selected_or_first_available_variant.sku.size == 0 %} visibility-hidden{% endif %}"
                   id="Sku-{{ section.id }}"
@@ -216,6 +303,7 @@
                   </details>
                 </div>
               {%- when 'quantity_selector' -%}
+                {%- unless skip_quantity_block -%}
                 <div
                   id="Quantity-Form-{{ section.id }}"
                   class="product-form__input product-form__quantity{% if settings.inputs_shadow_vertical_offset != 0 and settings.inputs_shadow_vertical_offset < 0 %} product-form__quantity-top{% endif %}"
@@ -428,6 +516,7 @@
                     </volume-pricing>
                   {%- endif -%}
                 </div>
+                {%- endunless -%}
               {%- when 'popup' -%}
                 <modal-opener
                   class="product-popup-modal__opener quick-add-hidden"
@@ -459,8 +548,14 @@
                   section_id: section.id,
                   show_pickup_availability: true
                 -%}
+                {%- comment -%} Product attributes table — rendered after buy buttons {%- endcomment -%}
+                {% render 'product-attributes-table', product: product %}
 
               {%- when 'rating' -%}
+                {%- if sku_rating_row and sku_rating_row_open == false -%}
+                  <div class="product__sku-rating-row">
+                  {%- assign sku_rating_row_open = true -%}
+                {%- endif -%}
                 {%- if product.metafields.reviews.rating.value != blank -%}
                   <div class="rating-wrapper">
                     {% liquid
@@ -497,6 +592,10 @@
                       </span>
                     </p>
                   </div>
+                {%- endif -%}
+                {%- if sku_rating_row_open -%}
+                  </div>
+                  {%- assign sku_rating_row_open = false -%}
                 {%- endif -%}
               {%- when 'complementary' -%}
                 <product-recommendations
@@ -668,7 +767,16 @@
                   %}
                 </div>
             {%- endcase -%}
+            {%- comment -%} Safety close: if sku opened a row but the next block isn't rating {%- endcomment -%}
+            {%- if sku_rating_row_open and block.type != 'sku' and block.type != 'rating' -%}
+              </div>
+              {%- assign sku_rating_row_open = false -%}
+            {%- endif -%}
           {%- endfor -%}
+          {%- comment -%} Safety close: if rows were never closed {%- endcomment -%}
+          {%- if sku_rating_row_open -%}
+            </div>
+          {%- endif -%}
           <a href="{{ product.url }}" class="link product__view-details animate-arrow">
             {{ 'products.product.view_full_details' | t }}
             {{- 'icon-arrow.svg' | inline_asset_content -}}

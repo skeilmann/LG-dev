@@ -289,7 +289,7 @@ a.product__text {
 
 @media screen and (min-width: 750px) {
   .product__info-container {
-    max-width: 60rem;
+    max-width: 100%;
   }
 
   .product__info-container .price--on-sale .price-item--regular {
@@ -1490,5 +1490,644 @@ a.product__text {
 
   .recipient-form > input[type='checkbox']:checked + label .icon-checkmark {
     border: none;
+  }
+}
+
+/* ============================================================
+   Brand Color Variables (Figma design tokens)
+   ============================================================ */
+
+:root {
+  --color-brand-pink: #f4b8dd;
+  --color-brand-pink-hover: #f0a0d0;
+  --color-brand-pink-active: #eb93c5;
+  --color-brand-pink-dark: #f93e89;
+  --color-brand-price: #f73794;
+  --color-brand-green: #4ce065;
+  --color-brand-yellow: #f1c40f;
+  --color-brand-orange: #ff6b00;
+  --color-brand-red: #ff0000;
+  --color-brand-gray: #ebebeb;
+  --color-brand-gray-hover: #e0e0e0;
+  --color-brand-gray-disabled: #f0f0f0;
+  --color-brand-text: #000;
+  --color-brand-text-muted: #454545;
+  --color-brand-text-light: #959595;
+  --color-brand-text-disabled: #999;
+}
+
+/* ============================================================
+   Product Gallery Layout — Vertical Thumbnails (Figma design)
+   ============================================================ */
+
+.product-gallery-layout {
+  position: relative;
+}
+
+@media screen and (min-width: 750px) {
+  .product-gallery-layout--has-thumbnails {
+    display: flex;
+    gap: 1rem;
+  }
+
+  /* Thumbnail column — vertical strip on the left */
+  .product-gallery-layout--has-thumbnails > .thumbnail-slider {
+    width: 9.8rem;
+    flex-shrink: 0;
+    order: -1;
+  }
+
+  .product-gallery-layout--has-thumbnails > .thumbnail-slider .thumbnail-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    grid-template-columns: none;
+    flex-wrap: nowrap;
+    max-height: 57rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    padding: 0;
+  }
+
+  .product-gallery-layout--has-thumbnails > .thumbnail-slider .thumbnail-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .product-gallery-layout--has-thumbnails > .thumbnail-slider .thumbnail-list__item {
+    width: 9.8rem;
+    flex-shrink: 0;
+  }
+
+  .product-gallery-layout--has-thumbnails > .thumbnail-slider .thumbnail-list__item::before {
+    padding-bottom: 100%;
+  }
+
+  .product-gallery-layout--has-thumbnails > .thumbnail-slider .thumbnail-list .thumbnail {
+    border-radius: 0.8rem;
+  }
+
+  .product-gallery-layout--has-thumbnails > .thumbnail-slider .thumbnail-list .thumbnail img {
+    border-radius: 0.8rem;
+  }
+
+  /* Hide thumbnail slider prev/next buttons on desktop (vertical scroll instead) */
+  .product-gallery-layout--has-thumbnails > .thumbnail-slider > .slider-button {
+    display: none;
+  }
+
+  /* Main image column */
+  .product-gallery-layout__main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* Rounded main image */
+  .product-gallery-layout__main .product-media-container .media {
+    border-radius: 1.8rem;
+    overflow: hidden;
+  }
+
+  .product-gallery-layout__main .product-media-container .media img {
+    border-radius: 1.8rem;
+  }
+
+  /* Override Dawn default thumbnail grid when inside our layout */
+  .product-gallery-layout--has-thumbnails .thumbnail-list.slider--tablet-up {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-gallery-layout--has-thumbnails .thumbnail-list.slider--tablet-up .thumbnail-list__item.slider__slide {
+    width: 100%;
+  }
+}
+
+/* ============================================================
+   Price + Quantity — Same Row (Figma design)
+   ============================================================ */
+
+.product__price-qty-row {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+
+.product__price-qty-row > [id^="price-"] {
+  flex-shrink: 0;
+}
+
+.product__price-qty-row__quantity {
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   Quantity Picker — Buttons Outside Box (Figma design)
+   ============================================================ */
+
+.product-qty-picker {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  border: 2px solid var(--color-brand-pink);
+  border-radius: 1.289rem;
+  width: 9.5rem;
+  height: 5.5rem;
+  padding: 0 1.2rem;
+}
+
+/* Number input */
+.product-qty-picker__input {
+  font-size: 2.4rem;
+  font-weight: 500;
+  color: var(--color-brand-text);
+  opacity: 1;
+  background: transparent;
+  border: none;
+  text-align: center;
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  -moz-appearance: textfield;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.product-qty-picker__input::-webkit-outer-spin-button,
+.product-qty-picker__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.product-qty-picker__input:focus,
+.product-qty-picker__input:focus-visible {
+  outline: none;
+  box-shadow: none;
+  background-color: transparent;
+}
+
+/* +/- buttons inside the box */
+.product-qty-picker__btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 2.5rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+
+.product-qty-picker__btn:hover {
+  opacity: 0.6;
+}
+
+/* Override Dawn's base .quantity__button styles */
+.product-qty-picker button.quantity__button {
+  width: auto;
+  font-size: inherit;
+}
+
+/* Minus — pink */
+.product-qty-picker button.product-qty-picker__btn--minus {
+  color: var(--color-brand-pink);
+}
+
+/* Plus — black */
+.product-qty-picker button.product-qty-picker__btn--plus {
+  color: var(--color-brand-text);
+}
+
+.product-qty-picker button svg {
+  pointer-events: none;
+}
+
+.product-qty-picker button svg * {
+  pointer-events: none;
+}
+
+.product-qty-picker .product-qty-picker__btn--plus svg {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+.product-qty-picker .product-qty-picker__btn--minus svg {
+  width: 1.3rem;
+  height: 0.3rem;
+}
+
+/* ============================================================
+   Universal Buy Button (Figma design)
+   ============================================================ */
+
+/* Shared button style — pink add-to-cart */
+.button.button--buy,
+.button.quick-add__submit {
+  background-color: var(--color-brand-pink);
+  color: var(--color-brand-text);
+  border-radius: 1.2196rem;
+  border: none;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.button.button--buy:hover,
+.button.quick-add__submit:hover {
+  background-color: var(--color-brand-pink-hover);
+  color: var(--color-brand-text);
+}
+
+.button.button--buy:active,
+.button.quick-add__submit:active {
+  background-color: var(--color-brand-pink-active);
+}
+
+.button.button--buy[disabled],
+.button.button--buy[aria-disabled='true'],
+.button.quick-add__submit[disabled] {
+  background-color: var(--color-brand-gray-hover);
+  color: var(--color-brand-text-disabled);
+}
+
+/* Button inner layout — icon + text */
+.button--buy .button__content,
+.quick-add__submit .button__content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  width: 100%;
+}
+
+.button--buy .button__icon,
+.quick-add__submit .button__icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+}
+
+.button--buy .button__icon svg,
+.quick-add__submit .button__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.button--buy .button__text {
+  white-space: nowrap;
+}
+
+/* ============================================================
+   Product Page — Buttons Row (Figma design)
+   ============================================================ */
+
+.product__info-container .product-form__buttons {
+  display: flex;
+  gap: 1rem;
+  align-items: stretch;
+  max-width: none;
+}
+
+.product__info-container .product-form__submit {
+  flex: 1;
+  min-height: 8rem;
+  font-size: 2rem;
+  margin-bottom: 0;
+}
+
+.product__info-container .product-form__submit .button__icon {
+  width: 2.7rem;
+  height: 3.1rem;
+}
+
+.product__info-container .product-form__submit .button__icon svg {
+  width: 2.7rem;
+  height: 3.1rem;
+}
+
+/* Buy Now button — gray, uppercase */
+.button--buy-now {
+  background-color: var(--color-brand-gray);
+  color: var(--color-brand-text);
+  border: none;
+  border-radius: 1.2196rem;
+  font-weight: 500;
+  font-size: 1.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2rem;
+  white-space: nowrap;
+}
+
+.product__info-container .button--buy-now {
+  flex: 1;
+  min-height: 8rem;
+}
+
+.button--buy-now:hover {
+  background-color: var(--color-brand-gray-hover);
+}
+
+.button--buy-now[disabled] {
+  background-color: var(--color-brand-gray-disabled);
+  color: var(--color-brand-text-disabled);
+  cursor: not-allowed;
+}
+
+/* Favorite heart button — icon only, in the same row */
+.button--favorite-heart {
+  flex-shrink: 0;
+  width: 8rem;
+  min-width: 8rem;
+  height: 8rem;
+  min-height: 8rem;
+  background-color: transparent;
+  border: none;
+  border-radius: 1.2196rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.2s ease;
+  color: var(--color-brand-text-muted);
+}
+
+.button--favorite-heart:hover {
+  background-color: rgba(244, 184, 221, 0.08);
+}
+
+.button--favorite-heart .favorite-heart {
+  width: 4.7rem;
+  height: 4.2rem;
+  transition: fill 0.3s ease, stroke 0.3s ease;
+}
+
+.button--favorite-heart:hover .favorite-heart path {
+  stroke: var(--color-brand-pink-dark);
+}
+
+.button--favorite-heart.favorited .favorite-heart path {
+  fill: var(--color-brand-pink-dark);
+  stroke: var(--color-brand-pink-dark);
+}
+
+.button--favorite-heart.favorited {
+  background-color: transparent;
+}
+
+/* Hide the old JS-injected favorite button wrapper */
+.product__info-container > .product-form__buttons:has(.product-favorite-btn) {
+  display: none;
+}
+
+/* Mobile: buttons stack or shrink */
+@media screen and (max-width: 749px) {
+  .product__info-container .product-form__buttons {
+    flex-wrap: wrap;
+  }
+
+  .product__info-container .product-form__submit,
+  .product__info-container .button--buy-now {
+    min-height: 5.5rem;
+    font-size: 1.5rem;
+  }
+
+  .button--favorite-heart {
+    width: 5.5rem;
+    min-width: 5.5rem;
+    height: 5.5rem;
+    min-height: 5.5rem;
+  }
+
+  .button--favorite-heart .favorite-heart {
+    width: 2.2rem;
+    height: 2.2rem;
+  }
+}
+
+/* ============================================================
+   Product Cards — Buy Button Overrides
+   ============================================================ */
+
+.quick-add__submit {
+  min-height: 5rem;
+  font-size: 1.6rem;
+}
+
+/* ============================================================
+   Price Styling — Pink, Large, Bold (Figma design)
+   ============================================================ */
+
+.product__info-container .price-item--regular,
+.product__info-container .price-item--sale,
+.product__info-container .price-item--last {
+  color: var(--color-brand-price);
+  font-size: 3.6rem;
+  font-weight: 600;
+}
+
+.product__info-container .price--on-sale .price-item--regular {
+  color: var(--color-brand-text-disabled);
+  font-size: 2rem;
+  font-weight: 400;
+}
+
+/* ============================================================
+   Product Pills — Availability & Cashback
+   ============================================================ */
+
+.product-pills-row {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+
+.product-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: var(--color-background, #fff);
+  border-radius: 3.1857rem;
+  box-shadow: 0 0.3261rem 2.4461rem 0.1631rem rgba(0, 0, 0, 0.1);
+  padding: 0.8rem 1.6rem;
+  font-size: 2rem;
+  color: var(--color-brand-text-muted);
+  white-space: nowrap;
+}
+
+.product-pill svg {
+  flex-shrink: 0;
+}
+
+.product-pill--out-of-stock {
+  color: var(--color-brand-text-disabled);
+}
+
+.product-pill__pink {
+  color: var(--color-brand-pink-dark);
+}
+
+/* ============================================================
+   Product Page Badges (on main image)
+   ============================================================ */
+
+/* ============================================================
+   SKU + Rating — Same Row
+   ============================================================ */
+
+.product__sku-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.product__sku-rating-row .product__sku {
+  margin: 0;
+  color: var(--color-brand-text-muted);
+  font-size: 2rem;
+}
+
+.product__sku-rating-row .rating-wrapper {
+  margin: 0;
+}
+
+.product__sku-rating-row .rating-text,
+.product__sku-rating-row .rating-count {
+  color: var(--color-brand-text-muted);
+  font-size: 2rem;
+}
+
+.product-page-badges {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: calc(4 * (3.4rem + 0.5rem));
+  overflow: hidden;
+}
+
+.product-page-badge {
+  display: inline-block;
+  border-radius: 0.9rem;
+  padding: 0.6rem 1.2rem;
+  font-size: 1.7rem;
+  font-weight: 600;
+  color: #fff; /* badge text on colored bg */
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.product-page-badge--top {
+  background: var(--color-brand-yellow);
+  box-shadow: 0 0.363rem 1.2rem 0.17rem rgba(241, 196, 15, 0.2);
+}
+
+.product-page-badge--new {
+  background: var(--color-brand-green);
+  box-shadow: 0 0.363rem 1.2rem 0.17rem rgba(76, 224, 101, 0.2);
+}
+
+.product-page-badge--discount[data-discount='small'] {
+  background: var(--color-brand-pink-dark);
+  box-shadow: 0 0.363rem 1.2rem 0.17rem rgba(249, 62, 137, 0.2);
+}
+
+.product-page-badge--discount[data-discount='medium'] {
+  background: var(--color-brand-orange);
+  box-shadow: 0 0.363rem 1.2rem 0.17rem rgba(255, 107, 0, 0.2);
+}
+
+.product-page-badge--discount[data-discount='large'] {
+  background: var(--color-brand-red);
+  box-shadow: 0 0.363rem 1.2rem 0.17rem rgba(255, 0, 0, 0.2);
+}
+
+.product-page-badge--soldout {
+  background: var(--color-brand-text-disabled);
+}
+
+/* ============================================================
+   Product Attributes Table (Figma design)
+   ============================================================ */
+
+.product-attributes-table {
+  margin-top: 2rem;
+}
+
+.product-attribute-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 2.4rem;
+  color: var(--color-brand-text-muted);
+  margin-bottom: 0.6rem;
+  line-height: 1.6;
+}
+
+.product-attribute-label {
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-weight: 500;
+}
+
+.product-attribute-dots {
+  flex: 1;
+  overflow: hidden;
+  color: var(--color-brand-text-light);
+  border-bottom: 2px dotted var(--color-brand-text-light);
+  margin-bottom: 0.4rem;
+  min-width: 2rem;
+}
+
+.product-attribute-value {
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-weight: 500;
+}
+
+.product-attribute-value--link {
+  color: var(--color-brand-pink-dark);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.product-attribute-value--link:hover {
+  text-decoration: underline;
+}
+
+@media screen and (max-width: 749px) {
+  .product-attribute-row {
+    font-size: 1.8rem;
+  }
+}
+
+/* Mobile: thumbnails below image, horizontal scroll (default Dawn behavior) */
+@media screen and (max-width: 749px) {
+  .product-gallery-layout {
+    display: block;
+  }
+
+  .product-gallery-layout__main .product-media-container .media {
+    border-radius: 1.2rem;
+    overflow: hidden;
   }
 }

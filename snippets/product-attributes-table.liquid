@@ -1,0 +1,87 @@
+{% comment %}
+  product-attributes-table.liquid
+  Renders a product attributes table with dotted line separators.
+  Data sources: product.vendor, product.type, product variant options, product tags (attr:key:value format).
+
+  Usage:
+  {% render 'product-attributes-table', product: product %}
+{% endcomment %}
+
+{%- liquid
+  assign has_any_attribute = false
+  if product.vendor != blank
+    assign has_any_attribute = true
+  endif
+  if product.type != blank
+    assign has_any_attribute = true
+  endif
+  for option in product.options_with_values
+    assign option_name_lower = option.name | downcase
+    if option_name_lower == 'color' or option_name_lower == 'colour' or option_name_lower == 'цвет'
+      assign has_any_attribute = true
+    endif
+    if option_name_lower == 'size' or option_name_lower == 'объём' or option_name_lower == 'объем' or option_name_lower == 'volume'
+      assign has_any_attribute = true
+    endif
+  endfor
+-%}
+
+{%- if has_any_attribute -%}
+  <div class="product-attributes-table">
+    {%- comment -%} Brand / Vendor {%- endcomment -%}
+    {%- if product.vendor != blank -%}
+      <div class="product-attribute-row">
+        <span class="product-attribute-label">{{ 'products.product.vendor' | t }}</span>
+        <span class="product-attribute-dots" aria-hidden="true"></span>
+        <a href="{{ product.vendor | url_for_vendor }}" class="product-attribute-value product-attribute-value--link">
+          {{ product.vendor }}
+        </a>
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} Product Type / Material {%- endcomment -%}
+    {%- if product.type != blank -%}
+      <div class="product-attribute-row">
+        <span class="product-attribute-label">{{ 'products.product.type' | t }}</span>
+        <span class="product-attribute-dots" aria-hidden="true"></span>
+        <span class="product-attribute-value">{{ product.type }}</span>
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} Variant options (volume, color, etc.) {%- endcomment -%}
+    {%- for option in product.options_with_values -%}
+      {%- assign option_name_lower = option.name | downcase -%}
+      {%- assign selected_value = product.selected_or_first_available_variant.options[forloop.index0] -%}
+
+      {%- if option_name_lower == 'size' or option_name_lower == 'объём' or option_name_lower == 'объем' or option_name_lower == 'volume' -%}
+        <div class="product-attribute-row">
+          <span class="product-attribute-label">{{ option.name }}</span>
+          <span class="product-attribute-dots" aria-hidden="true"></span>
+          <span class="product-attribute-value">{{ selected_value }}</span>
+        </div>
+      {%- endif -%}
+
+      {%- if option_name_lower == 'color' or option_name_lower == 'colour' or option_name_lower == 'цвет' -%}
+        <div class="product-attribute-row">
+          <span class="product-attribute-label">{{ option.name }}</span>
+          <span class="product-attribute-dots" aria-hidden="true"></span>
+          <span class="product-attribute-value">{{ selected_value }}</span>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- comment -%} Custom attributes from tags (format: attr:Label:Value) {%- endcomment -%}
+    {%- for tag in product.tags -%}
+      {%- if tag contains 'attr:' -%}
+        {%- assign tag_parts = tag | remove_first: 'attr:' | split: ':' -%}
+        {%- if tag_parts.size >= 2 -%}
+          <div class="product-attribute-row">
+            <span class="product-attribute-label">{{ tag_parts[0] }}</span>
+            <span class="product-attribute-dots" aria-hidden="true"></span>
+            <span class="product-attribute-value">{{ tag_parts[1] }}</span>
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+{%- endif -%}

@@ -53,6 +53,65 @@
   class="product-media-container media-type-{{ media.media_type }} media-fit-{{ media_fit }} global-media-settings gradient{% if constrain_to_viewport %} constrain-height{% endif %}"
   style="--ratio: {{ media.aspect_ratio | default: 1.0 }}; --preview-ratio: {{ media.preview_image.aspect_ratio | default: 1.0 }};"
 >
+  {%- comment -%} Product badges overlay (NEW, TOP, Discount) {%- endcomment -%}
+  {%- if position == 1 -%}
+    {%- liquid
+      assign badge_count = 0
+      assign product_available = product.available | default: true
+      assign is_on_sale = false
+      if product.compare_at_price > product.price
+        assign is_on_sale = true
+      endif
+      assign is_new = false
+      assign created_date = product.created_at | date: '%s' | plus: 0
+      assign today = 'now' | date: '%s' | plus: 0
+      assign days_old = today | minus: created_date | divided_by: 86400
+      if days_old < 14
+        assign is_new = true
+      endif
+      assign is_top = false
+      if product.tags contains 'top'
+        assign is_top = true
+      endif
+    -%}
+    {%- if product_available == false or is_on_sale or is_new or is_top -%}
+      <div class="product-page-badges">
+        {%- if product_available == false and badge_count < 4 -%}
+          <span class="product-page-badge product-page-badge--soldout">
+            {{ 'products.product.sold_out' | t }}
+          </span>
+          {%- assign badge_count = badge_count | plus: 1 -%}
+        {%- endif -%}
+        {%- if is_on_sale and product_available and badge_count < 4 -%}
+          {%- assign discount = product.compare_at_price | minus: product.price -%}
+          {%- assign discount_percent = discount | times: 100.0 | divided_by: product.compare_at_price | round -%}
+          {%- if discount_percent >= 50 -%}
+            {%- assign discount_class = 'large' -%}
+          {%- elsif discount_percent >= 30 -%}
+            {%- assign discount_class = 'medium' -%}
+          {%- else -%}
+            {%- assign discount_class = 'small' -%}
+          {%- endif -%}
+          <span class="product-page-badge product-page-badge--discount" data-discount="{{ discount_class }}">
+            -{{ discount_percent }}%
+          </span>
+          {%- assign badge_count = badge_count | plus: 1 -%}
+        {%- endif -%}
+        {%- if is_new and product_available and badge_count < 4 -%}
+          <span class="product-page-badge product-page-badge--new">
+            {{ 'products.product.new_badge' | t }}
+          </span>
+          {%- assign badge_count = badge_count | plus: 1 -%}
+        {%- endif -%}
+        {%- if is_top and product_available and badge_count < 4 -%}
+          <span class="product-page-badge product-page-badge--top">
+            {{ 'products.product.top_badge' | t }}
+          </span>
+          {%- assign badge_count = badge_count | plus: 1 -%}
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  {%- endif -%}
   <modal-opener
     class="product__modal-opener product__modal-opener--{{ media.media_type }}"
     data-modal="#ProductModal-{{ modal_id }}"

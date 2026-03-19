@@ -134,6 +134,7 @@
       "top_badge": "TOP",
       "add_to_cart": "Add to cart",
       "buy_now": "Buy now",
+      "add_to_favorites": "Add to favorites",
       "choose_options": "Choose options",
       "choose_product_options": "Choose options for {{ product_name }}",
       "description": "Description",
