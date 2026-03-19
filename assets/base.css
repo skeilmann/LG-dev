@@ -2125,9 +2125,9 @@ input[type='checkbox'] {
   justify-content: center;
 
   /* Default sizing (desktop) */
-  min-width: 1.7rem;
-  height: 1.7rem;
-  padding: 0 0.3rem;
+  min-width: 1.9rem;
+  height: 1.9rem;
+  padding: 0 0.35rem;
 
   /* Visual styling using Shopify theme variables */
   background-color: rgb(var(--color-foreground));
@@ -2136,14 +2136,15 @@ input[type='checkbox'] {
   border-radius: 50%;
 
   /* Typography */
-  font-size: 0.9rem;
+  font-size: 1.05rem;
   font-weight: 600;
   line-height: 1;
   text-align: center;
 
-  /* Default positioning (can be overridden by parent components) */
-  top: -0.5rem;
+  /* Default positioning — bottom of icon (can be overridden by parent components) */
+  bottom: -0.5rem;
   left: -0.5rem;
+  top: auto;
 
   /* Accessibility and performance */
   z-index: 10;

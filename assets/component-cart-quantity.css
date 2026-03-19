@@ -39,10 +39,10 @@
 
 /* Header-specific positioning for cart count bubble */
 .header .cart-count-bubble {
-    top: 0.125rem;
-    right: 0.125rem;
+    bottom: calc(-0.2rem + 8px);
+    right: calc(-0.2rem + 3px);
+    top: auto;
     left: auto;
-    /* Unset the default left positioning */
 }
 
 /* Responsive adjustments */
