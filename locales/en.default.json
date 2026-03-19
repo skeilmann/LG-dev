@@ -131,7 +131,9 @@
   "products": {
     "product": {
       "new_badge": "New",
+      "top_badge": "TOP",
       "add_to_cart": "Add to cart",
+      "buy_now": "Buy now",
       "choose_options": "Choose options",
       "choose_product_options": "Choose options for {{ product_name }}",
       "description": "Description",
@@ -194,6 +196,7 @@
       "sold_out": "Sold out",
       "unavailable": "Unavailable",
       "vendor": "Vendor",
+      "type": "Material type",
       "value_unavailable": "{{ option_value }} - Unavailable",
       "variant_sold_out_or_unavailable": "Variant sold out or unavailable",
       "video_exit_message": "{{ title }} opens full screen video in same window.",
@@ -292,6 +295,9 @@
     }
   },
   "sections": {
+    "breadcrumbs": {
+      "home": "Home"
+    },
     "announcements": {
       "previous_announcement": "Previous announcement",
       "next_announcement": "Next announcement",
@@ -512,6 +518,7 @@
     "loyalty": {
       "title": "Rewards",
       "points": "points",
+      "cashback": "cashback",
       "view_rewards": "View rewards",
       "loading": "Loading rewards...",
       "or": "or",

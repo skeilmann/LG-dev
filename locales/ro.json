@@ -77,7 +77,7 @@
   "announcement": {
     "free_shipping": {
       "empty": "Transport gratuit de la {{ threshold }}",
-      "progress": "Cheltuiți {{ remaining_amount }} pentru transport gratuit",
+      "progress": "Cheltuiți {{ remaining }} pentru transport gratuit",
       "reached": "Felicitări! Aveți transport gratuit!"
     }
   },
@@ -301,6 +301,9 @@
     }
   },
   "sections": {
+    "breadcrumbs": {
+      "home": "Acasă"
+    },
     "header": {
       "announcement": "Anunț",
       "menu": "Meniu",

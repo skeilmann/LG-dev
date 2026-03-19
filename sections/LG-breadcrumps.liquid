@@ -34,10 +34,15 @@
        }
 
        .breadcrumbs {
-         padding: 1rem 5rem;
-         color: {{ section.settings.breadcrumb_text_color }}
-         ;
-         background-color: {{ section.settings.breadcrumb_bg_color }}
+         padding: 1rem 1.5rem;
+         color: {{ section.settings.breadcrumb_text_color }};
+         background-color: {{ section.settings.breadcrumb_bg_color }};
+       }
+
+       @media screen and (min-width: 750px) {
+         .breadcrumbs {
+           padding: 1rem 5rem;
+         }
        }
 
        .breadcrumbs li {
@@ -122,7 +127,7 @@
       </div>
     {%- endif -%}
 
-    <a href="/" title="Home">Home</a>
+    <a href="/" title="{{ 'sections.breadcrumbs.home' | t }}">{{ 'sections.breadcrumbs.home' | t }}</a>
     {%- case template.name -%}
       {%- when 'article' -%}
         {%- for link in linklists['main-menu'].links -%}
@@ -314,7 +319,7 @@
         {%- endif -%}
 
         <span class="breadcrumb-delimeter" aria-hidden="true"></span>
-        <a href="{{ product.url }}">{{ product.title }}</a>
+        <span aria-current="page">{{ product.title }}</span>
       {%- else -%}
         {% for link in linklists['main-menu'].links %}
           {% if link.child_active or link.active %}
@@ -345,22 +350,10 @@
   {%- endunless -%}
 </div>
 
-<script defer>
-  const breadCrumbLinks = document.querySelectorAll('.breadcrumbs a');
-  const lastLink = breadCrumbLinks[breadCrumbLinks.length - 1];
-  if (lastLink) {
-    lastLink.href = 'javascript:void(0)';
-  }
-</script>
-
 {% schema %}
 {
   "name": "Breadcrumb Navigation",
   "settings": [
-    {
-      "type": "header",
-      "content": "Subscribe to our [channel](https://www.youtube.com/@websensepro?sub_confirmation=1)"
-    },
     {
       "type": "checkbox",
       "id": "breadcrumbs_home_icon_bool",
