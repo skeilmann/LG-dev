@@ -87,9 +87,9 @@ class CustomHeader {
 
     // Separate timeout IDs to prevent race conditions between zones
     this.menuLeaveTimeout = null;
-    this.zone1LeaveRAF = null;
-    this.zone2LeaveRAF = null;
-    this.zone3LeaveRAF = null;
+    this.zone1LeaveTimeout = null;
+    this.zone2LeaveTimeout = null;
+    this.zone3LeaveTimeout = null;
     this.hoverIntentTimeout = null;
     this.HOVER_INTENT_DELAY = 50; // ms - imperceptible but filters accidental hovers
     
@@ -271,12 +271,12 @@ class CustomHeader {
     };
 
     this._boundZone1Leave = () => {
-      cancelAnimationFrame(this.zone1LeaveRAF);
-      this.zone1LeaveRAF = requestAnimationFrame(() => {
+      clearTimeout(this.zone1LeaveTimeout);
+      this.zone1LeaveTimeout = setTimeout(() => {
         if (!this.zone2?.matches(':hover') && !this.zone3?.matches(':hover') && !this.zone4?.matches(':hover')) {
           this.resetToDefaultState();
         }
-      });
+      }, 75);
     };
 
     this.zone1.addEventListener('mouseover', this._boundZone1MouseOver);
@@ -295,13 +295,13 @@ class CustomHeader {
     };
 
     this._boundZone2Leave = () => {
-      cancelAnimationFrame(this.zone2LeaveRAF);
-      this.zone2LeaveRAF = requestAnimationFrame(() => {
+      clearTimeout(this.zone2LeaveTimeout);
+      this.zone2LeaveTimeout = setTimeout(() => {
         if (!this.zone3?.matches(':hover')) {
           this.resetVisibility(document.querySelectorAll('.mega-menu-sub-subcategories'));
           this.showCategoryImage();
         }
-      });
+      }, 75);
     };
 
     this.zone2.addEventListener('mouseover', this._boundZone2MouseOver);
@@ -319,10 +319,12 @@ class CustomHeader {
     };
 
     this._boundZone3Leave = () => {
-      cancelAnimationFrame(this.zone3LeaveRAF);
-      this.zone3LeaveRAF = requestAnimationFrame(() => {
-        this.showSubcategoryImage();
-      });
+      clearTimeout(this.zone3LeaveTimeout);
+      this.zone3LeaveTimeout = setTimeout(() => {
+        if (!this.zone4?.matches(':hover')) {
+          this.showSubcategoryImage();
+        }
+      }, 75);
     };
 
     this.zone3.addEventListener('mouseover', this._boundZone3MouseOver);
@@ -383,24 +385,33 @@ class CustomHeader {
   resetToDefaultState() {
     // Clear active states from category links
     this.resetVisibility(document.querySelectorAll('.mega-menu-category.is-visible'), false);
-    
+
     // Hide all subcategories (column 2)
     this.resetVisibility(document.querySelectorAll('.mega-menu-subcategories'));
-    
+
     // Hide all sub-subcategories (column 3)
     this.resetVisibility(document.querySelectorAll('.mega-menu-sub-subcategories'));
-    
+
     // Clear all images (column 4) - no default placeholder shown
     this.clearAllImages();
+
+    // Clear active tracking so re-hovering the same item works after reset
+    this.currentActiveCategory = null;
+    this.currentActiveSubcategory = null;
   }
 
   // Universal helper to clear all images before showing a new one
-  clearAllImages() {
-    // Hide all possible images inside the image container only
+  // Pass excludeElement to skip it during clear (enables smooth crossfade transitions)
+  clearAllImages(excludeElement = null) {
     const scope = this.imageContainer || this.megaMenuDropdown || document;
-    this.resetVisibility(scope.querySelectorAll(
+    const images = scope.querySelectorAll(
       '.mega-menu-category-image, .mega-menu-subcategory-image, .mega-menu-sub-subcategory-image'
-    ), false);
+    );
+    images.forEach((img) => {
+      if (img !== excludeElement) {
+        img.classList.remove('is-visible');
+      }
+    });
   }
 
 
@@ -418,9 +429,9 @@ class CustomHeader {
     const categoryImage = scope.querySelector(targetImageSelector);
     
     if (categoryImage) {
-      // Clear all images first to prevent switching bugs
-      this.clearAllImages();
-      
+      // Clear other images (exclude target for smooth crossfade)
+      this.clearAllImages(categoryImage);
+
       // Show target image
       this.showElements([categoryImage]);
     }
@@ -443,9 +454,9 @@ class CustomHeader {
     const subcategoryImage = scope.querySelector(targetImageSelector);
     
     if (subcategoryImage) {
-      // Clear all images first to prevent switching bugs
-      this.clearAllImages();
-      
+      // Clear other images (exclude target for smooth crossfade)
+      this.clearAllImages(subcategoryImage);
+
       // Show target image
       this.showElements([subcategoryImage]);
     } else {
@@ -559,9 +570,9 @@ class CustomHeader {
       const subSubcategoryImage = scope.querySelector(targetImageSelector);
       
       if (subSubcategoryImage) {
-        // Clear all images first to prevent switching bugs
-        this.clearAllImages();
-        
+        // Clear other images (exclude target for smooth crossfade)
+        this.clearAllImages(subSubcategoryImage);
+
         // Show target image
         this.showElements([subSubcategoryImage]);
       } else {
@@ -1136,9 +1147,9 @@ class CustomHeader {
     clearTimeout(this.menuLeaveTimeout);
     clearTimeout(this.hoverIntentTimeout);
     cancelAnimationFrame(this.rafId);
-    cancelAnimationFrame(this.zone1LeaveRAF);
-    cancelAnimationFrame(this.zone2LeaveRAF);
-    cancelAnimationFrame(this.zone3LeaveRAF);
+    clearTimeout(this.zone1LeaveTimeout);
+    clearTimeout(this.zone2LeaveTimeout);
+    clearTimeout(this.zone3LeaveTimeout);
 
     // Abort pending fetch requests
     this.fetchController?.abort();
