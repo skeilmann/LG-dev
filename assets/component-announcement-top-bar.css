@@ -1,0 +1,263 @@
+/* --------------------------------------------------------
+ * component-announcement-top-bar.css
+ * Announcement / top bar section — grid layout
+ * Center content is absolutely positioned for true centering
+ * -------------------------------------------------------- */
+
+.announcement-top-bar {
+  height: 56px;
+  padding: 0;
+}
+
+.announcement-top-bar__inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  height: 56px;
+}
+
+/* Center zone — absolutely positioned for true page centering */
+.announcement-top-bar__center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+  pointer-events: auto;
+}
+
+.announcement-top-bar__icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.announcement-top-bar__icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Right zone — flows naturally to the right via justify-content: flex-end */
+.announcement-top-bar__right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+  z-index: 1;
+}
+
+/* --- Block wrapper overrides --- */
+
+/*
+ * {% content_for 'blocks' %} renders block templates with wrappers.
+ * Collapse all wrappers so the actual content participates in centering.
+ */
+.announcement-top-bar .shopify-block,
+.announcement-top-bar .lg-custom-block,
+.announcement-top-bar .lg-cart-progress,
+.announcement-top-bar .ai-cart-progress,
+.announcement-top-bar [class*="ai-cart-progress-"] {
+  display: contents;
+}
+
+/* --- Progress bar in announcement bar --- */
+
+.announcement-top-bar .fs-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.announcement-top-bar .fs-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.announcement-top-bar .fs-empty-message {
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-align: center;
+  margin: 0;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Progress bar fill styling */
+.announcement-top-bar .fs-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.announcement-top-bar .fs-progress-bar {
+  width: 120px;
+  height: 6px;
+  background-color: rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.announcement-top-bar .fs-progress-fill {
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.announcement-top-bar .fs-progress-fill .progress-bar-placeholder {
+  display: none;
+}
+
+/* Hide the header row (title + amounts) — just show bar + message */
+.announcement-top-bar .fs-header {
+  display: none;
+}
+
+.announcement-top-bar .fs-success-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.announcement-top-bar .fs-success-message {
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-align: center;
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* --- Language selector pill --- */
+
+.announcement-top-bar .language-indicator {
+  background-color: #000;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 4px;
+  min-width: 40px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+.announcement-top-bar .language-indicator:hover {
+  background-color: rgb(156, 54, 143);
+}
+
+/* --- Localization overrides for tighter fit in 56px bar --- */
+
+.announcement-top-bar .disclosure__button {
+  height: auto;
+  padding: 0 1rem;
+  font-size: 1.2rem;
+}
+
+.announcement-top-bar .desktop-localization-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.announcement-top-bar .header-localization {
+  display: flex;
+  align-items: center;
+}
+
+.announcement-top-bar .localization-form {
+  padding: 0;
+}
+
+.announcement-top-bar .localization-form:only-child {
+  padding: 0;
+  margin: 0;
+}
+
+.announcement-top-bar .header-localization .disclosure .localization-form__select {
+  font-size: 1.2rem;
+  height: 32px;
+  min-height: initial;
+  padding: 0 2.2rem 0 0.8rem;
+}
+
+.announcement-top-bar .localization-form__select .icon-caret {
+  right: 0.4rem;
+  height: 0.5rem;
+}
+
+.announcement-top-bar .country-arrow svg {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+/* Ensure disclosure dropdowns sit above the header section below */
+.announcement-top-bar .disclosure {
+  position: relative;
+  z-index: 4;
+}
+
+.announcement-top-bar .disclosure__list-wrapper {
+  bottom: initial;
+  top: 100%;
+  transform: translateY(0);
+  z-index: 4;
+}
+
+/* --- Mobile responsive --- */
+
+@media screen and (max-width: 749px) {
+  .announcement-top-bar,
+  .announcement-top-bar__inner {
+    height: 44px;
+  }
+
+  .announcement-top-bar__icon {
+    display: none;
+  }
+
+  .announcement-top-bar .fs-empty-message,
+  .announcement-top-bar .fs-success-message {
+    font-size: 1.1rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .announcement-top-bar .fs-progress-bar {
+    width: 80px;
+  }
+
+  .announcement-top-bar__right {
+    gap: 2px;
+  }
+}
+
+/* --- Tablet --- */
+
+@media screen and (min-width: 750px) and (max-width: 989px) {
+  .announcement-top-bar,
+  .announcement-top-bar__inner {
+    height: 50px;
+  }
+
+  .announcement-top-bar .fs-empty-message,
+  .announcement-top-bar .fs-success-message {
+    font-size: 1.15rem;
+  }
+
+  .announcement-top-bar .fs-progress-bar {
+    width: 100px;
+  }
+}

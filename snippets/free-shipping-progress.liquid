@@ -8,6 +8,7 @@
   - show_empty_state: Show empty cart message (default: true)
   - style_prefix: CSS class prefix for styling (optional)
   - custom_messages: Object with custom message overrides (optional)
+  - compact: boolean — text-only mode for announcement bar (no progress bar UI)
 {% endcomment %}
 
 {% liquid
@@ -81,7 +82,10 @@
   data-locale-message-empty="{{ empty_msg | escape }}"
   data-locale-message-reached="{{ reached_msg | escape }}"
   data-locale-message-qualify="{{ qualify_msg | escape }}"
-  {% if custom_progress %}
+  {%- if compact %}
+    data-compact="true"
+  {%- endif %}
+  {%- if custom_progress %}
     data-custom-message-progress="{{ custom_progress }}"
   {% endif %}
   {% if custom_empty %}
@@ -107,30 +111,30 @@
     </div>
   {% endif %}
 
-  <div class="fs-content {{ style_prefix }}progress-content" style="display: none;">
-    {% if show_header %}
-      <div class="fs-header">
-        <h3 class="fs-title {{ style_prefix }}title">{{ 'general.free_shipping.title' | t }}</h3>
-        <div class="fs-amount {{ style_prefix }}amount">
-          <span class="fs-current {{ style_prefix }}current">{{ cart.total_price | money }}</span>
-          <span class="fs-separator {{ style_prefix }}separator"> / </span>
-          <span class="fs-target {{ style_prefix }}target">{{ threshold_formatted }}</span>
+    <div class="fs-content {{ style_prefix }}progress-content" style="display: none;">
+      {% if show_header %}
+        <div class="fs-header">
+          <h3 class="fs-title {{ style_prefix }}title">{{ 'general.free_shipping.title' | t }}</h3>
+          <div class="fs-amount {{ style_prefix }}amount">
+            <span class="fs-current {{ style_prefix }}current">{{ cart.total_price | money }}</span>
+            <span class="fs-separator {{ style_prefix }}separator"> / </span>
+            <span class="fs-target {{ style_prefix }}target">{{ threshold_formatted }}</span>
+          </div>
+        </div>
+      {% endif %}
+
+      <div
+        class="fs-progress-bar {{ style_prefix }}progress-bar"
+        role="progressbar"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow="0"
+      >
+        <div class="fs-progress-fill {{ style_prefix }}progress-fill" style="width: 0%;">
+          <span class="progress-bar-placeholder" aria-hidden="true">&nbsp;</span>
         </div>
       </div>
-    {% endif %}
-
-    <div
-      class="fs-progress-bar {{ style_prefix }}progress-bar"
-      role="progressbar"
-      aria-valuemin="0"
-      aria-valuemax="100"
-      aria-valuenow="0"
-    >
-      <div class="fs-progress-fill {{ style_prefix }}progress-fill" style="width: 0%;">
-        <span class="progress-bar-placeholder" aria-hidden="true">&nbsp;</span>
-      </div>
     </div>
-  </div>
   <div class="fs-success-container {{ style_prefix }}success-container" style="display: none;">
     <p class="fs-success-message {{ style_prefix }}success-message" aria-live="polite" role="status"></p>
   </div>

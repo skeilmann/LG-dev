@@ -118,7 +118,8 @@
       this.thresholdCents = parseInt(root.dataset.thresholdCents || root.dataset.threshold || '0', 10) || 0;
       this.currency = root.dataset.currencyCode || (GLOBAL.Shopify && GLOBAL.Shopify.currency && GLOBAL.Shopify.currency.active) || (GLOBAL.Shopify && GLOBAL.Shopify.currency) || 'USD';
 
-
+      // Compact mode: text-only display for announcement bar
+      this.isCompact = root.hasAttribute('data-compact');
 
       // Pre-rendered locale strings coming from Liquid
       this.msgProgressLocale = (root.dataset.localeMessageProgress || '').trim();
@@ -133,7 +134,7 @@
 
 
       // Elements - using standardized naming only
-      this.contentEl = root.querySelector('.fs-content') || root;
+      this.contentEl = root.querySelector('.fs-content') || null;
       this.emptyEl = root.querySelector('.fs-empty');
       this.emptyMessageEl = root.querySelector('.fs-empty-message');
       this.successEl = root.querySelector('.fs-success-container');
@@ -219,7 +220,7 @@
     }
 
     toggleContainerVisibility(cart, total, threshold, isThresholdMet) {
-      if (!this.emptyEl || !this.contentEl) return;
+      if (!this.emptyEl) return;
 
       // If no threshold is set, show empty message only
       if (threshold <= 0) {
@@ -229,13 +230,55 @@
 
       // Determine which container should be visible
       const isEmpty = !cart || cart.item_count === 0 || total === 0;
-      
+
+      if (this.isCompact) {
+        // Compact mode: swap text in the empty message element instead of toggling containers
+        this.renderCompactText(cart, total, threshold, isThresholdMet, isEmpty);
+        return;
+      }
+
       if (isEmpty) {
         this.showContainer('empty');
       } else if (isThresholdMet) {
         this.showContainer('success');
       } else {
         this.showContainer('progress');
+      }
+    }
+
+    renderCompactText(cart, total, threshold, isThresholdMet, isEmpty) {
+      if (!this.emptyMessageEl) return;
+      const { empty, progress, reached, qualify } = this.getMessageTemplates();
+      const thresholdFormatted = formatMoneyCents(threshold, this.currency);
+      const remainingCents = Math.max(threshold - total, 0);
+      const remainingFormatted = formatMoneyCents(remainingCents, this.currency);
+
+      let text;
+      if (isEmpty) {
+        text = tokenize(empty, '', thresholdFormatted);
+      } else if (isThresholdMet) {
+        text = qualify || tokenize(reached, '', thresholdFormatted);
+      } else {
+        text = tokenize(progress, remainingFormatted, thresholdFormatted);
+      }
+
+      this.emptyMessageEl.textContent = text;
+      // Keep empty container always visible — it holds the text for all states
+      if (this.emptyEl) {
+        this.emptyEl.style.display = '';
+        this.emptyEl.classList.remove('is-hidden');
+      }
+      // Hide success container (text is shown via emptyMessageEl)
+      if (this.successEl) {
+        this.successEl.style.display = 'none';
+      }
+      // Show/hide progress bar based on cart state
+      if (this.contentEl) {
+        if (!isEmpty && !isThresholdMet) {
+          this.contentEl.style.display = '';
+        } else {
+          this.contentEl.style.display = 'none';
+        }
       }
     }
 

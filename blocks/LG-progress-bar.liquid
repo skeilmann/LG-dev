@@ -52,6 +52,7 @@
 
     .lg-cart-progress {
       padding: 5px 30px;
+    }
   }
 {% endstyle %}
 
@@ -59,7 +60,9 @@
   {% render 'free-shipping-progress',
     threshold_block: block,
     container_class: 'fs-progress',
-    custom_message_empty: block.settings.empty_cart_message
+    show_header: false,
+    custom_message_empty: block.settings.empty_cart_message,
+    compact: true
   %}
 </div>
 
