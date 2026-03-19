@@ -494,7 +494,7 @@
     margin-bottom: 1rem;
     color: rgb(var(--color-foreground));
     font-size: inherit;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: normal;
 }
@@ -512,8 +512,8 @@
     text-decoration: none;
     transition: all var(--duration-short) ease, text-shadow var(--duration-short) ease;
     border-bottom: 1px solid transparent;
-    font-weight: 600;
-    text-transform: uppercase;
+    font-weight: 400;
+    text-transform: none;
 }
 
 /* Hover and active states for all menu links */
