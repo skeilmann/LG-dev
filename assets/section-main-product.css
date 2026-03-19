@@ -2261,25 +2261,30 @@ a.product__text {
   letter-spacing: -0.028rem;
 }
 
-.delivery-payment-card__list {
-  list-style: disc;
-  padding-left: 2.7rem;
-  margin: 0;
+.delivery-payment-card__body {
   font-size: 1.8rem;
   line-height: 1.7;
   color: var(--color-brand-text);
   letter-spacing: -0.018rem;
 }
 
-.delivery-payment-card__list li {
+.delivery-payment-card__body ul {
+  list-style: disc;
+  padding-left: 2.7rem;
+  margin: 0;
+}
+
+.delivery-payment-card__body li {
   margin-bottom: 0.6rem;
 }
 
-.delivery-payment-card__list li:last-child {
+.delivery-payment-card__body li:last-child {
   margin-bottom: 0;
 }
 
-.delivery-payment-card__highlight {
+/* Bold text in richtext renders as pink highlight */
+.delivery-payment-card__body strong,
+.delivery-payment-card__body b {
   color: var(--color-brand-pink-dark);
   font-weight: 500;
 }
@@ -2306,7 +2311,7 @@ a.product__text {
     font-size: 2.2rem;
   }
 
-  .delivery-payment-card__list {
+  .delivery-payment-card__body {
     font-size: 1.5rem;
   }
 }

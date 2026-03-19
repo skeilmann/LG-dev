@@ -847,8 +847,30 @@
       </script>
     {%- endif -%}
 
-    {%- comment -%} Delivery & Payment info card (Figma design) {%- endcomment -%}
-    {% render 'delivery-payment-info' %}
+    {%- comment -%} Delivery & Payment info card (Figma design) — uses section settings {%- endcomment -%}
+    {%- if section.settings.delivery_content != blank or section.settings.payment_content != blank -%}
+      <div class="delivery-payment-card">
+        {%- if section.settings.delivery_content != blank -%}
+          <div class="delivery-payment-card__col">
+            <h3 class="delivery-payment-card__heading">{{ section.settings.delivery_heading }}</h3>
+            <div class="delivery-payment-card__body rte">
+              {{ section.settings.delivery_content }}
+            </div>
+          </div>
+        {%- endif -%}
+        {%- if section.settings.delivery_content != blank and section.settings.payment_content != blank -%}
+          <div class="delivery-payment-card__divider" aria-hidden="true"></div>
+        {%- endif -%}
+        {%- if section.settings.payment_content != blank -%}
+          <div class="delivery-payment-card__col">
+            <h3 class="delivery-payment-card__heading">{{ section.settings.payment_heading }}</h3>
+            <div class="delivery-payment-card__body rte">
+              {{ section.settings.payment_content }}
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
 
     {% render 'product-media-modal', variant_images: variant_images %}
 
@@ -2522,6 +2544,34 @@
       "id": "enable_video_looping",
       "default": false,
       "label": "t:sections.main-product.settings.enable_video_looping.label"
+    },
+    {
+      "type": "header",
+      "content": "Delivery & Payment"
+    },
+    {
+      "type": "text",
+      "id": "delivery_heading",
+      "label": "Delivery heading",
+      "default": "Доставка"
+    },
+    {
+      "type": "richtext",
+      "id": "delivery_content",
+      "label": "Delivery content",
+      "default": "<ul><li><strong>Курьерской службой</strong> Nova Post по Молдове (1-3 дня), бесплатно от 1500 MDL;</li><li>Самовывоз с магазина <strong>VEV LUX SHOP</strong> в г. Бельцы;</li><li>Курьером по г. Бельцы, бесплатно от 300 MDL;</li><li>Курьерской службой по Европе и странам ЕС.</li></ul>"
+    },
+    {
+      "type": "text",
+      "id": "payment_heading",
+      "label": "Payment heading",
+      "default": "Оплата"
+    },
+    {
+      "type": "richtext",
+      "id": "payment_content",
+      "label": "Payment content",
+      "default": "<ul><li><strong>Наличкой</strong> при получении;</li><li>Картой при получении;</li><li>Перечисление по е-фактуре (<strong>для юр. лиц</strong>);</li><li><strong>Онлайн-оплата</strong>.</li></ul>"
     },
     {
       "type": "header",
