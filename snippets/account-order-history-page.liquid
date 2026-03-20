@@ -1,0 +1,90 @@
+{%- comment -%}
+  Account Order History Block (Page Template Version)
+  Renders order history WITHOUT {% paginate %} — for use on regular page templates
+  where customer.orders pagination is not available.
+  Parameters:
+    - block: The block object with settings (heading, orders_per_page)
+  Usage: {% render 'account-order-history-page', block: block %}
+  Dependencies: customer.css
+{%- endcomment -%}
+
+<div class="account-block account-block--order-history" {{ block.shopify_attributes }}>
+  {%- assign default_orders_heading = 'customer.orders.title' | t -%}
+  <h2 class="account-block__heading">
+    {{ block.settings.heading | default: default_orders_heading }}
+  </h2>
+
+  {%- assign orders_limit = block.settings.orders_per_page | default: 10 -%}
+
+  {%- if customer.orders.size > 0 -%}
+    <table role="table" class="order-history">
+      <caption class="visually-hidden">
+        {{ 'customer.orders.title' | t }}
+      </caption>
+      <thead role="rowgroup">
+        <tr role="row">
+          <th id="ColumnOrder" scope="col" role="columnheader">{{ 'customer.orders.order_number' | t }}</th>
+          <th id="ColumnDate" scope="col" role="columnheader">{{ 'customer.orders.date' | t }}</th>
+          <th id="ColumnPayment" scope="col" role="columnheader">{{ 'customer.orders.payment_status' | t }}</th>
+          <th id="ColumnFulfillment" scope="col" role="columnheader">
+            {{ 'customer.orders.fulfillment_status' | t }}
+          </th>
+          <th id="ColumnTotal" scope="col" role="columnheader">{{ 'customer.orders.total' | t }}</th>
+        </tr>
+      </thead>
+      <tbody role="rowgroup">
+        {%- for order in customer.orders -%}
+          {%- if forloop.index > orders_limit -%}
+            {%- break -%}
+          {%- endif -%}
+          <tr role="row">
+            <td
+              id="RowOrder"
+              role="cell"
+              headers="ColumnOrder"
+              data-label="{{ 'customer.orders.order_number' | t }}"
+            >
+              <a
+                href="{{ order.customer_url }}"
+                aria-label="{{ 'customer.orders.order_number_link' | t: number: order.name }}"
+              >
+                {{ order.name }}
+              </a>
+            </td>
+            <td headers="RowOrder ColumnDate" role="cell" data-label="{{ 'customer.orders.date' | t }}">
+              {{ order.created_at | time_tag: format: 'date' }}
+            </td>
+            <td
+              headers="RowOrder ColumnPayment"
+              role="cell"
+              data-label="{{ 'customer.orders.payment_status' | t }}"
+            >
+              {{ order.financial_status_label }}
+            </td>
+            <td
+              headers="RowOrder ColumnFulfillment"
+              role="cell"
+              data-label="{{ 'customer.orders.fulfillment_status' | t }}"
+            >
+              {{ order.fulfillment_status_label }}
+            </td>
+            <td headers="RowOrder ColumnTotal" role="cell" data-label="{{ 'customer.orders.total' | t }}">
+              {{ order.total_net_amount | money_with_currency }}
+            </td>
+          </tr>
+        {%- endfor -%}
+      </tbody>
+    </table>
+
+    {%- if customer.orders.size > orders_limit -%}
+      <p class="account-block__note">
+        {{ 'customer.account.recent_orders_note' | t }}
+        <a href="https://shopify.com/{{ shop.id }}/account" class="link underlined-link">
+          {{ 'customer.account.view_all_orders' | t }}
+        </a>
+      </p>
+    {%- endif -%}
+  {%- else -%}
+    <p>{{ 'customer.orders.none' | t }}</p>
+  {%- endif -%}
+</div>

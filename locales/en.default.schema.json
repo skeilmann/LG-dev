@@ -956,6 +956,14 @@
         }
       }
     },
+    "account-dashboard": {
+      "name": "Account Dashboard",
+      "settings": {
+        "login_message": {
+          "label": "Login message for guests"
+        }
+      }
+    },
     "featured-collection": {
       "name": "Featured collection",
       "settings": {

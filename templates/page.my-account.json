@@ -1,0 +1,45 @@
+{
+  "sections": {
+    "main": {
+      "type": "account-dashboard",
+      "settings": {
+        "heading": "My Account",
+        "show_logout": true,
+        "padding_top": 36,
+        "padding_bottom": 36
+      },
+      "blocks": {
+        "loyalty": {
+          "type": "loyalty_points",
+          "settings": {
+            "heading": "My Rewards"
+          }
+        },
+        "orders": {
+          "type": "order_history",
+          "settings": {
+            "heading": "Order History",
+            "orders_per_page": 10
+          }
+        },
+        "favorites": {
+          "type": "favorites",
+          "settings": {
+            "heading": "My Favorites",
+            "max_products": 6,
+            "columns_desktop": 3,
+            "show_view_all": true
+          }
+        },
+        "details": {
+          "type": "account_details",
+          "settings": {
+            "heading": "Account Details"
+          }
+        }
+      },
+      "block_order": ["loyalty", "orders", "favorites", "details"]
+    }
+  },
+  "order": ["main"]
+}

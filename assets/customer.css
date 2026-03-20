@@ -404,6 +404,38 @@
   }
 }
 
+/* Account Dashboard Guest State */
+.account-dashboard-guest {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.account-dashboard-guest__content {
+  text-align: center;
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: 6rem 1.5rem;
+}
+
+.account-dashboard-guest__content h1 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+.account-dashboard-guest__content p {
+  margin-bottom: 2.5rem;
+  color: rgba(var(--color-foreground), 0.7);
+}
+
+/* Order History Note */
+.account-block__note {
+  margin-top: 2rem;
+  font-size: 1.4rem;
+  color: rgba(var(--color-foreground), 0.6);
+}
+
 /* Account Blocks */
 .account__header {
   display: flex;

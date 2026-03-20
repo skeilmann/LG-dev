@@ -133,6 +133,7 @@
       "new_badge": "New",
       "top_badge": "TOP",
       "add_to_cart": "Add to cart",
+      "add_to_cart_short": "Add to cart",
       "buy_now": "Buy now",
       "add_to_favorites": "Add to favorites",
       "choose_options": "Choose options",
@@ -554,7 +555,11 @@
       "view_all_favorites": "View All",
       "favorites_empty": "You haven't added any favorites yet.",
       "favorites_browse": "Browse products",
-      "my_rewards": "My Rewards"
+      "my_rewards": "My Rewards",
+      "login_required": "Please log in to view your account dashboard.",
+      "login_button": "Log In",
+      "recent_orders_note": "Showing your most recent orders.",
+      "view_all_orders": "View full order history"
     },
     "account_fallback": "Account",
     "activate_account": {

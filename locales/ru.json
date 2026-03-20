@@ -135,6 +135,7 @@
       "new_badge": "Новинка",
       "top_badge": "TOP",
       "add_to_cart": "добавить в корзину",
+      "add_to_cart_short": "в корзину",
       "buy_now": "купить в один клик",
       "add_to_favorites": "Добавить в избранное",
       "description": "Описание товара",
@@ -318,6 +319,26 @@
   "sections": {
     "breadcrumbs": {
       "home": "Главная"
+    },
+    "recently_viewed": {
+      "name": "Недавно просмотренное",
+      "heading": "Недавно просмотренное",
+      "clear_history": "Очистить историю",
+      "no_products": "Нет недавно просмотренных товаров"
+    },
+    "frequently_bought": {
+      "heading": "Часто покупают вместе"
+    },
+    "lg-recommended-products": {
+      "name": "Рекомендуемые товары"
+    },
+    "instagram_feed": {
+      "name": "Instagram лента",
+      "loading": "Загрузка...",
+      "empty": "Нет видео для отображения",
+      "error": "Не удалось загрузить ленту",
+      "token_required": "Требуется токен доступа Instagram",
+      "play_video": "Воспроизвести видео"
     },
     "header": {
       "announcement": "Объявление",
@@ -540,7 +561,11 @@
       "view_all_favorites": "Показать все",
       "favorites_empty": "Вы ещё не добавили товары в избранное.",
       "favorites_browse": "Перейти к товарам",
-      "my_rewards": "Мои награды"
+      "my_rewards": "Мои награды",
+      "login_required": "Пожалуйста, войдите в систему, чтобы просмотреть личный кабинет.",
+      "login_button": "Войти",
+      "recent_orders_note": "Показаны ваши последние заказы.",
+      "view_all_orders": "Посмотреть всю историю заказов"
     },
     "account_fallback": "Учетная запись",
     "log_in": "Войти",
