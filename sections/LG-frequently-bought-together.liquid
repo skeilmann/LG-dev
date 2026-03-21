@@ -1,0 +1,247 @@
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-slider.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  .frequently-bought__heading {
+    margin-bottom: 2.4rem;
+  }
+
+  .frequently-bought__heading em,
+  .frequently-bought__heading i {
+    font-style: normal;
+    color: var(--color-brand-pink-dark, #f93e89);
+  }
+
+  .frequently-bought__slider {
+    position: relative;
+  }
+
+  .frequently-bought__slider .slider-button {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+{%- endstyle -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <product-recommendations
+    class="frequently-bought page-width section-{{ section.id }}-padding isolate{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+    data-url="{{ routes.product_recommendations_url }}?intent=complementary&limit={{ section.settings.products_to_show }}"
+    data-section-id="{{ section.id }}"
+    data-product-id="{{ product.id }}"
+  >
+    {% if recommendations.performed and recommendations.products_count > 0 %}
+      <h2 class="frequently-bought__heading inline-richtext {{ section.settings.heading_size }}">
+        {{ section.settings.heading }}
+      </h2>
+
+      {%- if section.settings.enable_slider -%}
+        <slider-component class="slider-mobile-gutter frequently-bought__slider">
+          <ul
+            class="grid product-grid grid--{{ section.settings.columns_desktop }}-col-desktop grid--{{ section.settings.columns_mobile }}-col-tablet-down{% if section.settings.enable_slider %} slider slider--tablet grid--peek{% endif %}"
+            id="Slider-{{ section.id }}"
+            role="list"
+          >
+            {% assign skip_card_product_styles = false %}
+            {% for recommendation in recommendations.products %}
+              <li
+                class="grid__item{% if section.settings.enable_slider %} slider__slide{% endif %}"
+                id="Slide-{{ section.id }}-{{ forloop.index }}"
+              >
+                {% render 'card-product',
+                  card_product: recommendation,
+                  media_aspect_ratio: section.settings.image_ratio,
+                  image_shape: 'default',
+                  show_secondary_image: section.settings.show_secondary_image,
+                  show_vendor: section.settings.show_vendor,
+                  show_rating: false,
+                  skip_styles: skip_card_product_styles,
+                  quick_add: 'standard'
+                %}
+              </li>
+              {%- assign skip_card_product_styles = true -%}
+            {% endfor %}
+          </ul>
+
+          {%- if section.settings.enable_slider -%}
+            <div class="slider-buttons no-js-hidden">
+              <button
+                type="button"
+                class="slider-button slider-button--prev"
+                name="previous"
+                aria-label="{{ 'general.slider.previous_slide' | t }}"
+                aria-controls="Slider-{{ section.id }}"
+              >
+                {% render 'icon-caret' %}
+              </button>
+              <div class="slider-counter caption">
+                <span class="slider-counter--current">1</span>
+                <span aria-hidden="true"> / </span>
+                <span class="visually-hidden">{{ 'general.slider.of' | t }}</span>
+                <span class="slider-counter--total">{{ recommendations.products_count }}</span>
+              </div>
+              <button
+                type="button"
+                class="slider-button slider-button--next"
+                name="next"
+                aria-label="{{ 'general.slider.next_slide' | t }}"
+                aria-controls="Slider-{{ section.id }}"
+              >
+                {% render 'icon-caret' %}
+              </button>
+            </div>
+          {%- endif -%}
+        </slider-component>
+      {%- else -%}
+        <ul
+          class="grid product-grid grid--{{ section.settings.columns_desktop }}-col-desktop grid--{{ section.settings.columns_mobile }}-col-tablet-down"
+          role="list"
+        >
+          {% assign skip_card_product_styles = false %}
+          {% for recommendation in recommendations.products %}
+            <li class="grid__item">
+              {% render 'card-product',
+                card_product: recommendation,
+                media_aspect_ratio: section.settings.image_ratio,
+                image_shape: 'default',
+                show_secondary_image: section.settings.show_secondary_image,
+                show_vendor: section.settings.show_vendor,
+                show_rating: false,
+                skip_styles: skip_card_product_styles,
+                quick_add: 'standard'
+              %}
+            </li>
+            {%- assign skip_card_product_styles = true -%}
+          {% endfor %}
+        </ul>
+      {%- endif -%}
+    {% endif %}
+  </product-recommendations>
+</div>
+
+{% schema %}
+{
+  "name": "Bought together",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "Часто покупают <em>вместе</em>",
+      "label": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        { "value": "h2", "label": "Small" },
+        { "value": "h1", "label": "Medium" },
+        { "value": "h0", "label": "Large" }
+      ],
+      "default": "h1",
+      "label": "Heading size"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "default": 4,
+      "label": "Products to show"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4,
+      "label": "Desktop columns"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "default": "2",
+      "label": "Mobile columns",
+      "options": [
+        { "value": "1", "label": "1 column" },
+        { "value": "2", "label": "2 columns" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "options": [
+        { "value": "adapt", "label": "Adapt" },
+        { "value": "portrait", "label": "Portrait" },
+        { "value": "square", "label": "Square" }
+      ],
+      "default": "square",
+      "label": "Image ratio"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_secondary_image",
+      "default": true,
+      "label": "Show secondary image on hover"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "default": false,
+      "label": "Show vendor"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_slider",
+      "default": true,
+      "label": "Enable slider"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "Bought together"
+    }
+  ]
+}
+{% endschema %}

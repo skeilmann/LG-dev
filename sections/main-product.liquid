@@ -782,95 +782,7 @@
       </div>
     </div>
 
-    {%- comment -%} Full-width product description (Figma design) {%- endcomment -%}
-    {%- if render_description_below and product.description != blank -%}
-      <div class="product-description-fullwidth">
-        <h2 class="product-description-fullwidth__heading">{{ 'products.product.description' | t }}</h2>
-        <div class="product-description-fullwidth__body">
-          <div class="product-description-fullwidth__content rte">
-            {{ product.description }}
-          </div>
-        </div>
-        <button type="button" class="product-description-fullwidth__toggle" data-description-toggle>
-          <span class="product-description-fullwidth__toggle-more">{{ 'products.product.read_more' | t | default: 'Читать полностью' }}</span>
-          <span class="product-description-fullwidth__toggle-less hidden">{{ 'products.product.read_less' | t | default: 'Свернуть' }}</span>
-        </button>
-      </div>
-      <script>
-        document.addEventListener('DOMContentLoaded', function() {
-          var content = document.querySelector('.product-description-fullwidth__content');
-          var toggle = document.querySelector('[data-description-toggle]');
-          var body = document.querySelector('.product-description-fullwidth__body');
-          if (!content || !toggle) return;
-
-          var MAX_VISIBLE = 2;
-          var children = content.children;
-          var visibleCount = 0;
-          var hiddenCount = 0;
-          var lastVisibleEl = null;
-
-          for (var i = 0; i < children.length; i++) {
-            /* Skip empty/whitespace-only elements */
-            if (!children[i].textContent || !children[i].textContent.trim()) continue;
-            visibleCount++;
-            if (visibleCount > MAX_VISIBLE) {
-              children[i].classList.add('product-description__hidden');
-              hiddenCount++;
-            } else {
-              lastVisibleEl = children[i];
-            }
-          }
-
-          /* Add fade to last visible paragraph */
-          if (hiddenCount > 0 && lastVisibleEl) {
-            lastVisibleEl.classList.add('product-description__fade-paragraph');
-          }
-
-          /* Hide toggle if nothing was hidden */
-          if (hiddenCount === 0) {
-            toggle.style.display = 'none';
-            return;
-          }
-
-          var moreText = toggle.querySelector('.product-description-fullwidth__toggle-more');
-          var lessText = toggle.querySelector('.product-description-fullwidth__toggle-less');
-          var expanded = false;
-
-          toggle.addEventListener('click', function() {
-            expanded = !expanded;
-            body.classList.toggle('product-description-fullwidth__body--expanded', expanded);
-            if (lastVisibleEl) lastVisibleEl.classList.toggle('product-description__fade-paragraph', !expanded);
-            moreText.classList.toggle('hidden', expanded);
-            lessText.classList.toggle('hidden', !expanded);
-          });
-        });
-      </script>
-    {%- endif -%}
-
-    {%- comment -%} Delivery & Payment info card (Figma design) — uses section settings {%- endcomment -%}
-    {%- if section.settings.delivery_content != blank or section.settings.payment_content != blank -%}
-      <div class="delivery-payment-card">
-        {%- if section.settings.delivery_content != blank -%}
-          <div class="delivery-payment-card__col">
-            <h3 class="delivery-payment-card__heading">{{ section.settings.delivery_heading }}</h3>
-            <div class="delivery-payment-card__body rte">
-              {{ section.settings.delivery_content }}
-            </div>
-          </div>
-        {%- endif -%}
-        {%- if section.settings.delivery_content != blank and section.settings.payment_content != blank -%}
-          <div class="delivery-payment-card__divider" aria-hidden="true"></div>
-        {%- endif -%}
-        {%- if section.settings.payment_content != blank -%}
-          <div class="delivery-payment-card__col">
-            <h3 class="delivery-payment-card__heading">{{ section.settings.payment_heading }}</h3>
-            <div class="delivery-payment-card__body rte">
-              {{ section.settings.payment_content }}
-            </div>
-          </div>
-        {%- endif -%}
-      </div>
-    {%- endif -%}
+    {%- comment -%} Description and Delivery/Payment are now separate sections (LG-product-description, LG-delivery-payment) {%- endcomment -%}
 
     {% render 'product-media-modal', variant_images: variant_images %}
 
@@ -2544,34 +2456,6 @@
       "id": "enable_video_looping",
       "default": false,
       "label": "t:sections.main-product.settings.enable_video_looping.label"
-    },
-    {
-      "type": "header",
-      "content": "Delivery & Payment"
-    },
-    {
-      "type": "text",
-      "id": "delivery_heading",
-      "label": "Delivery heading",
-      "default": "Доставка"
-    },
-    {
-      "type": "richtext",
-      "id": "delivery_content",
-      "label": "Delivery content",
-      "default": "<ul><li><strong>Курьерской службой</strong> Nova Post по Молдове (1-3 дня), бесплатно от 1500 MDL;</li><li>Самовывоз с магазина <strong>VEV LUX SHOP</strong> в г. Бельцы;</li><li>Курьером по г. Бельцы, бесплатно от 300 MDL;</li><li>Курьерской службой по Европе и странам ЕС.</li></ul>"
-    },
-    {
-      "type": "text",
-      "id": "payment_heading",
-      "label": "Payment heading",
-      "default": "Оплата"
-    },
-    {
-      "type": "richtext",
-      "id": "payment_content",
-      "label": "Payment content",
-      "default": "<ul><li><strong>Наличкой</strong> при получении;</li><li>Картой при получении;</li><li>Перечисление по е-фактуре (<strong>для юр. лиц</strong>);</li><li><strong>Онлайн-оплата</strong>.</li></ul>"
     },
     {
       "type": "header",

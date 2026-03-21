@@ -1,0 +1,145 @@
+{%- comment -%}
+  LG-product-description.liquid
+  Full-width product description with paragraph-aware truncation.
+  Reads from product.description, shows first N paragraphs with fade gradient.
+{%- endcomment -%}
+
+{%- if product.description != blank -%}
+  <div class="product-description-fullwidth page-width section-{{ section.id }}-padding">
+    <h2 class="product-description-fullwidth__heading">{{ section.settings.heading }}</h2>
+    <div class="product-description-fullwidth__body">
+      <div class="product-description-fullwidth__content rte">
+        {{ product.description }}
+      </div>
+    </div>
+    <button type="button" class="product-description-fullwidth__toggle" data-description-toggle>
+      <span class="product-description-fullwidth__toggle-more">{{ section.settings.read_more_text }}</span>
+      <span class="product-description-fullwidth__toggle-less hidden">{{ section.settings.read_less_text }}</span>
+    </button>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var content = document.querySelector('.product-description-fullwidth__content');
+      var toggle = document.querySelector('[data-description-toggle]');
+      var body = document.querySelector('.product-description-fullwidth__body');
+      if (!content || !toggle) return;
+
+      var MAX_VISIBLE = {{ section.settings.paragraphs_to_show | default: 2 }};
+      var children = content.children;
+      var visibleCount = 0;
+      var hiddenCount = 0;
+      var lastVisibleEl = null;
+
+      for (var i = 0; i < children.length; i++) {
+        if (!children[i].textContent || !children[i].textContent.trim()) continue;
+        visibleCount++;
+        if (visibleCount > MAX_VISIBLE) {
+          children[i].classList.add('product-description__hidden');
+          hiddenCount++;
+        } else {
+          lastVisibleEl = children[i];
+        }
+      }
+
+      if (hiddenCount > 0 && lastVisibleEl) {
+        lastVisibleEl.classList.add('product-description__fade-paragraph');
+      }
+
+      if (hiddenCount === 0) {
+        toggle.style.display = 'none';
+        return;
+      }
+
+      var moreText = toggle.querySelector('.product-description-fullwidth__toggle-more');
+      var lessText = toggle.querySelector('.product-description-fullwidth__toggle-less');
+      var expanded = false;
+
+      toggle.addEventListener('click', function() {
+        expanded = !expanded;
+        body.classList.toggle('product-description-fullwidth__body--expanded', expanded);
+        if (lastVisibleEl) lastVisibleEl.classList.toggle('product-description__fade-paragraph', !expanded);
+        moreText.classList.toggle('hidden', expanded);
+        lessText.classList.toggle('hidden', !expanded);
+      });
+    });
+  </script>
+{%- endif -%}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{% schema %}
+{
+  "name": "Product description",
+  "tag": "section",
+  "class": "section",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "default": "Описание товара",
+      "label": "Heading"
+    },
+    {
+      "type": "range",
+      "id": "paragraphs_to_show",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 2,
+      "label": "Paragraphs to show before truncation"
+    },
+    {
+      "type": "text",
+      "id": "read_more_text",
+      "default": "Читать полностью",
+      "label": "Read more button text"
+    },
+    {
+      "type": "text",
+      "id": "read_less_text",
+      "default": "Свернуть",
+      "label": "Read less button text"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 12
+    }
+  ],
+  "templates": ["product"],
+  "presets": [
+    {
+      "name": "Product description"
+    }
+  ]
+}
+{% endschema %}

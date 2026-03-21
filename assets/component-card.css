@@ -11,7 +11,7 @@
 }
 
 .favorite-icon.active .icon-heart path {
-  fill: #F4B8DD;
+  fill: var(--color-brand-pink, #F4B8DD);
 }
 
 .card-wrapper {
@@ -609,32 +609,26 @@
 
 .badge.new-badge {
   box-shadow: 0px 3.23px 12px 1.7px rgba(76, 224, 101, 0.2);
-  background: rgb(76, 224, 101);
+  background: var(--color-brand-green, rgb(76, 224, 101));
 }
 
 /* Different colors based on discount percentage */
 .badge.discount-badge[data-discount="small"] {
-  background-color: #F93E89;
+  background-color: var(--color-brand-pink-dark, #F93E89);
   box-shadow: 0px 3.23px 12px 1.7px rgba(249, 62, 137, 0.2);
 }
 
 .badge.discount-badge[data-discount="medium"] {
-  background-color: #FF6B00;
+  background-color: var(--color-brand-orange, #FF6B00);
   box-shadow: 0px 3.23px 12px 1.7px rgba(255, 107, 0, 0.2);
 }
 
 .badge.discount-badge[data-discount="large"] {
-  background-color: #FF0000;
+  background-color: var(--color-brand-red, #FF0000);
   box-shadow: 0px 3.23px 12px 1.7px rgba(255, 0, 0, 0.2);
 }
 
 /* Product Card Hover Effects */
-:root {
-  --color-card-hover-glow: 244, 184, 221;
-  /* #F4B8DD - soft pink */
-  --color-card-title-hover: 128, 128, 128;
-  /* #808080 - light grey */
-}
 
 /* Ensure smooth transitions for existing card elements */
 .card--card:after,
@@ -665,4 +659,92 @@
   .card-wrapper:hover .underline-links-hover .card__heading a {
     text-decoration: none !important;
   }
+}
+
+/* ============================================================
+   Figma Card Redesign — white, rounded, shadow, centered
+   ============================================================ */
+
+/* Card container: white bg, rounded, subtle shadow */
+.card--card,
+.card--standard .card__inner {
+  background-color: #fff;
+  border-radius: 1.5rem;
+  border: none;
+  box-shadow: 0 0.3rem 4rem 0.3rem rgba(0, 0, 0, 0.1);
+}
+
+.card--card:after,
+.card--standard .card__inner:after {
+  border-radius: 1.5rem;
+  box-shadow: none;
+}
+
+/* Image area: rounded top corners */
+.card .card__inner .card__media {
+  border-radius: 0.75rem;
+}
+
+.card--card .card__inner .card__media {
+  border-radius: 0.75rem 0.75rem 0 0;
+}
+
+/* Center card text */
+.card__heading,
+.card-information,
+.card__information {
+  text-align: center;
+}
+
+.card__heading a {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* Center the price */
+.card-information .price {
+  justify-content: center;
+}
+
+.card-information .price-item--regular {
+  font-size: 2.2rem;
+  font-weight: 600;
+}
+
+/* Quick-add button in cards */
+.card .quick-add {
+  padding: 0 1.6rem 1.6rem;
+}
+
+.card .quick-add__submit.button--buy,
+.quick-add__submit.button--buy {
+  width: 100%;
+  border-radius: 1.2rem;
+  height: 5.1rem;
+  font-size: 1.8rem;
+  background-color: var(--color-brand-pink, #f4b8dd);
+  color: #000;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  text-decoration: none;
+}
+
+.card .quick-add__submit.button--buy:hover,
+.quick-add__submit.button--buy:hover {
+  background-color: var(--color-brand-pink-hover, #f0a0d0);
+}
+
+.card .quick-add__submit.button--buy[disabled],
+.quick-add__submit.button--buy[disabled] {
+  background-color: var(--color-brand-gray, #ebebeb);
+  color: #999;
+  cursor: not-allowed;
 }

@@ -1301,6 +1301,71 @@
     ]
   },
   {
+    "name": "Brand Colors",
+    "settings": [
+      {
+        "type": "color",
+        "id": "brand_primary",
+        "label": "Primary brand color (buttons, accents)",
+        "default": "#f4b8dd"
+      },
+      {
+        "type": "color",
+        "id": "brand_primary_hover",
+        "label": "Primary brand hover",
+        "default": "#f0a0d0"
+      },
+      {
+        "type": "color",
+        "id": "brand_primary_active",
+        "label": "Primary brand active",
+        "default": "#eb93c5"
+      },
+      {
+        "type": "color",
+        "id": "brand_primary_dark",
+        "label": "Primary brand dark (price, highlights)",
+        "default": "#f93e89"
+      },
+      {
+        "type": "color",
+        "id": "brand_price_color",
+        "label": "Price highlight color",
+        "default": "#f73794"
+      },
+      {
+        "type": "color",
+        "id": "brand_badge_green",
+        "label": "Badge green (in stock)",
+        "default": "#4ce065"
+      },
+      {
+        "type": "color",
+        "id": "brand_badge_yellow",
+        "label": "Badge yellow (TOP)",
+        "default": "#f1c40f"
+      },
+      {
+        "type": "color",
+        "id": "brand_badge_orange",
+        "label": "Badge orange (medium discount)",
+        "default": "#ff6b00"
+      },
+      {
+        "type": "color",
+        "id": "brand_badge_red",
+        "label": "Badge red (large discount)",
+        "default": "#ff0000"
+      },
+      {
+        "type": "color",
+        "id": "brand_secondary_bg",
+        "label": "Secondary button background",
+        "default": "#ebebeb"
+      }
+    ]
+  },
+  {
     "name": "t:settings_schema.brand_information.name",
     "settings": [
       {

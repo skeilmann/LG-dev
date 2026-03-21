@@ -1493,28 +1493,7 @@ a.product__text {
   }
 }
 
-/* ============================================================
-   Brand Color Variables (Figma design tokens)
-   ============================================================ */
-
-:root {
-  --color-brand-pink: #f4b8dd;
-  --color-brand-pink-hover: #f0a0d0;
-  --color-brand-pink-active: #eb93c5;
-  --color-brand-pink-dark: #f93e89;
-  --color-brand-price: #f73794;
-  --color-brand-green: #4ce065;
-  --color-brand-yellow: #f1c40f;
-  --color-brand-orange: #ff6b00;
-  --color-brand-red: #ff0000;
-  --color-brand-gray: #ebebeb;
-  --color-brand-gray-hover: #e0e0e0;
-  --color-brand-gray-disabled: #f0f0f0;
-  --color-brand-text: #000;
-  --color-brand-text-muted: #454545;
-  --color-brand-text-light: #959595;
-  --color-brand-text-disabled: #999;
-}
+/* Brand color variables are now defined in theme.liquid from Theme Settings */
 
 /* ============================================================
    Product Gallery Layout — Vertical Thumbnails (Figma design)
