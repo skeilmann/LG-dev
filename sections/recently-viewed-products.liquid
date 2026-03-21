@@ -132,58 +132,9 @@
 </recently-viewed-products>
 
 {%- comment -%}
-  Template for rendering product cards via JavaScript
-  This hidden template is cloned and populated with product data
+  Cards are now fetched via Section Rendering API (card-product-standalone)
+  by recently-viewed.js — no template needed.
 {%- endcomment -%}
-<template id="recently-viewed-card-template-{{ section.id }}">
-  <li class="grid__item{% if section.settings.enable_slider %} slider__slide{% endif %}">
-    <div class="card-wrapper product-card-wrapper underline-links-hover">
-      <div class="card card--card card--media" style="--ratio-percent: 100%;">
-        <div class="card__inner color-scheme-1 gradient ratio" style="--ratio-percent: 100%;">
-          <div class="card__media">
-            <div class="media media--transparent media--hover-effect">
-              <a href="" class="recently-viewed-card__link" tabindex="-1">
-                <img
-                  src=""
-                  alt=""
-                  class="motion-reduce recently-viewed-card__image"
-                  loading="lazy"
-                  width="300"
-                  height="300"
-                />
-                {%- if section.settings.show_secondary_image -%}
-                  <img
-                    src=""
-                    alt=""
-                    class="motion-reduce recently-viewed-card__image-secondary"
-                    loading="lazy"
-                    width="300"
-                    height="300"
-                    hidden
-                  />
-                {%- endif -%}
-              </a>
-            </div>
-          </div>
-        </div>
-        <div class="card__content">
-          <div class="card__information">
-            {%- if section.settings.show_vendor -%}
-              <span class="visually-hidden">{{ 'accessibility.vendor' | t }}</span>
-              <div class="caption-with-letter-spacing light recently-viewed-card__vendor"></div>
-            {%- endif -%}
-            <h3 class="card__heading h5">
-              <a href="" class="full-unstyled-link recently-viewed-card__title-link"></a>
-            </h3>
-            <div class="card-information">
-              <span class="price-item price-item--regular recently-viewed-card__price"></span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </li>
-</template>
 
 {%- comment -%}
   Expose current product data for tracking (only on product pages)

@@ -1,6 +1,8 @@
 /**
  * Recently Viewed Products Handler
- * Tracks product page visits in localStorage and displays them in the recently-viewed-products section
+ * Tracks product page visits in localStorage and renders cards
+ * via Section Rendering API (card-product-standalone) for full
+ * feature parity with universal card-product snippet.
  */
 
 const STORAGE_KEY = 'recentlyViewedProducts';
@@ -18,13 +20,23 @@ class RecentlyViewedProducts extends HTMLElement {
     this.emptyMessage = this.querySelector('[data-recently-viewed-empty]');
     this.clearButton = this.querySelector('[data-recently-viewed-clear]');
     this.sliderButtons = this.querySelector('[data-slider-buttons]');
-    this.template = document.getElementById(`recently-viewed-card-template-${this.sectionId}`);
   }
 
   connectedCallback() {
     this.trackCurrentProduct();
-    this.renderProducts();
     this.bindEvents();
+
+    // Lazy-load cards when section approaches viewport
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          observer.disconnect();
+          this.renderProducts();
+        }
+      },
+      { rootMargin: '200px' }
+    );
+    observer.observe(this);
   }
 
   bindEvents() {
@@ -68,7 +80,6 @@ class RecentlyViewedProducts extends HTMLElement {
    * Track the current product page visit
    */
   trackCurrentProduct() {
-    // Only track on product pages
     const productData = this.getProductDataFromPage();
     if (!productData) return;
 
@@ -92,7 +103,6 @@ class RecentlyViewedProducts extends HTMLElement {
    * Extract product data from the current page
    */
   getProductDataFromPage() {
-    // Check for product data exposed by the section
     const productJson = document.querySelector('[data-recently-viewed-product-data]');
     if (productJson) {
       try {
@@ -104,9 +114,6 @@ class RecentlyViewedProducts extends HTMLElement {
           url: data.url || `/products/${data.handle}`,
           vendor: data.vendor || '',
           price: data.price,
-          priceFormatted: data.priceVaries
-            ? `From ${this.formatMoney(data.priceMin)}`
-            : this.formatMoney(data.price),
           image: data.image || '',
           secondaryImage: data.secondaryImage || null,
           timestamp: Date.now(),
@@ -123,8 +130,6 @@ class RecentlyViewedProducts extends HTMLElement {
     const handle = productIdMatch[1];
     const title = document.querySelector('meta[property="og:title"]')?.content || '';
     const image = document.querySelector('meta[property="og:image"]')?.content || '';
-    const price = document.querySelector('meta[property="product:price:amount"]')?.content || '';
-    const currency = document.querySelector('meta[property="product:price:currency"]')?.content || 'MDL';
 
     return {
       id: this.currentProductId || handle,
@@ -132,8 +137,7 @@ class RecentlyViewedProducts extends HTMLElement {
       title: title,
       url: `/products/${handle}`,
       vendor: '',
-      price: parseFloat(price) * 100,
-      priceFormatted: price ? `${price} ${currency}` : '',
+      price: 0,
       image: image,
       secondaryImage: null,
       timestamp: Date.now(),
@@ -141,19 +145,10 @@ class RecentlyViewedProducts extends HTMLElement {
   }
 
   /**
-   * Format money value (cents to display format)
+   * Render recently viewed products via Section Rendering API
    */
-  formatMoney(cents) {
-    if (!cents) return '';
-    const amount = (cents / 100).toFixed(0);
-    return `${amount} MDL`;
-  }
-
-  /**
-   * Render recently viewed products
-   */
-  renderProducts() {
-    if (!this.grid || !this.template) return;
+  async renderProducts() {
+    if (!this.grid) return;
 
     let products = this.getStoredProducts();
 
@@ -168,41 +163,42 @@ class RecentlyViewedProducts extends HTMLElement {
     // Show empty message if no products
     if (products.length === 0) {
       this.grid.innerHTML = '';
-      if (this.emptyMessage) {
-        this.emptyMessage.hidden = false;
-      }
-      if (this.clearButton) {
-        this.clearButton.hidden = true;
-      }
-      if (this.sliderButtons) {
-        this.sliderButtons.hidden = true;
-      }
+      if (this.emptyMessage) this.emptyMessage.hidden = false;
+      if (this.clearButton) this.clearButton.hidden = true;
+      if (this.sliderButtons) this.sliderButtons.hidden = true;
       return;
     }
 
     // Hide empty message, show clear button
-    if (this.emptyMessage) {
-      this.emptyMessage.hidden = true;
-    }
-    if (this.clearButton) {
-      this.clearButton.hidden = false;
-    }
-    if (this.sliderButtons && products.length > 1) {
-      this.sliderButtons.hidden = false;
-      const totalSpan = this.sliderButtons.querySelector('.slider-counter--total');
-      if (totalSpan) {
-        totalSpan.textContent = products.length;
-      }
-    }
+    if (this.emptyMessage) this.emptyMessage.hidden = true;
+    if (this.clearButton) this.clearButton.hidden = false;
 
-    // Render product cards
+    // Fetch all cards in parallel via Section Rendering API
     this.grid.innerHTML = '';
-    products.forEach((product, index) => {
-      const card = this.createProductCard(product, index);
-      if (card) {
-        this.grid.appendChild(card);
+    this.setAttribute('data-loading', 'true');
+
+    const fetchPromises = products.map((product, index) =>
+      this.fetchProductCard(product.handle, index)
+    );
+
+    const results = await Promise.allSettled(fetchPromises);
+
+    // Append successful cards in order
+    results.forEach((result) => {
+      if (result.status === 'fulfilled' && result.value) {
+        this.grid.appendChild(result.value);
       }
     });
+
+    this.removeAttribute('data-loading');
+
+    // Update slider
+    const renderedCount = this.grid.children.length;
+    if (this.sliderButtons) {
+      this.sliderButtons.hidden = renderedCount <= 1;
+      const totalSpan = this.sliderButtons.querySelector('.slider-counter--total');
+      if (totalSpan) totalSpan.textContent = renderedCount;
+    }
 
     // Reinitialize slider if present
     const sliderComponent = this.querySelector('slider-component');
@@ -212,80 +208,29 @@ class RecentlyViewedProducts extends HTMLElement {
   }
 
   /**
-   * Create a product card element from template
+   * Fetch a single product card via Section Rendering API
    */
-  createProductCard(product, index) {
-    if (!this.template) return null;
+  async fetchProductCard(handle, index) {
+    try {
+      const sectionId = 'card-product-standalone';
+      const response = await fetch(`/products/${handle}?section_id=${sectionId}`);
 
-    const clone = this.template.content.cloneNode(true);
-    const li = clone.querySelector('li');
+      if (!response.ok) return null;
 
-    if (li) {
+      const html = await response.text();
+      const temp = document.createElement('div');
+      temp.innerHTML = html;
+
+      // Wrap in <li> with slider classes
+      const li = document.createElement('li');
+      li.className = 'grid__item slider__slide';
       li.id = `Slide-${this.sectionId}-${index + 1}`;
+      li.innerHTML = temp.innerHTML;
+      return li;
+    } catch (e) {
+      console.warn(`RecentlyViewed: Failed to fetch card for "${handle}"`, e);
+      return null;
     }
-
-    // Set links
-    const links = clone.querySelectorAll('a');
-    links.forEach((link) => {
-      link.href = product.url;
-    });
-
-    // Set title
-    const titleLink = clone.querySelector('.recently-viewed-card__title-link');
-    if (titleLink) {
-      titleLink.textContent = product.title;
-      titleLink.href = product.url;
-    }
-
-    // Set image
-    const image = clone.querySelector('.recently-viewed-card__image');
-    if (image && product.image) {
-      // Use Shopify image URL with size parameter if it's a Shopify CDN URL
-      const imageUrl = this.getResizedImageUrl(product.image, 600);
-      image.src = imageUrl;
-      image.alt = product.title;
-    }
-
-    // Set secondary image if available
-    const secondaryImage = clone.querySelector('.recently-viewed-card__image-secondary');
-    if (secondaryImage && product.secondaryImage) {
-      const secondaryUrl = this.getResizedImageUrl(product.secondaryImage, 600);
-      secondaryImage.src = secondaryUrl;
-      secondaryImage.alt = product.title;
-      secondaryImage.hidden = false;
-    }
-
-    // Set vendor
-    const vendor = clone.querySelector('.recently-viewed-card__vendor');
-    if (vendor) {
-      vendor.textContent = product.vendor || '';
-      if (!product.vendor) {
-        vendor.style.display = 'none';
-      }
-    }
-
-    // Set price
-    const price = clone.querySelector('.recently-viewed-card__price');
-    if (price) {
-      price.textContent = product.priceFormatted || '';
-    }
-
-    return clone;
-  }
-
-  /**
-   * Get resized image URL for Shopify CDN images
-   */
-  getResizedImageUrl(url, width) {
-    if (!url) return '';
-
-    // Check if it's a Shopify CDN URL
-    if (url.includes('cdn.shopify.com')) {
-      // Insert width parameter before the file extension
-      return url.replace(/\.(jpg|jpeg|png|gif|webp)(\?.*)?$/i, `_${width}x.$1$2`);
-    }
-
-    return url;
   }
 
   /**
@@ -295,7 +240,6 @@ class RecentlyViewedProducts extends HTMLElement {
     this.saveProducts([]);
     this.renderProducts();
 
-    // Dispatch custom event for other components
     document.dispatchEvent(
       new CustomEvent('recentlyViewed:cleared', {
         bubbles: true,
@@ -311,27 +255,20 @@ if (!customElements.get('recently-viewed-products')) {
 
 /**
  * Track product views on page load (for pages without the section)
- * This ensures products are tracked even if the recently viewed section isn't present
  */
 document.addEventListener('DOMContentLoaded', () => {
-  // Only run if not already handled by the custom element
   if (document.querySelector('recently-viewed-products')) return;
 
-  // Check if on product page
   const isProductPage = window.location.pathname.includes('/products/');
   if (!isProductPage) return;
 
-  // Track the product using meta tags as fallback
   const productIdMatch = window.location.pathname.match(/\/products\/([^/?#]+)/);
   if (!productIdMatch) return;
 
   const handle = productIdMatch[1];
   const title = document.querySelector('meta[property="og:title"]')?.content || '';
   const image = document.querySelector('meta[property="og:image"]')?.content || '';
-  const price = document.querySelector('meta[property="product:price:amount"]')?.content || '';
-  const currency = document.querySelector('meta[property="product:price:currency"]')?.content || 'MDL';
 
-  // Get product ID from main-product section if available
   const mainProduct = document.querySelector('[data-product-id]');
   const productId = mainProduct?.dataset.productId || handle;
 
@@ -339,24 +276,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const stored = localStorage.getItem(STORAGE_KEY);
     let products = stored ? JSON.parse(stored) : [];
 
-    // Remove if exists
     products = products.filter((p) => String(p.id) !== String(productId) && p.handle !== handle);
 
-    // Add to front
     products.unshift({
       id: productId,
       handle: handle,
       title: title,
       url: `/products/${handle}`,
       vendor: '',
-      price: parseFloat(price) * 100 || 0,
-      priceFormatted: price ? `${price} ${currency}` : '',
+      price: 0,
       image: image,
       secondaryImage: null,
       timestamp: Date.now(),
     });
 
-    // Limit
     if (products.length > MAX_PRODUCTS) {
       products = products.slice(0, MAX_PRODUCTS);
     }
