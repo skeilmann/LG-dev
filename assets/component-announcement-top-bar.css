@@ -113,8 +113,36 @@
   transition: width 0.3s ease;
 }
 
-.announcement-top-bar .fs-progress-fill .progress-bar-placeholder {
-  display: none;
+/* Truck icon rides on the progress fill leading edge */
+.announcement-top-bar .fs-progress-bar {
+  position: relative;
+  overflow: visible;
+}
+
+.announcement-top-bar .fs-progress-fill {
+  position: relative;
+  overflow: visible;
+}
+
+.announcement-top-bar .fs-progress-truck {
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.announcement-top-bar .fs-progress-truck svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
 }
 
 /* Hide the header row (title + amounts) — just show bar + message */
@@ -239,6 +267,10 @@
     width: 80px;
   }
 
+  .announcement-top-bar .fs-progress-truck {
+    display: none;
+  }
+
   .announcement-top-bar__right {
     gap: 2px;
   }
@@ -259,5 +291,16 @@
 
   .announcement-top-bar .fs-progress-bar {
     width: 100px;
+  }
+
+  .announcement-top-bar .fs-progress-truck {
+    width: 14px;
+    height: 14px;
+    right: -7px;
+  }
+
+  .announcement-top-bar .fs-progress-truck svg {
+    width: 14px;
+    height: 14px;
   }
 }

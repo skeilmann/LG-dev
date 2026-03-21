@@ -140,6 +140,7 @@
       this.successEl = root.querySelector('.fs-success-container');
       this.successMessageEl = root.querySelector('.fs-success-message');
       this.progressFill = root.querySelector('.fs-progress-fill');
+      this.truckIcon = root.querySelector('.fs-progress-truck');
       this.progressContainer = root.querySelector('.fs-progress-bar');
       this.currentAmountEl = root.querySelector('.fs-current');
       this.targetAmountEl = root.querySelector('.fs-target');
@@ -196,6 +197,7 @@
       // Set progress bar to 100% when threshold is met, otherwise use calculated percentage
       const displayProgress = isThresholdMet ? 100 : clamped;
       if (this.progressFill) this.progressFill.style.width = `${displayProgress}%`;
+      if (this.truckIcon) this.truckIcon.style.opacity = displayProgress > 0 ? '1' : '0';
       if (this.progressContainer) {
         this.progressContainer.setAttribute('role', 'progressbar');
         this.progressContainer.setAttribute('aria-valuemin', '0');
