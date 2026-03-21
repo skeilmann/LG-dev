@@ -1,57 +1,61 @@
+/* ==========================================================================
+   Footer Section — Rounded card design with CSS variable customization
+   ========================================================================== */
+
+/* Base footer — rounded card with inset margins */
 .footer {
-  border-top: 0.1rem solid rgba(var(--color-foreground), 0.08);
+  border-top: none;
+  border-radius: var(--footer-border-radius, 2rem);
+  margin-left: var(--footer-margin-horizontal, 4rem);
+  margin-right: var(--footer-margin-horizontal, 4rem);
+  overflow: hidden;
 }
 
 footer .page-width {
   padding: 1.5rem;
 }
 
-.footer:not(.color-scheme-1) {
-  border-top: none;
-}
+/* ==========================================================================
+   Content Top — 3-column grid
+   ========================================================================== */
 
 .footer__content-top {
   padding-bottom: 5rem;
   display: block;
 }
 
-/* Ensure footer respects page-width container */
 .footer__content-top.page-width,
 .footer__content-bottom-wrapper.page-width {
   max-width: var(--page-width);
   margin: 0 auto;
 }
 
-/* Force 3 columns on desktop */
+/* Desktop: 3-column flex layout */
 @media screen and (min-width: 750px) {
-  .footer__blocks-wrapper {
-    display: flex !important;
+  .footer .footer__blocks-wrapper {
+    display: flex;
     flex-direction: row;
-    gap: 2rem;
+    gap: var(--footer-column-gap, 2rem);
     align-items: flex-start;
     width: 100%;
   }
 
-  .footer-block.grid__item {
+  .footer .footer-block.grid__item {
     flex: 1;
     margin: 0;
     display: block;
     min-width: 0;
-    /* Allow content to shrink */
     overflow-wrap: break-word;
   }
 
-  /* Ensure all three columns are visible */
-  .footer-block.grid__item:nth-child(1),
-  .footer-block.grid__item:nth-child(2),
-  .footer-block.grid__item:nth-child(3) {
-    display: block !important;
+  .footer .footer-block.grid__item:nth-child(1),
+  .footer .footer-block.grid__item:nth-child(2),
+  .footer .footer-block.grid__item:nth-child(3) {
+    display: block;
   }
 
-  /* Better spacing for text content */
   .footer-block__details-content {
     line-height: 1.6;
-    word-spacing: 0.1em;
     max-width: 100%;
     overflow-wrap: break-word;
     width: 100%;
@@ -59,14 +63,14 @@ footer .page-width {
 
   .footer-block__details-content .list-menu__item--link {
     display: block;
-    padding: 0.8rem 0;
+    padding: calc(var(--footer-link-spacing, 1.2rem) / 2) 0;
+    font-size: var(--footer-link-size, 1.8rem);
+    text-transform: var(--footer-link-transform, uppercase);
     line-height: 1.5;
-    word-spacing: 0.05em;
     max-width: 100%;
     overflow-wrap: break-word;
   }
 
-  /* Ensure menu items have proper spacing */
   .footer-block--menu {
     min-width: 0;
     max-width: 100%;
@@ -78,14 +82,20 @@ footer .page-width {
   }
 }
 
-/* Mobile: Hide columns 2 and 3, show only company info */
+/* Mobile: Single column, minimal info */
 @media screen and (max-width: 749px) {
-  .footer__blocks-wrapper {
-    display: block !important;
+  .footer {
+    border-radius: calc(var(--footer-border-radius, 2rem) * 0.5);
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
+  }
+
+  .footer .footer__blocks-wrapper {
+    display: block;
     flex-direction: column;
   }
 
-  .footer-block.grid__item:nth-child(n+2) {
+  .footer .footer-block.grid__item:nth-child(n+2) {
     display: none;
   }
 
@@ -96,9 +106,48 @@ footer .page-width {
   }
 
   .footer__content-top {
-    padding-bottom: 3rem;
-    padding-left: calc(4rem / var(--font-body-scale));
-    padding-right: calc(4rem / var(--font-body-scale));
+    padding-bottom: 2rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  /* Hide non-essential elements on mobile */
+  .footer .footer-block__payment-cards,
+  .footer .footer-block__payment-icons,
+  .footer .footer-block__working-hours {
+    display: none;
+  }
+
+  /* Center company info on mobile */
+  .footer-block--company {
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .footer .footer-block__phone,
+  .footer .footer-block__phone.rte {
+    font-size: 2.8rem;
+  }
+
+  .footer-block__details-content .list-menu__item--link {
+    font-size: var(--footer-link-size, 1.8rem);
+    text-transform: var(--footer-link-transform, uppercase);
+    padding: calc(var(--footer-link-spacing, 1.2rem) / 2) 0;
+  }
+}
+
+/* Tablet: intermediate sizing */
+@media screen and (min-width: 750px) and (max-width: 989px) {
+  .footer .footer-block__phone,
+  .footer .footer-block__phone.rte {
+    font-size: calc(var(--footer-phone-size, 4.4rem) * 0.75);
+  }
+
+  .footer .footer-block__heading {
+    font-size: calc(var(--footer-heading-size, 3.2rem) * 0.75);
   }
 }
 
@@ -109,9 +158,12 @@ footer .page-width {
   }
 }
 
+/* ==========================================================================
+   Content Bottom — localization, payment, copyright
+   ========================================================================== */
+
 .footer__content-bottom {
   border-top: solid 0.1rem rgba(var(--color-foreground), 0.08);
-  /* padding-top: 3rem; */
 }
 
 .footer__content-bottom:only-child {
@@ -145,12 +197,12 @@ footer .page-width {
   }
 }
 
-.footer__localization:empty+.footer__column--info {
+.footer__localization:empty + .footer__column--info {
   align-items: center;
 }
 
 @media screen and (max-width: 749px) {
-  .footer__localization:empty+.footer__column {
+  .footer__localization:empty + .footer__column {
     padding-top: 1.5rem;
   }
 }
@@ -177,6 +229,10 @@ footer .page-width {
   }
 }
 
+/* ==========================================================================
+   Footer Blocks — Company info, Menu columns
+   ========================================================================== */
+
 .footer-block:only-child:last-child {
   text-align: center;
   max-width: 76rem;
@@ -194,6 +250,262 @@ footer .page-width {
   display: none;
 }
 
+@media screen and (max-width: 749px) {
+  .footer-block.footer-block--menu:only-child {
+    text-align: left;
+  }
+}
+
+/* Block headings — customizable font size */
+.footer-block__heading {
+  margin-bottom: 2rem;
+  margin-top: 0;
+  font-size: var(--footer-heading-size, 3.2rem);
+  font-weight: 600;
+}
+
+.footer__list-social:empty {
+  display: none;
+}
+
+/* ==========================================================================
+   Company Information Styles
+   ========================================================================== */
+
+.footer-block--company {
+  text-align: left;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.footer-block__logo-wrapper {
+  margin-bottom: 0.8rem;
+}
+
+.footer-block__logo-wrapper img {
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
+
+.footer-block__company-name {
+  font-size: calc(var(--font-heading-scale) * 2rem);
+  font-weight: bold;
+  margin-bottom: 0.2rem;
+  margin-top: 0;
+}
+
+.footer-block__company-tagline {
+  font-size: 1.4rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.8;
+}
+
+/* Working hours */
+.footer-block__working-hours {
+  margin-bottom: 0.8rem;
+  font-size: 1.8rem;
+  line-height: 1.5;
+}
+
+/* Phone number — large and prominent */
+.footer-block__phone {
+  margin-bottom: 0.8rem;
+  font-size: var(--footer-phone-size, 4.4rem);
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.footer-block__phone.rte {
+  margin-bottom: 0.8rem;
+  font-size: var(--footer-phone-size, 4.4rem);
+  font-weight: 600;
+  line-height: 1.1;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.footer-block__phone.rte p,
+.footer-block__phone.rte h2 {
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  margin-bottom: 0;
+}
+
+/* Email */
+.footer-block__email {
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  line-height: 1.5;
+}
+
+.footer-block__email.rte {
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  line-height: 1.5;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.footer-block__email.rte p {
+  margin-bottom: 0;
+  line-height: 1.5;
+}
+
+/* Registration and IDNO */
+.footer-block__registration,
+.footer-block__idno {
+  margin-bottom: 0.4rem;
+  font-size: 2rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.footer-block__registration.rte,
+.footer-block__idno.rte {
+  margin-bottom: 0.4rem;
+  font-size: 2rem;
+  font-weight: 500;
+  line-height: 1.5;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.footer-block__registration.rte p,
+.footer-block__idno.rte p {
+  margin-bottom: 0;
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   Payment Card Images (custom uploads)
+   ========================================================================== */
+
+.footer-block__payment-cards {
+  display: flex;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.footer-block__payment-card {
+  height: var(--footer-card-height, 46px);
+  border-radius: var(--footer-card-radius, 8px);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-block__payment-card img {
+  height: 100%;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+
+/* Text alignment options for payment cards */
+.footer-block--company.text-center .footer-block__payment-cards {
+  justify-content: center;
+}
+
+.footer-block--company.text-right .footer-block__payment-cards {
+  justify-content: flex-end;
+}
+
+/* Payment icons (SVG fallback) */
+.footer-block__payment-icons {
+  margin-top: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.footer-block__payment-icons .list-payment {
+  justify-content: flex-start;
+}
+
+.footer-block--company.text-center .footer-block__payment-icons .list-payment {
+  justify-content: center;
+}
+
+.footer-block--company.text-right .footer-block__payment-icons .list-payment {
+  justify-content: flex-end;
+}
+
+/* ==========================================================================
+   Menu Links
+   ========================================================================== */
+
+.footer-block__details-content {
+  margin-bottom: 4rem;
+}
+
+@media screen and (min-width: 750px) {
+  .footer-block__details-content {
+    margin-bottom: 0;
+  }
+
+  .footer-block__details-content > p,
+  .footer-block__details-content > li {
+    padding: 0;
+  }
+
+  .footer-block:only-child li {
+    display: inline;
+  }
+
+  .footer-block__details-content > li:not(:last-child) {
+    margin-right: 1.5rem;
+  }
+}
+
+.footer-block__details-content .list-menu__item--link,
+.copyright__content a {
+  color: rgba(var(--color-foreground), 0.75);
+}
+
+.footer-block__details-content .list-menu__item--active {
+  transition: text-decoration-thickness var(--duration-short) ease;
+  color: rgb(var(--color-foreground));
+}
+
+@media screen and (min-width: 750px) {
+  .footer-block__details-content .list-menu__item--link:hover,
+  .copyright__content a:hover {
+    color: rgb(var(--color-foreground));
+    text-decoration: underline;
+    text-underline-offset: 0.3rem;
+  }
+
+  .footer-block__details-content .list-menu__item--active:hover {
+    text-decoration-thickness: 0.2rem;
+  }
+}
+
+@media screen and (max-width: 989px) {
+  .footer-block__details-content .list-menu__item--link {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+}
+
+@media screen and (min-width: 750px) {
+  .footer-block__details-content .list-menu__item--link {
+    display: inline-block;
+  }
+
+  .footer-block__details-content > :first-child .list-menu__item--link {
+    padding-top: 0;
+  }
+}
+
+/* ==========================================================================
+   Newsletter (kept for compatibility)
+   ========================================================================== */
+
 .footer-block--newsletter {
   display: flex;
   align-items: flex-end;
@@ -205,10 +517,8 @@ footer .page-width {
   margin-top: 0;
 }
 
-@media screen and (max-width: 749px) {
-  .footer-block.footer-block--menu:only-child {
-    text-align: left;
-  }
+.footer-block--newsletter:empty {
+  display: none;
 }
 
 @media screen and (min-width: 750px) {
@@ -216,23 +526,6 @@ footer .page-width {
     flex-wrap: nowrap;
     justify-content: center;
   }
-}
-
-.footer-block__heading {
-  margin-bottom: 2rem;
-  margin-top: 0;
-  font-size: calc(var(--font-heading-scale) * 1.6rem);
-}
-
-@media screen and (min-width: 990px) {
-  .footer-block__heading {
-    font-size: calc(var(--font-heading-scale) * 1.8rem);
-  }
-}
-
-.footer__list-social:empty,
-.footer-block--newsletter:empty {
-  display: none;
 }
 
 .footer__follow-on-shop {
@@ -254,8 +547,6 @@ footer .page-width {
 }
 
 @media screen and (min-width: 750px) {
-
-  /* Pushes other components to the right of the flexbox */
   .footer-block__newsletter:not(:only-child) {
     text-align: left;
     margin-right: auto;
@@ -274,17 +565,12 @@ footer .page-width {
     margin-bottom: 0.4rem;
   }
 
-  /* Follow on shop is the first button but it has siblings*/
   .footer__follow-on-shop:first-child:not(:last-child) {
     justify-content: flex-start;
     margin-right: auto;
     text-align: left;
   }
 
-  /*
-    All three components are present, email, Follow on Shop, and social icons.
-    Moves the FoS button next to the social icons so they appear grouped together
-  */
   .footer__follow-on-shop:not(:first-child):not(:last-child) {
     justify-content: flex-end;
     text-align: right;
@@ -292,11 +578,6 @@ footer .page-width {
 }
 
 @media screen and (max-width: 749px) {
-
-  /*
-    On a small screen we want all the items to be centered
-    because they will be stacked.
-   */
   .footer-block--newsletter {
     display: flex;
     flex-direction: column;
@@ -318,10 +599,14 @@ footer .page-width {
 }
 
 @media screen and (min-width: 750px) {
-  .footer-block__newsletter+.footer__list-social {
+  .footer-block__newsletter + .footer__list-social {
     margin-top: 0;
   }
 }
+
+/* ==========================================================================
+   Localization
+   ========================================================================== */
 
 .footer__localization {
   display: flex;
@@ -358,6 +643,10 @@ footer .page-width {
   }
 }
 
+/* ==========================================================================
+   Copyright
+   ========================================================================== */
+
 .footer__content-bottom-wrapper--center {
   justify-content: center;
 }
@@ -373,248 +662,6 @@ footer .page-width {
   }
 }
 
-@keyframes appear-down {
-  0% {
-    opacity: 0;
-    margin-top: -1rem;
-  }
-
-  100% {
-    opacity: 1;
-    margin-top: 0;
-  }
-}
-
-.footer-block__details-content {
-  margin-bottom: 4rem;
-}
-
-@media screen and (min-width: 750px) {
-  .footer-block__details-content {
-    margin-bottom: 0;
-  }
-
-  .footer-block__details-content>p,
-  .footer-block__details-content>li {
-    padding: 0;
-  }
-
-  .footer-block:only-child li {
-    display: inline;
-  }
-
-  .footer-block__details-content>li:not(:last-child) {
-    margin-right: 1.5rem;
-  }
-}
-
-.footer-block__details-content .list-menu__item--link,
-.copyright__content a {
-  color: rgba(var(--color-foreground), 0.75);
-}
-
-.footer-block__details-content .list-menu__item--active {
-  transition: text-decoration-thickness var(--duration-short) ease;
-  color: rgb(var(--color-foreground));
-}
-
-@media screen and (min-width: 750px) {
-
-  .footer-block__details-content .list-menu__item--link:hover,
-  .copyright__content a:hover {
-    color: rgb(var(--color-foreground));
-    text-decoration: underline;
-    text-underline-offset: 0.3rem;
-  }
-
-  .footer-block__details-content .list-menu__item--active:hover {
-    text-decoration-thickness: 0.2rem;
-  }
-}
-
-@media screen and (max-width: 989px) {
-  .footer-block__details-content .list-menu__item--link {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-  }
-}
-
-@media screen and (min-width: 750px) {
-  .footer-block__details-content .list-menu__item--link {
-    display: inline-block;
-    font-size: 1.4rem;
-  }
-
-  .footer-block__details-content> :first-child .list-menu__item--link {
-    padding-top: 0;
-  }
-}
-
-.footer-block-image {
-  display: flex;
-}
-
-.footer-block-image.left {
-  justify-content: flex-start;
-}
-
-.footer-block-image.center {
-  justify-content: center;
-}
-
-.footer-block-image.right {
-  justify-content: flex-end;
-}
-
-@media screen and (max-width: 749px) {
-
-  .footer-block-image,
-  .footer-block-image.left,
-  .footer-block-image.center,
-  .footer-block-image.right {
-    justify-content: center;
-  }
-}
-
-.footer-block__image-wrapper {
-  margin-bottom: 2rem;
-  overflow: hidden !important;
-}
-
-.footer-block__image-wrapper img {
-  display: block;
-  height: auto;
-  max-width: 100%;
-}
-
-.footer-block__brand-info {
-  text-align: left;
-}
-
-.footer-block:only-child .footer-block__brand-info {
-  text-align: center;
-}
-
-.footer-block:only-child>.footer-block__brand-info>.footer-block__image-wrapper {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.footer-block-image>img,
-.footer-block__brand-info>img {
-  height: auto;
-}
-
-.footer-block:only-child .footer-block__brand-info .footer__list-social.list-social {
-  justify-content: center;
-}
-
-.footer-block__brand-info .footer__list-social.list-social {
-  justify-content: flex-start;
-}
-
-.footer-block__details-content .placeholder-svg {
-  max-width: 20rem;
-}
-
-/* Company Information Styles */
-.footer-block--company {
-  text-align: left;
-  min-width: 0;
-  max-width: 100%;
-  overflow-wrap: break-word;
-}
-
-.footer-block__logo-wrapper {
-  margin-bottom: 2rem;
-}
-
-.footer-block__logo-wrapper img {
-  display: block;
-  height: auto;
-  max-width: 100%;
-}
-
-.footer-block__company-name {
-  font-size: calc(var(--font-heading-scale) * 2rem);
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  margin-top: 0;
-}
-
-.footer-block__company-tagline {
-  font-size: 1.4rem;
-  margin-bottom: 2rem;
-  opacity: 0.8;
-}
-
-.footer-block__working-hours,
-.footer-block__phone,
-.footer-block__email,
-.footer-block__registration,
-.footer-block__idno {
-  margin-bottom: 1rem;
-  font-size: 1.4rem;
-  line-height: 1.5;
-  word-spacing: 0.05em;
-}
-
-.footer-block__working-hours.rte,
-.footer-block__phone.rte,
-.footer-block__email.rte,
-.footer-block__registration.rte,
-.footer-block__idno.rte {
-  margin-bottom: 1rem;
-  font-size: 1.4rem;
-  line-height: 1.5;
-  word-spacing: 0.05em;
-  max-width: 100%;
-  overflow-wrap: break-word;
-}
-
-.footer-block__working-hours.rte p,
-.footer-block__phone.rte p,
-.footer-block__email.rte p,
-.footer-block__registration.rte p,
-.footer-block__idno.rte p {
-  margin-bottom: 0.5rem;
-  line-height: 1.5;
-  word-spacing: 0.05em;
-}
-
-.footer-block__working-hours.rte p:last-child,
-.footer-block__phone.rte p:last-child,
-.footer-block__email.rte p:last-child,
-.footer-block__registration.rte p:last-child,
-.footer-block__idno.rte p:last-child {
-  margin-bottom: 0;
-}
-
-.footer-block__payment-icons {
-  margin-top: 2rem;
-}
-
-.footer-block__payment-icons .list-payment {
-  justify-content: flex-start;
-}
-
-/* Text alignment options */
-.footer-block--company.text-center {
-  text-align: center;
-}
-
-.footer-block--company.text-center .footer-block__payment-icons .list-payment {
-  justify-content: center;
-}
-
-.footer-block--company.text-right {
-  text-align: right;
-}
-
-.footer-block--company.text-right .footer-block__payment-icons .list-payment {
-  justify-content: flex-end;
-}
-
 .copyright__content {
   font-size: 1.1rem;
 }
@@ -623,6 +670,10 @@ footer .page-width {
   color: currentColor;
   text-decoration: none;
 }
+
+/* ==========================================================================
+   Policies
+   ========================================================================== */
 
 .policies {
   display: inline;
@@ -650,19 +701,106 @@ footer .page-width {
   }
 }
 
+/* ==========================================================================
+   Images
+   ========================================================================== */
+
+.footer-block-image {
+  display: flex;
+}
+
+.footer-block-image.left {
+  justify-content: flex-start;
+}
+
+.footer-block-image.center {
+  justify-content: center;
+}
+
+.footer-block-image.right {
+  justify-content: flex-end;
+}
+
+@media screen and (max-width: 749px) {
+  .footer-block-image,
+  .footer-block-image.left,
+  .footer-block-image.center,
+  .footer-block-image.right {
+    justify-content: center;
+  }
+}
+
+.footer-block__image-wrapper {
+  margin-bottom: 2rem;
+  overflow: hidden !important;
+}
+
+.footer-block__image-wrapper img {
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
+
+.footer-block__brand-info {
+  text-align: left;
+}
+
+.footer-block:only-child .footer-block__brand-info {
+  text-align: center;
+}
+
+.footer-block:only-child > .footer-block__brand-info > .footer-block__image-wrapper {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.footer-block-image > img,
+.footer-block__brand-info > img {
+  height: auto;
+}
+
+.footer-block:only-child .footer-block__brand-info .footer__list-social.list-social {
+  justify-content: center;
+}
+
+.footer-block__brand-info .footer__list-social.list-social {
+  justify-content: flex-start;
+}
+
+.footer-block__details-content .placeholder-svg {
+  max-width: 20rem;
+}
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+
+@keyframes appear-down {
+  0% {
+    opacity: 0;
+    margin-top: -1rem;
+  }
+  100% {
+    opacity: 1;
+    margin-top: 0;
+  }
+}
+
 @keyframes animateLocalization {
   0% {
     opacity: 0;
     transform: translateY(0);
   }
-
   100% {
     opacity: 1;
     transform: translateY(-1rem);
   }
 }
 
-/* check for flexbox gap in older Safari versions */
+/* ==========================================================================
+   Safari flexbox gap fallback
+   ========================================================================== */
+
 @supports not (inset: 10px) {
   @media screen and (max-width: 749px) {
     .footer .grid {

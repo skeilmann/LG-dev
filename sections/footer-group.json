@@ -33,28 +33,37 @@
         "link_list_3irBBw",
         "link_list_qr6Jn8"
       ],
-      "custom_css": [
-        "@media (max-width: 750px) {.footer-block--company {align-items: center; text-align: center; justify-content: center; display: flex; flex-direction: column; }}"
-      ],
       "settings": {
         "color_scheme": "scheme-4",
+        "border_radius": 20,
+        "margin_horizontal": 40,
+        "column_gap": 20,
+        "phone_font_size": 44,
+        "heading_font_size": 32,
+        "link_font_size": 18,
+        "link_spacing": 12,
+        "uppercase_links": true,
         "company_logo": "shopify://shop_images/logo_vev.png",
         "logo_width": 150,
         "company_name": "",
         "company_tagline": "",
-        "phone_number": "<h2>+373-68-700-013</h2>",
+        "working_hours": "ежедневно с 10:00 до 17:00",
+        "phone_number": "<p><strong>+373-68-700-013</strong></p>",
         "email": "<p>info@vev.md</p>",
         "company_registration": "<p>SRL VOLOSANOVSCHI NAILS</p>",
         "company_idno": "<p>IDNO 1023602001320</p>",
-        "show_payment_icons": false,
         "show_social": false,
         "company_text_alignment": "left",
+        "show_payment_cards": true,
+        "payment_card_height": 46,
+        "payment_card_radius": 8,
+        "show_payment_icons": false,
         "enable_country_selector": false,
         "enable_language_selector": false,
         "payment_enable": false,
         "margin_top": 0,
-        "padding_top": 12,
-        "padding_bottom": 12
+        "padding_top": 32,
+        "padding_bottom": 32
       }
     }
   },

@@ -1,3 +1,7 @@
+{% comment %}
+  Footer section — Redesigned to match Figma (rounded card, fully customizable)
+  Dependencies: section-footer.css, component-list-menu.css, component-list-payment.css, component-list-social.css
+{% endcomment %}
 {% comment %}theme-check-disable UndefinedObject{% endcomment %}
 {{ 'section-footer.css' | asset_url | stylesheet_tag }}
 {{ 'component-list-menu.css' | asset_url | stylesheet_tag }}
@@ -7,6 +11,20 @@
 {%- style -%}
   .footer {
     margin-top: {{ section.settings.margin_top | times: 0.75 | round: 0 }}px;
+    --footer-border-radius: {{ section.settings.border_radius | default: 20 }}px;
+    --footer-margin-horizontal: {{ section.settings.margin_horizontal | default: 40 | times: 0.5 | round: 0 }}px;
+    --footer-column-gap: {{ section.settings.column_gap | default: 20 }}px;
+    --footer-phone-size: {{ section.settings.phone_font_size | default: 44 | times: 0.75 | round: 0 | divided_by: 10.0 }}rem;
+    --footer-heading-size: {{ section.settings.heading_font_size | default: 32 | times: 0.75 | round: 0 | divided_by: 10.0 }}rem;
+    --footer-link-size: {{ section.settings.link_font_size | default: 18 | divided_by: 10.0 }}rem;
+    --footer-link-spacing: {{ section.settings.link_spacing | default: 12 }}px;
+    --footer-card-height: {{ section.settings.payment_card_height | default: 46 }}px;
+    --footer-card-radius: {{ section.settings.payment_card_radius | default: 8 }}px;
+    {%- if section.settings.uppercase_links -%}
+      --footer-link-transform: uppercase;
+    {%- else -%}
+      --footer-link-transform: none;
+    {%- endif -%}
   }
 
   .section-{{ section.id }}-padding {
@@ -17,6 +35,9 @@
   @media screen and (min-width: 750px) {
     .footer {
       margin-top: {{ section.settings.margin_top }}px;
+      --footer-margin-horizontal: {{ section.settings.margin_horizontal | default: 40 }}px;
+      --footer-phone-size: {{ section.settings.phone_font_size | default: 44 | divided_by: 10.0 }}rem;
+      --footer-heading-size: {{ section.settings.heading_font_size | default: 32 | divided_by: 10.0 }}rem;
     }
 
     .section-{{ section.id }}-padding {
@@ -32,6 +53,16 @@
     if settings.social_facebook_link == blank and settings.social_instagram_link == blank and settings.social_youtube_link == blank and settings.social_tiktok_link == blank and settings.social_twitter_link == blank and settings.social_pinterest_link == blank and settings.social_snapchat_link == blank and settings.social_tumblr_link == blank and settings.social_vimeo_link == blank
       assign has_social_icons = false
     endif
+
+    assign has_custom_payment_cards = false
+    for i in (1..6)
+      assign card_setting = 'payment_card_' | append: i
+      assign card_image = section.settings[card_setting]
+      if card_image != blank
+        assign has_custom_payment_cards = true
+        break
+      endif
+    endfor
   -%}
 
   <div class="footer__content-top page-width">
@@ -58,7 +89,6 @@
               section.settings.company_logo
               | image_url: width: 300
               | image_tag: loading: 'lazy', alt: section.settings.company_name
-              | escape
             }}
           </div>
         {%- endif -%}
@@ -71,9 +101,38 @@
           <p class="footer-block__company-tagline">{{ section.settings.company_tagline | escape }}</p>
         {%- endif -%}
 
-        <div class="footer-block__working-hours">
-          {{ 'sections.footer.working_hours' | t }}
-        </div>
+        {%- comment -%} Payment card images (custom uploads) — hidden on mobile {%- endcomment -%}
+        {%- if section.settings.show_payment_cards and has_custom_payment_cards -%}
+          <div class="footer-block__payment-cards">
+            <span class="visually-hidden">{{ 'sections.footer.payment' | t }}</span>
+            {%- for i in (1..6) -%}
+              {%- assign card_setting = 'payment_card_' | append: i -%}
+              {%- assign card_image = section.settings[card_setting] -%}
+              {%- if card_image != blank -%}
+                <div class="footer-block__payment-card">
+                  {{ card_image | image_url: height: 92 | image_tag: loading: 'lazy', alt: 'sections.footer.payment' | t }}
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- elsif section.settings.show_payment_icons -%}
+          <div class="footer-block__payment-icons">
+            <span class="visually-hidden">{{ 'sections.footer.payment' | t }}</span>
+            <ul class="list list-payment" role="list">
+              {%- for type in shop.enabled_payment_types -%}
+                <li class="list-payment__item">
+                  {{ type | payment_type_svg_tag: class: 'icon icon--full-color' }}
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+
+        {%- if section.settings.working_hours != blank -%}
+          <div class="footer-block__working-hours">
+            {{ section.settings.working_hours | escape }}
+          </div>
+        {%- endif -%}
 
         {%- if section.settings.phone_number != blank -%}
           <div class="footer-block__phone rte">
@@ -93,19 +152,6 @@
 
         {%- if section.settings.company_idno != blank -%}
           <div class="footer-block__idno rte">{{ section.settings.company_idno }}</div>
-        {%- endif -%}
-
-        {%- if section.settings.show_payment_icons -%}
-          <div class="footer-block__payment-icons">
-            <span class="visually-hidden">{{ 'sections.footer.payment' | t }}</span>
-            <ul class="list list-payment" role="list">
-              {%- for type in shop.enabled_payment_types -%}
-                <li class="list-payment__item">
-                  {{ type | payment_type_svg_tag: class: 'icon icon--full-color' }}
-                </li>
-              {%- endfor -%}
-            </ul>
-          </div>
         {%- endif -%}
 
         {%- if section.settings.show_social and has_social_icons -%}
@@ -240,6 +286,90 @@
     },
     {
       "type": "header",
+      "content": "t:sections.footer.settings.header__layout.content"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "t:sections.footer.settings.border_radius.label",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "margin_horizontal",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.footer.settings.margin_horizontal.label",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.footer.settings.column_gap.label",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "t:sections.footer.settings.header__typography.content"
+    },
+    {
+      "type": "range",
+      "id": "phone_font_size",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "t:sections.footer.settings.phone_font_size.label",
+      "default": 44
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "min": 14,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "t:sections.footer.settings.heading_font_size.label",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "link_font_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "t:sections.footer.settings.link_font_size.label",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "link_spacing",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "t:sections.footer.settings.link_spacing.label",
+      "default": 12
+    },
+    {
+      "type": "checkbox",
+      "id": "uppercase_links",
+      "default": true,
+      "label": "t:sections.footer.settings.uppercase_links.label"
+    },
+    {
+      "type": "header",
       "content": "t:sections.footer.settings.header__company.content"
     },
     {
@@ -270,6 +400,12 @@
       "default": "lux shop nails"
     },
     {
+      "type": "text",
+      "id": "working_hours",
+      "label": "t:sections.footer.settings.working_hours.label",
+      "default": "ежедневно с 10:00 до 17:00"
+    },
+    {
       "type": "richtext",
       "id": "phone_number",
       "label": "t:sections.footer.settings.phone_number.label",
@@ -292,12 +428,6 @@
       "id": "company_idno",
       "label": "t:sections.footer.settings.company_idno.label",
       "default": "<p><strong>IDNO 1023602001320</strong></p>"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_payment_icons",
-      "default": true,
-      "label": "t:sections.footer.settings.show_payment_icons.label"
     },
     {
       "type": "checkbox",
@@ -324,6 +454,73 @@
         }
       ],
       "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.footer.settings.header__payment_cards.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_cards",
+      "default": true,
+      "label": "t:sections.footer.settings.show_payment_cards.label"
+    },
+    {
+      "type": "image_picker",
+      "id": "payment_card_1",
+      "label": "t:sections.footer.settings.payment_card.label_1"
+    },
+    {
+      "type": "image_picker",
+      "id": "payment_card_2",
+      "label": "t:sections.footer.settings.payment_card.label_2"
+    },
+    {
+      "type": "image_picker",
+      "id": "payment_card_3",
+      "label": "t:sections.footer.settings.payment_card.label_3"
+    },
+    {
+      "type": "image_picker",
+      "id": "payment_card_4",
+      "label": "t:sections.footer.settings.payment_card.label_4"
+    },
+    {
+      "type": "image_picker",
+      "id": "payment_card_5",
+      "label": "t:sections.footer.settings.payment_card.label_5"
+    },
+    {
+      "type": "image_picker",
+      "id": "payment_card_6",
+      "label": "t:sections.footer.settings.payment_card.label_6"
+    },
+    {
+      "type": "range",
+      "id": "payment_card_height",
+      "min": 24,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "t:sections.footer.settings.payment_card_height.label",
+      "default": 46
+    },
+    {
+      "type": "range",
+      "id": "payment_card_radius",
+      "min": 0,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "label": "t:sections.footer.settings.payment_card_radius.label",
+      "default": 8
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "default": false,
+      "label": "t:sections.footer.settings.show_payment_icons.label",
+      "info": "t:sections.footer.settings.show_payment_icons.info"
     },
     {
       "type": "header",
