@@ -1,0 +1,54 @@
+{%- comment -%}
+  Account Welcome Banner Block
+  Shows a personalized greeting with customer stats (member since, total orders, total spent).
+  Parameters:
+    - block: The block object with settings (show_member_since, show_orders_count, show_total_spent)
+  Usage: {% render 'account-welcome-banner', block: block %}
+  Dependencies: customer.css
+{%- endcomment -%}
+
+<div class="account-block account-block--welcome" {{ block.shopify_attributes }}>
+  <div class="account-welcome">
+    <div class="account-welcome__greeting">
+      <h2 class="account-welcome__name">
+        {{ 'customer.account.welcome' | t: name: customer.first_name }}
+      </h2>
+      <p class="account-welcome__email">{{ customer.email }}</p>
+    </div>
+
+    <div class="account-welcome__stats">
+      {%- if block.settings.show_member_since -%}
+        <div class="account-welcome__stat">
+          <span class="account-welcome__stat-value">
+            {{ customer.created_at | date: '%B %Y' }}
+          </span>
+          <span class="account-welcome__stat-label">
+            {{ 'customer.account.member_since' | t }}
+          </span>
+        </div>
+      {%- endif -%}
+
+      {%- if block.settings.show_orders_count -%}
+        <div class="account-welcome__stat">
+          <span class="account-welcome__stat-value">
+            {{ customer.orders_count }}
+          </span>
+          <span class="account-welcome__stat-label">
+            {{ 'customer.account.total_orders' | t }}
+          </span>
+        </div>
+      {%- endif -%}
+
+      {%- if block.settings.show_total_spent -%}
+        <div class="account-welcome__stat">
+          <span class="account-welcome__stat-value">
+            {{ customer.total_spent | money_without_trailing_zeros }}
+          </span>
+          <span class="account-welcome__stat-label">
+            {{ 'customer.account.total_spent' | t }}
+          </span>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>

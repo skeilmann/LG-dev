@@ -9,6 +9,29 @@
         "padding_bottom": 36
       },
       "blocks": {
+        "welcome": {
+          "type": "welcome_banner",
+          "settings": {
+            "show_member_since": true,
+            "show_orders_count": true,
+            "show_total_spent": true
+          }
+        },
+        "active": {
+          "type": "active_orders",
+          "settings": {
+            "heading": "Active Orders"
+          }
+        },
+        "spending": {
+          "type": "store_credit",
+          "settings": {
+            "heading": "Spending Summary",
+            "show_total_spent": true,
+            "show_orders_count": true,
+            "show_avg_order": true
+          }
+        },
         "loyalty": {
           "type": "loyalty_points",
           "settings": {
@@ -19,7 +42,8 @@
           "type": "order_history",
           "settings": {
             "heading": "Order History",
-            "orders_per_page": 10
+            "orders_per_page": 10,
+            "show_reorder": true
           }
         },
         "favorites": {
@@ -31,6 +55,14 @@
             "show_view_all": true
           }
         },
+        "recent": {
+          "type": "recently_viewed",
+          "settings": {
+            "heading": "Recently Viewed",
+            "products_to_show": 4,
+            "columns_desktop": 4
+          }
+        },
         "details": {
           "type": "account_details",
           "settings": {
@@ -38,7 +70,7 @@
           }
         }
       },
-      "block_order": ["loyalty", "orders", "favorites", "details"]
+      "block_order": ["welcome", "active", "spending", "loyalty", "orders", "favorites", "recent", "details"]
     }
   },
   "order": ["main"]

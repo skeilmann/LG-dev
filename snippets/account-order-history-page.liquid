@@ -2,8 +2,9 @@
   Account Order History Block (Page Template Version)
   Renders order history WITHOUT {% paginate %} — for use on regular page templates
   where customer.orders pagination is not available.
+  Includes quick reorder button per order.
   Parameters:
-    - block: The block object with settings (heading, orders_per_page)
+    - block: The block object with settings (heading, orders_per_page, show_reorder)
   Usage: {% render 'account-order-history-page', block: block %}
   Dependencies: customer.css
 {%- endcomment -%}
@@ -15,6 +16,7 @@
   </h2>
 
   {%- assign orders_limit = block.settings.orders_per_page | default: 10 -%}
+  {%- assign show_reorder = block.settings.show_reorder | default: true -%}
 
   {%- if customer.orders.size > 0 -%}
     <table role="table" class="order-history">
@@ -30,6 +32,11 @@
             {{ 'customer.orders.fulfillment_status' | t }}
           </th>
           <th id="ColumnTotal" scope="col" role="columnheader">{{ 'customer.orders.total' | t }}</th>
+          {%- if show_reorder -%}
+            <th id="ColumnReorder" scope="col" role="columnheader" class="order-history__reorder-header">
+              {{ 'customer.account.reorder' | t }}
+            </th>
+          {%- endif -%}
         </tr>
       </thead>
       <tbody role="rowgroup">
@@ -71,6 +78,25 @@
             <td headers="RowOrder ColumnTotal" role="cell" data-label="{{ 'customer.orders.total' | t }}">
               {{ order.total_net_amount | money_with_currency }}
             </td>
+            {%- if show_reorder -%}
+              <td
+                headers="RowOrder ColumnReorder"
+                role="cell"
+                data-label="{{ 'customer.account.reorder' | t }}"
+                class="order-history__reorder-cell"
+              >
+                {%- comment -%} Build line items JSON for the reorder button {%- endcomment -%}
+                {%- capture line_items_json -%}[{%- for line_item in order.line_items -%}{"id":{{ line_item.variant_id }},"quantity":{{ line_item.quantity }}}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}]{%- endcapture -%}
+                <button
+                  type="button"
+                  class="button button--small button--secondary account-reorder-btn"
+                  data-reorder-items='{{ line_items_json }}'
+                  aria-label="{{ 'customer.account.reorder_aria' | t: order: order.name }}"
+                >
+                  {{ 'customer.account.reorder' | t }}
+                </button>
+              </td>
+            {%- endif -%}
           </tr>
         {%- endfor -%}
       </tbody>
@@ -88,3 +114,38 @@
     <p>{{ 'customer.orders.none' | t }}</p>
   {%- endif -%}
 </div>
+
+<script>
+  document.addEventListener('click', function(e) {
+    const btn = e.target.closest('[data-reorder-items]');
+    if (!btn) return;
+
+    const items = JSON.parse(btn.dataset.reorderItems);
+    if (!items || items.length === 0) return;
+
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: items })
+    })
+    .then(function(response) {
+      if (!response.ok) throw new Error('Failed to add items');
+      return response.json();
+    })
+    .then(function() {
+      // Publish cart update event if PUB_SUB is available
+      if (typeof publish === 'function' && typeof PUB_SUB_EVENTS !== 'undefined') {
+        publish(PUB_SUB_EVENTS.cartUpdate, {});
+      }
+      window.location.href = '/cart';
+    })
+    .catch(function(error) {
+      console.error('Reorder failed:', error);
+      btn.classList.remove('loading');
+      btn.disabled = false;
+    });
+  });
+</script>

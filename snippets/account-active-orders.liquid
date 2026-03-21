@@ -1,0 +1,75 @@
+{%- comment -%}
+  Account Active Orders Block
+  Shows unfulfilled/in-transit orders prominently at the top of the dashboard.
+  Only renders if there are active (non-fulfilled) orders.
+  Parameters:
+    - block: The block object with settings (heading)
+  Usage: {% render 'account-active-orders', block: block %}
+  Dependencies: customer.css
+{%- endcomment -%}
+
+{%- assign active_orders = '' -%}
+{%- assign active_count = 0 -%}
+{%- for order in customer.orders -%}
+  {%- unless order.fulfillment_status == 'fulfilled' or order.cancelled -%}
+    {%- assign active_count = active_count | plus: 1 -%}
+  {%- endunless -%}
+{%- endfor -%}
+
+{%- if active_count > 0 -%}
+  <div class="account-block account-block--active-orders" {{ block.shopify_attributes }}>
+    {%- assign default_heading = 'customer.account.active_orders' | t -%}
+    <div class="account-block__header">
+      <h2 class="account-block__heading">
+        {{ block.settings.heading | default: default_heading }}
+      </h2>
+      <span class="account-active-orders__badge">{{ active_count }}</span>
+    </div>
+
+    <div class="account-active-orders__list">
+      {%- for order in customer.orders -%}
+        {%- unless order.fulfillment_status == 'fulfilled' or order.cancelled -%}
+          <div class="account-active-order">
+            <div class="account-active-order__header">
+              <a href="{{ order.customer_url }}" class="account-active-order__name">
+                {{ order.name }}
+              </a>
+              <span class="account-active-order__date">
+                {{ order.created_at | time_tag: format: 'date' }}
+              </span>
+            </div>
+
+            <div class="account-active-order__details">
+              <div class="account-active-order__status">
+                <span class="account-active-order__status-badge account-active-order__status-badge--{{ order.fulfillment_status | default: 'unfulfilled' }}">
+                  {{ order.fulfillment_status_label | default: 'customer.account.unfulfilled' | t }}
+                </span>
+                <span class="account-active-order__payment-status">
+                  {{ order.financial_status_label }}
+                </span>
+              </div>
+              <span class="account-active-order__total">
+                {{ order.total_net_amount | money_with_currency }}
+              </span>
+            </div>
+
+            {%- if order.line_items.size > 0 -%}
+              <div class="account-active-order__items">
+                {%- for line_item in order.line_items limit: 3 -%}
+                  <span class="account-active-order__item">
+                    {{ line_item.title }} &times; {{ line_item.quantity }}
+                  </span>
+                {%- endfor -%}
+                {%- if order.line_items.size > 3 -%}
+                  <span class="account-active-order__item account-active-order__item--more">
+                    {{ 'customer.account.and_more_items' | t: count: order.line_items.size | minus: 3 }}
+                  </span>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endunless -%}
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}

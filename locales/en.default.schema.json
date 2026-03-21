@@ -962,6 +962,68 @@
         "login_message": {
           "label": "Login message for guests"
         }
+      },
+      "blocks": {
+        "welcome_banner": {
+          "name": "Welcome Banner",
+          "settings": {
+            "show_member_since": {
+              "label": "Show member since date"
+            },
+            "show_orders_count": {
+              "label": "Show total orders count"
+            },
+            "show_total_spent": {
+              "label": "Show total spent"
+            }
+          }
+        },
+        "active_orders": {
+          "name": "Active Orders",
+          "settings": {
+            "heading": {
+              "label": "Heading"
+            }
+          }
+        },
+        "store_credit": {
+          "name": "Spending Summary",
+          "settings": {
+            "heading": {
+              "label": "Heading"
+            },
+            "show_total_spent": {
+              "label": "Show total spent"
+            },
+            "show_orders_count": {
+              "label": "Show orders count"
+            },
+            "show_avg_order": {
+              "label": "Show average order value"
+            }
+          }
+        },
+        "order_history": {
+          "settings": {
+            "show_reorder": {
+              "label": "Show reorder button"
+            }
+          }
+        },
+        "recently_viewed": {
+          "name": "Recently Viewed",
+          "settings": {
+            "heading": {
+              "label": "Heading"
+            },
+            "products_to_show": {
+              "label": "Products to show"
+            },
+            "columns_desktop": {
+              "label": "Desktop columns"
+            }
+          }
+        }
       }
     },
     "featured-collection": {

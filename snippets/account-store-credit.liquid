@@ -1,0 +1,55 @@
+{%- comment -%}
+  Account Store Credit / Spending Summary Block
+  Shows customer's total spent and number of orders as a visual summary.
+  Parameters:
+    - block: The block object with settings (heading, show_total_spent, show_orders_count)
+  Usage: {% render 'account-store-credit', block: block %}
+  Dependencies: customer.css
+{%- endcomment -%}
+
+<div class="account-block account-block--store-credit" {{ block.shopify_attributes }}>
+  {%- assign default_heading = 'customer.account.spending_summary' | t -%}
+  <h2 class="account-block__heading">
+    {{ block.settings.heading | default: default_heading }}
+  </h2>
+
+  <div class="account-store-credit__cards">
+    {%- if block.settings.show_total_spent -%}
+      <div class="account-store-credit__card">
+        <span class="account-store-credit__value">
+          {{ customer.total_spent | money_without_trailing_zeros }}
+        </span>
+        <span class="account-store-credit__label">
+          {{ 'customer.account.total_spent' | t }}
+        </span>
+      </div>
+    {%- endif -%}
+
+    {%- if block.settings.show_orders_count -%}
+      <div class="account-store-credit__card">
+        <span class="account-store-credit__value">
+          {{ customer.orders_count }}
+        </span>
+        <span class="account-store-credit__label">
+          {{ 'customer.account.total_orders' | t }}
+        </span>
+      </div>
+    {%- endif -%}
+
+    {%- if block.settings.show_avg_order -%}
+      <div class="account-store-credit__card">
+        <span class="account-store-credit__value">
+          {%- if customer.orders_count > 0 -%}
+            {%- assign avg_order = customer.total_spent | divided_by: customer.orders_count -%}
+            {{ avg_order | money_without_trailing_zeros }}
+          {%- else -%}
+            {{ 0 | money_without_trailing_zeros }}
+          {%- endif -%}
+        </span>
+        <span class="account-store-credit__label">
+          {{ 'customer.account.avg_order_value' | t }}
+        </span>
+      </div>
+    {%- endif -%}
+  </div>
+</div>

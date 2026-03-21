@@ -41,12 +41,20 @@
     <div class="account__blocks">
       {%- for block in section.blocks -%}
         {%- case block.type -%}
+          {%- when 'welcome_banner' -%}
+            {% render 'account-welcome-banner', block: block %}
+          {%- when 'active_orders' -%}
+            {% render 'account-active-orders', block: block %}
+          {%- when 'store_credit' -%}
+            {% render 'account-store-credit', block: block %}
           {%- when 'order_history' -%}
             {% render 'account-order-history-page', block: block %}
           {%- when 'favorites' -%}
             {% render 'account-favorites', block: block %}
           {%- when 'loyalty_points' -%}
             {% render 'account-loyalty-points', block: block %}
+          {%- when 'recently_viewed' -%}
+            {% render 'account-recently-viewed', block: block %}
           {%- when 'account_details' -%}
             {% render 'account-details', block: block %}
         {%- endcase -%}
@@ -121,6 +129,75 @@
   ],
   "blocks": [
     {
+      "type": "welcome_banner",
+      "name": "t:sections.account-dashboard.blocks.welcome_banner.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_member_since",
+          "label": "t:sections.account-dashboard.blocks.welcome_banner.settings.show_member_since.label",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_orders_count",
+          "label": "t:sections.account-dashboard.blocks.welcome_banner.settings.show_orders_count.label",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_total_spent",
+          "label": "t:sections.account-dashboard.blocks.welcome_banner.settings.show_total_spent.label",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "active_orders",
+      "name": "t:sections.account-dashboard.blocks.active_orders.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "t:sections.account-dashboard.blocks.active_orders.settings.heading.label",
+          "default": "Active Orders"
+        }
+      ]
+    },
+    {
+      "type": "store_credit",
+      "name": "t:sections.account-dashboard.blocks.store_credit.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "t:sections.account-dashboard.blocks.store_credit.settings.heading.label",
+          "default": "Spending Summary"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_total_spent",
+          "label": "t:sections.account-dashboard.blocks.store_credit.settings.show_total_spent.label",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_orders_count",
+          "label": "t:sections.account-dashboard.blocks.store_credit.settings.show_orders_count.label",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_avg_order",
+          "label": "t:sections.account-dashboard.blocks.store_credit.settings.show_avg_order.label",
+          "default": true
+        }
+      ]
+    },
+    {
       "type": "loyalty_points",
       "name": "t:sections.main-account.blocks.loyalty_points.name",
       "limit": 1,
@@ -170,6 +247,12 @@
           "step": 5,
           "label": "t:sections.main-account.blocks.order_history.settings.orders_per_page.label",
           "default": 10
+        },
+        {
+          "type": "checkbox",
+          "id": "show_reorder",
+          "label": "t:sections.account-dashboard.blocks.order_history.settings.show_reorder.label",
+          "default": true
         }
       ]
     },
@@ -237,6 +320,37 @@
       ]
     },
     {
+      "type": "recently_viewed",
+      "name": "t:sections.account-dashboard.blocks.recently_viewed.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "t:sections.account-dashboard.blocks.recently_viewed.settings.heading.label",
+          "default": "Recently Viewed"
+        },
+        {
+          "type": "range",
+          "id": "products_to_show",
+          "min": 2,
+          "max": 8,
+          "step": 1,
+          "label": "t:sections.account-dashboard.blocks.recently_viewed.settings.products_to_show.label",
+          "default": 4
+        },
+        {
+          "type": "range",
+          "id": "columns_desktop",
+          "min": 2,
+          "max": 6,
+          "step": 1,
+          "label": "t:sections.account-dashboard.blocks.recently_viewed.settings.columns_desktop.label",
+          "default": 4
+        }
+      ]
+    },
+    {
       "type": "account_details",
       "name": "t:sections.main-account.blocks.account_details.name",
       "limit": 1,
@@ -254,9 +368,13 @@
     {
       "name": "Account Dashboard",
       "blocks": [
+        { "type": "welcome_banner" },
+        { "type": "active_orders" },
+        { "type": "store_credit" },
         { "type": "loyalty_points" },
         { "type": "order_history" },
         { "type": "favorites" },
+        { "type": "recently_viewed" },
         { "type": "account_details" }
       ]
     }

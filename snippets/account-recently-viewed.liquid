@@ -1,0 +1,38 @@
+{%- comment -%}
+  Account Recently Viewed Products Block
+  Lightweight wrapper that reuses the existing recently-viewed-products Web Component.
+  Parameters:
+    - block: The block object with settings (heading, products_to_show, columns_desktop)
+  Usage: {% render 'account-recently-viewed', block: block %}
+  Dependencies: recently-viewed.js, component-card.css, component-price.css
+{%- endcomment -%}
+
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+
+<div class="account-block account-block--recently-viewed" {{ block.shopify_attributes }}>
+  {%- assign default_heading = 'customer.account.recently_viewed' | t -%}
+  <h2 class="account-block__heading">
+    {{ block.settings.heading | default: default_heading }}
+  </h2>
+
+  <recently-viewed-products
+    class="account-recently-viewed"
+    data-section-id="account-rv-{{ block.id }}"
+    data-products-to-show="{{ block.settings.products_to_show | default: 4 }}"
+    data-exclude-current="false"
+    style="display: block;"
+  >
+    <ul
+      class="grid product-grid contains-card contains-card--product grid--{{ block.settings.columns_desktop | default: 4 }}-col-desktop grid--2-col-tablet-down account-recently-viewed__grid"
+      role="list"
+      data-recently-viewed-grid
+    ></ul>
+
+    <p class="account-recently-viewed__empty" data-recently-viewed-empty hidden>
+      {{ 'customer.account.no_recently_viewed' | t }}
+    </p>
+  </recently-viewed-products>
+</div>
+
+<script src="{{ 'recently-viewed.js' | asset_url }}" defer="defer"></script>

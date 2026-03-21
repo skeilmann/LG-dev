@@ -643,7 +643,20 @@
       "login_required": "Please log in to view your account dashboard.",
       "login_button": "Log In",
       "recent_orders_note": "Showing your most recent orders.",
-      "view_all_orders": "View full order history"
+      "view_all_orders": "View full order history",
+      "welcome": "Welcome, {{ name }}!",
+      "member_since": "Member since",
+      "total_orders": "Total orders",
+      "total_spent": "Total spent",
+      "spending_summary": "Spending Summary",
+      "avg_order_value": "Avg. order value",
+      "active_orders": "Active Orders",
+      "unfulfilled": "Processing",
+      "and_more_items": "+{{ count }} more items",
+      "reorder": "Reorder",
+      "reorder_aria": "Reorder items from {{ order }}",
+      "recently_viewed": "Recently Viewed",
+      "no_recently_viewed": "You haven't viewed any products yet."
     },
     "account_fallback": "Account",
     "activate_account": {
