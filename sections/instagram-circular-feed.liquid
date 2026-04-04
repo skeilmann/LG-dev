@@ -1,12 +1,22 @@
 {%- comment -%}
   Filename: instagram-circular-feed.liquid
-  Purpose: Standalone Instagram circular video feed section
+  Purpose: Standalone Instagram circular feed section with dual mode:
+    - Manual: curated circles added as blocks, with rich content modals
+    - API: fetches videos from Instagram Graph API (original behavior)
   Dependencies: instagram-circles.liquid snippet, instagram-circles.js, instagram-circles.css
   Created: 2025-01-29
+  Updated: 2026-04-04 — added manual/curated mode with rich content modals
 {%- endcomment -%}
 
 {{ 'instagram-circles.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'instagram-circles.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  assign resolved_mode = section.settings.source_mode | default: 'api'
+  assign show_labels = section.settings.show_labels | default: true
+  assign label_font_size = section.settings.label_font_size | default: 14
+  assign label_uppercase = section.settings.label_uppercase | default: true
+-%}
 
 <div class="instagram-feed-section section-{{ section.id }}-padding color-{{ section.settings.color_scheme }}">
   <div class="page-width isolate">
@@ -29,21 +39,125 @@
       </div>
     {%- endif -%}
 
-    {% render 'instagram-circles',
-      unique_id: section.id,
-      token: section.settings.instagram_token,
-      video_count: section.settings.video_count,
-      desktop_count: section.settings.desktop_count,
-      mobile_count: section.settings.mobile_count,
-      circle_size: section.settings.circle_size,
-      circle_gap: section.settings.circle_gap,
-      circle_border: section.settings.circle_border,
-      circle_bg: section.settings.circle_background,
-      circle_hover_bg: section.settings.circle_hover_background,
-      circle_border_color: section.settings.circle_border_color,
-      show_nav_buttons: true,
-      compact_mode: false
-    %}
+    {%- if resolved_mode == 'manual' -%}
+      {%- comment -%} Manual / curated mode — render circles from section blocks {%- endcomment -%}
+      <instagram-circles
+        class="instagram-circles"
+        data-mode="manual"
+        data-desktop-count="{{ section.settings.desktop_count }}"
+        data-mobile-count="{{ section.settings.mobile_count }}"
+        style="
+          --ig-circle-size: {{ section.settings.circle_size }}px;
+          --ig-circle-gap: {{ section.settings.circle_gap }}px;
+          --ig-circle-border-color: {{ section.settings.circle_border_color | default: '#1a1a1a' }};
+          --ig-label-size: {{ label_font_size }}px;
+          --ig-label-transform: {% if label_uppercase %}uppercase{% else %}none{% endif %};
+        "
+      >
+        <div class="instagram-circles__container">
+          <button
+            type="button"
+            class="instagram-circles__btn instagram-circles__btn--prev"
+            aria-label="{{ 'general.slider.previous_slide' | t }}"
+            data-instagram-prev
+          >
+            <span class="svg-wrapper">
+              {{- 'icon-caret.svg' | inline_asset_content -}}
+            </span>
+          </button>
+
+          <div
+            class="instagram-circles__track"
+            id="InstagramTrack-{{ section.id }}"
+            data-instagram-track
+          >
+            {%- assign circle_blocks = section.blocks | where: 'type', 'circle' -%}
+            {%- if circle_blocks.size > 0 -%}
+              {%- for block in circle_blocks -%}
+                {%- assign modal_img = block.settings.modal_image | default: block.settings.image -%}
+                <button
+                  type="button"
+                  class="instagram-circles__item instagram-circles__item--manual"
+                  {% unless modal_img == blank %}data-modal-image="{{ modal_img | image_url: width: 800 }}"{% endunless %}
+                  data-modal-title="{{ block.settings.modal_title | escape }}"
+                  data-modal-description="{{ block.settings.modal_description | escape }}"
+                  data-modal-cta-text="{{ block.settings.cta_text | escape }}"
+                  data-modal-cta-url="{{ block.settings.cta_url }}"
+                  aria-label="{{ block.settings.label | default: 'Circle' | escape }}"
+                  {{ block.shopify_attributes }}
+                >
+                  <div class="instagram-circles__ring">
+                    {%- if block.settings.image != blank -%}
+                      {{
+                        block.settings.image
+                        | image_url: width: 200
+                        | image_tag: loading: 'lazy', alt: block.settings.label, class: ''
+                      }}
+                    {%- else -%}
+                      <div
+                        style="width:100%;height:100%;background:var(--ig-circle-bg, #f6f6f6);border-radius:50%;"
+                        aria-hidden="true"
+                      ></div>
+                    {%- endif -%}
+                  </div>
+                  {%- if show_labels and block.settings.label != blank -%}
+                    <span class="instagram-circles__label">{{ block.settings.label | escape }}</span>
+                  {%- endif -%}
+                </button>
+              {%- endfor -%}
+            {%- else -%}
+              <div class="instagram-circles__status">
+                {{ 'sections.instagram_feed.no_circles' | t | default: 'Add circle blocks in the theme editor' }}
+              </div>
+            {%- endif -%}
+          </div>
+
+          <button
+            type="button"
+            class="instagram-circles__btn instagram-circles__btn--next"
+            aria-label="{{ 'general.slider.next_slide' | t }}"
+            data-instagram-next
+          >
+            <span class="svg-wrapper">
+              {{- 'icon-caret.svg' | inline_asset_content -}}
+            </span>
+          </button>
+        </div>
+
+        {%- comment -%} Rich content modal (no video element) {%- endcomment -%}
+        <dialog class="instagram-circles__modal instagram-circles__modal--rich" data-instagram-modal>
+          <button
+            type="button"
+            class="instagram-circles__modal-close"
+            aria-label="{{ 'accessibility.close' | t }}"
+            data-instagram-modal-close
+          >
+            <span class="svg-wrapper">
+              {{- 'icon-close.svg' | inline_asset_content -}}
+            </span>
+          </button>
+          <div class="instagram-circles__modal-body"></div>
+        </dialog>
+      </instagram-circles>
+
+    {%- else -%}
+      {%- comment -%} API mode — unchanged, delegates to shared snippet {%- endcomment -%}
+      {% render 'instagram-circles',
+        unique_id: section.id,
+        token: section.settings.instagram_token,
+        video_count: section.settings.video_count,
+        desktop_count: section.settings.desktop_count,
+        mobile_count: section.settings.mobile_count,
+        circle_size: section.settings.circle_size,
+        circle_gap: section.settings.circle_gap,
+        circle_border: section.settings.circle_border,
+        circle_bg: section.settings.circle_background,
+        circle_hover_bg: section.settings.circle_hover_background,
+        circle_border_color: section.settings.circle_border_color,
+        show_nav_buttons: true,
+        compact_mode: false
+      %}
+    {%- endif -%}
   </div>
 </div>
 
@@ -93,6 +207,17 @@
     "groups": ["header", "footer"]
   },
   "settings": [
+    {
+      "type": "select",
+      "id": "source_mode",
+      "label": "Source mode",
+      "options": [
+        { "value": "manual", "label": "Manual (curated circles)" },
+        { "value": "api", "label": "Instagram API (videos)" }
+      ],
+      "default": "api",
+      "info": "Manual: add circles as blocks below. API: fetch videos from Instagram."
+    },
     {
       "type": "text",
       "id": "title",
@@ -152,7 +277,7 @@
       "type": "range",
       "id": "desktop_count",
       "min": 3,
-      "max": 8,
+      "max": 12,
       "step": 1,
       "label": "Visible circles (desktop)",
       "default": 6
@@ -161,7 +286,7 @@
       "type": "range",
       "id": "mobile_count",
       "min": 2,
-      "max": 4,
+      "max": 5,
       "step": 1,
       "label": "Visible circles (mobile)",
       "default": 3
@@ -184,7 +309,7 @@
       "type": "range",
       "id": "circle_gap",
       "min": 8,
-      "max": 32,
+      "max": 48,
       "step": 2,
       "unit": "px",
       "label": "Gap between circles",
@@ -203,8 +328,8 @@
     {
       "type": "color",
       "id": "circle_border_color",
-      "label": "Border color",
-      "default": "#e0e0e0"
+      "label": "Border / ring color",
+      "default": "#1a1a1a"
     },
     {
       "type": "color",
@@ -217,6 +342,32 @@
       "id": "circle_hover_background",
       "label": "Circle hover background",
       "default": "#ececec"
+    },
+    {
+      "type": "header",
+      "content": "Labels"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_labels",
+      "label": "Show labels below circles",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "label_font_size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Label font size",
+      "default": 14
+    },
+    {
+      "type": "checkbox",
+      "id": "label_uppercase",
+      "label": "Uppercase labels",
+      "default": true
     },
     {
       "type": "header",
@@ -249,9 +400,76 @@
       "default": 36
     }
   ],
+  "blocks": [
+    {
+      "type": "circle",
+      "name": "Circle",
+      "limit": 16,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Circle image"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label text",
+          "default": "Label"
+        },
+        {
+          "type": "header",
+          "content": "Modal content"
+        },
+        {
+          "type": "image_picker",
+          "id": "modal_image",
+          "label": "Modal image",
+          "info": "Larger image for popup. Falls back to circle image if empty."
+        },
+        {
+          "type": "text",
+          "id": "modal_title",
+          "label": "Modal title"
+        },
+        {
+          "type": "richtext",
+          "id": "modal_description",
+          "label": "Modal description"
+        },
+        {
+          "type": "text",
+          "id": "cta_text",
+          "label": "Button text"
+        },
+        {
+          "type": "url",
+          "id": "cta_url",
+          "label": "Button link"
+        }
+      ]
+    }
+  ],
   "presets": [
     {
       "name": "Instagram circular feed"
+    },
+    {
+      "name": "Story highlights (manual)",
+      "settings": {
+        "source_mode": "manual",
+        "title": "Highlights",
+        "show_labels": true,
+        "circle_size": 84,
+        "circle_gap": 28,
+        "label_uppercase": true,
+        "label_font_size": 14
+      },
+      "blocks": [
+        { "type": "circle", "settings": { "label": "New" } },
+        { "type": "circle", "settings": { "label": "Sale" } },
+        { "type": "circle", "settings": { "label": "Trending" } }
+      ]
     }
   ]
 }

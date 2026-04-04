@@ -6,7 +6,7 @@ if (typeof window !== 'undefined') {
   window.BaseNotification = class BaseNotification extends HTMLElement {
   constructor(notificationId, customElementName) {
     super();
-    
+
     this.notificationId = notificationId;
     this.customElementName = customElementName;
     this.notification = document.getElementById(notificationId);
@@ -20,12 +20,12 @@ if (typeof window !== 'undefined') {
       this.querySelectorAll('button[type="button"]').forEach((closeButton) =>
         closeButton.addEventListener('click', this.close.bind(this))
       );
-      
+
       this.notification.addEventListener('mouseenter', () => {
         this.hovered = true;
         this.clearAutoHideTimer();
       });
-      
+
       this.notification.addEventListener('mouseleave', () => {
         this.hovered = false;
         this.startAutoHideTimer();
@@ -34,8 +34,12 @@ if (typeof window !== 'undefined') {
   }
 
   open() {
-    if (!this.notification) return;
+    if (!this.notification) {
+      this.notification = document.getElementById(this.notificationId);
+      if (!this.notification) return;
+    }
 
+    if (this.header) this.header.reveal();
     this.updatePosition();
     this.notification.classList.add('animate', 'active');
 
@@ -50,14 +54,14 @@ if (typeof window !== 'undefined') {
 
     document.body.addEventListener('click', this.onBodyClick);
   }
-  
+
   startAutoHideTimer() {
     this.clearAutoHideTimer();
     if (!this.hovered) {
       this.autoHideTimer = setTimeout(() => this.close(), 7000);
     }
   }
-  
+
   clearAutoHideTimer() {
     if (this.autoHideTimer) {
       clearTimeout(this.autoHideTimer);
@@ -92,7 +96,8 @@ if (typeof window !== 'undefined') {
     if (!wrapper) return;
     const sectionHeader = document.querySelector('.section-header');
     if (sectionHeader) {
-      wrapper.style.top = sectionHeader.getBoundingClientRect().bottom + 'px';
+      const bottom = sectionHeader.getBoundingClientRect().bottom;
+      wrapper.style.top = Math.max(0, bottom) + 'px';
     }
   }
 
@@ -101,4 +106,3 @@ if (typeof window !== 'undefined') {
   }
   };
 }
-

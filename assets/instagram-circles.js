@@ -20,7 +20,11 @@ if (!customElements.get('instagram-circles')) {
         this.video = this.modal?.querySelector('[data-instagram-video]');
 
         if (this.track) {
-          this.loadFeed();
+          if (this.mode === 'manual') {
+            this.setupManualCircles();
+          } else {
+            this.loadFeed();
+          }
           this.setupNavigation();
           this.setupModal();
         }
@@ -47,6 +51,10 @@ if (!customElements.get('instagram-circles')) {
 
       get mobileCount() {
         return parseInt(this.dataset.mobileCount, 10) || 3;
+      }
+
+      get mode() {
+        return this.dataset.mode || 'api';
       }
 
       get slidesToShow() {
@@ -136,6 +144,48 @@ if (!customElements.get('instagram-circles')) {
         this.updateSlidesPerView();
       }
 
+      setupManualCircles() {
+        this.updateSlidesPerView();
+        this.setupResize();
+
+        this.track.querySelectorAll('.instagram-circles__item--manual').forEach((item) => {
+          item.addEventListener('click', () => this.openRichModal(item));
+        });
+      }
+
+      openRichModal(item) {
+        if (!this.modal) return;
+
+        const modalBody = this.modal.querySelector('.instagram-circles__modal-body');
+        if (!modalBody) return;
+
+        const image = item.dataset.modalImage || '';
+        const title = item.dataset.modalTitle || '';
+        const description = item.dataset.modalDescription || '';
+        const ctaText = item.dataset.modalCtaText || '';
+        const ctaUrl = item.dataset.modalCtaUrl || '';
+
+        let html = '';
+        if (image) {
+          html += `<img class="instagram-circles__modal-image" src="${this.escapeAttr(image)}" alt="${this.escapeAttr(title)}" loading="eager" />`;
+        }
+        html += '<div class="instagram-circles__modal-content">';
+        if (title) html += `<h3 class="instagram-circles__modal-title">${this.escapeHtml(title)}</h3>`;
+        if (description) html += `<div class="instagram-circles__modal-description">${description}</div>`;
+        if (ctaText && ctaUrl) {
+          html += `<a class="instagram-circles__modal-cta button button--secondary" href="${this.escapeAttr(ctaUrl)}">${this.escapeHtml(ctaText)}</a>`;
+        }
+        html += '</div>';
+
+        modalBody.innerHTML = html;
+
+        if (typeof this.modal.showModal === 'function') {
+          this.modal.showModal();
+        } else {
+          this.modal.setAttribute('open', 'true');
+        }
+      }
+
       setupNavigation() {
         const prevBtn = this.querySelector('[data-instagram-prev]');
         const nextBtn = this.querySelector('[data-instagram-next]');
@@ -168,7 +218,13 @@ if (!customElements.get('instagram-circles')) {
 
         const closeBtn = this.querySelector('[data-instagram-modal-close]');
 
-        this.modal.addEventListener('close', () => this.resetVideo());
+        this.modal.addEventListener('close', () => {
+          this.resetVideo();
+          if (this.mode === 'manual') {
+            const body = this.modal.querySelector('.instagram-circles__modal-body');
+            if (body) body.innerHTML = '';
+          }
+        });
         this.modal.addEventListener('cancel', (event) => {
           event.preventDefault();
           this.modal.close();

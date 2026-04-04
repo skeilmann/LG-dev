@@ -70,79 +70,42 @@
 
 .announcement-top-bar .fs-progress {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
 }
 
 .announcement-top-bar .fs-empty {
   display: flex;
   align-items: center;
-  justify-content: center;
 }
 
 .announcement-top-bar .fs-empty-message {
   font-size: 1.2rem;
   font-weight: 500;
   letter-spacing: 0.02em;
-  text-align: center;
   margin: 0;
   line-height: 1;
   white-space: nowrap;
 }
 
-/* Progress bar fill styling */
+/* Progress bar sits below text, matching its width */
 .announcement-top-bar .fs-content {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  white-space: nowrap;
+  display: block;
 }
 
 .announcement-top-bar .fs-progress-bar {
-  width: 120px;
-  height: 6px;
+  width: 100%;
+  height: 4px;
   background-color: rgba(0, 0, 0, 0.15);
-  border-radius: 3px;
-  flex-shrink: 0;
+  border-radius: 2px;
 }
 
 .announcement-top-bar .fs-progress-fill {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.7);
-  border-radius: 3px;
+  border-radius: 2px;
   transition: width 0.3s ease;
-}
-
-/* Truck icon rides on the progress fill leading edge */
-.announcement-top-bar .fs-progress-bar {
-  position: relative;
-  overflow: visible;
-}
-
-.announcement-top-bar .fs-progress-fill {
-  position: relative;
-  overflow: visible;
-}
-
-.announcement-top-bar .fs-progress-truck {
-  position: absolute;
-  right: -8px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 16px;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-.announcement-top-bar .fs-progress-truck svg {
-  width: 16px;
-  height: 16px;
-  fill: currentColor;
 }
 
 /* Hide the header row (title + amounts) — just show bar + message */
@@ -264,11 +227,7 @@
   }
 
   .announcement-top-bar .fs-progress-bar {
-    width: 80px;
-  }
-
-  .announcement-top-bar .fs-progress-truck {
-    display: none;
+    width: 100%;
   }
 
   .announcement-top-bar__right {
@@ -290,17 +249,6 @@
   }
 
   .announcement-top-bar .fs-progress-bar {
-    width: 100px;
-  }
-
-  .announcement-top-bar .fs-progress-truck {
-    width: 14px;
-    height: 14px;
-    right: -7px;
-  }
-
-  .announcement-top-bar .fs-progress-truck svg {
-    width: 14px;
-    height: 14px;
+    width: 100%;
   }
 }

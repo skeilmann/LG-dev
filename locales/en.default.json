@@ -546,7 +546,8 @@
       "empty": "No videos available",
       "error": "Error loading feed",
       "token_required": "Instagram access token required",
-      "play_video": "Play video {{ index }}"
+      "play_video": "Play video {{ index }}",
+      "no_circles": "Add circle blocks in the theme editor"
     },
     "page": {
       "title": "Page title"
