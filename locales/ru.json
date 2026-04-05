@@ -320,6 +320,11 @@
     "breadcrumbs": {
       "home": "Главная"
     },
+    "collage": {
+      "countdown_singular": "день до конца акции",
+      "countdown_few": "дня до конца акции",
+      "countdown_plural": "дней до конца акции"
+    },
     "recently_viewed": {
       "name": "Недавно просмотренное",
       "heading": "Недавно просмотренное",

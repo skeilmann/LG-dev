@@ -514,6 +514,11 @@
       "onboarding_title": "Blog post",
       "onboarding_content": "Give your customers a summary of your blog post"
     },
+    "collage": {
+      "countdown_singular": "day until end of sale",
+      "countdown_few": "days until end of sale",
+      "countdown_plural": "days until end of sale"
+    },
     "featured_collection": {
       "view_all": "View all",
       "view_all_label": "View all products in the {{ collection_name }} collection",

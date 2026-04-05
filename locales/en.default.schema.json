@@ -668,6 +668,9 @@
           "options__2": {
             "label": "Style all as product cards"
           }
+        },
+        "header_mobile": {
+          "content": "Mobile Layout"
         }
       },
       "blocks": {
