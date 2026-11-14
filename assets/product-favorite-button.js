@@ -39,40 +39,38 @@ document.addEventListener('DOMContentLoaded', function () {
         cadSaveBtn.style.display = 'none';
     }
 
-    // ── Buy Now Button ─────────────────────────────────────────
+    // ── Buy Now Button ("купить в один клик") ──────────────────
+    // Goes straight to checkout with ONLY this product (cart permalink).
+    // A cart permalink replaces the shopper's cart, so the current cart is saved
+    // first and put back by cart-restore.js when the shopper returns to the store.
     const buyNowBtn = document.querySelector('[data-buy-now]');
     if (buyNowBtn) {
-        buyNowBtn.addEventListener('click', function () {
-            if (buyNowBtn.disabled) return;
+        buyNowBtn.addEventListener('click', async function () {
+            if (buyNowBtn.disabled || buyNowBtn.classList.contains('loading')) return;
 
-            // Find the variant ID from the product form
-            const form = document.querySelector('[data-type="add-to-cart-form"]');
+            const container = buyNowBtn.closest('.product__info-container') || document;
+            const form = container.querySelector('[data-type="add-to-cart-form"]');
             const variantInput = form ? form.querySelector('.product-variant-id') : null;
-            const variantId = variantInput ? variantInput.value : null;
-
+            const variantId = variantInput ? parseInt(variantInput.value, 10) : NaN;
             if (!variantId) return;
 
-            // Get quantity
-            const quantityInput = document.querySelector('.quantity__input');
-            const quantity = quantityInput ? quantityInput.value : 1;
+            const quantityInput = form && form.id
+                ? document.querySelector(`.quantity__input[form="${form.id}"]`) || container.querySelector('.quantity__input')
+                : container.querySelector('.quantity__input');
+            const quantity = Math.max(1, parseInt(quantityInput ? quantityInput.value : 1, 10) || 1);
 
-            // Add to cart then redirect to checkout
             buyNowBtn.classList.add('loading');
-            fetch('/cart/add.js', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ items: [{ id: parseInt(variantId), quantity: parseInt(quantity) }] })
-            })
-            .then(function (response) {
-                if (response.ok) {
-                    window.location.href = '/checkout';
-                } else {
-                    buyNowBtn.classList.remove('loading');
-                }
-            })
-            .catch(function () {
-                buyNowBtn.classList.remove('loading');
-            });
+            buyNowBtn.setAttribute('aria-busy', 'true');
+
+            if (window.VevCartRestore) await window.VevCartRestore.saveCurrentCart();
+
+            window.location.href = `${window.Shopify?.routes?.root || '/'}cart/${variantId}:${quantity}`;
+        });
+
+        // Coming back with the browser "back" button: reset the button.
+        window.addEventListener('pageshow', function () {
+            buyNowBtn.classList.remove('loading');
+            buyNowBtn.removeAttribute('aria-busy');
         });
     }
 });

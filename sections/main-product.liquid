@@ -147,10 +147,14 @@
               {%- when 'price' -%}
                 <div class="product__price-qty-row">
                   <div id="price-{{ section.id }}" role="status" {{ block.shopify_attributes }}>
+                    {%- comment -%}
+                      No "Распродажа"/"Распродано" tag next to the price (Figma): the old price and
+                      discount badge show the sale, the grey add-to-cart button shows sold out.
+                    {%- endcomment -%}
                     {%- render 'price',
                       product: product,
                       use_variant: true,
-                      show_badges: true,
+                      show_badges: false,
                       price_class: 'price--large'
                     -%}
                   </div>
