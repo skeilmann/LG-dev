@@ -1362,6 +1362,18 @@
         "id": "brand_secondary_bg",
         "label": "Secondary button background",
         "default": "#ebebeb"
+      },
+      {
+        "type": "color",
+        "id": "brand_primary_in_cart",
+        "label": "Add-to-cart button when product is in cart",
+        "default": "#e598c8"
+      },
+      {
+        "type": "color",
+        "id": "brand_sold_out_bg",
+        "label": "Sold-out button background",
+        "default": "#d8d8d8"
       }
     ]
   },

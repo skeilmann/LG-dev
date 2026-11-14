@@ -158,6 +158,16 @@
         --color-brand-orange: {{ settings.brand_badge_orange }};
         --color-brand-red: {{ settings.brand_badge_red }};
         --color-brand-gray: {{ settings.brand_secondary_bg }};
+        --color-brand-pink-in-cart: {{ settings.brand_primary_in_cart | default: '#e598c8' }};
+        --color-brand-sold-out: {{ settings.brand_sold_out_bg | default: '#d8d8d8' }};
+
+        /* Product card tokens (Figma: VEV.MD Concept, product card states) */
+        --color-card-hover-glow: 249, 62, 137;
+        --color-card-title-hover: 145, 145, 145;
+        --product-card-shadow: 0 0.3rem 4rem 0.3rem rgba(0, 0, 0, 0.1);
+        --product-card-shadow-hover: 0 0.3rem 4rem 0.3rem rgba(var(--color-card-hover-glow), 0.15);
+        --product-card-radius: 1.5rem;
+        --product-card-media-radius: 0.75rem;
         --color-brand-gray-hover: #e0e0e0;
         --color-brand-gray-disabled: #f0f0f0;
         --color-brand-text: #000;

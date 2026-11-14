@@ -145,45 +145,38 @@
                 {{- 'products.product.sold_out' | t -}}
               </span>
             {%- else -%}
-              {% assign badge_count = 0 %}
+              {%- liquid
+                comment
+                  Badge order follows the Figma design: discount, TOP, NEW.
+                  TOP = product tagged "top" (any case). NEW = created in the last 14 days.
+                endcomment
+                assign created_date = card_product.created_at | date: '%s' | plus: 0
+                assign today = 'now' | date: '%s' | plus: 0
+                assign days_old = today | minus: created_date | divided_by: 86400
+                assign product_tags = card_product.tags | join: '|' | downcase | split: '|'
+              -%}
 
-              {% assign created_date = card_product.created_at | date: '%s' | plus: 0 %}
-
-              {% assign today = 'now' | date: '%s' | plus: 0 %}
-              {% assign days_old = today | minus: created_date | divided_by: 86400 %}
-
-              {% comment %}
-                <script>
-                  console.log("Product:", "{{ card_product.title }}");
-                  console.log("Metafield date:", "{{ card_product.metafields.custom.date_added_to_shopify }}");
-                  console.log("Created at:", "{{ card_product.created_at }}");
-                  console.log("Epoch:", {{ created_date }}, "Today:", {{ today }}, "Days Old:", {{ days_old }});
-                </script>
-              {% endcomment %}
-
-              {% if days_old < 14 %}
-                <span class="badge new-badge">{{ 'products.product.new_badge' | t }}</span>
-              {% endif %}
-
-              {%- if card_product.compare_at_price > card_product.price and badge_count < 4 -%}
-                {% assign discount = card_product.compare_at_price | minus: card_product.price %}
-                {% assign discount_percent = discount
-                  | times: 100.0
-                  | divided_by: card_product.compare_at_price
-                  | round
-                %}
-
-                {% assign discount_class = 'small' %}
-                {% if discount_percent >= 30 %}
-                  {% assign discount_class = 'medium' %}
-                {% endif %}
-                {% if discount_percent >= 50 %}
-                  {% assign discount_class = 'large' %}
-                {% endif %}
-
-                {% assign badge_count = badge_count | plus: 1 %}
+              {%- if card_product.compare_at_price > card_product.price -%}
+                {%- liquid
+                  assign discount = card_product.compare_at_price | minus: card_product.price
+                  assign discount_percent = discount | times: 100.0 | divided_by: card_product.compare_at_price | round
+                  assign discount_class = 'small'
+                  if discount_percent >= 50
+                    assign discount_class = 'large'
+                  elsif discount_percent >= 30
+                    assign discount_class = 'medium'
+                  endif
+                -%}
                 <span class="badge discount-badge" data-discount="{{ discount_class }}">-{{ discount_percent }}%</span>
-              {% endif %}
+              {%- endif -%}
+
+              {%- if product_tags contains 'top' -%}
+                <span class="badge top-badge">{{ 'products.product.top_badge' | t }}</span>
+              {%- endif -%}
+
+              {%- if days_old < 14 -%}
+                <span class="badge new-badge">{{ 'products.product.new_badge' | t }}</span>
+              {%- endif -%}
             {%- endif -%}
           </div>
         </div>
@@ -415,7 +408,11 @@
                   >
                     <span class="button__content">
                       <span class="icon-wrap button__icon">
-                        {{- 'icon-cart-empty.svg' | inline_asset_content -}}
+                        {%- if card_product.selected_or_first_available_variant.available -%}
+                          {{- 'icon-cart-empty.svg' | inline_asset_content -}}
+                        {%- else -%}
+                          {{- 'icon-bag-sad.svg' | inline_asset_content -}}
+                        {%- endif -%}
                       </span>
                       <span class="button__text">
                         {%- if card_product.selected_or_first_available_variant.available -%}

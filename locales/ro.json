@@ -132,6 +132,7 @@
   "products": {
     "product": {
       "new_badge": "Nou",
+      "top_badge": "TOP",
       "add_to_cart": "Adăugați în coș",
       "description": "Descriere",
       "on_sale": "Vânzare",

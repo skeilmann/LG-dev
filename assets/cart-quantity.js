@@ -136,7 +136,11 @@ class CartQuantityManager {
     if (!button) return;
     
     let badge = button.querySelector('.button__cart-count');
-    const iconWrap = button.querySelector('.button__icon');
+    // Sold-out buttons keep their own icon (sad bag); never swap it for the cart icon.
+    const iconWrap = button.disabled ? null : button.querySelector('.button__icon');
+
+    // Drives the "in cart" button style (darker pink + count chip) from the Figma design.
+    button.classList.toggle('quick-add__submit--in-cart', quantity > 0);
     
     if (quantity > 0) {
       // Show badge

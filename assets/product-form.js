@@ -159,6 +159,7 @@ if (!customElements.get('product-form')) {
             countNumber.textContent = newCount;
             buttonBadge.setAttribute('data-cart-count', newCount);
             buttonBadge.classList.remove('hidden');
+            this.submitButton.classList.add('quick-add__submit--in-cart');
           }
         }
 
@@ -228,6 +229,7 @@ if (!customElements.get('product-form')) {
               buttonBadge.classList.add('hidden');
               countNumber.textContent = '0';
               buttonBadge.setAttribute('data-cart-count', '0');
+              this.submitButton.classList.remove('quick-add__submit--in-cart');
             }
           }
         }
