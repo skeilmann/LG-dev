@@ -299,6 +299,14 @@
     }
   },
   "sections": {
+    "vev_carousel": {
+      "view_all": "View all",
+      "empty": "No products here yet.",
+      "filters_label": "Filter by category",
+      "loading": "Loading products…",
+      "shown": "Showing products: {{ category }}",
+      "error": "Could not load products. Please try again."
+    },
     "breadcrumbs": {
       "home": "Home"
     },

@@ -1,0 +1,338 @@
+/*
+  VEV product carousel (sections/vev-product-carousel.liquid)
+  Figma: VEV.MD Concept → "НОВИНКИ" block. Desktop sizes come from the 1728px frame.
+*/
+
+.vev-carousel {
+  display: block;
+}
+
+/* --- Heading ----------------------------------------------------------- */
+.vev-carousel__heading {
+  margin: 0 0 2rem;
+  color: rgb(0, 0, 0);
+  font-size: 2.4rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* --- Toolbar: chips + arrows -------------------------------------------- */
+.vev-carousel__toolbar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.2rem;
+}
+
+.vev-carousel__chips {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  /* room for the chip shadow inside the scroll area (shadow blur is ~2.6rem) */
+  padding: 2.8rem 1.5rem;
+  margin: -1.6rem -1.5rem;
+  scroll-padding-inline: 1.5rem;
+}
+
+.vev-carousel__chips::-webkit-scrollbar {
+  display: none;
+}
+
+.vev-chip {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 1rem;
+  height: 4.4rem;
+  padding: 0 1.8rem 0 0;
+  border: none;
+  border-radius: 10rem;
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0 0.3rem 2.4rem 0.16rem rgba(0, 0, 0, 0.15);
+  color: rgb(0, 0, 0);
+  font-family: inherit;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  text-transform: lowercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-default, 0.2s) ease,
+    box-shadow var(--duration-default, 0.2s) ease;
+}
+
+.vev-chip__image {
+  display: block;
+  flex-shrink: 0;
+  width: 4.4rem;
+  height: 4.4rem;
+  overflow: hidden;
+  border-radius: 50%;
+  background-color: rgb(241, 241, 241);
+}
+
+.vev-chip__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vev-chip[aria-pressed='true'] {
+  background-color: var(--color-brand-pink, #f4b8dd);
+}
+
+.vev-chip:focus-visible {
+  outline: 0.2rem solid rgb(0, 0, 0);
+  outline-offset: 0.3rem;
+}
+
+/* Arrows: hidden on touch-size screens (cards are swiped) */
+.vev-carousel__arrows {
+  display: none;
+}
+
+.vev-carousel__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 5.6rem;
+  height: 4.4rem;
+  padding: 0;
+  border: none;
+  background: none;
+  color: rgb(0, 0, 0);
+  cursor: pointer;
+}
+
+.vev-carousel__arrow .icon {
+  width: 4.8rem;
+  height: 2.5rem;
+}
+
+.vev-carousel__arrow--prev .icon {
+  transform: scaleX(-1);
+}
+
+.vev-carousel__arrow[disabled] {
+  color: rgb(151, 149, 149);
+  cursor: default;
+}
+
+.vev-carousel__arrow:focus-visible {
+  outline: 0.2rem solid rgb(0, 0, 0);
+  outline-offset: 0.2rem;
+}
+
+/* --- Track --------------------------------------------------------------- */
+/* Room for the card shadow (blur ~4.3rem) inside the scroll container, so it
+   isn't cut into grey bands; negative margins keep the visual spacing. */
+.vev-carousel .vev-carousel__track.slider {
+  padding-top: 4.4rem;
+  padding-bottom: 4.4rem;
+  margin-top: -3.2rem;
+  margin-bottom: -2rem;
+  scroll-padding-left: 1.5rem;
+  transition: opacity var(--duration-default, 0.2s) ease;
+}
+
+.vev-carousel.is-loading .vev-carousel__track {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.vev-carousel__empty {
+  width: 100%;
+  max-width: 100%;
+  flex: 1 0 100%;
+  padding: 4rem 1rem;
+  color: rgb(var(--color-foreground));
+  font-size: 1.6rem;
+  text-align: center;
+  list-style: none;
+}
+
+/* --- "смотреть все" button ---------------------------------------------- */
+.vev-carousel__footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.8rem;
+}
+
+.vev-carousel__view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.2rem;
+  min-height: 4.4rem;
+  padding: 0 2rem;
+  border-radius: 1.25rem;
+  background-color: rgb(241, 241, 241);
+  color: rgb(0, 0, 0);
+  font-size: 1.6rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    background-color var(--duration-default, 0.2s) ease,
+    color var(--duration-default, 0.2s) ease;
+}
+
+.vev-carousel__view-all .icon {
+  width: 2.6rem;
+  height: 1.4rem;
+}
+
+.vev-carousel__view-all:focus-visible {
+  outline: 0.2rem solid rgb(0, 0, 0);
+  outline-offset: 0.3rem;
+}
+
+/* --- Tablet and up -------------------------------------------------------- */
+@media screen and (min-width: 750px) {
+  .vev-carousel__heading {
+    margin-bottom: 2.8rem;
+    font-size: 3.2rem;
+  }
+
+  .vev-chip {
+    height: 5.4rem;
+    gap: 1.4rem;
+    padding-right: 2.4rem;
+    font-size: 1.8rem;
+  }
+
+  .vev-chip__image {
+    width: 5.4rem;
+    height: 5.4rem;
+  }
+
+  .vev-carousel__view-all {
+    min-height: 5rem;
+    padding: 0 2.4rem;
+    font-size: 2rem;
+  }
+
+  .vev-carousel__view-all .icon {
+    width: 3.2rem;
+    height: 1.6rem;
+  }
+}
+
+/* --- Desktop: chips centred in one row, arrows on the right ------------- */
+/* Sizes scale with the viewport and reach the Figma values at 1728px. */
+@media screen and (min-width: 990px) {
+  .vev-carousel__heading {
+    font-size: clamp(3.2rem, 2.32vw, 4rem);
+  }
+
+  .vev-carousel__toolbar {
+    margin-bottom: 1.6rem;
+    /* keep chips centred while leaving room for the arrows on the right */
+    padding: 0 13rem;
+  }
+
+  .vev-carousel__chips {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem clamp(1.6rem, 1.6vw, 4rem);
+    overflow: visible;
+    margin: 0;
+    padding: 1.2rem 0 1.6rem;
+  }
+
+  /* Side room for the card shadow; cards still line up with the page edges */
+  .vev-carousel .vev-carousel__track.slider--desktop {
+    margin-left: calc(-1 * var(--grid-desktop-horizontal-spacing));
+    margin-right: calc(-1 * var(--grid-desktop-horizontal-spacing));
+    padding-left: var(--grid-desktop-horizontal-spacing);
+    padding-right: var(--grid-desktop-horizontal-spacing);
+    scroll-padding-left: var(--grid-desktop-horizontal-spacing);
+  }
+
+  .vev-chip {
+    height: clamp(5rem, 3.82vw, 6.6rem);
+    gap: clamp(1.2rem, 0.93vw, 1.6rem);
+    padding-right: clamp(2rem, 1.74vw, 3rem);
+    font-size: clamp(1.6rem, 1.27vw, 2.2rem);
+  }
+
+  .vev-chip__image {
+    width: clamp(5rem, 3.82vw, 6.6rem);
+    height: clamp(5rem, 3.82vw, 6.6rem);
+  }
+
+  .vev-carousel__arrows {
+    position: absolute;
+    right: 0;
+    bottom: 0.4rem;
+    display: flex;
+    gap: 2rem;
+  }
+
+  /* Full rows of cards: no Dawn "peek" offset on the first slide */
+  .vev-carousel .vev-carousel__track.slider--desktop {
+    gap: var(--grid-desktop-horizontal-spacing);
+  }
+
+  .vev-carousel .vev-carousel__track.slider--desktop::after {
+    display: none;
+  }
+
+  /* Small laptops: at most 4 cards per row so cards stay readable */
+  .vev-carousel .vev-carousel__track.slider--desktop {
+    --vev-columns: min(var(--vev-columns-setting, 5), 4);
+  }
+
+  .vev-carousel .vev-carousel__track.slider--desktop .slider__slide {
+    width: calc((100% - (var(--vev-columns) - 1) * var(--grid-desktop-horizontal-spacing)) / var(--vev-columns));
+    min-width: 0;
+    max-width: none;
+  }
+
+  .vev-carousel .vev-carousel__track.slider--desktop .slider__slide:first-child {
+    margin-left: 0;
+    scroll-margin-left: 0;
+  }
+
+  .vev-carousel__view-all {
+    min-height: 5.5rem;
+    padding: 0 2.8rem;
+    font-size: clamp(2rem, 1.62vw, 2.8rem);
+  }
+}
+
+@media screen and (min-width: 1400px) {
+  .vev-carousel .vev-carousel__track.slider--desktop {
+    --vev-columns: var(--vev-columns-setting, 5);
+  }
+}
+
+/* --- Hover (pointer devices only) ---------------------------------------- */
+@media (hover: hover) and (pointer: fine) {
+  .vev-chip:hover {
+    box-shadow: 0 0.3rem 2.4rem 0.16rem rgba(var(--color-card-hover-glow, 249, 62, 137), 0.3);
+  }
+
+  .vev-carousel__arrow:not([disabled]):hover {
+    color: var(--color-brand-pink-dark, #f93e89);
+  }
+
+  .vev-carousel__view-all:hover {
+    background-color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vev-chip,
+  .vev-carousel__track,
+  .vev-carousel__view-all {
+    transition: none;
+  }
+}

@@ -302,6 +302,14 @@
     }
   },
   "sections": {
+    "vev_carousel": {
+      "view_all": "vezi toate",
+      "empty": "Încă nu sunt produse aici.",
+      "filters_label": "Filtrează după categorie",
+      "loading": "Se încarcă produsele…",
+      "shown": "Produse afișate: {{ category }}",
+      "error": "Produsele nu au putut fi încărcate. Încercați din nou."
+    },
     "breadcrumbs": {
       "home": "Acasă"
     },

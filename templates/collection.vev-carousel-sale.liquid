@@ -1,0 +1,12 @@
+{%- comment -%}
+  Alternate collection template for the VEV product carousel category chips (discounted products only).
+  Fetched as /collections/<handle>?view=vev-carousel-sale&sort_by=<order>
+  Returns only the product slides (no layout). Not meant to be assigned to a collection.
+{%- endcomment -%}
+{%- layout none -%}
+{%- paginate collection.products by 50 -%}
+  {%- assign id_prefix = 'vcs-' | append: collection.id | append: '-' | append: collection.sort_by -%}
+  <ul data-vev-carousel-items>
+    {%- render 'vev-carousel-items', products: collection.products, limit: 20, on_sale_only: true, section_id: id_prefix -%}
+  </ul>
+{%- endpaginate -%}

@@ -273,7 +273,8 @@
         "swipe_on_mobile": true,
         "padding_top": 36,
         "padding_bottom": 36
-      }
+      },
+      "disabled": true
     },
     "featured_collection_bBPBV4": {
       "type": "featured-collection",
@@ -307,7 +308,8 @@
         "swipe_on_mobile": true,
         "padding_top": 36,
         "padding_bottom": 36
-      }
+      },
+      "disabled": true
     },
     "featured_collection_9zRDWp": {
       "type": "featured-collection",
@@ -343,7 +345,8 @@
         "swipe_on_mobile": false,
         "padding_top": 36,
         "padding_bottom": 36
-      }
+      },
+      "disabled": true
     },
     "collage_3VGjEW": {
       "type": "collage",
@@ -701,6 +704,170 @@
         "padding_top": 36,
         "padding_bottom": 36
       }
+    },
+    "vev_carousel_new": {
+      "type": "vev-product-carousel",
+      "blocks": {
+        "chip_1": {
+          "type": "chip",
+          "settings": {
+            "collection": "базы"
+          }
+        },
+        "chip_2": {
+          "type": "chip",
+          "settings": {
+            "collection": "гель-лаки"
+          }
+        },
+        "chip_3": {
+          "type": "chip",
+          "settings": {
+            "collection": "наращивание"
+          }
+        },
+        "chip_4": {
+          "type": "chip",
+          "settings": {
+            "collection": "топы"
+          }
+        },
+        "chip_5": {
+          "type": "chip",
+          "settings": {
+            "collection": "инструменты-для-маникюра-и-педикюра",
+            "label": "инструменты"
+          }
+        }
+      },
+      "block_order": [
+        "chip_1",
+        "chip_2",
+        "chip_3",
+        "chip_4",
+        "chip_5"
+      ],
+      "settings": {
+        "heading": "НОВИНКИ",
+        "collection": "test-new-products",
+        "mode": "new",
+        "products_to_show": 10,
+        "columns_desktop": 5,
+        "show_view_all": true,
+        "color_scheme": "scheme-1",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "vev_carousel_best": {
+      "type": "vev-product-carousel",
+      "blocks": {
+        "chip_1": {
+          "type": "chip",
+          "settings": {
+            "collection": "базы"
+          }
+        },
+        "chip_2": {
+          "type": "chip",
+          "settings": {
+            "collection": "гель-лаки"
+          }
+        },
+        "chip_3": {
+          "type": "chip",
+          "settings": {
+            "collection": "гели-для-наращивания",
+            "label": "гели"
+          }
+        },
+        "chip_4": {
+          "type": "chip",
+          "settings": {
+            "collection": "топы"
+          }
+        },
+        "chip_5": {
+          "type": "chip",
+          "settings": {
+            "collection": "всё-для-педикюра",
+            "label": "педикюр"
+          }
+        }
+      },
+      "block_order": [
+        "chip_1",
+        "chip_2",
+        "chip_3",
+        "chip_4",
+        "chip_5"
+      ],
+      "settings": {
+        "heading": "ХИТЫ ПРОДАЖ — БЕСТСЕЛЛЕРЫ",
+        "collection": "хиты-продаж",
+        "mode": "best",
+        "products_to_show": 10,
+        "columns_desktop": 5,
+        "show_view_all": true,
+        "color_scheme": "scheme-1",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "vev_carousel_sale": {
+      "type": "vev-product-carousel",
+      "blocks": {
+        "chip_1": {
+          "type": "chip",
+          "settings": {
+            "collection": "базы"
+          }
+        },
+        "chip_2": {
+          "type": "chip",
+          "settings": {
+            "collection": "дизайн"
+          }
+        },
+        "chip_3": {
+          "type": "chip",
+          "settings": {
+            "collection": "наращивание"
+          }
+        },
+        "chip_4": {
+          "type": "chip",
+          "settings": {
+            "collection": "кремы-для-рук",
+            "label": "кремы для рук"
+          }
+        },
+        "chip_5": {
+          "type": "chip",
+          "settings": {
+            "collection": "инструменты-для-маникюра-и-педикюра",
+            "label": "инструменты"
+          }
+        }
+      },
+      "block_order": [
+        "chip_1",
+        "chip_2",
+        "chip_3",
+        "chip_4",
+        "chip_5"
+      ],
+      "settings": {
+        "heading": "ТОВАРЫ СО СКИДКОЙ",
+        "collection": "акции-недели",
+        "mode": "sale",
+        "products_to_show": 10,
+        "columns_desktop": 5,
+        "show_view_all": true,
+        "color_scheme": "scheme-1",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
     }
   },
   "order": [
@@ -708,8 +875,11 @@
     "page_FDaRX6",
     "featured_collection",
     "collection_list_EmXY8a",
+    "vev_carousel_new",
     "featured_collection_FKK34Y",
+    "vev_carousel_best",
     "featured_collection_bBPBV4",
+    "vev_carousel_sale",
     "featured_collection_9zRDWp",
     "collage_3VGjEW",
     "featured_blog_UhBKqY",

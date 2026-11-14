@@ -1,0 +1,322 @@
+{%- comment -%}
+  vev-product-carousel.liquid
+  Product carousel with category chips (Figma: VEV.MD Concept → "НОВИНКИ",
+  "ХИТЫ ПРОДАЖ", "ТОВАРЫ СО СКИДКОЙ").
+
+  - Heading, a row of category chips with round images, slider arrows,
+    product cards and a "смотреть все" button.
+  - Mode (newest / best sellers / discounted) applies to the main collection
+    and to every chip.
+  - Clicking a chip loads that category's products from
+    /collections/<handle>?view=vev-carousel[-sale]&sort_by=<order>
+    (templates/collection.vev-carousel*.liquid). Clicking it again goes back.
+
+  Dependencies:
+  - snippets/vev-carousel-items.liquid, snippets/card-product.liquid
+  - assets/section-vev-product-carousel.css, assets/vev-product-carousel.js
+  - assets/component-slider.css, assets/component-card.css, SliderComponent (global.js)
+{%- endcomment -%}
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-slider.css' | asset_url | stylesheet_tag }}
+{{ 'quick-add.css' | asset_url | stylesheet_tag }}
+{{ 'section-vev-product-carousel.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'quick-add.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'vev-product-carousel.js' | asset_url }}" defer="defer"></script>
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  #Slider-{{ section.id }} {
+    --vev-columns-setting: {{ section.settings.columns_desktop }};
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign main_collection = section.settings.collection
+  assign mode = section.settings.mode
+
+  case mode
+    when 'best'
+      assign sort_by = 'best-selling'
+      assign view = 'vev-carousel'
+    when 'sale'
+      assign sort_by = 'best-selling'
+      assign view = 'vev-carousel-sale'
+    else
+      assign sort_by = 'created-descending'
+      assign view = 'vev-carousel'
+  endcase
+
+  assign on_sale_only = false
+  if mode == 'sale'
+    assign on_sale_only = true
+  endif
+
+  assign products = main_collection.products
+  if mode == 'new' and main_collection != blank
+    assign products = main_collection.products | sort: 'created_at' | reverse
+  endif
+
+  assign view_all_url = main_collection.url
+  if mode != 'sale' and main_collection != blank
+    assign view_all_url = main_collection.url | append: '?sort_by=' | append: sort_by
+  endif
+
+  assign heading_id = 'VevCarouselHeading-' | append: section.id
+-%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <vev-product-carousel
+    class="vev-carousel page-width section-{{ section.id }}-padding"
+    data-section-id="{{ section.id }}"
+    data-view="{{ view }}"
+    data-sort-by="{{ sort_by }}"
+    data-limit="{{ section.settings.products_to_show }}"
+    data-default-url="{{ view_all_url }}"
+    data-error-message="{{ 'sections.vev_carousel.error' | t | escape }}"
+    {% if section.settings.heading != blank %}
+      role="region" aria-labelledby="{{ heading_id }}"
+    {% endif %}
+  >
+    {%- if section.settings.heading != blank -%}
+      <h2 id="{{ heading_id }}" class="vev-carousel__heading">{{ section.settings.heading | escape }}</h2>
+    {%- endif -%}
+
+    <slider-component class="vev-carousel__slider">
+      <div class="vev-carousel__toolbar">
+        {%- if section.blocks.size > 0 -%}
+          <div class="vev-carousel__chips" role="group" aria-label="{{ 'sections.vev_carousel.filters_label' | t }}">
+            {%- for block in section.blocks -%}
+              {%- liquid
+                assign chip_collection = block.settings.collection
+                if chip_collection == blank
+                  continue
+                endif
+                assign chip_label = block.settings.label | default: chip_collection.title
+                assign chip_image = block.settings.image | default: chip_collection.featured_image
+                assign chip_url = chip_collection.url
+                if mode != 'sale'
+                  assign chip_url = chip_collection.url | append: '?sort_by=' | append: sort_by
+                endif
+              -%}
+              <button
+                type="button"
+                class="vev-chip"
+                aria-pressed="false"
+                aria-controls="Slider-{{ section.id }}"
+                data-collection-url="{{ chip_collection.url }}"
+                data-view-all-url="{{ chip_url }}"
+                data-label="{{ chip_label | escape }}"
+                {{ block.shopify_attributes }}
+              >
+                <span class="vev-chip__image" aria-hidden="true">
+                  {%- if chip_image != blank -%}
+                    {{
+                      chip_image
+                      | image_url: width: 132
+                      | image_tag: width: 66, height: 66, loading: 'lazy', alt: '', class: 'vev-chip__img'
+                    }}
+                  {%- endif -%}
+                </span>
+                <span class="vev-chip__label">{{ chip_label | escape }}</span>
+              </button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        <div class="vev-carousel__arrows">
+          <button
+            type="button"
+            class="vev-carousel__arrow vev-carousel__arrow--prev"
+            name="previous"
+            aria-label="{{ 'general.slider.previous_slide' | t }}"
+            aria-controls="Slider-{{ section.id }}"
+          >
+            {{- 'icon-arrow-long.svg' | inline_asset_content -}}
+          </button>
+          <button
+            type="button"
+            class="vev-carousel__arrow vev-carousel__arrow--next"
+            name="next"
+            aria-label="{{ 'general.slider.next_slide' | t }}"
+            aria-controls="Slider-{{ section.id }}"
+          >
+            {{- 'icon-arrow-long.svg' | inline_asset_content -}}
+          </button>
+        </div>
+      </div>
+
+      <ul
+        id="Slider-{{ section.id }}"
+        class="vev-carousel__track grid product-grid contains-card contains-card--product grid--{{ section.settings.columns_desktop }}-col-desktop grid--2-col-tablet-down slider slider--desktop slider--tablet grid--peek"
+        role="list"
+        aria-label="{{ section.settings.heading | default: main_collection.title | escape }}"
+        aria-busy="false"
+        data-vev-carousel-track
+      >
+        {%- if main_collection != blank -%}
+          {%- render 'vev-carousel-items',
+            products: products,
+            limit: section.settings.products_to_show,
+            on_sale_only: on_sale_only,
+            section_id: section.id
+          -%}
+        {%- else -%}
+          {%- for i in (1..section.settings.columns_desktop) -%}
+            <li id="Slide-{{ section.id }}-{{ forloop.index }}" class="grid__item slider__slide">
+              {% render 'card-product', placeholder_image: 'product-apparel-1' %}
+            </li>
+          {%- endfor -%}
+        {%- endif -%}
+      </ul>
+    </slider-component>
+
+    <p class="visually-hidden" role="status" data-vev-carousel-status></p>
+
+    {%- if section.settings.show_view_all and main_collection != blank -%}
+      <div class="vev-carousel__footer">
+        <a href="{{ view_all_url }}" class="vev-carousel__view-all" data-vev-carousel-view-all>
+          {{- 'sections.vev_carousel.view_all' | t -}}
+          {{- 'icon-arrow-long.svg' | inline_asset_content -}}
+        </a>
+      </div>
+    {%- endif -%}
+
+    <template data-vev-carousel-strings>
+      <span data-key="loading">{{ 'sections.vev_carousel.loading' | t }}</span>
+      <span data-key="shown">{{ 'sections.vev_carousel.shown' | t: category: '__CATEGORY__' }}</span>
+      <span data-key="all">{{ section.settings.heading | default: main_collection.title | escape }}</span>
+    </template>
+  </vev-product-carousel>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.vev_carousel.name",
+  "tag": "section",
+  "class": "section vev-carousel-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:sections.vev_carousel.settings.heading.label",
+      "default": "НОВИНКИ"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "t:sections.vev_carousel.settings.collection.label"
+    },
+    {
+      "type": "select",
+      "id": "mode",
+      "label": "t:sections.vev_carousel.settings.mode.label",
+      "info": "t:sections.vev_carousel.settings.mode.info",
+      "options": [
+        { "value": "new", "label": "t:sections.vev_carousel.settings.mode.options__1.label" },
+        { "value": "best", "label": "t:sections.vev_carousel.settings.mode.options__2.label" },
+        { "value": "sale", "label": "t:sections.vev_carousel.settings.mode.options__3.label" }
+      ],
+      "default": "new"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "t:sections.vev_carousel.settings.products_to_show.label",
+      "min": 4,
+      "max": 20,
+      "step": 1,
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "t:sections.vev_carousel.settings.columns_desktop.label",
+      "min": 3,
+      "max": 6,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "t:sections.vev_carousel.settings.show_view_all.label",
+      "default": true
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.vev_carousel.settings.color_scheme.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.vev_carousel.settings.header__padding.content"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:sections.vev_carousel.settings.padding_top.label",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:sections.vev_carousel.settings.padding_bottom.label",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "chip",
+      "name": "t:sections.vev_carousel.blocks.chip.name",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "t:sections.vev_carousel.blocks.chip.settings.collection.label"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "t:sections.vev_carousel.blocks.chip.settings.label.label",
+          "info": "t:sections.vev_carousel.blocks.chip.settings.label.info"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.vev_carousel.blocks.chip.settings.image.label",
+          "info": "t:sections.vev_carousel.blocks.chip.settings.image.info"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "t:sections.vev_carousel.presets.name",
+      "blocks": [{ "type": "chip" }, { "type": "chip" }, { "type": "chip" }]
+    }
+  ]
+}
+{% endschema %}

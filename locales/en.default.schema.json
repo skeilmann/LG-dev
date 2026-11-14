@@ -389,6 +389,72 @@
     }
   },
   "sections": {
+    "vev_carousel": {
+      "name": "VEV product carousel",
+      "settings": {
+        "heading": {
+          "label": "Heading"
+        },
+        "collection": {
+          "label": "Collection"
+        },
+        "mode": {
+          "label": "Show",
+          "options__1": {
+            "label": "Newest first"
+          },
+          "options__2": {
+            "label": "Best sellers"
+          },
+          "options__3": {
+            "label": "Only discounted products"
+          },
+          "info": "Also applies to the category chips. For best sellers, set the collection sort order to \"Best selling\" in Shopify admin."
+        },
+        "products_to_show": {
+          "label": "Maximum products to show"
+        },
+        "columns_desktop": {
+          "label": "Products per row on desktop"
+        },
+        "show_view_all": {
+          "label": "Show \"View all\" button"
+        },
+        "color_scheme": {
+          "label": "Color scheme"
+        },
+        "header__padding": {
+          "content": "Section padding"
+        },
+        "padding_top": {
+          "label": "Top padding"
+        },
+        "padding_bottom": {
+          "label": "Bottom padding"
+        }
+      },
+      "blocks": {
+        "chip": {
+          "name": "Category chip",
+          "settings": {
+            "collection": {
+              "label": "Category (collection)"
+            },
+            "label": {
+              "label": "Label",
+              "info": "Leave empty to use the collection title."
+            },
+            "image": {
+              "label": "Image",
+              "info": "Leave empty to use the collection image."
+            }
+          }
+        }
+      },
+      "presets": {
+        "name": "VEV product carousel"
+      }
+    },
     "all": {
       "animation": {
         "content": "Animations",

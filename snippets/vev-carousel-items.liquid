@@ -1,0 +1,50 @@
+{%- comment -%}
+  vev-carousel-items
+  Renders the <li> slides of the VEV product carousel. Used by
+  sections/vev-product-carousel.liquid (first render) and by the
+  collection.vev-carousel*.liquid templates (category chips, loaded with fetch).
+
+  Accepts:
+  - products: {Array} Products to loop over (required)
+  - limit: {Number} Maximum number of slides. Default: 10
+  - on_sale_only: {Boolean} Only products with a compare-at price above the price. Default: false
+  - section_id: {String} Prefix for slide and card IDs (required)
+  - lazy_load: {Boolean} Lazy load card images. Default: true
+
+  Usage:
+  {% render 'vev-carousel-items', products: collection.products, limit: 10, section_id: section.id %}
+{%- endcomment -%}
+{%- liquid
+  assign max_items = limit | default: 10
+  assign shown = 0
+  assign skip_card_styles = false
+-%}
+{%- for product in products -%}
+  {%- comment -%} Explicit ">" check: a blank compare-at price must not count as "on sale". {%- endcomment -%}
+  {%- if on_sale_only -%}
+    {%- unless product.compare_at_price > product.price -%}
+      {%- continue -%}
+    {%- endunless -%}
+  {%- endif -%}
+  {%- assign shown = shown | plus: 1 -%}
+  <li id="Slide-{{ section_id }}-{{ shown }}" class="grid__item slider__slide">
+    {% render 'card-product',
+      card_product: product,
+      media_aspect_ratio: 'square',
+      show_secondary_image: false,
+      skip_styles: skip_card_styles,
+      section_id: section_id,
+      quick_add: 'standard',
+      lazy_load: lazy_load
+    %}
+  </li>
+  {%- assign skip_card_styles = true -%}
+  {%- if shown >= max_items -%}
+    {%- break -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- if shown == 0 -%}
+  <li class="vev-carousel__empty" data-vev-carousel-empty>
+    {{ 'sections.vev_carousel.empty' | t }}
+  </li>
+{%- endif -%}
