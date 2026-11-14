@@ -299,6 +299,9 @@
     }
   },
   "sections": {
+    "vev_stories": {
+      "label": "Brands and promotions"
+    },
     "vev_carousel": {
       "view_all": "View all",
       "empty": "No products here yet.",

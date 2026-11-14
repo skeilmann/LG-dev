@@ -1,0 +1,191 @@
+{%- comment -%}
+  vev-brand-stories.liquid
+  Row of round "story" links (brands and promotions) under the hero slider.
+  Figma: VEV.MD Concept → АКЦИИ / HEY / DARK / GA&MA ... row.
+
+  Each story links to a collection, a brand page or any URL. Its photo comes
+  from (in this order): the story image, the chosen product's image, the
+  collection's image.
+
+  Dependencies: assets/section-vev-brand-stories.css
+{%- endcomment -%}
+{{ 'section-vev-brand-stories.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign list_label = section.settings.heading
+  if list_label == blank
+    assign list_label = 'sections.vev_stories.label' | t
+  endif
+-%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="vev-stories page-width section-{{ section.id }}-padding">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="vev-stories__heading h2">{{ section.settings.heading | escape }}</h2>
+    {%- endif -%}
+
+    <ul
+      class="vev-stories__list list-unstyled"
+      role="list"
+      aria-label="{{ list_label | escape }}"
+    >
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign story_collection = block.settings.collection
+          assign story_product = block.settings.product
+
+          assign story_url = block.settings.link
+          if story_url == blank and story_collection != blank
+            assign story_url = story_collection.url
+          endif
+
+          assign story_label = block.settings.label
+          if story_label == blank and story_collection != blank
+            assign story_label = story_collection.title
+          endif
+
+          assign story_image = block.settings.image
+          if story_image == blank and story_product != blank
+            assign story_image = story_product.featured_image
+          endif
+          if story_image == blank and story_collection != blank
+            assign story_image = story_collection.featured_image
+          endif
+        -%}
+        <li class="vev-stories__item" {{ block.shopify_attributes }}>
+          <a
+            class="vev-story"
+            {% if story_url != blank %}
+              href="{{ story_url }}"
+            {% else %}
+              role="link" aria-disabled="true"
+            {% endif %}
+          >
+            <span class="vev-story__ring" aria-hidden="true">
+              {%- if story_image != blank -%}
+                {{
+                  story_image
+                  | image_url: width: 160
+                  | image_tag:
+                    widths: '80, 160',
+                    sizes: '(min-width: 750px) 73px, 62px',
+                    width: 73,
+                    height: 73,
+                    loading: 'lazy',
+                    alt: '',
+                    class: 'vev-story__img'
+                }}
+              {%- else -%}
+                {{ 'collection-1' | placeholder_svg_tag: 'vev-story__img vev-story__img--placeholder' }}
+              {%- endif -%}
+            </span>
+            <span class="vev-story__label">{{ story_label | escape }}</span>
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.vev_stories.name",
+  "tag": "section",
+  "class": "section vev-stories-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:sections.vev_stories.settings.heading.label",
+      "info": "t:sections.vev_stories.settings.heading.info"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.vev_stories.settings.color_scheme.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.vev_stories.settings.header__padding.content"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:sections.vev_stories.settings.padding_top.label",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:sections.vev_stories.settings.padding_bottom.label",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 12
+    }
+  ],
+  "blocks": [
+    {
+      "type": "story",
+      "name": "t:sections.vev_stories.blocks.story.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "t:sections.vev_stories.blocks.story.settings.label.label",
+          "info": "t:sections.vev_stories.blocks.story.settings.label.info"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "t:sections.vev_stories.blocks.story.settings.collection.label"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "t:sections.vev_stories.blocks.story.settings.link.label",
+          "info": "t:sections.vev_stories.blocks.story.settings.link.info"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.vev_stories.blocks.story.settings.image.label"
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "t:sections.vev_stories.blocks.story.settings.product.label",
+          "info": "t:sections.vev_stories.blocks.story.settings.product.info"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 16,
+  "presets": [
+    {
+      "name": "t:sections.vev_stories.presets.name",
+      "blocks": [{ "type": "story" }, { "type": "story" }, { "type": "story" }, { "type": "story" }, { "type": "story" }]
+    }
+  ]
+}
+{% endschema %}

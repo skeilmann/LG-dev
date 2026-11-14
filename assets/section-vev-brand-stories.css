@@ -1,0 +1,151 @@
+/*
+  VEV brand stories (sections/vev-brand-stories.liquid)
+  Figma: 83px black ring, 73px photo, 18px semibold uppercase label (1728px frame).
+*/
+
+.vev-stories__heading {
+  margin: 0 0 2rem;
+  text-align: center;
+}
+
+/* Mobile: one row that swipes sideways */
+.vev-stories__list {
+  display: flex;
+  gap: 1.6rem;
+  margin: 0 -1.5rem;
+  padding: 0.4rem 1.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: 1.5rem;
+  scrollbar-width: none;
+}
+
+.vev-stories__list::-webkit-scrollbar {
+  display: none;
+}
+
+.vev-stories__item {
+  flex-shrink: 0;
+  scroll-snap-align: start;
+}
+
+.vev-story {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  width: 7.2rem;
+  color: rgb(0, 0, 0);
+  text-decoration: none;
+}
+
+.vev-story__ring {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 7.2rem;
+  height: 7.2rem;
+  border: 0.2rem solid rgb(0, 0, 0);
+  border-radius: 50%;
+  transition: border-color var(--duration-default, 0.2s) ease;
+}
+
+.vev-story__img {
+  display: block;
+  width: 6.2rem;
+  height: 6.2rem;
+  border-radius: 50%;
+  object-fit: cover;
+  transition: transform var(--duration-default, 0.2s) ease;
+}
+
+.vev-story__img--placeholder {
+  background-color: rgb(241, 241, 241);
+}
+
+.vev-story__label {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  text-align: center;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.vev-story:focus-visible {
+  outline: none;
+}
+
+.vev-story:focus-visible .vev-story__ring {
+  outline: 0.2rem solid rgb(0, 0, 0);
+  outline-offset: 0.3rem;
+}
+
+/* Tablet and up: centred row(s) at Figma size */
+@media screen and (min-width: 750px) {
+  .vev-stories__list {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem 2.8rem;
+    margin: 0;
+    padding: 0.4rem 0;
+    overflow: visible;
+  }
+
+  .vev-story {
+    gap: 1rem;
+    width: auto;
+    min-width: 9rem;
+  }
+
+  /* Full label on larger screens (no "…") */
+  .vev-story__label {
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  .vev-story__ring {
+    width: 8.3rem;
+    height: 8.3rem;
+  }
+
+  .vev-story__img {
+    width: 7.3rem;
+    height: 7.3rem;
+  }
+
+  .vev-story__label {
+    font-size: 1.6rem;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .vev-story {
+    min-width: 10rem;
+  }
+
+  .vev-story__label {
+    font-size: 1.8rem;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .vev-story:hover .vev-story__ring {
+    border-color: var(--color-brand-pink, #f4b8dd);
+  }
+
+  .vev-story:hover .vev-story__img {
+    transform: scale(1.05);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vev-story__ring,
+  .vev-story__img {
+    transition: none;
+  }
+}

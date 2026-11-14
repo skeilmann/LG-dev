@@ -389,6 +389,99 @@
     }
   },
   "sections": {
+    "vev_category_grid": {
+      "name": "VEV category grid",
+      "settings": {
+        "heading": {
+          "label": "Heading"
+        },
+        "columns_desktop": {
+          "label": "Tiles per row on desktop"
+        },
+        "header__padding": {
+          "content": "Section padding"
+        },
+        "padding_top": {
+          "label": "Top padding"
+        },
+        "padding_bottom": {
+          "label": "Bottom padding"
+        },
+        "color_scheme": {
+          "label": "Color scheme"
+        }
+      },
+      "blocks": {
+        "category": {
+          "name": "Category",
+          "settings": {
+            "collection": {
+              "label": "Collection"
+            },
+            "label": {
+              "label": "Label",
+              "info": "Leave empty to use the collection title."
+            },
+            "image": {
+              "label": "Image",
+              "info": "Leave empty to use the collection image."
+            }
+          }
+        }
+      },
+      "presets": {
+        "name": "VEV category grid"
+      }
+    },
+    "vev_stories": {
+      "name": "VEV brand stories",
+      "settings": {
+        "heading": {
+          "label": "Heading",
+          "info": "Optional. Leave empty to show only the round links."
+        },
+        "header__padding": {
+          "content": "Section padding"
+        },
+        "padding_top": {
+          "label": "Top padding"
+        },
+        "padding_bottom": {
+          "label": "Bottom padding"
+        },
+        "color_scheme": {
+          "label": "Color scheme"
+        }
+      },
+      "blocks": {
+        "story": {
+          "name": "Story",
+          "settings": {
+            "label": {
+              "label": "Label",
+              "info": "Leave empty to use the collection title."
+            },
+            "collection": {
+              "label": "Collection"
+            },
+            "link": {
+              "label": "Link",
+              "info": "Optional. Overrides the collection link, e.g. a brand page /collections/vendors?q=HEYLOVE"
+            },
+            "image": {
+              "label": "Image"
+            },
+            "product": {
+              "label": "Product for the image",
+              "info": "Used when no image is chosen. Otherwise the collection image is used."
+            }
+          }
+        }
+      },
+      "presets": {
+        "name": "VEV brand stories"
+      }
+    },
     "vev_carousel": {
       "name": "VEV product carousel",
       "settings": {

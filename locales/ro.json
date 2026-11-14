@@ -302,6 +302,9 @@
     }
   },
   "sections": {
+    "vev_stories": {
+      "label": "Branduri și promoții"
+    },
     "vev_carousel": {
       "view_all": "vezi toate",
       "empty": "Încă nu sunt produse aici.",

@@ -1,0 +1,187 @@
+{%- comment -%}
+  vev-category-grid.liquid
+  "КАТАЛОГ" grid of category tiles: photo with an uppercase label below.
+  Figma: VEV.MD Concept → КАТАЛОГ (5 per row on desktop, last row centred,
+  2 per row on mobile).
+
+  Each tile links to a collection. Photo: tile image, else the collection image.
+  Label: tile label, else the collection title.
+
+  Dependencies: assets/section-vev-category-grid.css
+{%- endcomment -%}
+{{ 'section-vev-category-grid.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  #VevCategoryGrid-{{ section.id }} {
+    --vev-grid-columns: {{ section.settings.columns_desktop }};
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- assign heading_id = 'VevCategoryGridHeading-' | append: section.id -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div
+    class="vev-category-grid page-width section-{{ section.id }}-padding"
+    {% if section.settings.heading != blank %}
+      role="region" aria-labelledby="{{ heading_id }}"
+    {% endif %}
+  >
+    {%- if section.settings.heading != blank -%}
+      <h2 id="{{ heading_id }}" class="vev-category-grid__heading">{{ section.settings.heading | escape }}</h2>
+    {%- endif -%}
+
+    <ul id="VevCategoryGrid-{{ section.id }}" class="vev-category-grid__list list-unstyled" role="list">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign tile_collection = block.settings.collection
+          assign tile_label = block.settings.label | default: tile_collection.title
+          assign tile_image = block.settings.image | default: tile_collection.featured_image
+          assign lazy = true
+          if forloop.index <= section.settings.columns_desktop and section.index <= 3
+            assign lazy = false
+          endif
+        -%}
+        <li class="vev-category-grid__item" {{ block.shopify_attributes }}>
+          <a
+            class="vev-category"
+            {% if tile_collection != blank %}
+              href="{{ tile_collection.url }}"
+            {% else %}
+              role="link" aria-disabled="true"
+            {% endif %}
+          >
+            <span class="vev-category__media">
+              {%- if tile_image != blank -%}
+                {%- if lazy -%}
+                  {{
+                    tile_image
+                    | image_url: width: 640
+                    | image_tag:
+                      widths: '180, 280, 360, 460, 640',
+                      sizes: '(min-width: 1200px) 300px, (min-width: 750px) calc((100vw - 10rem) / 4), calc((100vw - 4.6rem) / 2)',
+                      loading: 'lazy',
+                      alt: '',
+                      class: 'vev-category__img'
+                  }}
+                {%- else -%}
+                  {{
+                    tile_image
+                    | image_url: width: 640
+                    | image_tag:
+                      widths: '180, 280, 360, 460, 640',
+                      sizes: '(min-width: 1200px) 300px, (min-width: 750px) calc((100vw - 10rem) / 4), calc((100vw - 4.6rem) / 2)',
+                      loading: 'eager',
+                      alt: '',
+                      class: 'vev-category__img'
+                  }}
+                {%- endif -%}
+              {%- else -%}
+                {{ 'collection-1' | placeholder_svg_tag: 'vev-category__img vev-category__img--placeholder' }}
+              {%- endif -%}
+            </span>
+            <span class="vev-category__label">{{ tile_label | escape }}</span>
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.vev_category_grid.name",
+  "tag": "section",
+  "class": "section vev-category-grid-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:sections.vev_category_grid.settings.heading.label",
+      "default": "КАТАЛОГ"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "t:sections.vev_category_grid.settings.columns_desktop.label",
+      "min": 3,
+      "max": 6,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.vev_category_grid.settings.color_scheme.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.vev_category_grid.settings.header__padding.content"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:sections.vev_category_grid.settings.padding_top.label",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:sections.vev_category_grid.settings.padding_bottom.label",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "t:sections.vev_category_grid.blocks.category.name",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "t:sections.vev_category_grid.blocks.category.settings.collection.label"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "t:sections.vev_category_grid.blocks.category.settings.label.label",
+          "info": "t:sections.vev_category_grid.blocks.category.settings.label.info"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.vev_category_grid.blocks.category.settings.image.label",
+          "info": "t:sections.vev_category_grid.blocks.category.settings.image.info"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 30,
+  "presets": [
+    {
+      "name": "t:sections.vev_category_grid.presets.name",
+      "blocks": [{ "type": "category" }, { "type": "category" }, { "type": "category" }, { "type": "category" }, { "type": "category" }]
+    }
+  ]
+}
+{% endschema %}

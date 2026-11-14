@@ -317,6 +317,9 @@
     }
   },
   "sections": {
+    "vev_stories": {
+      "label": "Бренды и акции"
+    },
     "vev_carousel": {
       "view_all": "смотреть все",
       "empty": "Здесь пока нет товаров.",

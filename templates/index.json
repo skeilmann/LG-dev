@@ -239,7 +239,8 @@
         "swipe_on_mobile": false,
         "padding_top": 36,
         "padding_bottom": 36
-      }
+      },
+      "disabled": true
     },
     "featured_collection_FKK34Y": {
       "type": "featured-collection",
@@ -868,12 +869,250 @@
         "padding_top": 36,
         "padding_bottom": 36
       }
+    },
+    "vev_brand_stories": {
+      "type": "vev-brand-stories",
+      "blocks": {
+        "story_1": {
+          "type": "story",
+          "settings": {
+            "label": "АКЦИИ",
+            "collection": "акции-недели"
+          }
+        },
+        "story_2": {
+          "type": "story",
+          "settings": {
+            "label": "HEY 🖤",
+            "link": "/collections/vendors?q=HEYLOVE",
+            "product": "гель-лак-heylove-gel-polish-cats-eye-moon-daisy-кошачий-глаз-15-мл-1"
+          }
+        },
+        "story_3": {
+          "type": "story",
+          "settings": {
+            "label": "DARK",
+            "collection": "dark"
+          }
+        },
+        "story_4": {
+          "type": "story",
+          "settings": {
+            "label": "GÉMELY",
+            "collection": "ga-ma"
+          }
+        },
+        "story_5": {
+          "type": "story",
+          "settings": {
+            "label": "BIBLIOTEKA",
+            "link": "/collections/vendors?q=BIBLIOTEKA",
+            "product": "гель-biblioteka-builder-gel-intense-05-toffee-моделирующий-30-мл"
+          }
+        },
+        "story_6": {
+          "type": "story",
+          "settings": {
+            "label": "NOTD",
+            "collection": "nails-of-the-day"
+          }
+        },
+        "story_7": {
+          "type": "story",
+          "settings": {
+            "label": "DA'23",
+            "collection": "da23"
+          }
+        },
+        "story_8": {
+          "type": "story",
+          "settings": {
+            "label": "LUNA",
+            "collection": "luna"
+          }
+        },
+        "story_9": {
+          "type": "story",
+          "settings": {
+            "label": "AMERICAN",
+            "collection": "гели-american-creator"
+          }
+        },
+        "story_10": {
+          "type": "story",
+          "settings": {
+            "label": "EASY",
+            "link": "/collections/vendors?q=Easy%20by%20MASHA%20CREATE",
+            "product": "верхние-формы-easy-universal-set-type-06-для-наращивания-268-шт"
+          }
+        }
+      },
+      "block_order": [
+        "story_1",
+        "story_2",
+        "story_3",
+        "story_4",
+        "story_5",
+        "story_6",
+        "story_7",
+        "story_8",
+        "story_9",
+        "story_10"
+      ],
+      "settings": {
+        "heading": "",
+        "color_scheme": "scheme-1",
+        "padding_top": 28,
+        "padding_bottom": 12
+      }
+    },
+    "vev_category_grid": {
+      "type": "vev-category-grid",
+      "blocks": {
+        "category_1": {
+          "type": "category",
+          "settings": {
+            "collection": "базы"
+          }
+        },
+        "category_2": {
+          "type": "category",
+          "settings": {
+            "collection": "гель-лаки"
+          }
+        },
+        "category_3": {
+          "type": "category",
+          "settings": {
+            "collection": "наращивание"
+          }
+        },
+        "category_4": {
+          "type": "category",
+          "settings": {
+            "collection": "топы"
+          }
+        },
+        "category_5": {
+          "type": "category",
+          "settings": {
+            "collection": "жидкости"
+          }
+        },
+        "category_6": {
+          "type": "category",
+          "settings": {
+            "collection": "праймеры"
+          }
+        },
+        "category_7": {
+          "type": "category",
+          "settings": {
+            "collection": "инструменты-для-маникюра-и-педикюра"
+          }
+        },
+        "category_8": {
+          "type": "category",
+          "settings": {
+            "collection": "фрезы"
+          }
+        },
+        "category_9": {
+          "type": "category",
+          "settings": {
+            "collection": "дизайн"
+          }
+        },
+        "category_10": {
+          "type": "category",
+          "settings": {
+            "collection": "аксессуары-для-мастера"
+          }
+        },
+        "category_11": {
+          "type": "category",
+          "settings": {
+            "collection": "стерилизация-и-дезинфекция"
+          }
+        },
+        "category_12": {
+          "type": "category",
+          "settings": {
+            "collection": "оборудование-для-маникюра"
+          }
+        },
+        "category_13": {
+          "type": "category",
+          "settings": {
+            "collection": "всё-для-педикюра"
+          }
+        },
+        "category_14": {
+          "type": "category",
+          "settings": {
+            "collection": "уход"
+          }
+        },
+        "category_15": {
+          "type": "category",
+          "settings": {
+            "collection": "расходные-материалы"
+          }
+        },
+        "category_16": {
+          "type": "category",
+          "settings": {
+            "collection": "японский-маникюр"
+          }
+        },
+        "category_17": {
+          "type": "category",
+          "settings": {
+            "collection": "дип-системы"
+          }
+        },
+        "category_18": {
+          "type": "category",
+          "settings": {
+            "collection": "всё-для-бровей"
+          }
+        }
+      },
+      "block_order": [
+        "category_1",
+        "category_2",
+        "category_3",
+        "category_4",
+        "category_5",
+        "category_6",
+        "category_7",
+        "category_8",
+        "category_9",
+        "category_10",
+        "category_11",
+        "category_12",
+        "category_13",
+        "category_14",
+        "category_15",
+        "category_16",
+        "category_17",
+        "category_18"
+      ],
+      "settings": {
+        "heading": "КАТАЛОГ",
+        "columns_desktop": 5,
+        "color_scheme": "scheme-1",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
     }
   },
   "order": [
     "slideshow_kHzFpH",
+    "vev_brand_stories",
     "page_FDaRX6",
     "featured_collection",
+    "vev_category_grid",
     "collection_list_EmXY8a",
     "vev_carousel_new",
     "featured_collection_FKK34Y",
