@@ -773,6 +773,21 @@
   display: none;
 }
 
+/* Button label follows the button size (overrides the 10px label in component-cart-quantity.css) */
+.product-card-wrapper .quick-add__submit .button__content .button__text {
+  font-size: inherit;
+}
+
+.product-card-wrapper .quick-add > product-form,
+.product-card-wrapper .quick-add > modal-opener {
+  width: 100%;
+}
+
+.product-card-wrapper .quick-add form {
+  display: flex;
+  justify-content: center;
+}
+
 .product-card-wrapper .quick-add__submit .button__icon svg {
   color: currentColor;
 }
