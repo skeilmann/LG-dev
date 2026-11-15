@@ -3433,6 +3433,9 @@
         }
       }
     },
+    "recently_viewed": {
+      "name": "Recently viewed products"
+    },
     "related-products": {
       "name": "Related products",
       "settings": {

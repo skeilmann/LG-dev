@@ -345,6 +345,9 @@
       "countdown_few": "дня до конца акции",
       "countdown_plural": "дней до конца акции"
     },
+    "related_products": {
+      "heading": "Вам также может понравиться"
+    },
     "recently_viewed": {
       "name": "Недавно просмотренное",
       "heading": "Недавно просмотренное",

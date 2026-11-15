@@ -75,7 +75,7 @@
         {%- liquid
           assign heading_text = section.settings.heading
           if heading_text == blank or heading_text == 't:sections.related-products.settings.paragraph__1.default'
-            assign heading_text = 'sections.related-products.settings.paragraph__1.default' | t
+            assign heading_text = 'sections.related_products.heading' | t
           endif
         -%}
         {{ heading_text }}
