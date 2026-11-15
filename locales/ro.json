@@ -715,7 +715,23 @@
       "earned": "Primite pentru comandă",
       "redeemed": "Folosite pentru reducere",
       "reversed": "Puncte anulate",
-      "welcome_bonus": "Bonus de bun venit"
+      "welcome_bonus": "Bonus de bun venit",
+      "you_have": "Aveți {{ points }} puncte",
+      "points_label": "Puncte",
+      "tier_label": "Nivel",
+      "view_details": "Vezi detalii",
+      "tier_bronze": "Bronz",
+      "tier_silver": "Argint",
+      "tier_gold": "Aur",
+      "redeeming": "Se procesează...",
+      "redeem_failed": "Nu am putut folosi punctele. Încercați din nou.",
+      "congrats_title": "Felicitări!",
+      "discount_ready": "Codul dvs. de reducere de {{ value }} MDL este gata.",
+      "code_note": "Folosiți-l la finalizarea comenzii. Valabil 90 de zile, doar pentru contul dvs.",
+      "copy": "Copiază",
+      "copied": "Copiat!",
+      "close": "Închide",
+      "unavailable": "Recompensele sunt temporar indisponibile."
     }
   },
   "gift_cards": {

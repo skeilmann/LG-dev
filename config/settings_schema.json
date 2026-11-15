@@ -1612,5 +1612,27 @@
         "default": 0
       }
     ]
+  },
+  {
+    "name": "t:settings_schema.vev_app.name",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "t:settings_schema.vev_app.settings.paragraph.content"
+      },
+      {
+        "type": "text",
+        "id": "vev_api_url",
+        "label": "t:settings_schema.vev_app.settings.vev_api_url.label",
+        "info": "t:settings_schema.vev_app.settings.vev_api_url.info"
+      },
+      {
+        "type": "checkbox",
+        "id": "loyalty_widgets_enabled",
+        "label": "t:settings_schema.vev_app.settings.loyalty_widgets_enabled.label",
+        "info": "t:settings_schema.vev_app.settings.loyalty_widgets_enabled.info",
+        "default": false
+      }
+    ]
   }
 ]

@@ -847,6 +847,8 @@
             {% render 'favorites-icon-bubble' %}
           </button>
 
+          {%- render 'loyalty-points-badge' -%}
+
           <a
             href="{{ routes.cart_url }}"
             class="header__icon header__icon--cart link focus-inset{% if section.settings.enable_mobile_bottom_nav %} mobile-hide-cart{% endif %}"
