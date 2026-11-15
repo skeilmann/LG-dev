@@ -12,13 +12,11 @@
   }
 </style>
 
-{%- comment -%} Preload critical resources FIRST for render optimization {%- endcomment -%}
-<link rel="preload" href="{{ 'component-custom-header.css' | asset_url }}" as="style">
-<link rel="preload" href="{{ 'custom-header.js' | asset_url }}" as="script">
-{%- if settings.logo -%}
-  <link rel="preload" as="image" href="{{ settings.logo | image_url: width: 600 }}" fetchpriority="high">
-{%- endif -%}
-
+{%- comment -%}
+  No manual preloads here: the stylesheet below is already render-blocking,
+  custom-header.js is deferred, and the logo's image_tag uses preload: true
+  (Shopify sends a preload for the srcset size the browser will really use).
+{%- endcomment -%}
 {%- comment -%} Load critical header CSS synchronously - removed media="print" hack {%- endcomment -%}
 <link rel="stylesheet" href="{{ 'component-custom-header.css' | asset_url }}">
 <link rel="stylesheet" href="{{ 'component-list-menu.css' | asset_url }}">
