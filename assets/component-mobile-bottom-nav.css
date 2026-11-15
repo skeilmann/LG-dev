@@ -18,11 +18,9 @@
     z-index: 100;
     /* Above content, below modals */
 
-    /* iOS-style translucent background */
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    /* Safari support */
+    /* Solid white bar with a thin divider (Figma mobile frame 23:887) */
+    background: #ffffff;
+    border-top: 1px solid #e8e3e3;
 
     /* Safe area insets for notched devices */
     padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -52,7 +50,7 @@
     display: flex;
     width: 100%;
     justify-content: space-around;
-    min-height: 50px;
+    min-height: 58px;
 }
 
 .mobile-bottom-nav__button {
@@ -105,7 +103,6 @@
 @media (hover: hover) and (pointer: fine) {
     .mobile-bottom-nav__button:hover {
         color: var(--mobile-nav-icon-active-color, #0066cc);
-        transform: translateY(-1px);
     }
 }
 
@@ -113,7 +110,7 @@
 .mobile-bottom-nav__button:active {
     color: var(--mobile-nav-icon-active-color, #0066cc);
     transform: scale(0.95);
-    background: rgba(0, 102, 204, 0.1);
+    background: rgba(0, 0, 0, 0.05);
     border-radius: 0.5rem;
     transition: all 0.15s ease;
 }
@@ -126,8 +123,7 @@
 }
 
 .mobile-bottom-nav__button--active .mobile-bottom-nav__icon {
-    transform: scale(1.1);
-    filter: drop-shadow(0 0 4px rgba(var(--mobile-nav-icon-active-color, 0, 102, 204), 0.3));
+    transform: none;
 }
 
 /* --- Icon Styles --- */
@@ -136,8 +132,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
     transition: transform 0.2s ease;
     /* Ensure proper sizing */
     flex-shrink: 0;
@@ -146,8 +142,8 @@
 .mobile-bottom-nav__icon svg {
     width: 100% !important;
     height: 100% !important;
-    max-width: 24px;
-    max-height: 24px;
+    max-width: 26px;
+    max-height: 26px;
     /* Ensure color inheritance */
     fill: currentColor;
     stroke: currentColor;
@@ -718,5 +714,105 @@
     .mobile-bottom-nav,
     .mobile-catalog-drawer {
         display: none !important;
+    }
+}
+/* ============================================
+   VEV design (Figma "iPhone 16 Pro - RU" 23:887, bar 32:232)
+   402×58 white bar, #e8e3e3 top line, four black ~28px glyphs
+   (home, search, cart, catalog), cart count as a 16px black dot
+   at the bag's lower-right. No coloured active state in the design.
+   ============================================ */
+
+.mobile-bottom-nav__icon {
+    width: 28px;
+    height: 28px;
+}
+
+.mobile-bottom-nav__icon svg {
+    max-width: 28px;
+    max-height: 28px;
+}
+
+.mobile-bottom-nav__button,
+.mobile-bottom-nav__button--active,
+.mobile-bottom-nav__button--active .mobile-bottom-nav__icon {
+    color: #000000;
+}
+
+.mobile-bottom-nav__button:active {
+    background: none;
+}
+
+.mobile-bottom-nav__button[data-nav-type="cart"] .mobile-bottom-nav__badge {
+    top: 50%;
+    left: 50%;
+    right: auto;
+    width: 16px;
+    min-width: 16px;
+    height: 16px;
+    margin: 1px 0 0 2px;
+    padding: 0;
+    background: #000000;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 500;
+    line-height: 16px;
+    box-shadow: 0 0 0 1.5px #ffffff;
+}
+
+/* The generic `.mobile-bottom-nav__icon svg { stroke: currentColor }` above adds a
+   1px outline to paths without their own stroke (search, catalog), making them
+   bolder than in Figma. The VEV icons carry their own fill/stroke. */
+.mobile-bottom-nav__icon svg.icon-vev-nav {
+    stroke: none;
+}
+
+/* Interaction states — same language as the header icons (base.css:
+   `.header__icon:hover .icon { transform: scale(1.07) }`) */
+.mobile-bottom-nav__icon {
+    transition: transform var(--duration-short, 0.1s) ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .mobile-bottom-nav__button:hover {
+        transform: none;
+    }
+
+    .mobile-bottom-nav__button:hover .mobile-bottom-nav__icon {
+        transform: scale(1.07);
+    }
+}
+
+.mobile-bottom-nav__button:active,
+.mobile-bottom-nav__button[data-animation-style]:active {
+    transform: none;
+    animation: none;
+}
+
+.mobile-bottom-nav__button:active .mobile-bottom-nav__icon {
+    transform: scale(0.9);
+}
+
+.mobile-bottom-nav__button:focus-visible {
+    outline: 2px solid #000000;
+    outline-offset: -2px;
+}
+
+/* Current page: small dot under the icon (aria-current / --active) */
+.mobile-bottom-nav__button--active::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 3px;
+    width: 4px;
+    height: 4px;
+    margin-left: -2px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mobile-bottom-nav__icon {
+        transition: none;
     }
 }

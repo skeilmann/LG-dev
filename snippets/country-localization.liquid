@@ -3,6 +3,12 @@
 
   Accepts:
     - localPosition: pass in the position in which the form is coming up to create specific IDs
+    - vev_mobile: (optional) true = VEV mobile header look (Figma 26:30/26:33): outlined
+      triangle; while Moldova is selected the label is localization.delivery_location_md
+      ("Молдова, Бельцы" / "Moldova, Bălți"), otherwise the Shopify country name.
+
+  Usage:
+    {% render 'country-localization', localPosition: 'HeaderCountryMobile', vev_mobile: true %}
 {%- endcomment -%}
 
 {%- liquid
@@ -34,12 +40,22 @@
     aria-describedby="{{ localPosition }}Label"
   >
     <span class="country-arrow" aria-hidden="true">
-      {{ 'LG-caret-down.svg' | inline_asset_content }}
+      {%- if vev_mobile -%}
+        {{- 'icon-vev-caret-outline.svg' | inline_asset_content -}}
+      {%- else -%}
+        {{- 'LG-caret-down.svg' | inline_asset_content -}}
+      {%- endif -%}
     </span>
     <span>
-      {{- localization.country.name }} |
-      {{ localization.country.currency.iso_code }}
-      {{ localization.country.currency.symbol -}}
+      {%- if vev_mobile and localization.country.iso_code == 'MD' -%}
+        {{- 'localization.delivery_location_md' | t -}}
+      {%- else -%}
+        {{- localization.country.name -}}
+      {%- endif -%}
+      <span class="localization-form__currency">
+        | {{ localization.country.currency.iso_code }}
+        {{ localization.country.currency.symbol -}}
+      </span>
     </span>
   </button>
   <div class="disclosure__list-wrapper country-selector" hidden>

@@ -75,6 +75,25 @@
                 assign fetch_priority = 'high'
               endif
             -%}
+            {%- comment -%}
+              Optional mobile image (< 750px), e.g. the 402×408 hero crop from the Figma
+              mobile frame. Served through <picture> so phones download only that file.
+            {%- endcomment -%}
+            {%- if block.settings.image_mobile != blank -%}
+              <picture class="slideshow__picture">
+                <source
+                  media="(max-width: 749px)"
+                  srcset="
+                    {{ block.settings.image_mobile | image_url: width: 375 }} 375w,
+                    {{ block.settings.image_mobile | image_url: width: 550 }} 550w,
+                    {{ block.settings.image_mobile | image_url: width: 750 }} 750w,
+                    {{ block.settings.image_mobile | image_url: width: 1100 }} 1100w
+                  "
+                  sizes="100vw"
+                  width="{{ block.settings.image_mobile.width }}"
+                  height="{{ block.settings.image_mobile.height }}"
+                >
+            {%- endif -%}
             {%- if forloop.first %}
               {{
                 block.settings.image
@@ -87,6 +106,9 @@
                 | image_url: width: 3840
                 | image_tag: loading: 'lazy', height: height, sizes: sizes, widths: widths
               }}
+            {%- endif -%}
+            {%- if block.settings.image_mobile != blank -%}
+              </picture>
             {%- endif -%}
           {%- else -%}
             {%- assign placeholder_slide = forloop.index | modulo: 2 -%}
@@ -291,6 +313,12 @@
           "type": "image_picker",
           "id": "image",
           "label": "t:sections.slideshow.blocks.slide.settings.image.label"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_mobile",
+          "label": "t:sections.slideshow.blocks.slide.settings.image_mobile.label",
+          "info": "t:sections.slideshow.blocks.slide.settings.image_mobile.info"
         },
         {
           "type": "select",

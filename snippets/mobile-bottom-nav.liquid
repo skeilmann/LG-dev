@@ -85,7 +85,7 @@
           aria-label="{{ home_label }}"
         >
           <span class="mobile-bottom-nav__icon">
-            {{ 'icon-home.svg' | inline_asset_content }}
+            {{ 'icon-vev-nav-home.svg' | inline_asset_content }}
           </span>
           {% comment %} <span class="mobile-bottom-nav__label">{{ home_label }}</span> {% endcomment %}
         </a>
@@ -101,27 +101,9 @@
           aria-label="{{ search_label }}"
         >
           <span class="mobile-bottom-nav__icon">
-            {{ 'icon-search.svg' | inline_asset_content }}
+            {{ 'icon-vev-nav-search.svg' | inline_asset_content }}
           </span>
           {% comment %} <span class="mobile-bottom-nav__label">{{ search_label }}</span> {% endcomment %}
-        </button>
-      {%- endif -%}
-
-      {%- comment -%} Catalog Button {%- endcomment -%}
-      {%- if section.settings.show_nav_catalog -%}
-        <button
-          type="button"
-          class="mobile-bottom-nav__button{% if is_collection %} mobile-bottom-nav__button--active{% endif %}"
-          data-nav-type="catalog"
-          data-trigger-catalog-drawer
-          aria-label="{{ catalog_label }}"
-          aria-expanded="false"
-          aria-controls="mobile-catalog-drawer"
-        >
-          <span class="mobile-bottom-nav__icon">
-            {{ 'icon-menu.svg' | inline_asset_content }}
-          </span>
-          {% comment %} <span class="mobile-bottom-nav__label">{{ catalog_label }}</span> {% endcomment %}
         </button>
       {%- endif -%}
 
@@ -157,11 +139,7 @@
           aria-label="{{ cart_label }}"
         >
           <span class="mobile-bottom-nav__icon">
-            {%- if cart == empty -%}
-              {{ 'icon-cart-empty.svg' | inline_asset_content }}
-            {%- else -%}
-              {{ 'icon-cart.svg' | inline_asset_content }}
-            {%- endif -%}
+            {{- 'icon-vev-nav-cart.svg' | inline_asset_content -}}
           </span>
           {% comment %} <span class="mobile-bottom-nav__label">{{ cart_label }}</span> {% endcomment %}
           {%- comment -%} Cart count badge {%- endcomment -%}
@@ -175,6 +153,23 @@
             </span>
           {%- endif -%}
         </a>
+      {%- endif -%}
+      {%- comment -%} Catalog Button {%- endcomment -%}
+      {%- if section.settings.show_nav_catalog -%}
+        <button
+          type="button"
+          class="mobile-bottom-nav__button{% if is_collection %} mobile-bottom-nav__button--active{% endif %}"
+          data-nav-type="catalog"
+          data-trigger-catalog-drawer
+          aria-label="{{ catalog_label }}"
+          aria-expanded="false"
+          aria-controls="mobile-catalog-drawer"
+        >
+          <span class="mobile-bottom-nav__icon">
+            {{ 'icon-vev-nav-catalog.svg' | inline_asset_content }}
+          </span>
+          {% comment %} <span class="mobile-bottom-nav__label">{{ catalog_label }}</span> {% endcomment %}
+        </button>
       {%- endif -%}
     </div>
   </nav>

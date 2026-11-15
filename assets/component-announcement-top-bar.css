@@ -5,8 +5,19 @@
  * -------------------------------------------------------- */
 
 .announcement-top-bar {
+  position: relative;
   height: 56px;
   padding: 0;
+}
+
+/*
+ * Only while a country/language list is open: lift the bar above the header
+ * section (z-index 3 in base.css) so the list that opens downward is not hidden
+ * under the header. Kept conditional because a permanent z-index would put the
+ * bar on top of the header's menu drawer.
+ */
+.announcement-top-bar:has([aria-expanded='true']) {
+  z-index: 4;
 }
 
 .announcement-top-bar__inner {

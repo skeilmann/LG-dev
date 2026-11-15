@@ -559,6 +559,8 @@
   },
   "localization": {
     "country_label": "Страна/регион",
+    "delivery_address_label": "Адрес доставки",
+    "delivery_location_md": "Молдова, Бельцы",
     "language_label": "Язык",
     "update_language": "Изменить язык",
     "update_country": "Изменить данные о стране/регионе",

@@ -741,11 +741,14 @@
       <!-- Mobile Country Selector (below logo on mobile) -->
       {%- if section.settings.enable_country_selector and localization.available_countries.size > 1 -%}
         <div class="mobile-country-selector-wrapper">
+          <span class="mobile-country-selector__caption" aria-hidden="true">
+            {{- 'localization.delivery_address_label' | t -}}
+          </span>
           <localization-form data-prevent-hide>
             {%- form 'localization', id: 'HeaderCountryMobileForm', class: 'localization-form' -%}
               <div>
                 <h2 class="visually-hidden" id="HeaderCountryMobileLabel">{{ 'localization.country_label' | t }}</h2>
-                {%- render 'country-localization', localPosition: 'HeaderCountryMobile' -%}
+                {%- render 'country-localization', localPosition: 'HeaderCountryMobile', vev_mobile: true -%}
               </div>
             {%- endform -%}
           </localization-form>

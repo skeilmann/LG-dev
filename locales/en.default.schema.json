@@ -3736,6 +3736,10 @@
             "image": {
               "label": "Image"
             },
+            "image_mobile": {
+              "label": "Mobile image",
+              "info": "Optional. Shown on screens under 750px instead of the image above. 402 × 408 px or larger at the same ratio works best."
+            },
             "heading": {
               "label": "Heading",
               "default": "Image slide"

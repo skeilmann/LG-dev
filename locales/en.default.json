@@ -614,6 +614,8 @@
   },
   "localization": {
     "country_label": "Country/region",
+    "delivery_address_label": "Delivery address",
+    "delivery_location_md": "Moldova, Bălți",
     "language_label": "Language",
     "update_language": "Update language",
     "update_country": "Update country/region",
