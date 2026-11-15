@@ -205,7 +205,13 @@
       },
       "taxes_included": "Taxe incluse.",
       "duties_included": "Taxe vamale incluse.",
-      "duties_and_taxes_included": "Taxe și taxe vamale incluse."
+      "duties_and_taxes_included": "Taxe și taxe vamale incluse.",
+      "add_to_cart_short": "În coș",
+      "buy_now": "Cumpără acum",
+      "add_to_favorites": "Adaugă la favorite",
+      "read_more": "Citește mai mult",
+      "read_less": "Restrânge",
+      "type": "Tip material"
     },
     "modal": {
       "label": "Galerie media"
@@ -321,7 +327,8 @@
       }
     },
     "breadcrumbs": {
-      "home": "Acasă"
+      "home": "Acasă",
+      "label": "Fir de navigare"
     },
     "header": {
       "announcement": "Anunț",
@@ -506,6 +513,29 @@
       "min_error": "Pentru acest articol, valoarea minimă este de {{ min }}",
       "max_error": "Pentru acest articol, valoarea maximă este de {{ max }}",
       "step_error": "Poți introduce acest articol numai în incrementuri de {{ step }}"
+    },
+    "collage": {
+      "countdown_singular": "zi până la sfârșitul reducerilor",
+      "countdown_few": "zile până la sfârșitul reducerilor",
+      "countdown_plural": "de zile până la sfârșitul reducerilor"
+    },
+    "instagram_feed": {
+      "name": "Flux video Instagram",
+      "loading": "Se încarcă videoclipurile...",
+      "empty": "Nu există videoclipuri",
+      "error": "Eroare la încărcarea fluxului",
+      "token_required": "Este necesar un token de acces Instagram",
+      "play_video": "Redă videoclipul {{ index }}",
+      "no_circles": "Adăugați blocuri de cercuri în editorul de teme"
+    },
+    "recently_viewed": {
+      "name": "Vizualizate recent",
+      "heading": "Vizualizate recent",
+      "clear_history": "Șterge istoricul",
+      "no_products": "Nu există produse vizualizate recent"
+    },
+    "lg-recommended-products": {
+      "name": "Produse recomandate"
     }
   },
   "localization": {
@@ -530,7 +560,29 @@
       "title": "Cont",
       "details": "Detalii cont",
       "view_addresses": "Afișați adresele",
-      "return": "Înapoi la detaliile contului"
+      "return": "Înapoi la detaliile contului",
+      "my_favorites": "Favoritele mele",
+      "view_all_favorites": "Vezi toate",
+      "favorites_empty": "Nu ați adăugat încă produse la favorite.",
+      "favorites_browse": "Vezi produsele",
+      "my_rewards": "Recompensele mele",
+      "login_required": "Conectați-vă pentru a vedea contul.",
+      "login_button": "Conectare",
+      "recent_orders_note": "Sunt afișate cele mai recente comenzi.",
+      "view_all_orders": "Vezi tot istoricul comenzilor",
+      "welcome": "Bun venit, {{ name }}!",
+      "member_since": "Membru din",
+      "total_orders": "Total comenzi",
+      "total_spent": "Total cheltuit",
+      "spending_summary": "Rezumatul cheltuielilor",
+      "avg_order_value": "Valoarea medie a comenzii",
+      "active_orders": "Comenzi active",
+      "unfulfilled": "În procesare",
+      "and_more_items": "+{{ count }} produse în plus",
+      "reorder": "Comandă din nou",
+      "reorder_aria": "Comandă din nou produsele din {{ order }}",
+      "recently_viewed": "Vizualizate recent",
+      "no_recently_viewed": "Nu ați vizualizat încă niciun produs."
     },
     "account_fallback": "Cont",
     "log_in": "Conectați-vă",
@@ -634,6 +686,33 @@
       "subtotal": "Subtotal",
       "total_duties": "Taxe vamale",
       "total_refunded": "Rambursată"
+    },
+    "loyalty": {
+      "title": "Recompense",
+      "points": "puncte",
+      "cashback": "cashback",
+      "view_rewards": "Vezi recompensele",
+      "loading": "Se încarcă recompensele...",
+      "or": "sau",
+      "to_earn": "pentru a primi recompense la fiecare cumpărătură!",
+      "login_required": "Conectați-vă pentru a vedea recompensele.",
+      "join_title": "Alăturați-vă programului de recompense",
+      "join_description": "Creați un cont și primiți puncte la fiecare cumpărătură!",
+      "tiers_title": "Niveluri de membru",
+      "how_it_works": "Cum funcționează",
+      "points_balance": "Sold puncte",
+      "your_tier": "Nivelul dvs.",
+      "redeem": "Folosește",
+      "redeem_for": "Folosește {{ points }} puncte pentru o reducere de {{ value }} MDL",
+      "earn_more": "Mai acumulați {{ points }} puncte pentru a le folosi",
+      "max_tier": "Ați atins cel mai înalt nivel!",
+      "spend_to_next": "Mai cheltuiți {{ amount }} MDL pentru a ajunge la nivelul {{ tier }}",
+      "recent_activity": "Activitate recentă",
+      "no_activity": "Nicio activitate încă. Faceți cumpărături și primiți puncte!",
+      "earned": "Primite pentru comandă",
+      "redeemed": "Folosite pentru reducere",
+      "reversed": "Puncte anulate",
+      "welcome_bonus": "Bonus de bun venit"
     }
   },
   "gift_cards": {
@@ -674,7 +753,8 @@
     "add": "Add to Favorites",
     "remove": "Remove from Favorites",
     "login_message": "Log in to sync your favorites across devices",
-    "added": "Added to Favorites"
+    "added": "Added to Favorites",
+    "browse_products": "Vezi produsele"
   },
   "stock": {
     "in_stock": "Stoc",
@@ -686,5 +766,23 @@
     "title": "Brandurile noastre",
     "view_collection": "Vizualizați colecția {{ collection }}",
     "no_collections_configured": "Colecțiile nu au fost încă configurate. Adăugați blocuri de colecții în editorul de teme."
+  },
+  "shipping": {
+    "delivery_heading": "Livrare",
+    "courier_service": "Prin serviciu de curierat",
+    "courier_details": "Nova Post în toată Moldova (1-3 zile), gratuit de la 1500 MDL;",
+    "pickup_prefix": "Ridicare din magazinul",
+    "pickup_store": "VEV LUX SHOP",
+    "pickup_suffix": "din Bălți;",
+    "local_courier": "Curier local în Bălți, gratuit de la 300 MDL;",
+    "international": "Serviciu de curierat în Europa și țările UE.",
+    "payment_heading": "Plată",
+    "cash": "Numerar",
+    "cash_details": "la livrare;",
+    "card_payment": "Plată cu cardul la livrare;",
+    "invoice_prefix": "Transfer bancar prin factură electronică (",
+    "invoice_legal": "pentru persoane juridice",
+    "invoice_suffix": ");",
+    "online_payment": "Plată online"
   }
 }

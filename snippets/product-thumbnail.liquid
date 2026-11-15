@@ -136,6 +136,11 @@
       {% endcase %}
     </span>
     {%- render 'loading-spinner' -%}
+    {%- comment -%}
+      Photos uploaded without alt text fall back to the product name (product pages only;
+      `product` is empty elsewhere), so Google Images and screen readers still get a name.
+    {%- endcomment -%}
+    {%- assign thumbnail_alt = media.alt | default: product.title -%}
     <div class="product__media media media--transparent">
       {{
         media.preview_image
@@ -144,6 +149,7 @@
           class: image_class,
           loading: lazy,
           sizes: sizes,
+          alt: thumbnail_alt,
           widths: '246, 493, 600, 713, 823, 990, 1100, 1206, 1346, 1426, 1646, 1946'
       }}
     </div>

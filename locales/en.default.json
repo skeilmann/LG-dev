@@ -317,7 +317,8 @@
       }
     },
     "breadcrumbs": {
-      "home": "Home"
+      "home": "Home",
+      "label": "Breadcrumbs"
     },
     "announcements": {
       "previous_announcement": "Previous announcement",
@@ -352,7 +353,6 @@
         "navigation": {
           "content": "Navigation Settings"
         },
-
         "menu": {
           "label": "Legacy Menu",
           "info": "This menu is kept for backward compatibility"
@@ -642,10 +642,10 @@
       "points_balance": "Points Balance",
       "your_tier": "Your Tier",
       "redeem": "Redeem",
-      "redeem_for": "Redeem {{ points }} pts for ${{ value }} off",
+      "redeem_for": "Redeem {{ points }} pts for {{ value }} MDL off",
       "earn_more": "Earn {{ points }} more points to redeem",
       "max_tier": "You've reached the highest tier!",
-      "spend_to_next": "Spend ${{ amount }} more to reach {{ tier }}",
+      "spend_to_next": "Spend {{ amount }} MDL more to reach {{ tier }}",
       "recent_activity": "Recent Activity",
       "no_activity": "No activity yet. Start shopping to earn points!",
       "earned": "Earned from order",

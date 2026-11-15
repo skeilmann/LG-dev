@@ -107,7 +107,11 @@
        }
 {%- endstyle -%}
 
-<div class="page-width breadcrumbs" aria-label="breadcrumbs">
+{%- comment -%}
+  The trail is captured so the same links can also be written as BreadcrumbList
+  structured data for Google (see the end of this file).
+{%- endcomment -%}
+{%- capture breadcrumb_trail -%}
   {%- unless template == 'index' or template == 'cart' -%}
     <a href="/" title="{{ 'sections.breadcrumbs.home' | t }}">{{ 'sections.breadcrumbs.home' | t }}</a>
     {%- case template.name -%}
@@ -330,7 +334,57 @@
         {%- endfor -%}
     {%- endcase -%}
   {%- endunless -%}
-</div>
+{%- endcapture -%}
+
+<nav class="page-width breadcrumbs" aria-label="{{ 'sections.breadcrumbs.label' | t }}">
+  {{- breadcrumb_trail -}}
+</nav>
+
+{%- comment -%}
+  BreadcrumbList structured data, built from the links above so it always matches
+  what shoppers see. Only output where the breadcrumbs are visible (Google requires
+  structured data to match visible content).
+{%- endcomment -%}
+{%- liquid
+  assign breadcrumbs_visible = section.settings.enable_complete_site
+  if template.name == 'product' and section.settings.enable_product_page
+    assign breadcrumbs_visible = true
+  endif
+  if template.name == 'collection' and section.settings.enable_collection_page
+    assign breadcrumbs_visible = true
+  endif
+  assign crumb_links = breadcrumb_trail | split: '<a href="'
+-%}
+{%- if breadcrumbs_visible and crumb_links.size > 2 -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {%- assign position = 0 -%}
+        {%- for crumb in crumb_links offset: 1 -%}
+          {%- liquid
+            assign crumb_url = crumb | split: '"' | first
+            assign crumb_name = crumb | split: '</a>' | first | split: '>' | last | strip_html | strip
+            if crumb_url contains '://'
+              assign crumb_item = crumb_url
+            else
+              assign crumb_item = request.origin | append: crumb_url
+            endif
+            assign position = position | plus: 1
+          -%}
+          {%- unless position == 1 -%},{%- endunless -%}
+          {
+            "@type": "ListItem",
+            "position": {{ position }},
+            "name": {{ crumb_name | json }},
+            "item": {{ crumb_item | json }}
+          }
+        {%- endfor -%}
+      ]
+    }
+  </script>
+{%- endif -%}
 
 {% schema %}
 {
