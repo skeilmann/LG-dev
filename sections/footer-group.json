@@ -17,14 +17,14 @@
         "link_list_3irBBw": {
           "type": "link_list",
           "settings": {
-            "heading": "Quick links",
+            "heading": "КАТАЛОГ",
             "menu": "footer"
           }
         },
         "link_list_qr6Jn8": {
           "type": "link_list",
           "settings": {
-            "heading": "Quick links",
+            "heading": "О НАС",
             "menu": "footer-1"
           }
         }
@@ -35,8 +35,8 @@
       ],
       "settings": {
         "color_scheme": "scheme-4",
-        "border_radius": 20,
-        "margin_horizontal": 40,
+        "border_radius": 0,
+        "margin_horizontal": 0,
         "column_gap": 20,
         "phone_font_size": 44,
         "heading_font_size": 32,

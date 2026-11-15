@@ -86,23 +86,39 @@ footer .page-width {
 @media screen and (max-width: 749px) {
   .footer {
     border-radius: calc(var(--footer-border-radius, 2rem) * 0.5);
-    margin-left: 1.5rem;
-    margin-right: 1.5rem;
+    margin-left: var(--footer-margin-horizontal, 1.5rem);
+    margin-right: var(--footer-margin-horizontal, 1.5rem);
   }
 
+  /* Company info on top, the two menus side by side below it, so delivery,
+     returns and privacy pages stay reachable on phones. */
   .footer .footer__blocks-wrapper {
-    display: block;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 1.6rem;
+    row-gap: 3.2rem;
   }
 
-  .footer .footer-block.grid__item:nth-child(n+2) {
-    display: none;
+  .footer-block.grid__item {
+    margin: 0;
+    width: 100%;
+    padding: 0;
   }
 
   .footer-block.grid__item:first-child {
-    margin: 0;
-    width: 100%;
+    grid-column: 1 / -1;
     flex: none;
+  }
+
+  .footer .footer-block--menu .footer-block__heading {
+    margin-bottom: 0.8rem;
+    font-size: 1.8rem;
+  }
+
+  .footer .footer-block--menu .list-menu__item--link {
+    display: block;
+    font-size: 1.3rem;
+    line-height: 1.3;
   }
 
   .footer__content-top {
@@ -133,9 +149,8 @@ footer .page-width {
   }
 
   .footer-block__details-content .list-menu__item--link {
-    font-size: var(--footer-link-size, 1.8rem);
     text-transform: var(--footer-link-transform, uppercase);
-    padding: calc(var(--footer-link-spacing, 1.2rem) / 2) 0;
+    padding: 0.6rem 0;
   }
 }
 
@@ -332,6 +347,17 @@ footer .page-width {
   font-weight: inherit;
   line-height: inherit;
   margin-bottom: 0;
+}
+
+/* Phone and email links keep the footer text colour */
+.footer-block__contact-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.footer-block__contact-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
 }
 
 /* Email */

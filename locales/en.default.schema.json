@@ -1610,10 +1610,64 @@
           "label": "Company ID number"
         },
         "show_payment_icons": {
-          "label": "Show payment icons"
+          "label": "Show payment icons",
+          "info": "Used when no payment card images are uploaded."
         },
         "company_text_alignment": {
           "label": "Text alignment"
+        },
+        "header__layout": {
+          "content": "Layout"
+        },
+        "border_radius": {
+          "label": "Corner radius"
+        },
+        "margin_horizontal": {
+          "label": "Side margin"
+        },
+        "column_gap": {
+          "label": "Column gap"
+        },
+        "header__typography": {
+          "content": "Text sizes"
+        },
+        "phone_font_size": {
+          "label": "Phone number size"
+        },
+        "heading_font_size": {
+          "label": "Menu heading size"
+        },
+        "link_font_size": {
+          "label": "Link size"
+        },
+        "link_spacing": {
+          "label": "Link spacing"
+        },
+        "uppercase_links": {
+          "label": "Uppercase links"
+        },
+        "working_hours": {
+          "label": "Working hours"
+        },
+        "header__payment_cards": {
+          "content": "Payment card images"
+        },
+        "show_payment_cards": {
+          "label": "Show payment card images"
+        },
+        "payment_card": {
+          "label_1": "Card image 1",
+          "label_2": "Card image 2",
+          "label_3": "Card image 3",
+          "label_4": "Card image 4",
+          "label_5": "Card image 5",
+          "label_6": "Card image 6"
+        },
+        "payment_card_height": {
+          "label": "Card image height"
+        },
+        "payment_card_radius": {
+          "label": "Card corner radius"
         }
       }
     },
@@ -2192,9 +2246,6 @@
       "presets": {
         "name": "Multirow"
       }
-    },
-    "main-account": {
-      "name": "Account"
     },
     "main-activate-account": {
       "name": "Account activation"

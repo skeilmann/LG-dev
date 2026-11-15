@@ -81,6 +81,7 @@
         {% endif %}
       >
         {%- if section.settings.company_logo != blank -%}
+          {%- assign logo_alt = section.settings.company_name | default: shop.name | escape -%}
           <div
             class="footer-block__logo-wrapper"
             style="max-width: {{ section.settings.logo_width | default: 150 }}px;"
@@ -88,7 +89,7 @@
             {{
               section.settings.company_logo
               | image_url: width: 300
-              | image_tag: loading: 'lazy', alt: section.settings.company_name
+              | image_tag: loading: 'lazy', alt: logo_alt
             }}
           </div>
         {%- endif -%}
@@ -134,15 +135,31 @@
           </div>
         {%- endif -%}
 
+        {%- comment -%}
+          Phone and email are rich text settings; their plain text becomes a tappable
+          tel: / mailto: link. tel: drops hyphens, spaces and brackets.
+        {%- endcomment -%}
         {%- if section.settings.phone_number != blank -%}
-          <div class="footer-block__phone rte">
-            {{ section.settings.phone_number }}
+          {%- liquid
+            assign phone_text = section.settings.phone_number | strip_html | strip
+            assign phone_href = phone_text | remove: '-' | remove: ' ' | remove: '(' | remove: ')' | remove: '.'
+          -%}
+          <div class="footer-block__phone">
+            <a href="tel:{{ phone_href | escape }}" class="footer-block__contact-link">{{ phone_text }}</a>
           </div>
         {%- endif -%}
 
         {%- if section.settings.email != blank -%}
-          <div class="footer-block__email rte">
-            {{ section.settings.email }}
+          {%- liquid
+            assign email_text = section.settings.email | strip_html | strip
+            assign email_words = email_text | split: ' '
+          -%}
+          <div class="footer-block__email">
+            {%- if email_text contains '@' and email_words.size == 1 -%}
+              <a href="mailto:{{ email_text | escape }}" class="footer-block__contact-link">{{ email_text }}</a>
+            {%- else -%}
+              <div class="rte">{{ section.settings.email }}</div>
+            {%- endif -%}
           </div>
         {%- endif -%}
 
