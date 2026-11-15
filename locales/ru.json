@@ -615,7 +615,16 @@
       "copy": "Копировать",
       "copied": "Скопировано!",
       "close": "Закрыть",
-      "unavailable": "Бонусы временно недоступны."
+      "unavailable": "Бонусы временно недоступны.",
+      "points_available": "Доступно баллов",
+      "points_per_mdl": "Баллов за 1 MDL: {{ rate }}",
+      "from_amount": "от {{ amount }} MDL",
+      "step_shop_title": "Покупайте",
+      "step_shop_text": "Получайте баллы за каждый оплаченный заказ.",
+      "step_earn_title": "Растите",
+      "step_earn_text": "Чем выше уровень, тем больше баллов за каждый MDL.",
+      "step_redeem_title": "Обменивайте",
+      "step_redeem_text": "{{ points }} баллов = скидка {{ value }} MDL."
     },
     "account": {
       "title": "Учетная запись",

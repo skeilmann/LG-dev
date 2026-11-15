@@ -488,7 +488,16 @@
     copy: {{ 'customer.loyalty.copy' | t | json }},
     copied: {{ 'customer.loyalty.copied' | t | json }},
     close: {{ 'customer.loyalty.close' | t | json }},
-    unavailable: {{ 'customer.loyalty.unavailable' | t | json }}
+    unavailable: {{ 'customer.loyalty.unavailable' | t | json }},
+    pointsAvailable: {{ 'customer.loyalty.points_available' | t | json }},
+    pointsPerMdl: {{ 'customer.loyalty.points_per_mdl' | t: rate: '[rate]' | json }},
+    yourTier: {{ 'customer.loyalty.your_tier' | t | json }},
+    recentActivity: {{ 'customer.loyalty.recent_activity' | t | json }},
+    noActivity: {{ 'customer.loyalty.no_activity' | t | json }},
+    historyEarned: {{ 'customer.loyalty.earned' | t | json }},
+    historyRedeemed: {{ 'customer.loyalty.redeemed' | t | json }},
+    historyReversed: {{ 'customer.loyalty.reversed' | t | json }},
+    historyBonus: {{ 'customer.loyalty.welcome_bonus' | t | json }}
   };
   {%- endif %}
     </script>

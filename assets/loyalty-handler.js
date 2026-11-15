@@ -21,6 +21,7 @@ class LoyaltyHandler {
     this.nextTier = null;
     this.spendToNextTier = 0;
     this.redemption = null;
+    this.history = [];
     this.isLoading = true;
     this.loadFailed = false;
 
@@ -79,6 +80,7 @@ class LoyaltyHandler {
         this.nextTier = data.next_tier || null;
         this.spendToNextTier = data.spend_to_next_tier || 0;
         this.redemption = data.redemption || null;
+        this.history = Array.isArray(data.history) ? data.history : [];
       } else {
         this.loadFailed = true;
       }
@@ -94,6 +96,7 @@ class LoyaltyHandler {
     this.updatePointsBadge();
     this.updateCartWidget();
     this.updateAccountSection();
+    this.updateRewardsPage();
     this.observeNewWidgets();
   }
 
@@ -235,6 +238,99 @@ class LoyaltyHandler {
     `;
   }
 
+  /**
+   * Rewards page (sections/loyalty-rewards-page.liquid): balance, tier,
+   * redeem button and recent activity for the logged-in customer.
+   */
+  updateRewardsPage() {
+    const container = document.querySelector('[data-loyalty-rewards]');
+    if (!container || this.isLoading) return;
+
+    if (this.loadFailed) {
+      container.innerHTML = `<p class="loyalty-unavailable">${this.escape(this.t('unavailable', 'Rewards are temporarily unavailable.'))}</p>`;
+      return;
+    }
+
+    let action = '';
+    if (this.canRedeem()) {
+      action = this.renderRedeemButton('');
+    } else if (this.redemption) {
+      const needed = Math.max(0, this.redemption.points_required - this.balance);
+      action = `<p class="loyalty-redeem-info">${this.escape(this.t('earnMore', 'Earn [points] more points to redeem', { points: needed }))}</p>`;
+    }
+
+    let progress = '';
+    if (this.nextTier) {
+      const text = this.t('spendToNext', 'Spend [amount] MDL more to reach [tier]', {
+        amount: Math.ceil(this.spendToNextTier),
+        tier: this.tierName(this.nextTier),
+      });
+      progress = `
+        <div class="loyalty-tier-progress">
+          <div class="loyalty-progress-bar"><div class="loyalty-progress-fill" style="width: ${this.tierProgressPercent().toFixed(1)}%"></div></div>
+          <p>${this.escape(text)}</p>
+        </div>`;
+    } else {
+      progress = `<p class="loyalty-max-tier">${this.escape(this.t('maxTier', "You've reached the highest tier!"))}</p>`;
+    }
+
+    const tierClass = ['bronze', 'silver', 'gold'].includes(this.tier) ? this.tier : 'bronze';
+    const rate = this.tierConfig ? this.tierConfig.points_per_dollar : null;
+    const labels = {
+      earn: this.t('historyEarned', 'Earned from order'),
+      redeem: this.t('historyRedeemed', 'Redeemed for discount'),
+      reverse: this.t('historyReversed', 'Points reversed'),
+      bonus: this.t('historyBonus', 'Welcome bonus'),
+    };
+    const icons = { earn: '➕', redeem: '🎁', reverse: '↩️', bonus: '⭐' };
+    const dateFormat = new Intl.DateTimeFormat(document.documentElement.lang || undefined);
+
+    const history = this.history.slice(0, 10).map((entry) => {
+      const points = Number(entry.points) || 0;
+      const date = entry.date ? dateFormat.format(new Date(entry.date)) : '';
+      const code = entry.type === 'redeem' && entry.discount_code ? ` · <code>${this.escape(entry.discount_code)}</code>` : '';
+      return `
+        <li class="loyalty-history-item loyalty-history-${this.escape(entry.type)}">
+          <span class="loyalty-history-icon" aria-hidden="true">${icons[entry.type] || '⭐'}</span>
+          <span class="loyalty-history-details">
+            <span class="loyalty-history-action">${this.escape(labels[entry.type] || entry.type)}${code}</span>
+            <span class="loyalty-history-date">${this.escape(date)}</span>
+          </span>
+          <span class="loyalty-history-points ${points >= 0 ? 'positive' : 'negative'}">${points >= 0 ? '+' : ''}${this.escape(this.formatPoints(points))}</span>
+        </li>`;
+    }).join('');
+
+    container.innerHTML = `
+      <div class="loyalty-dashboard">
+        <div class="loyalty-balance-card">
+          <div class="loyalty-balance-main">
+            <span class="loyalty-balance-icon" aria-hidden="true">⭐</span>
+            <div class="loyalty-balance-info">
+              <span class="loyalty-balance-points">${this.escape(this.formatPoints(this.balance))}</span>
+              <span class="loyalty-balance-label">${this.escape(this.t('pointsAvailable', 'Points available'))}</span>
+            </div>
+          </div>
+          ${action}
+        </div>
+        <div class="loyalty-tier-card-current">
+          <h2 class="h3">${this.escape(this.t('yourTier', 'Your tier'))}</h2>
+          <div class="loyalty-current-tier loyalty-tier-${tierClass}">
+            <span class="loyalty-tier-badge">${this.escape(this.tierName(this.tier))}</span>
+            ${rate !== null ? `<span class="loyalty-tier-rate">${this.escape(this.t('pointsPerMdl', '[rate] points per 1 MDL', { rate }))}</span>` : ''}
+          </div>
+          ${progress}
+        </div>
+      </div>
+      <div class="loyalty-history-section">
+        <h2 class="h3">${this.escape(this.t('recentActivity', 'Recent activity'))}</h2>
+        ${history
+          ? `<ul class="loyalty-history-list list-unstyled" role="list">${history}</ul>`
+          : `<p class="loyalty-no-history">${this.escape(this.t('noActivity', 'No activity yet. Start shopping to earn points!'))}</p>`}
+      </div>
+    `;
+    this.attachRedeemHandler(container);
+  }
+
   /** Fill widgets that appear later, e.g. when the cart drawer is re-rendered. */
   observeNewWidgets() {
     if (this.observer) return;
@@ -278,10 +374,15 @@ class LoyaltyHandler {
       if (!data.success) throw new Error(data.error || 'redeem failed');
 
       this.balance = data.remaining_points;
+      this.history = [
+        { type: 'redeem', points: -data.points_redeemed, discount_code: data.discount_code, date: new Date().toISOString() },
+        ...this.history,
+      ];
       this.showDiscountCode(data.discount_code, data.discount_value);
       this.updatePointsBadge();
       this.updateCartWidget();
       this.updateAccountSection();
+      this.updateRewardsPage();
     } catch (error) {
       console.error('Error redeeming points:', error.message);
       button.disabled = false;

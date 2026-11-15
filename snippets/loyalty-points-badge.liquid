@@ -1,6 +1,7 @@
 {%- comment -%}
   Loyalty Points Badge
-  Header link to the account page showing the customer's points balance.
+  Header link to the rewards page (theme setting "Rewards page", falls back to
+  the account page) showing the customer's points balance.
   Hidden until loyalty-handler.js has loaded the balance; renders nothing for
   guests or when the "VEV app" theme settings are off.
 
@@ -8,8 +9,14 @@
   Dependencies: assets/loyalty-handler.js, assets/component-loyalty.css
 {%- endcomment -%}
 {%- if customer and settings.loyalty_widgets_enabled and settings.vev_api_url != blank -%}
+  {%- liquid
+    assign rewards_url = routes.account_url
+    if settings.loyalty_page != blank
+      assign rewards_url = settings.loyalty_page.url
+    endif
+  -%}
   <a
-    href="{{ routes.account_url }}"
+    href="{{ rewards_url }}"
     class="header__icon header__icon--loyalty link focus-inset"
     id="loyalty-points-badge"
     hidden

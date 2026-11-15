@@ -22,6 +22,10 @@
         "loyalty_widgets_enabled": {
           "label": "Show rewards in header and cart",
           "info": "Points badge in the header and the rewards box in the cart. Turn on only after the server is live."
+        },
+        "loyalty_page": {
+          "label": "Rewards page",
+          "info": "Page using the \"rewards\" template. The header points badge links here."
         }
       }
     },

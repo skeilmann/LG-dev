@@ -670,7 +670,16 @@
       "copy": "Copy",
       "copied": "Copied!",
       "close": "Close",
-      "unavailable": "Rewards are temporarily unavailable."
+      "unavailable": "Rewards are temporarily unavailable.",
+      "points_available": "Points available",
+      "points_per_mdl": "Points per 1 MDL: {{ rate }}",
+      "from_amount": "from {{ amount }} MDL",
+      "step_shop_title": "Shop",
+      "step_shop_text": "Earn points on every paid order.",
+      "step_earn_title": "Grow",
+      "step_earn_text": "Higher tiers earn more points per MDL.",
+      "step_redeem_title": "Redeem",
+      "step_redeem_text": "{{ points }} points = {{ value }} MDL off."
     },
     "account": {
       "title": "Account",

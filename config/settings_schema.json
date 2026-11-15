@@ -1632,6 +1632,12 @@
         "label": "t:settings_schema.vev_app.settings.loyalty_widgets_enabled.label",
         "info": "t:settings_schema.vev_app.settings.loyalty_widgets_enabled.info",
         "default": false
+      },
+      {
+        "type": "page",
+        "id": "loyalty_page",
+        "label": "t:settings_schema.vev_app.settings.loyalty_page.label",
+        "info": "t:settings_schema.vev_app.settings.loyalty_page.info"
       }
     ]
   }

@@ -731,7 +731,16 @@
       "copy": "Copiază",
       "copied": "Copiat!",
       "close": "Închide",
-      "unavailable": "Recompensele sunt temporar indisponibile."
+      "unavailable": "Recompensele sunt temporar indisponibile.",
+      "points_available": "Puncte disponibile",
+      "points_per_mdl": "Puncte pentru 1 MDL: {{ rate }}",
+      "from_amount": "de la {{ amount }} MDL",
+      "step_shop_title": "Cumpărați",
+      "step_shop_text": "Primiți puncte pentru fiecare comandă plătită.",
+      "step_earn_title": "Avansați",
+      "step_earn_text": "Nivelurile superioare primesc mai multe puncte pentru fiecare MDL.",
+      "step_redeem_title": "Folosiți",
+      "step_redeem_text": "{{ points }} puncte = reducere de {{ value }} MDL."
     }
   },
   "gift_cards": {
