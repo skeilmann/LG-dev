@@ -1,7 +1,8 @@
 {%- comment -%}
   Filename: vendor-showcase.liquid
   Purpose: Display collection logos in grid with links to collection pages
-  Dependencies: None
+  Dependencies: assets/component-vendor-showcase.css
+  Blocks: collection (with an "enabled" checkbox to hide a brand without deleting it)
   Created: 2025-01-15
 {%- endcomment -%}
 
@@ -13,7 +14,6 @@
   assign desktop_columns = section.settings.desktop_columns | default: 5
   assign mobile_columns = section.settings.mobile_columns | default: 2
   assign logo_height = section.settings.logo_height | default: 60
-  assign show_collection_names = section.settings.show_collection_names
   assign grid_gap = section.settings.grid_gap | default: 3
   assign color_scheme = section.settings.color_scheme | default: 'scheme-1'
 -%}
@@ -42,13 +42,17 @@
         "
       >
         {%- for block in section.blocks limit: max_collections -%}
-          {%- if block.type == 'collection' and block.settings.collection != blank -%}
+          {%- if block.type == 'collection' and block.settings.collection != blank and block.settings.enabled != false -%}
             {%- liquid
               assign collection = block.settings.collection
               assign collection_url = collection.url
             -%}
 
-            <div class="vendor-showcase__item" {{ block.shopify_attributes }}>
+            <div
+              class="vendor-showcase__item"
+              style="--item-index: {{ forloop.index0 }};"
+              {{ block.shopify_attributes }}
+            >
               <a
                 href="{{ collection_url }}"
                 class="vendor-showcase__link"
@@ -72,12 +76,6 @@
                     <div class="vendor-showcase__placeholder">
                       {{ collection.title | truncate: 15 }}
                     </div>
-                  </div>
-                {%- endif -%}
-
-                {%- if show_collection_names -%}
-                  <div class="vendor-showcase__name">
-                    {{ collection.title }}
                   </div>
                 {%- endif -%}
               </a>

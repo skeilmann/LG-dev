@@ -702,7 +702,7 @@
       "name": "t:sections.vendor_showcase.presets.name",
       "settings": {
         "heading": "КАТАЛОГ БРЕНДОВ ❤️",
-        "max_collections": 20,
+        "max_collections": 30,
         "desktop_columns": 5,
         "mobile_columns": 3,
         "logo_height": 120,
