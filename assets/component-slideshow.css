@@ -350,8 +350,11 @@ slideshow-component:not(.page-width) .slider-buttons {
   scroll-snap-align: unset;
 }
 
-/* First slide stays relative so the container has intrinsic height */
-.slideshow--crossfade .slideshow__slide:first-child {
+/* First slide stays relative so the container has intrinsic height.
+   :first-of-type, not :first-child — each slide is preceded by its own <style>
+   tag, so :first-child never matched and the slider was 0px tall on mobile
+   (desktop hid it via the banner's min-height). */
+.slideshow--crossfade .slideshow__slide:first-of-type {
   position: relative;
 }
 
@@ -368,5 +371,74 @@ slideshow-component:not(.page-width) .slider-buttons {
 @media (prefers-reduced-motion: reduce) {
   .slideshow--crossfade .slideshow__slide {
     transition: opacity 0.1s ease;
+  }
+}
+
+/* ── Mobile image (<picture>) ─────────────────── */
+.slideshow__picture > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
+
+/* ── Mobile overlay hero (Figma "iPhone 16 Pro - RU" 23:887, hero 26:35) ──
+   402×408 image, text over it at x33 / 36px from the top: title 32px semibold,
+   subtitle 15px (12px below), white 31px button (14px below), radius 7px.
+   Applies when "show text below on mobile" is off. */
+@media screen and (max-width: 749px) {
+  .slideshow.banner--medium:not(.banner--mobile-bottom):not(.banner--adapt) .banner__content {
+    min-height: 40.8rem;
+  }
+
+  .slideshow:not(.banner--mobile-bottom) .slideshow__text-wrapper.banner__content {
+    padding: 3.6rem 3.3rem 5rem;
+  }
+
+  .slideshow:not(.banner--mobile-bottom) .slideshow__text.banner__box {
+    padding: 0;
+    background: transparent;
+  }
+
+  .slideshow:not(.banner--mobile-bottom) .slideshow__text .banner__heading {
+    margin: 0;
+    font-size: 3.2rem;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+
+  /* The heading is rich text: it may contain <p> or <h2> — both take the 32px */
+  .slideshow:not(.banner--mobile-bottom) .slideshow__text .banner__heading > * {
+    margin: 0;
+    font: inherit;
+    letter-spacing: inherit;
+  }
+
+  .slideshow:not(.banner--mobile-bottom) .slideshow__text .banner__text {
+    margin-top: 1.2rem;
+    font-size: 1.5rem;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+
+  .slideshow:not(.banner--mobile-bottom) .slideshow__text .banner__text p {
+    margin: 0;
+  }
+
+  .slideshow:not(.banner--mobile-bottom) .slideshow__text .banner__buttons {
+    margin-top: 1.4rem;
+  }
+
+  .slideshow:not(.banner--mobile-bottom) .slideshow__text .banner__buttons .button {
+    min-height: 3.1rem;
+    min-width: 0;
+    padding: 0 1.1rem;
+    gap: 0.8rem;
+    border-radius: 0.7rem;
+    font-size: 1.5rem;
+    font-weight: 500;
+    letter-spacing: 0;
   }
 }

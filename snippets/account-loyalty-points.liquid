@@ -15,7 +15,10 @@
   data-rewards-url="{{ block.settings.rewards_page_url | default: '/pages/rewards' }}"
   {{ block.shopify_attributes }}
 >
-  {%- if customer -%}
+  {%- if customer and settings.vev_api_url == blank -%}
+    {%- comment -%}No server configured: loyalty-handler.js is not loaded{%- endcomment -%}
+    <p class="loyalty-unavailable">{{ 'customer.loyalty.unavailable' | t }}</p>
+  {%- elsif customer -%}
     <div class="loyalty-loading">
       {%- assign default_loyalty_heading = 'customer.loyalty.title' | t -%}
       <h2 class="account-block__heading">

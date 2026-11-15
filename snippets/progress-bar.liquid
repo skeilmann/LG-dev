@@ -1,0 +1,13 @@
+{% comment %}
+  Renders a loading bar, hidden by default.
+  quick-add-bulk.js shows it (removes .hidden) while a bulk quantity update is
+  in flight. Styles: base.css ("Progress bar") and quick-add.css.
+
+  Usage:
+  {% render 'progress-bar' %}
+{% endcomment %}
+<div class="progress-bar-container hidden">
+  <div class="progress-bar">
+    <div class="progress-bar-value"></div>
+  </div>
+</div>

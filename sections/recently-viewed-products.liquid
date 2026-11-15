@@ -94,7 +94,7 @@
             aria-label="{{ 'general.slider.previous_slide' | t }}"
             aria-controls="RecentlyViewedSlider-{{ section.id }}"
           >
-            {% render 'icon-caret' %}
+            <span class="svg-wrapper">{{- 'icon-caret1.svg' | inline_asset_content -}}</span>
           </button>
           <div class="slider-counter caption">
             <span class="slider-counter--current">1</span>
@@ -109,7 +109,7 @@
             aria-label="{{ 'general.slider.next_slide' | t }}"
             aria-controls="RecentlyViewedSlider-{{ section.id }}"
           >
-            {% render 'icon-caret' %}
+            <span class="svg-wrapper">{{- 'icon-caret1.svg' | inline_asset_content -}}</span>
           </button>
         </div>
       </slider-component>

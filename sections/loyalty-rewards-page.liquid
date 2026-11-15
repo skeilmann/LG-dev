@@ -1,179 +1,100 @@
 {%- comment -%}
-  Loyalty Rewards Page Section
-  Full rewards page with tiers, balance, redemption, and history
+  Loyalty Rewards Page Section (templates/page.rewards.json)
+  - Logged-in customers: balance, tier, redeem button and recent activity,
+    drawn by assets/loyalty-handler.js into [data-loyalty-rewards].
+  - Guests: how the program works and the tiers (values below match the
+    server defaults; update them if shop metafield custom.loyalty_config changes).
+  Dependencies: assets/loyalty-handler.js, assets/component-loyalty.css
 {%- endcomment -%}
 
 {{ 'component-loyalty.css' | asset_url | stylesheet_tag }}
 
+{%- liquid
+  assign heading = section.settings.title
+  if heading == blank
+    assign heading = 'customer.loyalty.title' | t
+  endif
+  assign points_required = 100
+  assign discount_value = 5
+  assign silver_rate = '1,5'
+  if request.locale.iso_code == 'en'
+    assign silver_rate = '1.5'
+  endif
+-%}
+
 <div class="loyalty-rewards-page page-width section-{{ section.id }}-padding">
   <div class="loyalty-rewards-header">
-    <h1 class="loyalty-rewards-title">{{ section.settings.title | default: 'Rewards Program' }}</h1>
-    {% if section.settings.subtitle != blank %}
-      <p class="loyalty-rewards-subtitle">{{ section.settings.subtitle }}</p>
-    {% endif %}
+    <h1 class="loyalty-rewards-title">{{ heading | escape }}</h1>
+    {%- if section.settings.subtitle != blank -%}
+      <p class="loyalty-rewards-subtitle">{{ section.settings.subtitle | escape }}</p>
+    {%- endif -%}
   </div>
 
-  {%- if customer -%}
-    <div class="loyalty-rewards-content" id="loyalty-rewards-content">
-      <div class="loyalty-loading">Loading your rewards...</div>
+  {%- if customer and settings.vev_api_url != blank -%}
+    <div class="loyalty-rewards-content" data-loyalty-rewards>
+      <p class="loyalty-loading">{{ 'customer.loyalty.loading' | t }}</p>
     </div>
+  {%- elsif customer -%}
+    <p class="loyalty-unavailable">{{ 'customer.loyalty.unavailable' | t }}</p>
   {%- else -%}
     <div class="loyalty-rewards-guest">
       <div class="loyalty-guest-card">
-        <h2>{{ 'customer.loyalty.join_title' | t | default: 'Join Our Rewards Program' }}</h2>
-        <p>{{ 'customer.loyalty.join_description' | t | default: 'Create an account to start earning points on every purchase!' }}</p>
+        <h2>{{ 'customer.loyalty.join_title' | t }}</h2>
+        <p>{{ 'customer.loyalty.join_description' | t }}</p>
 
         <div class="loyalty-tiers-preview">
-          <h3>{{ 'customer.loyalty.tiers_title' | t | default: 'Membership Tiers' }}</h3>
+          <h3>{{ 'customer.loyalty.tiers_title' | t }}</h3>
           <div class="loyalty-tiers-grid">
             <div class="loyalty-tier-card loyalty-tier-bronze">
-              <span class="loyalty-tier-icon">🥉</span>
-              <h4>Bronze</h4>
-              <p>1 point per $1</p>
-              <span class="loyalty-tier-threshold">$0+</span>
+              <span class="loyalty-tier-icon" aria-hidden="true">🥉</span>
+              <h4>{{ 'customer.loyalty.tier_bronze' | t }}</h4>
+              <p>{{ 'customer.loyalty.points_per_mdl' | t: rate: '1' }}</p>
+              <span class="loyalty-tier-threshold">{{ 'customer.loyalty.from_amount' | t: amount: '0' }}</span>
             </div>
             <div class="loyalty-tier-card loyalty-tier-silver">
-              <span class="loyalty-tier-icon">🥈</span>
-              <h4>Silver</h4>
-              <p>1.5 points per $1</p>
-              <span class="loyalty-tier-threshold">$500+</span>
+              <span class="loyalty-tier-icon" aria-hidden="true">🥈</span>
+              <h4>{{ 'customer.loyalty.tier_silver' | t }}</h4>
+              <p>{{ 'customer.loyalty.points_per_mdl' | t: rate: silver_rate }}</p>
+              <span class="loyalty-tier-threshold">{{ 'customer.loyalty.from_amount' | t: amount: '500' }}</span>
             </div>
             <div class="loyalty-tier-card loyalty-tier-gold">
-              <span class="loyalty-tier-icon">🥇</span>
-              <h4>Gold</h4>
-              <p>2 points per $1</p>
-              <span class="loyalty-tier-threshold">$2,000+</span>
+              <span class="loyalty-tier-icon" aria-hidden="true">🥇</span>
+              <h4>{{ 'customer.loyalty.tier_gold' | t }}</h4>
+              <p>{{ 'customer.loyalty.points_per_mdl' | t: rate: '2' }}</p>
+              <span class="loyalty-tier-threshold">{{ 'customer.loyalty.from_amount' | t: amount: '2 000' }}</span>
             </div>
           </div>
         </div>
 
         <div class="loyalty-how-it-works">
-          <h3>{{ 'customer.loyalty.how_it_works' | t | default: 'How It Works' }}</h3>
-          <div class="loyalty-steps">
-            <div class="loyalty-step">
-              <span class="loyalty-step-number">1</span>
-              <h4>Shop</h4>
-              <p>Earn points on every purchase</p>
-            </div>
-            <div class="loyalty-step">
-              <span class="loyalty-step-number">2</span>
-              <h4>Earn</h4>
-              <p>Points add up based on your tier</p>
-            </div>
-            <div class="loyalty-step">
-              <span class="loyalty-step-number">3</span>
-              <h4>Redeem</h4>
-              <p>100 points = $5 off</p>
-            </div>
-          </div>
+          <h3>{{ 'customer.loyalty.how_it_works' | t }}</h3>
+          <ol class="loyalty-steps list-unstyled" role="list">
+            <li class="loyalty-step">
+              <span class="loyalty-step-number" aria-hidden="true">1</span>
+              <h4>{{ 'customer.loyalty.step_shop_title' | t }}</h4>
+              <p>{{ 'customer.loyalty.step_shop_text' | t }}</p>
+            </li>
+            <li class="loyalty-step">
+              <span class="loyalty-step-number" aria-hidden="true">2</span>
+              <h4>{{ 'customer.loyalty.step_earn_title' | t }}</h4>
+              <p>{{ 'customer.loyalty.step_earn_text' | t }}</p>
+            </li>
+            <li class="loyalty-step">
+              <span class="loyalty-step-number" aria-hidden="true">3</span>
+              <h4>{{ 'customer.loyalty.step_redeem_title' | t }}</h4>
+              <p>{{ 'customer.loyalty.step_redeem_text' | t: points: points_required, value: discount_value }}</p>
+            </li>
+          </ol>
         </div>
 
         <div class="loyalty-cta-buttons">
-          <a href="{{ routes.account_register_url }}" class="button">{{ 'customer.register.title' | t | default: 'Create Account' }}</a>
-          <a href="{{ routes.account_login_url }}" class="button button--secondary">{{ 'customer.log_in' | t | default: 'Log In' }}</a>
+          <a href="{{ routes.account_register_url }}" class="button">{{ 'customer.register.title' | t }}</a>
+          <a href="{{ routes.account_login_url }}" class="button button--secondary">{{ 'customer.log_in' | t }}</a>
         </div>
       </div>
     </div>
   {%- endif -%}
 </div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    if (!window.loyaltyHandler || !window.Shopify?.customerId) return;
-
-    const content = document.getElementById('loyalty-rewards-content');
-    if (!content) return;
-
-    // Wait for loyalty data to load
-    const checkLoaded = setInterval(function() {
-      if (!window.loyaltyHandler.isLoading) {
-        clearInterval(checkLoaded);
-        renderRewardsPage(content);
-      }
-    }, 100);
-
-    function renderRewardsPage(container) {
-      const handler = window.loyaltyHandler;
-      const tierLabels = { bronze: 'Bronze', silver: 'Silver', gold: 'Gold' };
-
-      container.innerHTML = `
-        <div class="loyalty-dashboard">
-          <div class="loyalty-balance-card">
-            <div class="loyalty-balance-main">
-              <span class="loyalty-balance-icon">⭐</span>
-              <div class="loyalty-balance-info">
-                <span class="loyalty-balance-points">${handler.balance.toLocaleString()}</span>
-                <span class="loyalty-balance-label">Points Available</span>
-              </div>
-            </div>
-            ${handler.redemption && handler.balance >= handler.redemption.points_required ? `
-              <button class="loyalty-redeem-btn button" id="rewards-page-redeem" data-points="${handler.redemption.points_required}">
-                Redeem ${handler.redemption.points_required} pts for $${handler.redemption.discount_value} off
-              </button>
-            ` : `
-              <p class="loyalty-redeem-info">
-                ${handler.redemption ? `Earn ${Math.max(0, handler.redemption.points_required - handler.balance)} more points to redeem $${handler.redemption.discount_value} off` : ''}
-              </p>
-            `}
-          </div>
-
-          <div class="loyalty-tier-card-current">
-            <h3>Your Status</h3>
-            <div class="loyalty-current-tier loyalty-tier-${handler.tier}">
-              <span class="loyalty-tier-badge">${tierLabels[handler.tier] || handler.tier}</span>
-              ${handler.tierConfig ? `<span class="loyalty-tier-rate">${handler.tierConfig.points_per_dollar}x points per $1</span>` : ''}
-            </div>
-            ${handler.nextTier ? `
-              <div class="loyalty-tier-progress">
-                <div class="loyalty-progress-bar">
-                  <div class="loyalty-progress-fill" style="width: ${Math.min(100, 100 - (handler.spendToNextTier / 500 * 100))}%"></div>
-                </div>
-                <p>Spend $${handler.spendToNextTier.toFixed(0)} more to reach ${tierLabels[handler.nextTier]}</p>
-              </div>
-            ` : `<p class="loyalty-max-tier">🎉 You've reached the highest tier!</p>`}
-          </div>
-        </div>
-
-        <div class="loyalty-history-section">
-          <h3>Recent Activity</h3>
-          ${handler.history && handler.history.length > 0 ? `
-            <div class="loyalty-history-list">
-              ${handler.history.slice(0, 10).map(entry => `
-                <div class="loyalty-history-item loyalty-history-${entry.type}">
-                  <div class="loyalty-history-icon">
-                    ${entry.type === 'earn' ? '➕' : entry.type === 'redeem' ? '🎁' : entry.type === 'reverse' ? '↩️' : '⭐'}
-                  </div>
-                  <div class="loyalty-history-details">
-                    <span class="loyalty-history-action">
-                      ${entry.type === 'earn' ? 'Earned from order' : entry.type === 'redeem' ? 'Redeemed for discount' : entry.type === 'reverse' ? 'Points reversed' : entry.type === 'bonus' ? 'Welcome bonus' : entry.type}
-                    </span>
-                    <span class="loyalty-history-date">${new Date(entry.date).toLocaleDateString()}</span>
-                  </div>
-                  <span class="loyalty-history-points ${entry.points >= 0 ? 'positive' : 'negative'}">
-                    ${entry.points >= 0 ? '+' : ''}${entry.points}
-                  </span>
-                </div>
-              `).join('')}
-            </div>
-          ` : `
-            <p class="loyalty-no-history">No activity yet. Start shopping to earn points!</p>
-          `}
-        </div>
-      `;
-
-      // Attach redeem handler
-      const redeemBtn = container.querySelector('#rewards-page-redeem');
-      if (redeemBtn) {
-        redeemBtn.addEventListener('click', async function(e) {
-          e.preventDefault();
-          const points = parseInt(this.dataset.points, 10);
-          await handler.redeemPoints(points, this);
-          renderRewardsPage(container); // Re-render after redemption
-        });
-      }
-    }
-  });
-</script>
 
 <style>
   .loyalty-rewards-page {
@@ -484,13 +405,12 @@
       "type": "text",
       "id": "title",
       "label": "Title",
-      "default": "Rewards Program"
+      "info": "Leave empty to use the translated title"
     },
     {
       "type": "text",
       "id": "subtitle",
-      "label": "Subtitle",
-      "default": "Earn points on every purchase and redeem for discounts"
+      "label": "Subtitle"
     },
     {
       "type": "range",

@@ -1,266 +1,234 @@
 /**
  * Loyalty Handler
- * Manages loyalty points display, redemption, and sync with VPS app
+ * Shows loyalty points (header badge, cart widget, account block) and handles
+ * redemption, using the VEV server.
+ *
+ * Loaded only for logged-in customers when the "VEV app" theme setting has a
+ * server address (layout/theme.liquid). Auth: window.VEV.token, a signed
+ * customer token rendered by Liquid — no API key or customer ID is sent.
+ * Text: window.theme.strings.loyalty (locales customer.loyalty.*).
  */
 class LoyaltyHandler {
   constructor() {
-    this.isLoggedIn = !!(window.Shopify && window.Shopify.customerId);
-    this.customerId = window.Shopify?.customerId;
-    this.apiUrl = 'http://31.97.184.19:3000'; // Your VPS app URL
-    this.apiKey = 'Gheorghe2025VeV';
+    this.apiUrl = (window.VEV && window.VEV.apiUrl) || '';
+    this.token = (window.VEV && window.VEV.token) || '';
+    this.strings = (window.theme && window.theme.strings && window.theme.strings.loyalty) || {};
 
-    // Loyalty state
     this.balance = 0;
     this.tier = 'bronze';
     this.tierConfig = null;
+    this.lifetimeSpend = 0;
     this.nextTier = null;
     this.spendToNextTier = 0;
     this.redemption = null;
     this.history = [];
     this.isLoading = true;
+    this.loadFailed = false;
 
-    if (this.isLoggedIn) {
-      this.loadLoyaltyData().then(() => {
-        this.initializeUI();
-      });
-    } else {
+    if (!this.apiUrl || !this.token) {
       this.isLoading = false;
+      this.loadFailed = true;
       this.initializeUI();
+      return;
     }
+
+    this.loadLoyaltyData().then(() => this.initializeUI());
   }
 
-  /**
-   * Load loyalty data from VPS app
-   */
+  t(key, fallback, values = {}) {
+    let text = this.strings[key] || fallback;
+    Object.keys(values).forEach((name) => {
+      text = text.split(`[${name}]`).join(values[name]);
+    });
+    return text;
+  }
+
+  tierName(tier) {
+    return (this.strings.tiers && this.strings.tiers[tier]) || tier;
+  }
+
+  escape(value) {
+    return String(value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+  }
+
+  async request(path, options = {}) {
+    const response = await fetch(`${this.apiUrl}${path}`, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${this.token}`,
+        ...(options.headers || {}),
+      },
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const error = new Error(data.error || data.message || `HTTP ${response.status}`);
+      error.status = response.status;
+      throw error;
+    }
+    return data;
+  }
+
   async loadLoyaltyData() {
     try {
-      const response = await fetch(
-        `${this.apiUrl}/api/loyalty/balance?customerId=${this.customerId}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': this.apiKey,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-
-      const data = await response.json();
-
+      const data = await this.request('/api/loyalty/balance');
       if (data.success) {
         this.balance = data.points_balance || 0;
         this.tier = data.tier || 'bronze';
         this.tierConfig = data.tier_config || null;
+        this.lifetimeSpend = data.lifetime_spend || 0;
         this.nextTier = data.next_tier || null;
         this.spendToNextTier = data.spend_to_next_tier || 0;
         this.redemption = data.redemption || null;
-        this.history = data.history || [];
+        this.history = Array.isArray(data.history) ? data.history : [];
+      } else {
+        this.loadFailed = true;
       }
     } catch (error) {
-      console.error('Error loading loyalty data:', error);
+      console.error('Error loading loyalty data:', error.message);
+      this.loadFailed = true;
     } finally {
       this.isLoading = false;
     }
   }
 
-  /**
-   * Load loyalty config (for non-logged-in users info display)
-   */
-  async loadConfig() {
-    try {
-      const response = await fetch(`${this.apiUrl}/api/loyalty/config`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': this.apiKey,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        return data;
-      }
-    } catch (error) {
-      console.error('Error loading loyalty config:', error);
-    }
-    return null;
-  }
-
-  /**
-   * Initialize UI elements
-   */
   initializeUI() {
     this.updatePointsBadge();
     this.updateCartWidget();
     this.updateAccountSection();
-    this.setupEventListeners();
+    this.updateRewardsPage();
+    this.observeNewWidgets();
   }
 
-  /**
-   * Update points badge in header
-   */
   updatePointsBadge() {
     const badge = document.getElementById('loyalty-points-badge');
-    const balanceEl = document.getElementById('loyalty-points-balance');
-
     if (!badge) return;
 
-    if (this.isLoggedIn && !this.isLoading) {
-      badge.style.display = 'flex';
-      if (balanceEl) {
-        balanceEl.textContent = this.formatPoints(this.balance);
-      }
-    } else if (!this.isLoggedIn) {
-      badge.style.display = 'none';
+    if (this.isLoading || this.loadFailed) {
+      badge.hidden = true;
+      return;
     }
+
+    const balanceEl = badge.querySelector('.loyalty-badge-count');
+    if (balanceEl) balanceEl.textContent = this.formatPoints(this.balance);
+    badge.hidden = false;
   }
 
-  /**
-   * Update cart widget with redemption option
-   */
   updateCartWidget() {
-    const widget = document.querySelector('.loyalty-cart-widget');
-    if (!widget) return;
-
-    if (!this.isLoggedIn) {
-      widget.innerHTML = this.renderGuestMessage();
-      return;
-    }
-
-    if (this.isLoading) {
-      widget.innerHTML = '<div class="loyalty-loading">Loading rewards...</div>';
-      return;
-    }
-
-    widget.innerHTML = this.renderCartWidget();
-    this.attachRedeemHandler(widget);
+    document.querySelectorAll('.loyalty-cart-widget[data-customer]').forEach((widget) => {
+      if (this.isLoading) return;
+      if (this.loadFailed) {
+        widget.hidden = true;
+        return;
+      }
+      widget.hidden = false;
+      widget.innerHTML = this.renderCartWidget();
+      this.attachRedeemHandler(widget);
+    });
   }
 
-  /**
-   * Update account page section
-   * Reads data attributes from the container to respect Theme Editor block settings
-   */
   updateAccountSection() {
     const section = document.querySelector('.loyalty-account-section');
-    if (!section) return;
+    if (!section || this.isLoading) return;
 
-    if (!this.isLoggedIn) {
-      section.innerHTML = this.renderGuestMessage();
+    if (this.loadFailed) {
+      section.innerHTML = `<p class="loyalty-unavailable">${this.escape(this.t('unavailable', 'Rewards are temporarily unavailable.'))}</p>`;
       return;
     }
 
-    if (this.isLoading) {
-      section.innerHTML = '<div class="loyalty-loading">Loading your rewards...</div>';
-      return;
-    }
-
-    // Read Theme Editor settings from data attributes
-    const sectionSettings = {
+    const settings = {
       showTierProgress: section.dataset.showTierProgress !== 'false',
       showRedeem: section.dataset.showRedeem !== 'false',
       rewardsUrl: section.dataset.rewardsUrl || '/pages/rewards',
     };
 
-    section.innerHTML = this.renderAccountSection(sectionSettings);
+    section.innerHTML = this.renderAccountSection(settings);
     this.attachRedeemHandler(section);
   }
 
-  /**
-   * Render cart widget HTML
-   */
+  canRedeem() {
+    return Boolean(this.redemption && this.balance >= this.redemption.points_required);
+  }
+
+  renderRedeemButton(extraClass) {
+    const points = this.redemption.points_required;
+    const label = this.t('redeemFor', 'Redeem [points] pts for [value] MDL off', {
+      points,
+      value: this.redemption.discount_value,
+    });
+    return `<button type="button" class="loyalty-redeem-btn button ${extraClass}" data-points="${this.escape(points)}">${this.escape(label)}</button>`;
+  }
+
   renderCartWidget() {
-    const canRedeem = this.redemption && this.balance >= this.redemption.points_required;
-    const pointsNeeded = this.redemption
-      ? Math.max(0, this.redemption.points_required - this.balance)
-      : 0;
+    const youHave = this.t('youHave', 'You have [points] points', { points: this.formatPoints(this.balance) });
+    let action = '';
+
+    if (this.canRedeem()) {
+      action = this.renderRedeemButton('button--secondary');
+    } else if (this.redemption) {
+      const needed = Math.max(0, this.redemption.points_required - this.balance);
+      action = `<p class="loyalty-earn-more">${this.escape(this.t('earnMore', 'Earn [points] more points to redeem', { points: needed }))}</p>`;
+    }
 
     return `
       <div class="loyalty-cart-content">
-        <div class="loyalty-cart-balance">
-          <span class="loyalty-icon">⭐</span>
-          <span class="loyalty-balance-text">
-            You have <strong>${this.formatPoints(this.balance)}</strong> points
-          </span>
-        </div>
-        ${
-          canRedeem
-            ? `
-          <button class="loyalty-redeem-btn button button--secondary" data-points="${this.redemption.points_required}">
-            Redeem ${this.redemption.points_required} pts for $${this.redemption.discount_value} off
-          </button>
-        `
-            : `
-          <p class="loyalty-earn-more">
-            Earn ${pointsNeeded} more points to redeem $${this.redemption?.discount_value || 5} off
-          </p>
-        `
-        }
+        <p class="loyalty-cart-balance">
+          <span class="loyalty-icon" aria-hidden="true">⭐</span>
+          <span class="loyalty-balance-text">${this.escape(youHave)}</span>
+        </p>
+        ${action}
       </div>
     `;
   }
 
-  /**
-   * Render account section HTML
-   * @param {Object} settings - Theme Editor block settings
-   */
-  renderAccountSection(settings = {}) {
-    const showTierProgress = settings.showTierProgress !== false;
-    const showRedeem = settings.showRedeem !== false;
-    const rewardsUrl = settings.rewardsUrl || '/pages/rewards';
+  /** Share (0–100) of the way from the current tier's minimum to the next tier. */
+  tierProgressPercent() {
+    if (!this.nextTier) return 100;
+    const currentMin = (this.tierConfig && this.tierConfig.min_spend) || 0;
+    const nextMin = this.lifetimeSpend + this.spendToNextTier;
+    const span = nextMin - currentMin;
+    if (span <= 0) return 100;
+    return Math.max(0, Math.min(100, ((this.lifetimeSpend - currentMin) / span) * 100));
+  }
 
-    const tierLabels = {
-      bronze: 'Bronze',
-      silver: 'Silver',
-      gold: 'Gold',
-    };
-
-    const progressPercent = this.nextTier
-      ? Math.min(100, ((this.tierConfig?.min_spend || 0) / (this.tierConfig?.min_spend + this.spendToNextTier)) * 100)
-      : 100;
-
+  renderAccountSection(settings) {
     let tierProgressHtml = '';
-    if (showTierProgress) {
-      tierProgressHtml = this.nextTier
-        ? `
+    if (settings.showTierProgress) {
+      if (this.nextTier) {
+        const text = this.t('spendToNext', 'Spend [amount] MDL more to reach [tier]', {
+          amount: Math.ceil(this.spendToNextTier),
+          tier: this.tierName(this.nextTier),
+        });
+        tierProgressHtml = `
           <div class="loyalty-progress">
             <div class="loyalty-progress-bar">
-              <div class="loyalty-progress-fill" style="width: ${progressPercent}%"></div>
+              <div class="loyalty-progress-fill" style="width: ${this.tierProgressPercent().toFixed(1)}%"></div>
             </div>
-            <p class="loyalty-progress-text">
-              Spend $${this.spendToNextTier.toFixed(0)} more to reach ${tierLabels[this.nextTier]}
-            </p>
+            <p class="loyalty-progress-text">${this.escape(text)}</p>
           </div>
-        `
-        : `<p class="loyalty-max-tier">You've reached the highest tier!</p>`;
+        `;
+      } else {
+        tierProgressHtml = `<p class="loyalty-max-tier">${this.escape(this.t('maxTier', "You've reached the highest tier!"))}</p>`;
+      }
     }
 
-    let redeemHtml = '';
-    if (showRedeem && this.redemption && this.balance >= this.redemption.points_required) {
-      redeemHtml = `
-        <button class="loyalty-redeem-btn button" data-points="${this.redemption.points_required}">
-          Redeem ${this.redemption.points_required} pts for $${this.redemption.discount_value} off
-        </button>
-      `;
-    }
+    const redeemHtml = settings.showRedeem && this.canRedeem() ? this.renderRedeemButton('') : '';
+    const tierClass = ['bronze', 'silver', 'gold'].includes(this.tier) ? this.tier : 'bronze';
 
     return `
       <div class="loyalty-account-content">
         <div class="loyalty-account-header">
-          <a href="${rewardsUrl}" class="loyalty-view-all">View Details &rarr;</a>
+          <a href="${this.escape(settings.rewardsUrl)}" class="loyalty-view-all">${this.escape(this.t('viewDetails', 'View details'))} &rarr;</a>
         </div>
 
         <div class="loyalty-account-stats">
           <div class="loyalty-stat">
-            <span class="loyalty-stat-value">${this.formatPoints(this.balance)}</span>
-            <span class="loyalty-stat-label">Points</span>
+            <span class="loyalty-stat-value">${this.escape(this.formatPoints(this.balance))}</span>
+            <span class="loyalty-stat-label">${this.escape(this.t('pointsLabel', 'Points'))}</span>
           </div>
           <div class="loyalty-stat">
-            <span class="loyalty-stat-value loyalty-tier-${this.tier}">${tierLabels[this.tier] || this.tier}</span>
-            <span class="loyalty-stat-label">Tier</span>
+            <span class="loyalty-stat-value loyalty-tier-${tierClass}">${this.escape(this.tierName(this.tier))}</span>
+            <span class="loyalty-stat-label">${this.escape(this.t('tierLabel', 'Tier'))}</span>
           </div>
         </div>
 
@@ -271,174 +239,212 @@ class LoyaltyHandler {
   }
 
   /**
-   * Render guest message
+   * Rewards page (sections/loyalty-rewards-page.liquid): balance, tier,
+   * redeem button and recent activity for the logged-in customer.
    */
-  renderGuestMessage() {
-    return `
-      <div class="loyalty-guest-message">
-        <p>
-          <a href="/account/login">Log in</a> or <a href="/account/register">create an account</a>
-          to earn rewards on every purchase!
-        </p>
+  updateRewardsPage() {
+    const container = document.querySelector('[data-loyalty-rewards]');
+    if (!container || this.isLoading) return;
+
+    if (this.loadFailed) {
+      container.innerHTML = `<p class="loyalty-unavailable">${this.escape(this.t('unavailable', 'Rewards are temporarily unavailable.'))}</p>`;
+      return;
+    }
+
+    let action = '';
+    if (this.canRedeem()) {
+      action = this.renderRedeemButton('');
+    } else if (this.redemption) {
+      const needed = Math.max(0, this.redemption.points_required - this.balance);
+      action = `<p class="loyalty-redeem-info">${this.escape(this.t('earnMore', 'Earn [points] more points to redeem', { points: needed }))}</p>`;
+    }
+
+    let progress = '';
+    if (this.nextTier) {
+      const text = this.t('spendToNext', 'Spend [amount] MDL more to reach [tier]', {
+        amount: Math.ceil(this.spendToNextTier),
+        tier: this.tierName(this.nextTier),
+      });
+      progress = `
+        <div class="loyalty-tier-progress">
+          <div class="loyalty-progress-bar"><div class="loyalty-progress-fill" style="width: ${this.tierProgressPercent().toFixed(1)}%"></div></div>
+          <p>${this.escape(text)}</p>
+        </div>`;
+    } else {
+      progress = `<p class="loyalty-max-tier">${this.escape(this.t('maxTier', "You've reached the highest tier!"))}</p>`;
+    }
+
+    const tierClass = ['bronze', 'silver', 'gold'].includes(this.tier) ? this.tier : 'bronze';
+    const rate = this.tierConfig ? this.tierConfig.points_per_dollar : null;
+    const labels = {
+      earn: this.t('historyEarned', 'Earned from order'),
+      redeem: this.t('historyRedeemed', 'Redeemed for discount'),
+      reverse: this.t('historyReversed', 'Points reversed'),
+      bonus: this.t('historyBonus', 'Welcome bonus'),
+    };
+    const icons = { earn: '➕', redeem: '🎁', reverse: '↩️', bonus: '⭐' };
+    const dateFormat = new Intl.DateTimeFormat(document.documentElement.lang || undefined);
+
+    const history = this.history.slice(0, 10).map((entry) => {
+      const points = Number(entry.points) || 0;
+      const date = entry.date ? dateFormat.format(new Date(entry.date)) : '';
+      const code = entry.type === 'redeem' && entry.discount_code ? ` · <code>${this.escape(entry.discount_code)}</code>` : '';
+      return `
+        <li class="loyalty-history-item loyalty-history-${this.escape(entry.type)}">
+          <span class="loyalty-history-icon" aria-hidden="true">${icons[entry.type] || '⭐'}</span>
+          <span class="loyalty-history-details">
+            <span class="loyalty-history-action">${this.escape(labels[entry.type] || entry.type)}${code}</span>
+            <span class="loyalty-history-date">${this.escape(date)}</span>
+          </span>
+          <span class="loyalty-history-points ${points >= 0 ? 'positive' : 'negative'}">${points >= 0 ? '+' : ''}${this.escape(this.formatPoints(points))}</span>
+        </li>`;
+    }).join('');
+
+    container.innerHTML = `
+      <div class="loyalty-dashboard">
+        <div class="loyalty-balance-card">
+          <div class="loyalty-balance-main">
+            <span class="loyalty-balance-icon" aria-hidden="true">⭐</span>
+            <div class="loyalty-balance-info">
+              <span class="loyalty-balance-points">${this.escape(this.formatPoints(this.balance))}</span>
+              <span class="loyalty-balance-label">${this.escape(this.t('pointsAvailable', 'Points available'))}</span>
+            </div>
+          </div>
+          ${action}
+        </div>
+        <div class="loyalty-tier-card-current">
+          <h2 class="h3">${this.escape(this.t('yourTier', 'Your tier'))}</h2>
+          <div class="loyalty-current-tier loyalty-tier-${tierClass}">
+            <span class="loyalty-tier-badge">${this.escape(this.tierName(this.tier))}</span>
+            ${rate !== null ? `<span class="loyalty-tier-rate">${this.escape(this.t('pointsPerMdl', '[rate] points per 1 MDL', { rate }))}</span>` : ''}
+          </div>
+          ${progress}
+        </div>
+      </div>
+      <div class="loyalty-history-section">
+        <h2 class="h3">${this.escape(this.t('recentActivity', 'Recent activity'))}</h2>
+        ${history
+          ? `<ul class="loyalty-history-list list-unstyled" role="list">${history}</ul>`
+          : `<p class="loyalty-no-history">${this.escape(this.t('noActivity', 'No activity yet. Start shopping to earn points!'))}</p>`}
       </div>
     `;
+    this.attachRedeemHandler(container);
   }
 
-  /**
-   * Setup event listeners
-   */
-  setupEventListeners() {
-    // Listen for cart updates to refresh widget
-    document.addEventListener('cart:updated', () => {
-      this.updateCartWidget();
-    });
-
-    // Handle dynamically added elements
-    const observer = new MutationObserver((mutations) => {
+  /** Fill widgets that appear later, e.g. when the cart drawer is re-rendered. */
+  observeNewWidgets() {
+    if (this.observer) return;
+    this.observer = new MutationObserver((mutations) => {
+      let cart = false;
+      let account = false;
       for (const mutation of mutations) {
         for (const node of mutation.addedNodes) {
-          if (node.nodeType === Node.ELEMENT_NODE) {
-            if (node.classList?.contains('loyalty-cart-widget')) {
-              this.updateCartWidget();
-            }
-            if (node.classList?.contains('loyalty-account-section') && !node.dataset.loyaltyInitialized) {
-              node.dataset.loyaltyInitialized = 'true';
-              this.updateAccountSection();
-            }
-          }
+          if (node.nodeType !== Node.ELEMENT_NODE) continue;
+          if (node.matches('.loyalty-cart-widget') || node.querySelector('.loyalty-cart-widget')) cart = true;
+          if (node.matches('.loyalty-account-section') || node.querySelector('.loyalty-account-section')) account = true;
         }
       }
+      if (cart) this.updateCartWidget();
+      if (account) this.updateAccountSection();
     });
-    observer.observe(document.body, { childList: true, subtree: true });
+    this.observer.observe(document.body, { childList: true, subtree: true });
   }
 
-  /**
-   * Attach redeem button handler
-   */
   attachRedeemHandler(container) {
     const btn = container.querySelector('.loyalty-redeem-btn');
     if (!btn) return;
 
-    btn.addEventListener('click', async (e) => {
-      e.preventDefault();
-      const points = parseInt(btn.dataset.points, 10);
-      await this.redeemPoints(points, btn);
+    btn.addEventListener('click', async (event) => {
+      event.preventDefault();
+      await this.redeemPoints(parseInt(btn.dataset.points, 10), btn);
     });
   }
 
-  /**
-   * Redeem points for discount code
-   */
   async redeemPoints(points, button) {
-    if (!this.isLoggedIn || !this.customerId) {
-      alert('Please log in to redeem points');
-      return;
-    }
-
     const originalText = button.textContent;
     button.disabled = true;
-    button.textContent = 'Redeeming...';
+    button.textContent = this.t('redeeming', 'Redeeming...');
 
     try {
-      const response = await fetch(`${this.apiUrl}/api/loyalty/redeem`, {
+      const data = await this.request('/api/loyalty/redeem', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': this.apiKey,
-        },
-        body: JSON.stringify({
-          customerId: this.customerId,
-          points: points,
-        }),
+        body: JSON.stringify({ points }),
       });
 
-      const data = await response.json();
+      if (!data.success) throw new Error(data.error || 'redeem failed');
 
-      if (data.success) {
-        this.balance = data.remaining_points;
-        this.showDiscountCode(data.discount_code, data.discount_value);
-        this.updatePointsBadge();
-        this.updateCartWidget();
-        this.updateAccountSection();
-      } else {
-        alert(data.error || 'Failed to redeem points. Please try again.');
-        button.disabled = false;
-        button.textContent = originalText;
-      }
+      this.balance = data.remaining_points;
+      this.history = [
+        { type: 'redeem', points: -data.points_redeemed, discount_code: data.discount_code, date: new Date().toISOString() },
+        ...this.history,
+      ];
+      this.showDiscountCode(data.discount_code, data.discount_value);
+      this.updatePointsBadge();
+      this.updateCartWidget();
+      this.updateAccountSection();
+      this.updateRewardsPage();
     } catch (error) {
-      console.error('Error redeeming points:', error);
-      alert('Failed to redeem points. Please try again.');
+      console.error('Error redeeming points:', error.message);
       button.disabled = false;
       button.textContent = originalText;
+      window.alert(this.t('redeemFailed', 'Could not redeem points. Please try again.'));
     }
   }
 
-  /**
-   * Show discount code modal/notification
-   */
   showDiscountCode(code, value) {
-    // Create modal
+    const previousFocus = document.activeElement;
     const modal = document.createElement('div');
     modal.className = 'loyalty-discount-modal';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'LoyaltyModalTitle');
     modal.innerHTML = `
       <div class="loyalty-discount-modal-content">
-        <button class="loyalty-modal-close">&times;</button>
-        <div class="loyalty-modal-icon">🎉</div>
-        <h3>Congratulations!</h3>
-        <p>You've redeemed your points for a $${value} discount!</p>
+        <button type="button" class="loyalty-modal-close" aria-label="${this.escape(this.t('close', 'Close'))}">&times;</button>
+        <div class="loyalty-modal-icon" aria-hidden="true">🎉</div>
+        <h3 id="LoyaltyModalTitle">${this.escape(this.t('congratsTitle', 'Congratulations!'))}</h3>
+        <p>${this.escape(this.t('discountReady', 'Your [value] MDL discount code is ready.', { value }))}</p>
         <div class="loyalty-discount-code">
-          <code>${code}</code>
-          <button class="loyalty-copy-btn" data-code="${code}">Copy</button>
+          <code>${this.escape(code)}</code>
+          <button type="button" class="loyalty-copy-btn">${this.escape(this.t('copy', 'Copy'))}</button>
         </div>
-        <p class="loyalty-modal-note">Use this code at checkout. Valid for 90 days.</p>
+        <p class="loyalty-modal-note">${this.escape(this.t('codeNote', 'Use it at checkout. Valid for 90 days, for your account only.'))}</p>
       </div>
     `;
 
-    document.body.appendChild(modal);
-
-    // Handle close
-    modal.querySelector('.loyalty-modal-close').addEventListener('click', () => {
+    const close = () => {
       modal.remove();
-    });
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) modal.remove();
+      document.removeEventListener('keydown', onKeydown);
+      if (previousFocus && previousFocus.focus) previousFocus.focus();
+    };
+    const onKeydown = (event) => {
+      if (event.key === 'Escape') close();
+    };
+
+    document.body.appendChild(modal);
+    document.addEventListener('keydown', onKeydown);
+    modal.querySelector('.loyalty-modal-close').addEventListener('click', close);
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) close();
     });
 
-    // Handle copy
-    modal.querySelector('.loyalty-copy-btn').addEventListener('click', (e) => {
+    const copyBtn = modal.querySelector('.loyalty-copy-btn');
+    copyBtn.addEventListener('click', () => {
       navigator.clipboard.writeText(code).then(() => {
-        e.target.textContent = 'Copied!';
+        copyBtn.textContent = this.t('copied', 'Copied!');
         setTimeout(() => {
-          e.target.textContent = 'Copy';
+          copyBtn.textContent = this.t('copy', 'Copy');
         }, 2000);
       });
     });
+    copyBtn.focus();
   }
 
-  /**
-   * Format points for display
-   */
   formatPoints(points) {
-    return points.toLocaleString();
-  }
-
-  /**
-   * Get translation with fallback
-   */
-  getTranslation(key, fallback) {
-    const keys = key.split('.');
-    let value = window.translations || {};
-
-    for (const k of keys) {
-      value = value[k];
-      if (!value) return fallback;
-    }
-
-    return value || fallback;
+    return Number(points || 0).toLocaleString(document.documentElement.lang || undefined);
   }
 }
 
-// Initialize on DOM load
 document.addEventListener('DOMContentLoaded', () => {
   window.loyaltyHandler = new LoyaltyHandler();
 });

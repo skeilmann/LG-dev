@@ -599,6 +599,9 @@
       "max_error": "This item has a maximum of {{ max }}",
       "step_error": "You can only add this item in increments of {{ step }}"
     },
+    "related_products": {
+      "heading": "You may also like"
+    },
     "recently_viewed": {
       "name": "Recently Viewed",
       "heading": "Recently Viewed",
@@ -611,6 +614,8 @@
   },
   "localization": {
     "country_label": "Country/region",
+    "delivery_address_label": "Delivery address",
+    "delivery_location_md": "Moldova, Bălți",
     "language_label": "Language",
     "update_language": "Update language",
     "update_country": "Update country/region",
@@ -651,7 +656,32 @@
       "earned": "Earned from order",
       "redeemed": "Redeemed for discount",
       "reversed": "Points reversed",
-      "welcome_bonus": "Welcome bonus"
+      "welcome_bonus": "Welcome bonus",
+      "you_have": "You have {{ points }} points",
+      "points_label": "Points",
+      "tier_label": "Tier",
+      "view_details": "View details",
+      "tier_bronze": "Bronze",
+      "tier_silver": "Silver",
+      "tier_gold": "Gold",
+      "redeeming": "Redeeming...",
+      "redeem_failed": "Could not redeem points. Please try again.",
+      "congrats_title": "Congratulations!",
+      "discount_ready": "Your {{ value }} MDL discount code is ready.",
+      "code_note": "Use it at checkout. Valid for 90 days, for your account only.",
+      "copy": "Copy",
+      "copied": "Copied!",
+      "close": "Close",
+      "unavailable": "Rewards are temporarily unavailable.",
+      "points_available": "Points available",
+      "points_per_mdl": "Points per 1 MDL: {{ rate }}",
+      "from_amount": "from {{ amount }} MDL",
+      "step_shop_title": "Shop",
+      "step_shop_text": "Earn points on every paid order.",
+      "step_earn_title": "Grow",
+      "step_earn_text": "Higher tiers earn more points per MDL.",
+      "step_redeem_title": "Redeem",
+      "step_redeem_text": "{{ points }} points = {{ value }} MDL off."
     },
     "account": {
       "title": "Account",

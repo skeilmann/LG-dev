@@ -9,6 +9,26 @@
  */
 {
   "settings_schema": {
+    "vev_app": {
+      "name": "VEV app (favorites & rewards)",
+      "settings": {
+        "paragraph": {
+          "content": "Connects favorites sync and loyalty points to the VEV server. Customers are identified by a signed token made from the shop metafield custom.vev_token_secret."
+        },
+        "vev_api_url": {
+          "label": "Server address",
+          "info": "HTTPS address of the VEV server, without a trailing slash. Leave empty to turn off favorites sync and rewards."
+        },
+        "loyalty_widgets_enabled": {
+          "label": "Show rewards in header and cart",
+          "info": "Points badge in the header and the rewards box in the cart. Turn on only after the server is live."
+        },
+        "loyalty_page": {
+          "label": "Rewards page",
+          "info": "Page using the \"rewards\" template. The header points badge links here."
+        }
+      }
+    },
     "global": {
       "settings": {
         "header__border": {
@@ -3433,6 +3453,9 @@
         }
       }
     },
+    "recently_viewed": {
+      "name": "Recently viewed products"
+    },
     "related-products": {
       "name": "Related products",
       "settings": {
@@ -3712,6 +3735,10 @@
           "settings": {
             "image": {
               "label": "Image"
+            },
+            "image_mobile": {
+              "label": "Mobile image",
+              "info": "Optional. Shown on screens under 750px instead of the image above. 402 × 408 px or larger at the same ratio works best."
             },
             "heading": {
               "label": "Heading",

@@ -318,34 +318,47 @@ class FavoritesHandler {
      * @private
      */
     async syncFavoritesToServer() {
-        if (!this.isLoggedIn || !window.Shopify?.customerId) {
+        if (!this.isLoggedIn) {
             return;
+        }
+        await this.postFavorites(Array.from(this.favorites.values()), 'replace');
+    }
+
+    /**
+     * Sends favorites to the VEV server, which saves them to the customer
+     * metafield custom.fav_prod. The customer is identified by the signed token
+     * in window.VEV (rendered by Liquid in theme.liquid); nothing is sent when
+     * the server is not configured.
+     * @param {Array<{id:number, handle:string}>} favorites
+     * @param {'replace'|'merge'} mode - replace: full current list; merge: add to stored list
+     * @returns {Promise<Array|null>} the saved list, or null on failure
+     * @private
+     */
+    async postFavorites(favorites, mode) {
+        const api = window.VEV;
+        if (!api || !api.apiUrl || !api.token) {
+            return null;
         }
 
         try {
-            const favoritesArray = Array.from(this.favorites.values());
-            console.log('Syncing favorites to server:', favoritesArray.length, 'items');
-
-            const response = await fetch('http://31.97.184.19:3000/api/sync-favorites', {
+            const response = await fetch(`${api.apiUrl}/api/sync-favorites`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-api-key': 'Gheorghe2025VeV'
+                    Authorization: `Bearer ${api.token}`
                 },
-                body: JSON.stringify({
-                    customerId: window.Shopify.customerId,
-                    favorites: favoritesArray
-                })
+                body: JSON.stringify({ favorites, mode })
             });
 
-            if (response.ok) {
-                console.log('Favorites synced successfully to metafield');
-            } else {
-                const text = await response.text();
-                console.error('Failed to sync favorites:', text);
+            if (!response.ok) {
+                console.error('Failed to sync favorites:', response.status);
+                return null;
             }
+            const data = await response.json();
+            return Array.isArray(data.saved) ? data.saved : null;
         } catch (error) {
-            console.error('Error syncing favorites to server:', error);
+            console.error('Error syncing favorites to server:', error.message);
+            return null;
         }
     }
 
@@ -398,8 +411,7 @@ class FavoritesHandler {
             return;
         }
 
-        const customerId = window.Shopify?.customerId;
-        if (!customerId) {
+        if (!window.Shopify?.customerId) {
             return;
         }
 
@@ -415,33 +427,19 @@ class FavoritesHandler {
             return;
         }
 
-        try {
-            console.log('Migrating guest favorites to metafield:', favoritesToSync.length, 'items');
-            const response = await fetch('http://31.97.184.19:3000/api/sync-favorites', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': 'Gheorghe2025VeV'
-                },
-                body: JSON.stringify({
-                    customerId: customerId,
-                    favorites: favoritesToSync
-                })
-            });
-
-            if (response.ok) {
-                console.log('Guest favorites migrated successfully to metafield');
-                localStorage.removeItem('guestFavorites');
-                // Reload favorites from metafield after migration
-                this.favorites = await this.loadFavorites();
-                this.updateButtons();
-            } else {
-                const text = await response.text();
-                console.error('Failed to migrate favorites:', text);
-            }
-        } catch (error) {
-            console.error('Error migrating guest favorites:', error);
+        const saved = await this.postFavorites(favoritesToSync, 'merge');
+        if (!saved) {
+            // Keep the guest list so the next page load can try again
+            return;
         }
+
+        localStorage.removeItem('guestFavorites');
+        // The server returns the merged list; use it (the page's metafield copy is older)
+        // Map keys are numeric product IDs, as in toggleFavorite()
+        this.favorites = new Map(saved.map((item) => [Number(item.id), { id: Number(item.id), handle: item.handle || '' }]));
+        this.updateButtons();
+        this.updateFavoritesBubble();
+        this.notifyStateChange();
     }
 
     /**

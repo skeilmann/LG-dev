@@ -12,13 +12,11 @@
   }
 </style>
 
-{%- comment -%} Preload critical resources FIRST for render optimization {%- endcomment -%}
-<link rel="preload" href="{{ 'component-custom-header.css' | asset_url }}" as="style">
-<link rel="preload" href="{{ 'custom-header.js' | asset_url }}" as="script">
-{%- if settings.logo -%}
-  <link rel="preload" as="image" href="{{ settings.logo | image_url: width: 600 }}" fetchpriority="high">
-{%- endif -%}
-
+{%- comment -%}
+  No manual preloads here: the stylesheet below is already render-blocking,
+  custom-header.js is deferred, and the logo's image_tag uses preload: true
+  (Shopify sends a preload for the srcset size the browser will really use).
+{%- endcomment -%}
 {%- comment -%} Load critical header CSS synchronously - removed media="print" hack {%- endcomment -%}
 <link rel="stylesheet" href="{{ 'component-custom-header.css' | asset_url }}">
 <link rel="stylesheet" href="{{ 'component-list-menu.css' | asset_url }}">
@@ -749,11 +747,14 @@
       <!-- Mobile Country Selector (below logo on mobile) -->
       {%- if section.settings.enable_country_selector and localization.available_countries.size > 1 -%}
         <div class="mobile-country-selector-wrapper">
+          <span class="mobile-country-selector__caption" aria-hidden="true">
+            {{- 'localization.delivery_address_label' | t -}}
+          </span>
           <localization-form data-prevent-hide>
             {%- form 'localization', id: 'HeaderCountryMobileForm', class: 'localization-form' -%}
               <div>
                 <h2 class="visually-hidden" id="HeaderCountryMobileLabel">{{ 'localization.country_label' | t }}</h2>
-                {%- render 'country-localization', localPosition: 'HeaderCountryMobile' -%}
+                {%- render 'country-localization', localPosition: 'HeaderCountryMobile', vev_mobile: true -%}
               </div>
             {%- endform -%}
           </localization-form>
@@ -854,6 +855,8 @@
             <span class="visually-hidden">{{ 'customer.favorites.title' | t }}</span>
             {% render 'favorites-icon-bubble' %}
           </button>
+
+          {%- render 'loyalty-points-badge' -%}
 
           <a
             href="{{ routes.cart_url }}"

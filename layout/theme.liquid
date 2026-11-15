@@ -1,7 +1,6 @@
 <!doctype html>
 <html class="js" lang="{{ request.locale.iso_code }}">
   <head>
-    {%- render 'ecom_header' -%}
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -33,6 +32,25 @@
       <script>
         window.Shopify = window.Shopify || {};
         window.Shopify.customerId = {{ customer.id }};
+        {%- comment -%}
+          Signed customer token for the VEV server (favorites sync, rewards).
+          token = "<customer id>.<expires>.<hmac>", hmac = HMAC-SHA256 of
+          "<customer id>:<expires>" with shop metafield custom.vev_token_secret.
+          The secret is only used here, server-side; it never reaches the page.
+          The server keeps the same secret in CUSTOMER_TOKEN_SECRET.
+        {%- endcomment -%}
+        {%- liquid
+          assign vev_secret = shop.metafields.custom.vev_token_secret.value
+          if settings.vev_api_url != blank and vev_secret != blank
+            assign vev_expires = 'now' | date: '%s' | plus: 86400
+            assign vev_message = customer.id | append: ':' | append: vev_expires
+            assign vev_sig = vev_message | hmac_sha256: vev_secret
+            assign vev_token = customer.id | append: '.' | append: vev_expires | append: '.' | append: vev_sig
+            assign vev_api_json = settings.vev_api_url | json
+            assign vev_token_json = vev_token | json
+            echo 'window.VEV = { apiUrl: ' | append: vev_api_json | append: ', token: ' | append: vev_token_json | append: ' };'
+          endif
+        -%}
         {%- comment -%}Load metafield value safely - handle cases where json filter might fail{%- endcomment -%}
         {%- if customer.metafields.custom.fav_prod.value != blank -%}
           {%- assign fav_metafield = customer.metafields.custom.fav_prod.value -%}
@@ -58,7 +76,14 @@
     <script src="{{ 'search-form.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'cart-restore.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'favorites-handler.js' | asset_url }}" defer="defer"></script>
-    <script src="{{ 'loyalty-handler.js' | asset_url }}" defer="defer"></script>
+    {%- if customer and settings.vev_api_url != blank -%}
+      <script src="{{ 'loyalty-handler.js' | asset_url }}" defer="defer"></script>
+    {%- endif -%}
+    {%- if settings.vev_api_url != blank -%}
+      {%- if customer or settings.loyalty_widgets_enabled -%}
+        <link rel="stylesheet" href="{{ 'component-loyalty.css' | asset_url }}" media="print" onload="this.media='all'">
+      {%- endif -%}
+    {%- endif -%}
 
     {%- if settings.animations_reveal_on_scroll -%}
       <script src="{{ 'animations.js' | asset_url }}" defer="defer"></script>
@@ -361,11 +386,6 @@
       >
     {%- endif -%}
 
-    <!-- Add these lines -->
-    <link rel="stylesheet" href="{{ 'instagram-section.css' | asset_url }}" media="print" onload="this.media='all'">
-    <script src="{{ 'instagram-section.js' | asset_url }}" defer="defer"></script>
-    <!-- End of new additions -->
-
     <script src="{{ 'free-shipping-progress.js' | asset_url }}" defer="defer"></script>
     {{ 'free-shipping-progress.css' | asset_url | stylesheet_tag }}
 
@@ -445,6 +465,41 @@
   window.theme.strings.favoriteAdded = {{ 'favorites.added' | t | json }};
   window.theme.strings.favoriteRemove = {{ 'favorites.remove' | t | json }};
   window.theme.strings.favoritesEmpty = {{ 'favorites.empty' | t | json }};
+  {%- if customer and settings.vev_api_url != blank %}
+  window.theme.strings.loyalty = {
+    youHave: {{ 'customer.loyalty.you_have' | t: points: '[points]' | json }},
+    redeemFor: {{ 'customer.loyalty.redeem_for' | t: points: '[points]', value: '[value]' | json }},
+    earnMore: {{ 'customer.loyalty.earn_more' | t: points: '[points]' | json }},
+    spendToNext: {{ 'customer.loyalty.spend_to_next' | t: amount: '[amount]', tier: '[tier]' | json }},
+    maxTier: {{ 'customer.loyalty.max_tier' | t | json }},
+    pointsLabel: {{ 'customer.loyalty.points_label' | t | json }},
+    tierLabel: {{ 'customer.loyalty.tier_label' | t | json }},
+    viewDetails: {{ 'customer.loyalty.view_details' | t | json }},
+    tiers: {
+      bronze: {{ 'customer.loyalty.tier_bronze' | t | json }},
+      silver: {{ 'customer.loyalty.tier_silver' | t | json }},
+      gold: {{ 'customer.loyalty.tier_gold' | t | json }}
+    },
+    redeeming: {{ 'customer.loyalty.redeeming' | t | json }},
+    redeemFailed: {{ 'customer.loyalty.redeem_failed' | t | json }},
+    congratsTitle: {{ 'customer.loyalty.congrats_title' | t | json }},
+    discountReady: {{ 'customer.loyalty.discount_ready' | t: value: '[value]' | json }},
+    codeNote: {{ 'customer.loyalty.code_note' | t | json }},
+    copy: {{ 'customer.loyalty.copy' | t | json }},
+    copied: {{ 'customer.loyalty.copied' | t | json }},
+    close: {{ 'customer.loyalty.close' | t | json }},
+    unavailable: {{ 'customer.loyalty.unavailable' | t | json }},
+    pointsAvailable: {{ 'customer.loyalty.points_available' | t | json }},
+    pointsPerMdl: {{ 'customer.loyalty.points_per_mdl' | t: rate: '[rate]' | json }},
+    yourTier: {{ 'customer.loyalty.your_tier' | t | json }},
+    recentActivity: {{ 'customer.loyalty.recent_activity' | t | json }},
+    noActivity: {{ 'customer.loyalty.no_activity' | t | json }},
+    historyEarned: {{ 'customer.loyalty.earned' | t | json }},
+    historyRedeemed: {{ 'customer.loyalty.redeemed' | t | json }},
+    historyReversed: {{ 'customer.loyalty.reversed' | t | json }},
+    historyBonus: {{ 'customer.loyalty.welcome_bonus' | t | json }}
+  };
+  {%- endif %}
     </script>
 
     {%- if settings.predictive_search_enabled -%}
@@ -454,6 +509,5 @@
     {%- if settings.cart_type == 'drawer' -%}
       <script src="{{ 'cart-drawer.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
-    {%- render 'ecom_footer' -%}
   </body>
 </html>
