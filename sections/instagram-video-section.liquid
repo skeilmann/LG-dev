@@ -7,7 +7,12 @@
   - Optional "View More" button
   - Responsive slider with navigation
   - Dynamic video loading from Instagram
+
+  Dependencies: assets/instagram-section.css, assets/instagram-section.js
+  (loaded here so pages without this section don't download them)
 {%- endcomment -%}
+{{ 'instagram-section.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'instagram-section.js' | asset_url }}" defer="defer"></script>
 
 <div class="instagram-video-section" data-instagram-feed>
   <div class="page-width isolate">
