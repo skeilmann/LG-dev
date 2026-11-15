@@ -352,13 +352,45 @@
     "vev_promo": {
       "type": "vev-promo",
       "blocks": {
-        "chip_1": { "type": "chip", "settings": { "collection": "dark-gel-polish" } },
-        "chip_2": { "type": "chip", "settings": { "collection": "dark", "label": "бренд Dark" } },
-        "chip_3": { "type": "chip", "settings": { "collection": "dark-flash-gel-polish" } },
-        "chip_4": { "type": "chip", "settings": { "collection": "dark-cat-eye" } },
-        "chip_5": { "type": "chip", "settings": { "collection": "da23" } }
+        "chip_1": {
+          "type": "chip",
+          "settings": {
+            "collection": "dark-gel-polish"
+          }
+        },
+        "chip_2": {
+          "type": "chip",
+          "settings": {
+            "collection": "dark",
+            "label": "бренд Dark"
+          }
+        },
+        "chip_3": {
+          "type": "chip",
+          "settings": {
+            "collection": "dark-flash-gel-polish"
+          }
+        },
+        "chip_4": {
+          "type": "chip",
+          "settings": {
+            "collection": "dark-cat-eye"
+          }
+        },
+        "chip_5": {
+          "type": "chip",
+          "settings": {
+            "collection": "da23"
+          }
+        }
       },
-      "block_order": ["chip_1", "chip_2", "chip_3", "chip_4", "chip_5"],
+      "block_order": [
+        "chip_1",
+        "chip_2",
+        "chip_3",
+        "chip_4",
+        "chip_5"
+      ],
       "settings": {
         "eyebrow": "ГОРЯЧЕЕ ПРЕДЛОЖЕНИЕ",
         "heading": "DARK SMART BUILDER GEL 🔥",
@@ -475,42 +507,14 @@
         "padding_bottom": 36
       }
     },
-    "image_with_text_aQnCVL": {
-      "type": "image-with-text",
-      "blocks": {
-        "heading_VB98cF": {
-          "type": "heading",
-          "settings": {
-            "heading": "<strong>О МАГАЗИНЕ VEV.MD ☺️</strong>",
-            "heading_size": "h1"
-          }
-        },
-        "text_XnEXTG": {
-          "type": "text",
-          "settings": {
-            "text": "<p>VEV LUX NAILS SHOP - это все необходимые Вам товары для маникюра и дизайна ногтей в Молдове, собранные в одном месте, с доставкой по всему миру. <br/><br/>Мы являемся официальным дистрибьютором брендов: HELLO, DARK, NAILS OF THE DAY, LUNA, GA&MA, SUNUV, MARATHON, ÜLKA, DA'23, EASY, AMERICAN CREATOR и многих других. Получите приятный бонус в виде кэшбека 5% с каждого заказа на сайте.<br/><br/>Работаем как с розничными клиентами, так и с салонами красоты по перечислению, а для больших оптовых заказов действуют скидки. Заказать товар можно прямо с сайта или Instagram. В наличии гель-лаки, всё для стемпинга, оригинальные UV-лампы, фрезеры и вытяжки, а также любые инструменты и расходные материалы.<br/><br/>Мы находимся по адресу: ул. Михай Витязул 34а, г. Бельцы, Республика Молдова. Будем рады вас видеть!<br/><br/>SRL VOLOSANOVSCHI NAILS<br/>IDNO 1023602001320</p>",
-            "text_style": "body"
-          }
-        }
-      },
-      "block_order": [
-        "heading_VB98cF",
-        "text_XnEXTG"
-      ],
+    "vev_about": {
+      "type": "vev-about",
       "settings": {
         "image": "shopify://shop_images/image_2f5e4909-b589-447a-8f6e-b0f05f6a16ef.jpg",
-        "height": "large",
-        "desktop_image_width": "medium",
-        "layout": "image_first",
-        "desktop_content_position": "top",
-        "desktop_content_alignment": "left",
-        "content_layout": "no-overlap",
-        "section_color_scheme": "",
-        "color_scheme": "",
-        "image_behavior": "none",
-        "mobile_content_alignment": "left",
-        "padding_top": 36,
-        "padding_bottom": 36
+        "heading": "О МАГАЗИНЕ VEV.MD ☺️",
+        "text": "<p><strong>VEV LUX NAILS SHOP</strong> - это все необходимые Вам товары для маникюра и дизайна ногтей в Молдове, собранные в одном месте, с доставкой по всему миру.</p><p>Мы являемся официальным дистрибьютором брендов: HELLO, DARK, NAILS OF THE DAY, LUNA, GA&MA, SUNUV, MARATHON, ÜLKA, DA'23, EASY, AMERICAN CREATOR и многих других. Получите приятный бонус в виде кэшбека 5% с каждого заказа на сайте.</p><p>Работаем как с розничными клиентами, так и с салонами красоты по перечислению, а для больших оптовых заказов действуют скидки. Заказать товар можно прямо с сайта или Instagram. В наличии гель-лаки, всё для стемпинга, оригинальные UV-лампы, фрезеры и вытяжки, а также любые инструменты и расходные материалы.</p><p>Мы находимся по адресу: ул. Михай Витязул 34а, г. Бельцы, Республика Молдова. Будем рады вас видеть!</p><p>SRL VOLOSANOVSCHI NAILS<br/>IDNO 1023602001320</p>",
+        "padding_top": 88,
+        "padding_bottom": 88
       }
     },
     "vendor_showcase_renUma": {
@@ -710,13 +714,9 @@
     },
     "contact_form_f3YMJB": {
       "type": "contact-form",
-      "custom_css": [
-        ".contact-form {padding: 0 50px;}",
-        "@media screen and (min-width: 750px) {.contact-form {padding: 0 100px; }}"
-      ],
       "name": "t:sections.contact-form.presets.name",
       "settings": {
-        "custom_subtitle": "<p>Have questions? Leave a request and we will call you back 💖✨</p>",
+        "custom_subtitle": "",
         "title_size": "h1",
         "text_alignment": "center",
         "show_name_field": true,
@@ -1149,7 +1149,7 @@
     "collage_3VGjEW",
     "featured_blog_UhBKqY",
     "featured_collection_HWdCEJ",
-    "image_with_text_aQnCVL",
+    "vev_about",
     "vendor_showcase_renUma",
     "contact_form_f3YMJB"
   ]

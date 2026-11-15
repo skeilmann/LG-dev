@@ -43,7 +43,7 @@
         {%- else -%}
           <p class="contact-form-description">
             {{ 'templates.contact.form.description' | t }}
-            <span class="contact-form-emojis">💖✨</span>
+            <span class="contact-form-emojis" aria-hidden="true">💖</span>
           </p>
         {%- endif -%}
       </div>
@@ -64,20 +64,14 @@
             {{- 'icon-error.svg' | inline_asset_content -}}
             {{ 'templates.contact.form.error_heading' | t }}
           </div>
-          <ul class="contact-form-errors">
-            <li>
-              <a href="#ContactForm-email" class="link">
-                {{ form.errors.translated_fields.email | capitalize }}
-                {{ form.errors.messages.email }}
-              </a>
-            </li>
-          </ul>
+          <div class="contact-form-errors">{{ form.errors | default_errors }}</div>
         {%- endif -%}
 
         <div class="contact-form-fields">
           <div class="contact-form-row">
             {%- if section.settings.show_name_field -%}
               <div class="contact-form-field">
+                <label class="visually-hidden" for="ContactForm-name">{{ 'templates.contact.form.name' | t }}</label>
                 <input
                   class="contact-form-input"
                   autocomplete="name"
@@ -92,13 +86,15 @@
             {%- endif -%}
             {%- if section.settings.show_phone_field -%}
               <div class="contact-form-field">
+                <label class="visually-hidden" for="ContactForm-phone">{{ 'templates.contact.form.phone' | t }}</label>
                 <input
                   type="tel"
                   id="ContactForm-phone"
                   class="contact-form-input"
                   autocomplete="tel"
                   name="contact[{{ 'templates.contact.form.phone' | t }}]"
-                  pattern="[0-9\-]*"
+                  inputmode="tel"
+                  pattern="[0-9 +\(\)\-]{6,}"
                   value="{% if form.phone %}{{ form.phone }}{% elsif customer %}{{ customer.phone }}{% endif %}"
                   placeholder="{{ 'templates.contact.form.phone' | t }}*"
                   required
@@ -107,6 +103,7 @@
             {%- endif -%}
             {%- if section.settings.show_email_field -%}
               <div class="contact-form-field">
+                <label class="visually-hidden" for="ContactForm-email">{{ 'templates.contact.form.email' | t }}</label>
                 <input
                   autocomplete="email"
                   type="email"
@@ -125,6 +122,7 @@
           {%- if section.settings.show_comment_field -%}
             <div class="contact-form-row">
               <div class="contact-form-field contact-form-field--full">
+                <label class="visually-hidden" for="ContactForm-body">{{ 'templates.contact.form.comment' | t }}</label>
                 <textarea
                   rows="4"
                   id="ContactForm-body"

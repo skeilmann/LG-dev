@@ -482,6 +482,15 @@
         "name": "VEV brand stories"
       }
     },
+    "vev_about": {
+      "name": "VEV about the shop",
+      "settings": {
+        "image": { "label": "Image" },
+        "heading": { "label": "Heading" },
+        "text": { "label": "Text" }
+      },
+      "presets": { "name": "VEV about the shop" }
+    },
     "vev_promo": {
       "name": "VEV promo with countdown",
       "settings": {
