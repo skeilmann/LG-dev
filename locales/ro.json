@@ -313,6 +313,13 @@
       "shown": "Produse afișate: {{ category }}",
       "error": "Produsele nu au putut fi încărcate. Încercați din nou."
     },
+    "vev_promo": {
+      "days_left": {
+        "one": "zi până la finalul ofertei",
+        "few": "zile până la finalul ofertei",
+        "other": "de zile până la finalul ofertei"
+      }
+    },
     "breadcrumbs": {
       "home": "Acasă"
     },

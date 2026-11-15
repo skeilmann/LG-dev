@@ -21,7 +21,13 @@
 <div class="vendor-showcase color-{{ color_scheme }} gradient section-{{ section_id }}-padding">
   <div class="page-width">
     <div class="vendor-showcase__header">
-      <h2 class="vendor-showcase__title h1">{{ 'vendor_showcase.title' | t }}</h2>
+      <h2 class="vendor-showcase__title">
+        {%- if section.settings.heading != blank -%}
+          {{ section.settings.heading | escape }}
+        {%- else -%}
+          {{ 'vendor_showcase.title' | t }}
+        {%- endif -%}
+      </h2>
     </div>
 
     {%- if section.blocks.size > 0 -%}
@@ -31,6 +37,7 @@
           --desktop-columns: {{ desktop_columns }};
           --mobile-columns: {{ mobile_columns }};
           --logo-height: {{ logo_height }}px;
+          --logo-height-number: {{ logo_height }};
           --grid-gap: {{ grid_gap }}rem;
         "
       >
@@ -95,6 +102,12 @@
     "groups": ["header", "footer"]
   },
   "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:sections.vendor_showcase.settings.heading.label",
+      "info": "t:sections.vendor_showcase.settings.heading.info"
+    },
     {
       "type": "range",
       "id": "max_collections",

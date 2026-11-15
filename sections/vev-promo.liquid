@@ -1,0 +1,368 @@
+{%- comment -%}
+  vev-promo.liquid
+  Promo block with a countdown (Figma: VEV.MD Concept → "ГОРЯЧЕЕ ПРЕДЛОЖЕНИЕ").
+
+  - Left: small pink heading, big title, subtitle, and a photo with a
+    "N days left" badge in its corner.
+  - Right: category chips, slider arrows and product cards. This reuses the
+    <vev-product-carousel> element and styles from sections/vev-product-carousel.liquid,
+    so chips load their products the same way.
+  - The badge counts down to the end of the "Offer end date" (shop time zone).
+    It is hidden when the date is empty or in the past. The number is worked out
+    on the server and updated in the browser, so cached pages stay correct.
+
+  Dependencies:
+  - snippets/vev-carousel-items.liquid, snippets/card-product.liquid
+  - assets/section-vev-product-carousel.css, assets/vev-product-carousel.js
+  - assets/section-vev-promo.css, assets/vev-countdown.js
+  - assets/component-slider.css, assets/component-card.css, SliderComponent (global.js)
+{%- endcomment -%}
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-slider.css' | asset_url | stylesheet_tag }}
+{{ 'quick-add.css' | asset_url | stylesheet_tag }}
+{{ 'section-vev-product-carousel.css' | asset_url | stylesheet_tag }}
+{{ 'section-vev-promo.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'quick-add.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'vev-product-carousel.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'vev-countdown.js' | asset_url }}" defer="defer"></script>
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  #Slider-{{ section.id }} {
+    --vev-columns-setting: 2;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign main_collection = section.settings.collection
+  assign heading_id = 'VevPromoHeading-' | append: section.id
+
+  assign promo_image = section.settings.image | default: main_collection.image
+
+  # Countdown end (Unix seconds). The section's date wins: the offer ends at 23:59:59
+  # that day, shop time zone. Otherwise use the collection's "end of sale" metafield,
+  # which the old collage section used. An unreadable date gives a tiny number,
+  # so the badge simply stays hidden.
+  assign end_ts = 0
+  assign end_date = section.settings.end_date | strip
+  if end_date.size == 10
+    assign tz = 'now' | date: '%z'
+    assign end_ts = end_date | append: ' 23:59:59 ' | append: tz | date: '%s' | plus: 0
+  elsif main_collection.metafields.custom.end_of_sale_colection != blank
+    assign end_ts = main_collection.metafields.custom.end_of_sale_colection | date: '%s' | plus: 0
+  endif
+
+  assign days_left = 0
+  if end_ts > 1000000000
+    assign now_ts = 'now' | date: '%s' | plus: 0
+    assign seconds_left = end_ts | minus: now_ts
+    if seconds_left > 0
+      assign days_left = seconds_left | plus: 86399 | divided_by: 86400
+    endif
+  endif
+-%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div
+    class="vev-promo section-{{ section.id }}-padding"
+    {% if section.settings.heading != blank %}
+      role="region" aria-labelledby="{{ heading_id }}"
+    {% endif %}
+  >
+    <div class="vev-promo__intro">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="vev-promo__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 id="{{ heading_id }}" class="vev-promo__heading">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <p class="vev-promo__subheading">{{ section.settings.subheading | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="vev-promo__media">
+      {%- if promo_image != blank -%}
+        {{
+          promo_image
+          | image_url: width: 1600
+          | image_tag:
+            widths: '400, 600, 800, 1000, 1200, 1600',
+            sizes: '(min-width: 990px) 44vw, calc(100vw - 3rem)',
+            loading: 'lazy',
+            alt: promo_image.alt,
+            class: 'vev-promo__img'
+        }}
+      {%- else -%}
+        {{ 'lifestyle-2' | placeholder_svg_tag: 'vev-promo__img placeholder-svg' }}
+      {%- endif -%}
+
+      {%- if days_left > 0 -%}
+        <vev-countdown
+          class="vev-promo__badge"
+          data-end="{{ end_ts }}"
+          data-one="{{ 'sections.vev_promo.days_left' | t: count: 1 | escape }}"
+          data-few="{{ 'sections.vev_promo.days_left' | t: count: 2 | escape }}"
+          data-many="{{ 'sections.vev_promo.days_left' | t: count: 5 | escape }}"
+          data-other="{{ 'sections.vev_promo.days_left' | t: count: 20 | escape }}"
+        >
+          <span class="vev-promo__badge-number" data-countdown-number>{{ days_left }}</span>
+          <span class="vev-promo__badge-label" data-countdown-label>
+            {{- 'sections.vev_promo.days_left' | t: count: days_left -}}
+          </span>
+        </vev-countdown>
+      {%- endif -%}
+    </div>
+
+    <vev-product-carousel
+      class="vev-carousel vev-promo__carousel"
+      data-section-id="{{ section.id }}"
+      data-view="vev-carousel"
+      data-sort-by="manual"
+      data-limit="{{ section.settings.products_to_show }}"
+      data-default-url="{{ main_collection.url }}"
+      data-error-message="{{ 'sections.vev_carousel.error' | t | escape }}"
+    >
+      <slider-component class="vev-carousel__slider vev-promo__slider">
+        <div class="vev-carousel__toolbar vev-promo__toolbar">
+          {%- if section.blocks.size > 0 -%}
+            <div class="vev-carousel__chips" role="group" aria-label="{{ 'sections.vev_carousel.filters_label' | t }}">
+              {%- for block in section.blocks -%}
+                {%- liquid
+                  assign chip_collection = block.settings.collection
+                  if chip_collection == blank
+                    continue
+                  endif
+                  assign chip_label = block.settings.label | default: chip_collection.title
+                  assign chip_image = block.settings.image | default: chip_collection.featured_image
+                -%}
+                <button
+                  type="button"
+                  class="vev-chip"
+                  aria-pressed="false"
+                  aria-controls="Slider-{{ section.id }}"
+                  data-collection-url="{{ chip_collection.url }}"
+                  data-view-all-url="{{ chip_collection.url }}"
+                  data-label="{{ chip_label | escape }}"
+                  {{ block.shopify_attributes }}
+                >
+                  <span class="vev-chip__image" aria-hidden="true">
+                    {%- if chip_image != blank -%}
+                      {{
+                        chip_image
+                        | image_url: width: 162
+                        | image_tag: width: 81, height: 81, loading: 'lazy', alt: '', class: 'vev-chip__img'
+                      }}
+                    {%- endif -%}
+                  </span>
+                  <span class="vev-chip__label">{{ chip_label | escape }}</span>
+                </button>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+
+          <div class="vev-carousel__arrows">
+            <button
+              type="button"
+              class="vev-carousel__arrow vev-carousel__arrow--prev"
+              name="previous"
+              aria-label="{{ 'general.slider.previous_slide' | t }}"
+              aria-controls="Slider-{{ section.id }}"
+            >
+              {{- 'icon-arrow-long.svg' | inline_asset_content -}}
+            </button>
+            <button
+              type="button"
+              class="vev-carousel__arrow vev-carousel__arrow--next"
+              name="next"
+              aria-label="{{ 'general.slider.next_slide' | t }}"
+              aria-controls="Slider-{{ section.id }}"
+            >
+              {{- 'icon-arrow-long.svg' | inline_asset_content -}}
+            </button>
+          </div>
+        </div>
+
+        <ul
+          id="Slider-{{ section.id }}"
+          class="vev-carousel__track vev-promo__track grid product-grid contains-card contains-card--product grid--2-col-desktop grid--2-col-tablet-down slider slider--desktop slider--tablet"
+          role="list"
+          aria-label="{{ section.settings.heading | default: main_collection.title | escape }}"
+          aria-busy="false"
+          data-vev-carousel-track
+        >
+          {%- if main_collection != blank -%}
+            {%- render 'vev-carousel-items',
+              products: main_collection.products,
+              limit: section.settings.products_to_show,
+              on_sale_only: false,
+              section_id: section.id
+            -%}
+          {%- else -%}
+            {%- for i in (1..2) -%}
+              <li id="Slide-{{ section.id }}-{{ forloop.index }}" class="grid__item slider__slide">
+                {% render 'card-product', placeholder_image: 'product-apparel-1' %}
+              </li>
+            {%- endfor -%}
+          {%- endif -%}
+        </ul>
+      </slider-component>
+
+      <p class="visually-hidden" role="status" data-vev-carousel-status></p>
+
+      {%- if section.settings.show_view_all and main_collection != blank -%}
+        <div class="vev-carousel__footer vev-promo__footer">
+          <a href="{{ main_collection.url }}" class="vev-carousel__view-all" data-vev-carousel-view-all>
+            {{- 'sections.vev_carousel.view_all' | t -}}
+            {{- 'icon-arrow-long.svg' | inline_asset_content -}}
+          </a>
+        </div>
+      {%- endif -%}
+
+      <template data-vev-carousel-strings>
+        <span data-key="loading">{{ 'sections.vev_carousel.loading' | t }}</span>
+        <span data-key="shown">{{ 'sections.vev_carousel.shown' | t: category: '__CATEGORY__' }}</span>
+        <span data-key="all">{{ section.settings.heading | default: main_collection.title | escape }}</span>
+      </template>
+    </vev-product-carousel>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.vev_promo.name",
+  "tag": "section",
+  "class": "section vev-promo-section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:sections.vev_promo.settings.eyebrow.label",
+      "default": "ГОРЯЧЕЕ ПРЕДЛОЖЕНИЕ"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:sections.vev_promo.settings.heading.label",
+      "default": "DARK SMART BUILDER GEL 🔥"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "t:sections.vev_promo.settings.subheading.label",
+      "default": "коллекция моделирующих гелей с шиммером"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:sections.vev_promo.settings.image.label",
+      "info": "t:sections.vev_promo.settings.image.info"
+    },
+    {
+      "type": "text",
+      "id": "end_date",
+      "label": "t:sections.vev_promo.settings.end_date.label",
+      "info": "t:sections.vev_promo.settings.end_date.info",
+      "placeholder": "2026-12-31"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "t:sections.vev_promo.settings.collection.label"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "t:sections.vev_promo.settings.products_to_show.label",
+      "min": 2,
+      "max": 20,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "t:sections.vev_promo.settings.show_view_all.label",
+      "default": false
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.vev_promo.settings.color_scheme.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.vev_promo.settings.header__padding.content"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:sections.vev_promo.settings.padding_top.label",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:sections.vev_promo.settings.padding_bottom.label",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "chip",
+      "name": "t:sections.vev_promo.blocks.chip.name",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "t:sections.vev_promo.blocks.chip.settings.collection.label"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "t:sections.vev_promo.blocks.chip.settings.label.label",
+          "info": "t:sections.vev_promo.blocks.chip.settings.label.info"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.vev_promo.blocks.chip.settings.image.label",
+          "info": "t:sections.vev_promo.blocks.chip.settings.image.info"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "t:sections.vev_promo.presets.name",
+      "blocks": [{ "type": "chip" }, { "type": "chip" }, { "type": "chip" }]
+    }
+  ]
+}
+{% endschema %}

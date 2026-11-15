@@ -310,6 +310,12 @@
       "shown": "Showing products: {{ category }}",
       "error": "Could not load products. Please try again."
     },
+    "vev_promo": {
+      "days_left": {
+        "one": "day left",
+        "other": "days left"
+      }
+    },
     "breadcrumbs": {
       "home": "Home"
     },

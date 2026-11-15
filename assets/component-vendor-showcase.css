@@ -1,4 +1,7 @@
-/* Vendor Showcase Component Styles */
+/* Vendor Showcase Component Styles
+   Figma: VEV.MD Concept → "КАТАЛОГ БРЕНДОВ ❤️" (1728px frame): 40px semibold
+   uppercase heading, 35px below it a 1321px-wide grid of black logos, 5 per row,
+   no cards. Desktop sizes scale with the viewport and reach Figma values at 1728px. */
 
 .vendor-showcase {
     padding: var(--section-padding-top, 0) 0 var(--section-padding-bottom, 0);
@@ -6,25 +9,50 @@
 
 .vendor-showcase__header {
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 2.4rem;
 }
 
 .vendor-showcase__title {
     margin: 0;
-    color: rgb(var(--color-foreground));
+    color: rgb(0, 0, 0);
+    font-size: 2.4rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    text-transform: uppercase;
 }
 
 .vendor-showcase__grid {
     display: grid;
     grid-template-columns: repeat(var(--mobile-columns, 2), 1fr);
-    gap: var(--grid-gap, 3rem);
+    gap: 3.2rem var(--grid-gap, 3rem);
     align-items: center;
     justify-items: center;
+    max-width: 132.1rem;
+    margin: 0 auto;
 }
 
 @media screen and (min-width: 750px) {
     .vendor-showcase__grid {
         grid-template-columns: repeat(var(--desktop-columns, 5), 1fr);
+    }
+
+    .vendor-showcase__title {
+        font-size: 3.2rem;
+    }
+}
+
+@media screen and (min-width: 990px) {
+    .vendor-showcase__header {
+        margin-bottom: clamp(2.4rem, 2.03vw, 3.5rem);
+    }
+
+    .vendor-showcase__title {
+        font-size: clamp(3.2rem, 2.32vw, 4rem);
+    }
+
+    .vendor-showcase__grid {
+        row-gap: clamp(3.2rem, 4.34vw, 7.5rem);
     }
 }
 
@@ -40,21 +68,13 @@
     flex-direction: column;
     align-items: center;
     text-decoration: none;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
     width: 100%;
-    border-radius: 0.5rem;
-    padding: 0.75rem;
-    box-shadow: var(--shadow-horizontal-offset) var(--shadow-vertical-offset) var(--shadow-blur-radius) rgba(var(--color-shadow), var(--shadow-opacity));
-}
-
-.vendor-showcase__link:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(var(--color-card-hover-glow), 0.6);
 }
 
 .vendor-showcase__logo-container {
     width: 100%;
-    height: var(--logo-height, 60px);
+    /* Full logo height at 1728px, smaller on narrower screens, never below 4.8rem */
+    height: clamp(4.8rem, calc(var(--logo-height-number, 60) * 100vw / 1728), var(--logo-height, 60px));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -70,19 +90,19 @@
 }
 
 .vendor-showcase__logo {
-    max-width: 100%;
+    max-width: 80%;
     max-height: 100%;
     width: auto;
     height: auto;
     object-fit: contain;
-    filter: grayscale(100%);
-    transition: filter 0.3s ease, transform 0.3s ease;
-    transform: scale(1.1);
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.vendor-showcase__link:hover .vendor-showcase__logo {
-    filter: grayscale(0%);
-    transform: scale(1.15);
+@media (hover: hover) and (pointer: fine) {
+    .vendor-showcase__link:hover .vendor-showcase__logo {
+        opacity: 0.7;
+        transform: scale(1.04);
+    }
 }
 
 .vendor-showcase__placeholder {

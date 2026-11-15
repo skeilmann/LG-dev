@@ -349,8 +349,32 @@
       },
       "disabled": true
     },
+    "vev_promo": {
+      "type": "vev-promo",
+      "blocks": {
+        "chip_1": { "type": "chip", "settings": { "collection": "dark-gel-polish" } },
+        "chip_2": { "type": "chip", "settings": { "collection": "dark", "label": "бренд Dark" } },
+        "chip_3": { "type": "chip", "settings": { "collection": "dark-flash-gel-polish" } },
+        "chip_4": { "type": "chip", "settings": { "collection": "dark-cat-eye" } },
+        "chip_5": { "type": "chip", "settings": { "collection": "da23" } }
+      },
+      "block_order": ["chip_1", "chip_2", "chip_3", "chip_4", "chip_5"],
+      "settings": {
+        "eyebrow": "ГОРЯЧЕЕ ПРЕДЛОЖЕНИЕ",
+        "heading": "DARK SMART BUILDER GEL 🔥",
+        "subheading": "коллекция моделирующих гелей с шиммером",
+        "end_date": "",
+        "collection": "горячее-предложение",
+        "products_to_show": 8,
+        "show_view_all": false,
+        "color_scheme": "scheme-1",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
     "collage_3VGjEW": {
       "type": "collage",
+      "disabled": true,
       "custom_css": [],
       "settings": {
         "show_filter": true,
@@ -673,10 +697,11 @@
       ],
       "name": "t:sections.vendor_showcase.presets.name",
       "settings": {
+        "heading": "КАТАЛОГ БРЕНДОВ ❤️",
         "max_collections": 20,
         "desktop_columns": 5,
         "mobile_columns": 3,
-        "logo_height": 100,
+        "logo_height": 120,
         "grid_gap": 3,
         "color_scheme": "",
         "padding_top": 44,
@@ -1120,6 +1145,7 @@
     "featured_collection_bBPBV4",
     "vev_carousel_sale",
     "featured_collection_9zRDWp",
+    "vev_promo",
     "collage_3VGjEW",
     "featured_blog_UhBKqY",
     "featured_collection_HWdCEJ",

@@ -482,6 +482,37 @@
         "name": "VEV brand stories"
       }
     },
+    "vev_promo": {
+      "name": "VEV promo with countdown",
+      "settings": {
+        "eyebrow": { "label": "Small heading" },
+        "heading": { "label": "Heading" },
+        "subheading": { "label": "Text" },
+        "image": { "label": "Image", "info": "Leave empty to use the collection image." },
+        "end_date": {
+          "label": "Offer end date",
+          "info": "Format YYYY-MM-DD, e.g. 2026-12-31. The offer ends at 23:59 on that day (shop time zone). Leave empty to use the collection's \"end of sale colection\" date. With neither, the countdown is hidden."
+        },
+        "collection": { "label": "Products (collection)" },
+        "products_to_show": { "label": "Maximum products to show" },
+        "show_view_all": { "label": "Show \"View all\" button" },
+        "color_scheme": { "label": "Color scheme" },
+        "header__padding": { "content": "Section padding" },
+        "padding_top": { "label": "Top padding" },
+        "padding_bottom": { "label": "Bottom padding" }
+      },
+      "blocks": {
+        "chip": {
+          "name": "Category chip",
+          "settings": {
+            "collection": { "label": "Category (collection)" },
+            "label": { "label": "Label", "info": "Leave empty to use the collection title." },
+            "image": { "label": "Image", "info": "Leave empty to use the collection image." }
+          }
+        }
+      },
+      "presets": { "name": "VEV promo with countdown" }
+    },
     "vev_carousel": {
       "name": "VEV product carousel",
       "settings": {
@@ -3923,6 +3954,10 @@
     "vendor_showcase": {
       "name": "Vendor Showcase",
       "settings": {
+        "heading": {
+          "label": "Heading",
+          "info": "Leave empty to use the default \"Our brands\" text."
+        },
         "max_collections": {
           "label": "Maximum collections to display",
           "info": "Limit the number of collections shown in the grid"

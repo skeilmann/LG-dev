@@ -1,0 +1,255 @@
+/*
+  VEV promo block with countdown (sections/vev-promo.liquid)
+  Figma: VEV.MD Concept → "ГОРЯЧЕЕ ПРЕДЛОЖЕНИЕ".
+  Mobile sizes come from the 402px iPhone frame. Desktop sizes scale with the
+  viewport and reach the Figma values at 1728px (value / 17.28 = vw).
+  Chips, arrows and cards are styled by section-vev-product-carousel.css;
+  only the differences are here.
+*/
+
+.vev-promo {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+/* --- Text ---------------------------------------------------------------- */
+.vev-promo__eyebrow {
+  margin: 0;
+  color: var(--color-brand-pink, #f4b8dd);
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: 0.4em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.vev-promo__heading {
+  max-width: 8em;
+  margin: 2.4rem 0 0;
+  color: rgb(0, 0, 0);
+  font-size: 3.6rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+.vev-promo__subheading {
+  margin: 1.3rem 0 0;
+  color: rgb(0, 0, 0);
+  font-size: 1.6rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+/* --- Photo + countdown badge ---------------------------------------------- */
+.vev-promo__media {
+  position: relative;
+  margin-top: 2.5rem;
+  aspect-ratio: 348 / 309;
+  overflow: hidden;
+  border-radius: 1.4rem;
+  background-color: rgb(241, 241, 241);
+}
+
+.vev-promo__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vev-promo__badge {
+  position: absolute;
+  right: 9%;
+  bottom: 9.5%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  width: 9rem;
+  height: 9rem;
+  padding: 0.6rem;
+  border-radius: 1.2rem;
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0 0.5rem 4rem rgba(0, 0, 0, 0.5);
+  color: rgb(0, 0, 0);
+  text-align: center;
+}
+
+.vev-promo__badge[hidden] {
+  display: none;
+}
+
+.vev-promo__badge-number {
+  font-size: 3.3rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.vev-promo__badge-label {
+  /* "до конца" fits on one line, as in Figma ("дней / до конца / акции") */
+  max-width: 5.2em;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+/* --- Chips and cards ------------------------------------------------------ */
+.vev-promo .vev-promo__toolbar {
+  justify-content: flex-start;
+  margin-top: 2.7rem;
+}
+
+/* --- Tablet --------------------------------------------------------------- */
+@media screen and (min-width: 750px) {
+  .vev-promo {
+    padding-left: 5rem;
+    padding-right: 5rem;
+  }
+
+  .vev-promo__eyebrow {
+    font-size: 2rem;
+  }
+
+  .vev-promo__heading {
+    font-size: 4.8rem;
+  }
+
+  .vev-promo__subheading {
+    font-size: 2rem;
+  }
+
+  .vev-promo__badge {
+    width: 11rem;
+    height: 11rem;
+    border-radius: 1.6rem;
+  }
+
+  .vev-promo__badge-number {
+    font-size: 4.2rem;
+  }
+
+  .vev-promo__badge-label {
+    font-size: 1.3rem;
+  }
+}
+
+/* --- Desktop: photo on the left edge, chips and cards on the right -------- */
+/* Figma 1728px: photo 753px wide from the left edge, 85px gap, cards column 833px,
+   57px right margin; the text starts 132px from the left edge. */
+@media screen and (min-width: 990px) {
+  .vev-promo {
+    display: grid;
+    grid-template-columns: 43.6% minmax(0, 1fr);
+    grid-template-areas:
+      'intro toolbar'
+      'media track'
+      '. footer';
+    column-gap: 4.9%;
+    row-gap: clamp(2.4rem, 3.24vw, 5.6rem);
+    max-width: 172.8rem;
+    margin: 0 auto;
+    padding-left: 0;
+    padding-right: 3.3%;
+  }
+
+  /* Let the toolbar and track sit directly in the grid. SliderComponent and
+     <vev-product-carousel> only look up their children, so their own box isn't needed. */
+  .vev-promo .vev-promo__carousel,
+  .vev-promo .vev-promo__slider {
+    display: contents;
+  }
+
+  .vev-promo__intro {
+    grid-area: intro;
+    align-self: start;
+    /* 132px of the 753px column */
+    padding-left: 17.5%;
+  }
+
+  .vev-promo__eyebrow {
+    font-size: clamp(1.8rem, 1.62vw, 2.8rem);
+  }
+
+  .vev-promo__heading {
+    margin-top: clamp(2rem, 2.84vw, 4.9rem);
+    font-size: clamp(4rem, 3.7vw, 6.4rem);
+  }
+
+  .vev-promo__subheading {
+    margin-top: clamp(1.2rem, 1.56vw, 2.7rem);
+    font-size: clamp(1.8rem, 1.62vw, 2.8rem);
+  }
+
+  .vev-promo__media {
+    grid-area: media;
+    margin-top: 0;
+    aspect-ratio: 753 / 671;
+    border-radius: 0;
+  }
+
+  .vev-promo__badge {
+    width: clamp(10rem, 8.04vw, 13.9rem);
+    height: clamp(10rem, 8.04vw, 13.9rem);
+    border-radius: clamp(1.4rem, 1.1vw, 1.9rem);
+  }
+
+  .vev-promo__badge-number {
+    font-size: clamp(3.6rem, 3.01vw, 5.2rem);
+  }
+
+  .vev-promo__badge-label {
+    font-size: clamp(1.2rem, 0.93vw, 1.6rem);
+  }
+
+  /* Chips left-aligned and wrapping; arrows at the bottom right of the chips */
+  .vev-promo .vev-promo__toolbar {
+    grid-area: toolbar;
+    align-self: end;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .vev-promo .vev-carousel__chips {
+    flex: 1 1 auto;
+    justify-content: flex-start;
+    gap: clamp(1.2rem, 1.27vw, 2.2rem) clamp(1.6rem, 2.26vw, 3.9rem);
+    padding: 1.2rem 0;
+  }
+
+  .vev-promo .vev-carousel__arrows {
+    position: static;
+    flex-shrink: 0;
+    margin-bottom: 1.2rem;
+  }
+
+  /* Promo chips are larger than the carousel chips: 81px high in Figma */
+  .vev-promo .vev-chip {
+    height: clamp(5rem, 4.69vw, 8.1rem);
+    gap: clamp(1.2rem, 1.16vw, 2rem);
+    padding-right: clamp(2rem, 1.68vw, 2.9rem);
+    font-size: clamp(1.6rem, 1.58vw, 2.73rem);
+  }
+
+  .vev-promo .vev-chip__image {
+    width: clamp(5rem, 4.69vw, 8.1rem);
+    height: clamp(5rem, 4.69vw, 8.1rem);
+  }
+
+  /* Cards start level with the top of the photo (the track keeps its shadow padding) */
+  .vev-promo .vev-promo__track.slider {
+    grid-area: track;
+    align-self: start;
+    margin-top: -4.4rem;
+  }
+
+  .vev-promo .vev-promo__footer {
+    grid-area: footer;
+    margin-top: 0;
+  }
+}
