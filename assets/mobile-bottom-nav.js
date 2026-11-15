@@ -224,7 +224,12 @@ class MobileBottomNav extends HTMLElement {
    */
   openDrawer() {
     if (!this.drawer || this.isDrawerOpen) return;
-    
+
+    // The catalog list ships inside <template data-lazy-catalog-drawer> so its links are
+    // not part of the live page until the drawer is first opened.
+    const lazyCatalog = this.drawer.querySelector('template[data-lazy-catalog-drawer]');
+    if (lazyCatalog) lazyCatalog.replaceWith(lazyCatalog.content);
+
     this.isDrawerOpen = true;
     this.drawer.setAttribute('aria-hidden', 'false');
     

@@ -73,11 +73,9 @@ class CustomHeader {
     this.megaMenuWrapper = document.querySelector('.mega-menu-wrapper');
     this.megaMenuDropdown = document.querySelector('.mega-menu-dropdown');
     this.megaMenuTrigger = document.querySelector('.header__menu-item--mega');
-    this.zone1 = document.querySelector('.mega-menu-zone-1'); // Categories
-    this.zone2 = document.querySelector('.mega-menu-zone-2'); // Subcategories
-    this.zone3 = document.querySelector('.mega-menu-zone-3'); // Sub-subcategories
-    this.zone4 = document.querySelector('.mega-menu-zone-4'); // Images
-    this.imageContainer = document.querySelector('.mega-menu-featured-image');
+    this.leftMenu = document.querySelector('.header__left-menu');
+    this.megaMenuHydrated = false;
+    this.cacheMegaMenuZones(); // Null until the lazy template is hydrated
 
     // State variables for mega menu management
     this.currentActiveCategory = null;
@@ -233,6 +231,10 @@ class CustomHeader {
     this.megaMenuWrapper.addEventListener('mouseenter', this._boundMegaMenuEnter);
     this.megaMenuWrapper.addEventListener('mouseleave', this._boundMegaMenuLeave);
 
+    // Build the mega menu as soon as the pointer reaches the nav, so it is ready on hover
+    this._boundHydrateMegaMenu = this.hydrateMegaMenu.bind(this);
+    this.leftMenu?.addEventListener('pointerenter', this._boundHydrateMegaMenu, { once: true });
+
     if (this.megaMenuDropdown) {
       this.megaMenuDropdown.addEventListener('mouseenter', this._boundMegaMenuEnter);
       this.megaMenuDropdown.addEventListener('mouseleave', this._boundMegaMenuLeave);
@@ -331,7 +333,36 @@ class CustomHeader {
     this.zone3.addEventListener('mouseleave', this._boundZone3Leave);
   }
 
+  /**
+   * The mega menu markup ships inside <template data-lazy-mega-menu> so its ~400 links
+   * and images are not part of the live page until needed. The first open (or the
+   * pointer entering the left nav) moves it into the dropdown and binds the zones.
+   */
+  hydrateMegaMenu() {
+    if (this.megaMenuHydrated || !this.megaMenuDropdown) return;
+    this.megaMenuHydrated = true;
+
+    const template = this.megaMenuDropdown.querySelector('template[data-lazy-mega-menu]');
+    if (!template) return; // Markup already in the page (nothing to do)
+
+    template.replaceWith(template.content);
+    this.cacheMegaMenuZones();
+    this.initCategoryHovers();
+    this.initSubcategoryHovers();
+    this.initSubSubcategoryHovers();
+    this.bindZoneKeyboardNavigation();
+  }
+
+  cacheMegaMenuZones() {
+    this.zone1 = document.querySelector('.mega-menu-zone-1'); // Categories
+    this.zone2 = document.querySelector('.mega-menu-zone-2'); // Subcategories
+    this.zone3 = document.querySelector('.mega-menu-zone-3'); // Sub-subcategories
+    this.zone4 = document.querySelector('.mega-menu-zone-4'); // Images
+    this.imageContainer = document.querySelector('.mega-menu-featured-image');
+  }
+
   openMegaMenu() {
+    this.hydrateMegaMenu();
     this.megaMenuTrigger?.setAttribute('aria-expanded', 'true');
     this.megaMenuDropdown.setAttribute('aria-hidden', 'false');
     
@@ -615,10 +646,14 @@ class CustomHeader {
       this.megaMenuTrigger.addEventListener('keydown', this._boundTriggerKeydown);
     }
 
-    // Zone keyboard navigation (event delegation)
-    this._boundZone1Keydown = this.handleCategoryKeyNavigation.bind(this);
-    this._boundZone2Keydown = this.handleSubcategoryKeyNavigation.bind(this);
-    this._boundZone3Keydown = this.handleSubSubcategoryKeyNavigation.bind(this);
+    this.bindZoneKeyboardNavigation();
+  }
+
+  // Zone keyboard navigation (event delegation). Safe to call before hydration (zones are null).
+  bindZoneKeyboardNavigation() {
+    this._boundZone1Keydown ??= this.handleCategoryKeyNavigation.bind(this);
+    this._boundZone2Keydown ??= this.handleSubcategoryKeyNavigation.bind(this);
+    this._boundZone3Keydown ??= this.handleSubSubcategoryKeyNavigation.bind(this);
 
     if (this.zone1) this.zone1.addEventListener('keydown', this._boundZone1Keydown);
     if (this.zone2) this.zone2.addEventListener('keydown', this._boundZone2Keydown);
@@ -1200,6 +1235,7 @@ class CustomHeader {
     if (this.megaMenuTrigger) {
       this.megaMenuTrigger.removeEventListener('keydown', this._boundTriggerKeydown);
     }
+    this.leftMenu?.removeEventListener('pointerenter', this._boundHydrateMegaMenu);
 
     // Remove zone listeners
     if (this.zone1) {

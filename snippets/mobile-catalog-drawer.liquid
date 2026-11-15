@@ -93,17 +93,13 @@
     {%- comment -%} Drawer body with catalog content {%- endcomment -%}
     <div class="mobile-catalog-drawer__body">
       {%- if menu_to_use != blank -%}
+        {%- comment -%} Inert until first open: mobile-bottom-nav.js copies it into the drawer. {%- endcomment -%}
+        <template data-lazy-catalog-drawer>
         <nav
           class="mobile-catalog-drawer__nav"
           role="navigation"
           aria-label="{{ 'sections.header.mobile_bottom_nav.catalog' | t }}"
         >
-          {%- comment -%} Debug: Show which menu is being used {%- endcomment -%}
-          {%- if menu_to_use.title -%}
-            <!-- Using menu: {{ menu_to_use.title }} (handle: {{ debug_menu_handle }}) -->
-          {%- else -%}
-            <!-- Debug: No menu found for handle: {{ debug_menu_handle }} -->
-          {%- endif -%}
           {%- for link in menu_to_use.links -%}
             <div class="mobile-catalog-drawer__category-group">
               {%- if link.links != blank -%}
@@ -193,6 +189,7 @@
             </div>
           {%- endfor -%}
         </nav>
+        </template>
       {%- else -%}
         {%- comment -%} Fallback when no menu is configured {%- endcomment -%}
         <div class="mobile-catalog-drawer__empty">
