@@ -1,0 +1,51 @@
+{%- comment -%}
+  vev-trust-badges
+  Short reassurance lines (delivery, official distributor, cashback…) and the
+  store's payment icons, shown under the product's buy buttons.
+
+  Accepts:
+  - block: {Object} main-product "trust_badges" block (required)
+
+  Usage:
+  {% render 'vev-trust-badges', block: block %}
+{%- endcomment -%}
+{{ 'component-vev-trust-badges.css' | asset_url | stylesheet_tag }}
+
+<div class="vev-trust" {{ block.shopify_attributes }}>
+  {%- liquid
+    assign lines = ''
+    if block.settings.text_1 != blank
+      assign lines = lines | append: block.settings.text_1 | append: '|||'
+    endif
+    if block.settings.text_2 != blank
+      assign lines = lines | append: block.settings.text_2 | append: '|||'
+    endif
+    if block.settings.text_3 != blank
+      assign lines = lines | append: block.settings.text_3 | append: '|||'
+    endif
+    assign lines = lines | split: '|||'
+  -%}
+  {%- if lines.size > 0 -%}
+    <ul class="vev-trust__list" role="list">
+      {%- for line in lines -%}
+        <li class="vev-trust__item">
+          <span class="vev-trust__icon" aria-hidden="true">{{- 'icon-checkmark.svg' | inline_asset_content -}}</span>
+          <span>{{ line | escape }}</span>
+        </li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+
+  {%- if block.settings.show_payment_icons and shop.enabled_payment_types.size > 0 -%}
+    <div class="vev-trust__payment">
+      <span class="visually-hidden">{{ 'sections.footer.payment' | t }}</span>
+      <ul class="list list-payment vev-trust__payment-list" role="list">
+        {%- for type in shop.enabled_payment_types -%}
+          <li class="list-payment__item">
+            {{ type | payment_type_svg_tag: class: 'icon icon--full-color' }}
+          </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  {%- endif -%}
+</div>

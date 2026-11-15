@@ -1,0 +1,64 @@
+{%- comment -%}
+  vev-sticky-atc
+  Mobile-only bar with the product photo, name, price and an "Add to cart" button.
+  It slides up (above the mobile bottom navigation) once the main "Add to cart"
+  button has scrolled off the top of the screen.
+
+  The bar has no form of its own: its button clicks the main button, so the chosen
+  variant, quantity and sold-out state always come from the product form.
+  Price and button text are copied from the page whenever the variant changes.
+
+  Accepts:
+  - product: {Object} Product (required)
+  - section_id: {String} main-product section id (required)
+
+  Usage (inside <product-info> in sections/main-product.liquid):
+  {% render 'vev-sticky-atc', product: product, section_id: section.id %}
+{%- endcomment -%}
+{%- liquid
+  assign variant = product.selected_or_first_available_variant
+  assign image = variant.featured_image | default: product.featured_image
+-%}
+{{ 'component-vev-sticky-atc.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'vev-sticky-atc.js' | asset_url }}" defer="defer"></script>
+
+<vev-sticky-atc
+  class="vev-sticky-atc"
+  data-main-button-id="ProductSubmitButton-{{ section_id }}"
+  data-price-id="price-{{ section_id }}"
+  aria-hidden="true"
+  inert
+>
+  <div class="vev-sticky-atc__inner">
+    {%- if image != blank -%}
+      {{
+        image
+        | image_url: width: 96
+        | image_tag: width: 48, height: 48, loading: 'lazy', alt: '', class: 'vev-sticky-atc__img'
+      }}
+    {%- endif -%}
+    <div class="vev-sticky-atc__info">
+      <p class="vev-sticky-atc__title">{{ product.title | escape }}</p>
+      <p class="vev-sticky-atc__price" data-sticky-atc-price>{{ variant.price | money }}</p>
+    </div>
+    <button
+      type="button"
+      class="vev-sticky-atc__button button button--buy"
+      data-sticky-atc-button
+      {% unless variant.available %}
+        disabled
+      {% endunless %}
+    >
+      <span class="icon-wrap" aria-hidden="true">
+        {{- 'icon-cart-empty.svg' | inline_asset_content -}}
+      </span>
+      <span data-sticky-atc-text>
+        {%- if variant.available -%}
+          {{ 'products.product.add_to_cart' | t }}
+        {%- else -%}
+          {{ 'products.product.sold_out' | t }}
+        {%- endif -%}
+      </span>
+    </button>
+  </div>
+</vev-sticky-atc>

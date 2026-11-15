@@ -48,6 +48,15 @@
             {{ 'sections.cart.checkout' | t }}
           </button>
         </form>
+        {%- comment -%}
+          Express checkout (Shop Pay, Apple Pay, Google Pay, PayPal…). Shopify only renders
+          the methods enabled in the store's payment settings; with none, nothing shows.
+        {%- endcomment -%}
+        {%- if additional_checkout_buttons -%}
+          <div class="cart-notification__dynamic-checkout">
+            {{ content_for_additional_checkout_buttons }}
+          </div>
+        {%- endif -%}
         <button type="button" class="link button-label">{{ 'general.continue_shopping' | t }}</button>
       </div>
     </div>

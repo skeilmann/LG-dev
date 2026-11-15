@@ -226,6 +226,11 @@
   margin-top: 1rem;
 }
 
+/* Express checkout buttons: no gap when Shopify renders none */
+.cart-notification__dynamic-checkout:has(.dynamic-checkout__content:empty) {
+  margin-top: 0;
+}
+
 .cart-notification-product,
 .favorites-notification-product {
   align-items: flex-start;
