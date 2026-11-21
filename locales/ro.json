@@ -372,7 +372,8 @@
         "close_drawer": "Închide catalogul",
         "swipe_down": "Glisați în jos pentru a închide",
         "no_menu": "Nu este configurat meniul de catalog",
-        "view_all_collections": "Vedeți toate colecțiile"
+        "view_all_collections": "Vedeți toate colecțiile",
+        "all_products": "Toate produsele"
       }
     },
     "cart": {

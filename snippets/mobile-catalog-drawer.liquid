@@ -99,99 +99,105 @@
           placeholder that mobile-bottom-nav.js fills on first open.
         {%- endcomment -%}
         {%- if full_menus -%}
+        {%- capture icon_expand -%}
+          <span class="catalog-list__icon catalog-list__icon--expand" aria-hidden="true">
+            <svg width="12" height="8" viewBox="0 0 12 8" fill="none" focusable="false"><path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        {%- endcapture -%}
+        {%- capture icon_go -%}
+          <span class="catalog-list__icon catalog-list__icon--go" aria-hidden="true">
+            <svg width="8" height="12" viewBox="0 0 8 12" fill="none" focusable="false"><path d="M1.5 1L6.5 6L1.5 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        {%- endcapture -%}
+        {%- assign all_label = 'sections.header.mobile_bottom_nav.all_products' | t -%}
         <nav
           class="mobile-catalog-drawer__nav"
-          role="navigation"
           aria-label="{{ 'sections.header.mobile_bottom_nav.catalog' | t }}"
         >
-          {%- for link in menu_to_use.links -%}
-            <div class="mobile-catalog-drawer__category-group">
-              {%- if link.links != blank -%}
-                {%- comment -%} Category with subcategories - accordion {%- endcomment -%}
-                <details class="mobile-catalog-drawer__category-accordion" data-category-handle="{{ link.handle }}">
-                  <summary class="mobile-catalog-drawer__category-title">
-                    <span class="mobile-catalog-drawer__category-link">
-                      {{ link.title | escape }}
-                    </span>
-                    <span class="mobile-catalog-drawer__accordion-icon" aria-hidden="true">
-                      <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
-                        <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                      </svg>
-                    </span>
-                  </summary>
-
-                  <div class="mobile-catalog-drawer__subcategory-content">
-                    <ul class="mobile-catalog-drawer__subcategory-list" role="list">
+          <ul class="catalog-list catalog-list--level-1" role="list">
+            {%- for link in menu_to_use.links -%}
+              <li class="catalog-list__item">
+                {%- if link.links != blank -%}
+                  <details class="catalog-list__group" data-category-handle="{{ link.handle }}">
+                    <summary class="catalog-list__row catalog-list__row--level-1">
+                      <span class="catalog-list__label">{{ link.title | escape }}</span>
+                      {{- icon_expand -}}
+                    </summary>
+                    <ul class="catalog-list catalog-list--level-2" role="list">
+                      <li class="catalog-list__item">
+                        <a
+                          href="{{ link.url }}"
+                          class="catalog-list__row catalog-list__row--level-2 catalog-list__row--all"
+                          aria-label="{{ all_label }}: {{ link.title | escape }}"
+                          {% if link.current %}aria-current="page"{% endif %}
+                        >
+                          <span class="catalog-list__label">{{ all_label }}</span>
+                          {{- icon_go -}}
+                        </a>
+                      </li>
                       {%- for sublink in link.links -%}
-                        <li>
+                        <li class="catalog-list__item">
                           {%- if sublink.links != blank -%}
-                            {%- comment -%} Subcategory with sub-subcategories - nested accordion {%- endcomment -%}
-                            <details
-                              class="mobile-catalog-drawer__subcategory-accordion"
-                              data-subcategory-handle="{{ sublink.handle }}"
-                            >
-                              <summary class="mobile-catalog-drawer__subcategory-title">
-                                <span class="mobile-catalog-drawer__subcategory-link">
-                                  {{ sublink.title | escape }}
-                                </span>
-                                <span class="mobile-catalog-drawer__accordion-icon" aria-hidden="true">
-                                  <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
-                                    <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                  </svg>
-                                </span>
+                            <details class="catalog-list__group" data-subcategory-handle="{{ sublink.handle }}">
+                              <summary class="catalog-list__row catalog-list__row--level-2">
+                                <span class="catalog-list__label">{{ sublink.title | escape }}</span>
+                                {{- icon_expand -}}
                               </summary>
-
-                              <div class="mobile-catalog-drawer__sub-subcategory-content">
-                                <ul class="mobile-catalog-drawer__sub-subcategory-list" role="list">
-                                  {%- for sub_sublink in sublink.links -%}
-                                    <li>
-                                      <a
-                                        href="{{ sub_sublink.url }}"
-                                        class="mobile-catalog-drawer__sub-subcategory-link"
-                                        data-collection-handle="{{ sub_sublink.handle }}"
-                                        {% if sub_sublink.current %}
-                                          aria-current="page"
-                                        {% endif %}
-                                      >
-                                        {{ sub_sublink.title | escape }}
-                                      </a>
-                                    </li>
-                                  {%- endfor -%}
-                                </ul>
-                              </div>
+                              <ul class="catalog-list catalog-list--level-3" role="list">
+                                <li class="catalog-list__item">
+                                  <a
+                                    href="{{ sublink.url }}"
+                                    class="catalog-list__row catalog-list__row--level-3 catalog-list__row--all"
+                                    aria-label="{{ all_label }}: {{ sublink.title | escape }}"
+                                    {% if sublink.current %}aria-current="page"{% endif %}
+                                  >
+                                    <span class="catalog-list__label">{{ all_label }}</span>
+                                    {{- icon_go -}}
+                                  </a>
+                                </li>
+                                {%- for sub_sublink in sublink.links -%}
+                                  <li class="catalog-list__item">
+                                    <a
+                                      href="{{ sub_sublink.url }}"
+                                      class="catalog-list__row catalog-list__row--level-3"
+                                      data-collection-handle="{{ sub_sublink.handle }}"
+                                      {% if sub_sublink.current %}aria-current="page"{% endif %}
+                                    >
+                                      <span class="catalog-list__label">{{ sub_sublink.title | escape }}</span>
+                                      {{- icon_go -}}
+                                    </a>
+                                  </li>
+                                {%- endfor -%}
+                              </ul>
                             </details>
                           {%- else -%}
-                            {%- comment -%} Simple subcategory link {%- endcomment -%}
                             <a
                               href="{{ sublink.url }}"
-                              class="mobile-catalog-drawer__subcategory-link"
+                              class="catalog-list__row catalog-list__row--level-2"
                               data-collection-handle="{{ sublink.handle }}"
-                              {% if sublink.current %}
-                                aria-current="page"
-                              {% endif %}
+                              {% if sublink.current %}aria-current="page"{% endif %}
                             >
-                              {{ sublink.title | escape }}
+                              <span class="catalog-list__label">{{ sublink.title | escape }}</span>
+                              {{- icon_go -}}
                             </a>
                           {%- endif -%}
                         </li>
                       {%- endfor -%}
                     </ul>
-                  </div>
-                </details>
-              {%- else -%}
-                {%- comment -%} Simple category link {%- endcomment -%}
-                <a
-                  href="{{ link.url }}"
-                  class="mobile-catalog-drawer__category-single-link"
-                  {% if link.current %}
-                    aria-current="page"
-                  {% endif %}
-                >
-                  {{ link.title | escape }}
-                </a>
-              {%- endif -%}
-            </div>
-          {%- endfor -%}
+                  </details>
+                {%- else -%}
+                  <a
+                    href="{{ link.url }}"
+                    class="catalog-list__row catalog-list__row--level-1"
+                    {% if link.current %}aria-current="page"{% endif %}
+                  >
+                    <span class="catalog-list__label">{{ link.title | escape }}</span>
+                    {{- icon_go -}}
+                  </a>
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
         </nav>
         {%- else -%}
           <div class="mobile-catalog-drawer__nav mobile-catalog-drawer__nav--pending" data-catalog-pending aria-busy="true"></div>

@@ -368,7 +368,8 @@
         "close_drawer": "Close catalog",
         "swipe_down": "Swipe down to close",
         "no_menu": "No catalog menu configured",
-        "view_all_collections": "View all collections"
+        "view_all_collections": "View all collections",
+        "all_products": "All products"
       }
     },
     "cart": {
