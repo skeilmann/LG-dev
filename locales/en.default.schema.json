@@ -1024,7 +1024,8 @@
           "label": "Show Phone Field"
         },
         "show_email_field": {
-          "label": "Show Email Field"
+          "label": "Show Email Field",
+          "info": "Always shown and required: Shopify only accepts contact requests with an email."
         },
         "show_comment_field": {
           "label": "Show Comment Field"

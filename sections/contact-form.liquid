@@ -64,7 +64,13 @@
             {{- 'icon-error.svg' | inline_asset_content -}}
             {{ 'templates.contact.form.error_heading' | t }}
           </div>
-          <div class="contact-form-errors">{{ form.errors | default_errors }}</div>
+          <div class="contact-form-errors" role="alert">
+            {%- if form.errors contains 'email' -%}
+              {{ 'templates.contact.form.email_required' | t }}
+            {%- else -%}
+              {{ form.errors | default_errors }}
+            {%- endif -%}
+          </div>
         {%- endif -%}
 
         <div class="contact-form-fields">
@@ -101,22 +107,26 @@
                 >
               </div>
             {%- endif -%}
-            {%- if section.settings.show_email_field -%}
-              <div class="contact-form-field">
-                <label class="visually-hidden" for="ContactForm-email">{{ 'templates.contact.form.email' | t }}</label>
-                <input
-                  autocomplete="email"
-                  type="email"
-                  id="ContactForm-email"
-                  class="contact-form-input"
-                  name="contact[email]"
-                  spellcheck="false"
-                  autocapitalize="off"
-                  value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
-                  placeholder="{{ 'templates.contact.form.email' | t }}"
-                >
-              </div>
-            {%- endif -%}
+            {%- comment -%}
+              Always rendered and required: Shopify's contact form rejects submissions
+              without a valid email, so a form without it could never be sent.
+            {%- endcomment -%}
+            <div class="contact-form-field">
+              <label class="visually-hidden" for="ContactForm-email">{{ 'templates.contact.form.email' | t }}</label>
+              <input
+                autocomplete="email"
+                type="email"
+                id="ContactForm-email"
+                class="contact-form-input"
+                name="contact[email]"
+                spellcheck="false"
+                autocapitalize="off"
+                value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+                placeholder="{{ 'templates.contact.form.email' | t }}*"
+                required
+                aria-required="true"
+              >
+            </div>
           </div>
 
           {%- if section.settings.show_comment_field -%}
@@ -232,6 +242,7 @@
       "type": "checkbox",
       "id": "show_email_field",
       "label": "t:sections.contact-form.settings.show_email_field.label",
+      "info": "t:sections.contact-form.settings.show_email_field.info",
       "default": true
     },
     {

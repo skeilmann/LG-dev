@@ -290,6 +290,7 @@
         "comment": "Comment",
         "send": "send",
         "post_success": "Thanks for contacting us. We'll get back to you as soon as possible.",
+        "email_required": "Please enter a valid email so we can receive your request.",
         "error_heading": "Please adjust the following:"
       }
     },

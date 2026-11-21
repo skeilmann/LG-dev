@@ -299,6 +299,7 @@
         "comment": "Comentariu",
         "send": "trimite",
         "post_success": "Vă mulțumim că ne-ați contactat! Vom lua legătura cu dvs. în cel mai scurt timp.",
+        "email_required": "Introduceți un e-mail valid, altfel cererea nu poate fi trimisă.",
         "error_heading": "Vă rugăm să corectați următoarele erori:"
       }
     },
