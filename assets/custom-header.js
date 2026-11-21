@@ -56,6 +56,49 @@
  * - Escape key handling
  * - Loading states with proper announcements
  */
+/**
+ * Header menus loader (shared with mobile-bottom-nav.js).
+ * Normal page loads ship the header without its mega menu and mobile catalog
+ * (they were ~44% of the HTML). On first need, this fetches the header section
+ * once via the Section Rendering API with the "megamenu" template view, where
+ * sections/header.liquid renders the full menus, and returns the parsed document.
+ */
+window.VEVHeaderMenus = window.VEVHeaderMenus || {
+  promise: null,
+  sectionId() {
+    const el = document.querySelector('.mega-menu-dropdown, mobile-bottom-nav, .mobile-catalog-drawer');
+    const section = el && el.closest('.shopify-section');
+    return section ? section.id.replace(/^shopify-section-/, '') : null;
+  },
+  load() {
+    if (this.promise) return this.promise;
+    const id = this.sectionId();
+    if (!id) return Promise.reject(new Error('Header section not found'));
+    const root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+    const url = `${root}?view=megamenu&section_id=${encodeURIComponent(id)}`;
+    this.promise = fetch(url, { credentials: 'same-origin' })
+      .then((response) => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.text();
+      })
+      .then((html) => new DOMParser().parseFromString(html, 'text/html'))
+      .catch((error) => {
+        this.promise = null; // allow a retry on the next open
+        throw error;
+      });
+    return this.promise;
+  },
+  /** Replace a pending placeholder with the matching element from the fetched header. */
+  async fill(placeholder, selector) {
+    const doc = await this.load();
+    const fresh = doc.querySelector(selector);
+    if (!fresh) throw new Error(`Menu markup not found: ${selector}`);
+    const node = document.importNode(fresh, true);
+    placeholder.replaceWith(node);
+    return node;
+  },
+};
+
 class CustomHeader {
   constructor() {
     this.init();
@@ -234,6 +277,7 @@ class CustomHeader {
     // Build the mega menu as soon as the pointer reaches the nav, so it is ready on hover
     this._boundHydrateMegaMenu = this.hydrateMegaMenu.bind(this);
     this.leftMenu?.addEventListener('pointerenter', this._boundHydrateMegaMenu, { once: true });
+    this.megaMenuTrigger?.addEventListener('focus', this._boundHydrateMegaMenu, { once: true });
 
     if (this.megaMenuDropdown) {
       this.megaMenuDropdown.addEventListener('mouseenter', this._boundMegaMenuEnter);
@@ -334,23 +378,41 @@ class CustomHeader {
   }
 
   /**
-   * The mega menu markup ships inside <template data-lazy-mega-menu> so its ~400 links
-   * and images are not part of the live page until needed. The first open (or the
-   * pointer entering the left nav) moves it into the dropdown and binds the zones.
+   * The mega menu is not in the page HTML: the dropdown holds an empty
+   * [data-mega-menu-pending] placeholder. The first open (or the pointer entering
+   * the nav, or keyboard focus on the trigger) fetches it once and binds the zones.
+   * If the fetch fails, the trigger falls back to the catalog page.
    */
   hydrateMegaMenu() {
-    if (this.megaMenuHydrated || !this.megaMenuDropdown) return;
-    this.megaMenuHydrated = true;
+    if (!this.megaMenuDropdown) return Promise.resolve();
+    if (this.megaMenuHydration) return this.megaMenuHydration;
 
-    const template = this.megaMenuDropdown.querySelector('template[data-lazy-mega-menu]');
-    if (!template) return; // Markup already in the page (nothing to do)
+    const placeholder = this.megaMenuDropdown.querySelector('[data-mega-menu-pending]');
+    if (!placeholder) {
+      // Full markup already present (theme editor): bind once
+      this.megaMenuHydrated = true;
+      this.megaMenuHydration = Promise.resolve();
+      return this.megaMenuHydration;
+    }
 
-    template.replaceWith(template.content);
-    this.cacheMegaMenuZones();
-    this.initCategoryHovers();
-    this.initSubcategoryHovers();
-    this.initSubSubcategoryHovers();
-    this.bindZoneKeyboardNavigation();
+    const dropdownSelector = `#${CSS.escape(this.megaMenuDropdown.id)} .mega-menu-content`;
+    this.megaMenuHydration = window.VEVHeaderMenus.fill(placeholder, dropdownSelector)
+      .then(() => {
+        this.megaMenuHydrated = true;
+        this.cacheMegaMenuZones();
+        this.initCategoryHovers();
+        this.initSubcategoryHovers();
+        this.initSubSubcategoryHovers();
+        this.bindZoneKeyboardNavigation();
+        if (this.megaMenuDropdown.getAttribute('aria-hidden') === 'false') this.resetToDefaultState();
+      })
+      .catch((error) => {
+        console.error('Could not load the catalog menu:', error.message);
+        this.megaMenuHydration = null;
+        this.megaMenuLoadFailed = true;
+        if (this.megaMenuDropdown.getAttribute('aria-hidden') === 'false') this.openMegaMenu();
+      });
+    return this.megaMenuHydration;
   }
 
   cacheMegaMenuZones() {
@@ -362,6 +424,11 @@ class CustomHeader {
   }
 
   openMegaMenu() {
+    if (this.megaMenuLoadFailed) {
+      // The menu could not be fetched earlier: go to the catalog instead of an empty dropdown
+      window.location.href = this.megaMenuTrigger?.getAttribute('href') || `${(window.Shopify?.routes?.root) || '/'}collections/all`;
+      return;
+    }
     this.hydrateMegaMenu();
     this.megaMenuTrigger?.setAttribute('aria-expanded', 'true');
     this.megaMenuDropdown.setAttribute('aria-hidden', 'false');
@@ -1236,6 +1303,7 @@ class CustomHeader {
       this.megaMenuTrigger.removeEventListener('keydown', this._boundTriggerKeydown);
     }
     this.leftMenu?.removeEventListener('pointerenter', this._boundHydrateMegaMenu);
+    this.megaMenuTrigger?.removeEventListener('focus', this._boundHydrateMegaMenu);
 
     // Remove zone listeners
     if (this.zone1) {

@@ -2,6 +2,18 @@
   ULTRA-MINIMAL Critical CSS - Only prevent CLS, no FOUC flash
   Following Shopify best practices: <500 bytes inline, rest in external files
 {%- endcomment -%}
+{%- comment -%}
+  Mega menu + mobile catalog are NOT rendered in normal page loads (they were ~44% of
+  the page HTML). custom-header.js fetches this section once, on first open, via
+  /?view=megamenu&section_id=<this section> (templates/index.megamenu.json); for that
+  request, and in the theme editor, the full menus are rendered.
+{%- endcomment -%}
+{%- liquid
+  assign vev_full_menus = false
+  if template.suffix == 'megamenu' or request.design_mode
+    assign vev_full_menus = true
+  endif
+-%}
 <style>
   .header-wrapper {
     opacity: 1;
@@ -209,8 +221,7 @@
                   aria-hidden="true"
                   aria-label="{{ 'sections.header.menu_items.catalog' | t }} {{ 'sections.header.mega_menu' | t }}"
                 >
-                  {%- comment -%} Inert until first open: custom-header.js copies it into the dropdown (keeps ~400 menu links and images out of the live page). {%- endcomment -%}
-                  <template data-lazy-mega-menu>
+                  {%- if vev_full_menus -%}
                   <div class="mega-menu-content">
                     <div class="mega-menu-columns" role="presentation">
                       {%- comment -%}
@@ -416,7 +427,9 @@
                       </div>
                     </div>
                   </div>
-                  </template>
+                  {%- else -%}
+                    <div class="mega-menu-content mega-menu-content--pending" data-mega-menu-pending aria-busy="true"></div>
+                  {%- endif -%}
                 </div>
               {%- else -%}
                 <!-- Fallback to left menu if no catalog menu is set -->
@@ -437,8 +450,7 @@
                   aria-hidden="true"
                   aria-label="{{ 'sections.header.menu_items.catalog' | t }} {{ 'sections.header.mega_menu' | t }}"
                 >
-                  {%- comment -%} Inert until first open: custom-header.js copies it into the dropdown (keeps ~400 menu links and images out of the live page). {%- endcomment -%}
-                  <template data-lazy-mega-menu>
+                  {%- if vev_full_menus -%}
                   <div class="mega-menu-content">
                     <nav class="mega-menu-columns" aria-label="{{ 'sections.header.mega_menu' | t }}">
                       {%- assign left_menu = null -%}
@@ -643,7 +655,9 @@
                       </div>
                     </nav>
                   </div>
-                  </template>
+                  {%- else -%}
+                    <div class="mega-menu-content mega-menu-content--pending" data-mega-menu-pending aria-busy="true"></div>
+                  {%- endif -%}
                 </div>
               {%- endif -%}
             </div>
@@ -1315,7 +1329,7 @@
 </div>
 
 {%- comment -%} Mobile Bottom Navigation - Renders only on mobile devices {%- endcomment -%}
-{% render 'mobile-bottom-nav', section: section %}
+{% render 'mobile-bottom-nav', section: section, full_menus: vev_full_menus %}
 
 {%- if settings.cart_type == 'notification' -%}
   {%- render 'cart-notification',

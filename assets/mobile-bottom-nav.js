@@ -225,10 +225,9 @@ class MobileBottomNav extends HTMLElement {
   openDrawer() {
     if (!this.drawer || this.isDrawerOpen) return;
 
-    // The catalog list ships inside <template data-lazy-catalog-drawer> so its links are
-    // not part of the live page until the drawer is first opened.
-    const lazyCatalog = this.drawer.querySelector('template[data-lazy-catalog-drawer]');
-    if (lazyCatalog) lazyCatalog.replaceWith(lazyCatalog.content);
+    // The catalog list is not in the page HTML: fetch it once (custom-header.js loader)
+    // and fill the placeholder; the drawer opens right away with a loading state.
+    this.loadCatalog();
 
     this.isDrawerOpen = true;
     this.drawer.setAttribute('aria-hidden', 'false');
@@ -247,6 +246,33 @@ class MobileBottomNav extends HTMLElement {
     
     // Set animation speed
     this.drawer.style.setProperty('--drawer-animation-speed', `${this.drawerSpeed}ms`);
+  }
+
+  /**
+   * Fill the drawer's [data-catalog-pending] placeholder from the fetched header.
+   * On failure, go to the catalog page instead of leaving an empty drawer.
+   */
+  loadCatalog() {
+    const placeholder = this.drawer.querySelector('[data-catalog-pending]');
+    if (!placeholder || this.catalogLoading) return;
+    if (!window.VEVHeaderMenus) {
+      this.goToCatalogPage();
+      return;
+    }
+    this.catalogLoading = true;
+    window.VEVHeaderMenus.fill(placeholder, '.mobile-catalog-drawer__nav')
+      .catch((error) => {
+        console.error('Could not load the catalog menu:', error.message);
+        if (this.isDrawerOpen) this.goToCatalogPage();
+      })
+      .finally(() => {
+        this.catalogLoading = false;
+      });
+  }
+
+  goToCatalogPage() {
+    const root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+    window.location.href = `${root}collections/all`;
   }
 
   /**

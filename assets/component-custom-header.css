@@ -1215,3 +1215,34 @@ header-drawer {
         transition-duration: 0.05s;
     }
 }
+/* Mega menu not fetched yet (custom-header.js fills it on first open) */
+.mega-menu-content--pending {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24rem;
+}
+
+.mega-menu-content--pending::after,
+.mobile-catalog-drawer__nav--pending::after {
+  content: '';
+  width: 2.8rem;
+  height: 2.8rem;
+  border: 0.3rem solid rgba(var(--color-foreground), 0.15);
+  border-top-color: rgb(var(--color-foreground));
+  border-radius: 50%;
+  animation: vev-menu-spin 0.8s linear infinite;
+}
+
+@keyframes vev-menu-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mega-menu-content--pending::after,
+  .mobile-catalog-drawer__nav--pending::after {
+    animation-duration: 2.4s;
+  }
+}

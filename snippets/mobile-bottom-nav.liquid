@@ -6,7 +6,8 @@
   iOS-style translucent background and backdrop blur.
 
   Usage:
-  {% render 'mobile-bottom-nav', section: section %}
+  {% render 'mobile-bottom-nav', section: section, full_menus: vev_full_menus %}
+  full_menus: true only when the header is fetched for its menus (see sections/header.liquid)
 
   Features:
   - Fixed positioning with translucent backdrop
@@ -175,5 +176,5 @@
   </nav>
 
   {%- comment -%} Render catalog drawer {%- endcomment -%}
-  {% render 'mobile-catalog-drawer', section: section %}
+  {% render 'mobile-catalog-drawer', section: section, full_menus: full_menus %}
 </mobile-bottom-nav>

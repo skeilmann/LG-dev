@@ -6,7 +6,8 @@
   nested accordions for categories and subcategories.
 
   Usage:
-  {% render 'mobile-catalog-drawer', section: section %}
+  {% render 'mobile-catalog-drawer', section: section, full_menus: full_menus %}
+  full_menus: render the catalog list (menu fetch); otherwise an empty placeholder
 
   Features:
   - Bottom sheet slide-up animation
@@ -93,8 +94,11 @@
     {%- comment -%} Drawer body with catalog content {%- endcomment -%}
     <div class="mobile-catalog-drawer__body">
       {%- if menu_to_use != blank -%}
-        {%- comment -%} Inert until first open: mobile-bottom-nav.js copies it into the drawer. {%- endcomment -%}
-        <template data-lazy-catalog-drawer>
+        {%- comment -%}
+          Only rendered for the menu fetch (full_menus); normal pages get an empty
+          placeholder that mobile-bottom-nav.js fills on first open.
+        {%- endcomment -%}
+        {%- if full_menus -%}
         <nav
           class="mobile-catalog-drawer__nav"
           role="navigation"
@@ -189,7 +193,9 @@
             </div>
           {%- endfor -%}
         </nav>
-        </template>
+        {%- else -%}
+          <div class="mobile-catalog-drawer__nav mobile-catalog-drawer__nav--pending" data-catalog-pending aria-busy="true"></div>
+        {%- endif -%}
       {%- else -%}
         {%- comment -%} Fallback when no menu is configured {%- endcomment -%}
         <div class="mobile-catalog-drawer__empty">

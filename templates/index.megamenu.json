@@ -1,0 +1,9 @@
+/*
+ * Used only by custom-header.js: /?view=megamenu&section_id=<header section> renders the
+ * header with its full mega menu and mobile catalog (see sections/header.liquid).
+ * Not linked anywhere; marked noindex in layout/theme.liquid.
+ */
+{
+  "sections": {},
+  "order": []
+}

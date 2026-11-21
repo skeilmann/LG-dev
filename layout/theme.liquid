@@ -25,6 +25,10 @@
     {% endif %}
 
     {% render 'meta-tags' %}
+    {%- if template.suffix == 'megamenu' -%}
+      {%- comment -%} Menu fragment endpoint for custom-header.js, not a real page {%- endcomment -%}
+      <meta name="robots" content="noindex, nofollow">
+    {%- endif -%}
 
     <script src="{{ 'constants.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'pubsub.js' | asset_url }}" defer="defer"></script>

@@ -816,3 +816,11 @@
         transition: none;
     }
 }
+
+/* Catalog list not fetched yet (mobile-bottom-nav.js fills it on first open) */
+.mobile-catalog-drawer__nav--pending {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 20rem;
+}
