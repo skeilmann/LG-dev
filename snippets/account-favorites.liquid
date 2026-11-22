@@ -15,7 +15,7 @@
       {{ block.settings.heading | default: default_fav_heading }}
     </h2>
     {%- if block.settings.show_view_all -%}
-      <a href="/pages/favorites" class="account-block__view-all link underlined-link">
+      <a href="{{ routes.root_url | append: '/pages/favorites' | replace: '//', '/' }}" class="account-block__view-all link underlined-link">
         {{ 'customer.account.view_all_favorites' | t | default: 'View All' }}
       </a>
     {%- endif -%}

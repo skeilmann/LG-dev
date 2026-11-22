@@ -111,7 +111,7 @@
       {%- comment -%} Favorites Button {%- endcomment -%}
       {%- if section.settings.show_nav_favorites -%}
         <a
-          href="/pages/favorites"
+          href="{{ routes.root_url | append: '/pages/favorites' | replace: '//', '/' }}"
           class="mobile-bottom-nav__button"
           data-nav-type="favorites"
           aria-label="{{ favorites_label }}"

@@ -126,7 +126,7 @@
     btn.classList.add('loading');
     btn.disabled = true;
 
-    fetch('/cart/add.js', {
+    fetch('{{ routes.cart_add_url }}.js', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ items: items })
@@ -140,7 +140,7 @@
       if (typeof publish === 'function' && typeof PUB_SUB_EVENTS !== 'undefined') {
         publish(PUB_SUB_EVENTS.cartUpdate, {});
       }
-      window.location.href = '/cart';
+      window.location.href = '{{ routes.cart_url }}';
     })
     .catch(function(error) {
       console.error('Reorder failed:', error);

@@ -227,9 +227,9 @@ class FavoritesHandler {
             const handles = Array.from(this.favorites.values())
                 .map(fav => fav.handle)
                 .filter(Boolean);
-            window.location.href = `/pages/favorites${handles.length ? '?favorites=' + handles.join(',') : ''}`;
+            window.location.href = `${(window.Shopify?.routes?.root || '/')}pages/favorites${handles.length ? '?favorites=' + handles.join(',') : ''}`;
         } else {
-            window.location.href = '/pages/favorites';
+            window.location.href = `${(window.Shopify?.routes?.root || '/')}pages/favorites`;
         }
     }
 
@@ -567,7 +567,7 @@ class FavoritesHandler {
                     <p class="caption-with-letter-spacing light">${vendorEscaped}</p>
                     ` : ''}
                     <h3 class="favorites-notification-product__name h4">
-                        <a href="/products/${product.handle}" class="link">
+                        <a href="${(window.Shopify?.routes?.root || '/')}products/${encodeURIComponent(product.handle)}" class="link">
                             ${productTitle}
                         </a>
                     </h3>

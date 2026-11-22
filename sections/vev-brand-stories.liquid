@@ -53,6 +53,18 @@
             assign story_url = story_collection.url
           endif
 
+          # Typed paths (e.g. /collections/vendors?q=BRAND) are not localized by Shopify;
+          # add the language prefix (/ro, /en) so visitors stay in their language.
+          if story_url != blank and routes.root_url != '/' and story_url != routes.root_url
+            assign locale_prefix = routes.root_url | append: '/'
+            assign url_head = story_url | slice: 0, locale_prefix.size
+            assign url_first_two = story_url | slice: 0, 2
+            assign url_first_char = story_url | slice: 0
+            if url_first_char == '/' and url_first_two != '//' and url_head != locale_prefix
+              assign story_url = routes.root_url | append: story_url
+            endif
+          endif
+
           assign story_label = block.settings.label
           if story_label == blank and story_collection != blank
             assign story_label = story_collection.title

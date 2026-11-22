@@ -37,7 +37,7 @@
       <div id="favorites-notification-product" class="favorites-notification-product"></div>
       <div class="favorites-notification__links">
         <a
-          href="{{ routes.root_url }}pages/favorites"
+          href="{{ routes.root_url | append: '/pages/favorites' | replace: '//', '/' }}"
           id="favorites-notification-button"
           class="button button--secondary button--full-width"
         >

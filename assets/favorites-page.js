@@ -288,7 +288,7 @@ class FavoritesPage extends HTMLElement {
             <div class="collection collection--empty">
               <div class="title-wrapper center">
                 <h2 class="title">${this.getTranslation('favorites.empty', 'You haven\'t added any favorites yet')}</h2>
-                <a href="/collections" class="button">
+                <a href="${(window.Shopify?.routes?.root || '/')}collections" class="button">
                   ${this.getTranslation('favorites.browse_products', 'Browse Products')}
                 </a>
               </div>
