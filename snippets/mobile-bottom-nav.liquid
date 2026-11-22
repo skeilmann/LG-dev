@@ -60,6 +60,8 @@
   data-button-order="{{ button_order }}"
   data-animation-style="{{ section.settings.nav_animation_style | default: 'scale' }}"
   data-drawer-speed="{{ section.settings.drawer_animation_speed | default: 300 }}"
+  data-text-catalog-opened="{{ 'sections.header.mobile_bottom_nav.catalog_opened' | t | escape }}"
+  data-text-catalog-closed="{{ 'sections.header.mobile_bottom_nav.catalog_closed' | t | escape }}"
   style="
     --mobile-nav-bg: {{ section.settings.mobile_nav_background | default: '#ffffff' }};
     --mobile-nav-opacity: {{ section.settings.mobile_nav_opacity | default: 90 }}%;

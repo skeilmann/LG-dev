@@ -242,7 +242,7 @@ class MobileBottomNav extends HTMLElement {
     // this.initAccordionImageLoading();
     
     // Announce to screen readers
-    this.announceToScreenReader('Catalog menu opened');
+    this.announceToScreenReader(this.dataset.textCatalogOpened || 'Catalog opened');
     
     // Set animation speed
     this.drawer.style.setProperty('--drawer-animation-speed', `${this.drawerSpeed}ms`);
@@ -292,7 +292,7 @@ class MobileBottomNav extends HTMLElement {
     catalogButton?.focus();
     
     // Announce to screen readers
-    this.announceToScreenReader('Catalog menu closed');
+    this.announceToScreenReader(this.dataset.textCatalogClosed || 'Catalog closed');
   }
 
   /**

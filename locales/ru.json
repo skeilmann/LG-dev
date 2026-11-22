@@ -414,7 +414,9 @@
         "swipe_down": "Потяните вниз, чтобы закрыть",
         "no_menu": "Каталог не настроен",
         "view_all_collections": "Посмотреть все коллекции",
-        "all_products": "Все товары"
+        "all_products": "Все товары",
+        "catalog_opened": "Каталог открыт",
+        "catalog_closed": "Каталог закрыт"
       }
     },
     "cart": {

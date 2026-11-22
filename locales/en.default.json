@@ -370,7 +370,9 @@
         "swipe_down": "Swipe down to close",
         "no_menu": "No catalog menu configured",
         "view_all_collections": "View all collections",
-        "all_products": "All products"
+        "all_products": "All products",
+        "catalog_opened": "Catalog opened",
+        "catalog_closed": "Catalog closed"
       }
     },
     "cart": {
