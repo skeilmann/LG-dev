@@ -14,10 +14,11 @@
   {%- else -%}
     <div class="loyalty-cart-widget">
       <p class="loyalty-guest-message">
-        <a href="{{ routes.account_login_url }}">{{ 'customer.log_in' | t }}</a>
-        {{ 'customer.loyalty.or' | t }}
-        <a href="{{ routes.account_register_url }}">{{ 'customer.register.title' | t | downcase }}</a>
-        {{ 'customer.loyalty.to_earn' | t }}
+        {%- comment -%} One sentence per language so word order and punctuation stay correct {%- endcomment -%}
+        {{-
+          'customer.loyalty.guest_message_html'
+          | t: login_url: routes.account_login_url, register_url: routes.account_register_url
+        -}}
       </p>
     </div>
   {%- endif -%}
