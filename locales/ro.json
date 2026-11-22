@@ -556,12 +556,7 @@
   },
   "customer": {
     "favorites": {
-      "title": "Favorite",
-      "count": {
-        "one": "{{ count }} favorit",
-        "other": "{{ count }} favorite",
-        "few": "{{ count }} favorite"
-      }
+      "title": "Favorite"
     },
     "account": {
       "title": "Cont",
@@ -779,13 +774,14 @@
     }
   },
   "favorites": {
-    "title": "My Favorites",
-    "empty": "You haven't added any favorites yet",
-    "add": "Add to Favorites",
-    "remove": "Remove from Favorites",
-    "login_message": "Log in to sync your favorites across devices",
-    "added": "Added to Favorites",
-    "browse_products": "Vezi produsele"
+    "title": "Favoritele mele",
+    "empty": "Nu ați adăugat încă produse la favorite",
+    "add": "Adaugă la favorite",
+    "remove": "Elimină din favorite",
+    "login_message": "Conectați-vă pentru a sincroniza favoritele pe toate dispozitivele",
+    "added": "Adăugat la favorite",
+    "browse_products": "Vezi produsele",
+    "count_label": "Favorite: {{ count }}"
   },
   "stock": {
     "in_stock": "Stoc",

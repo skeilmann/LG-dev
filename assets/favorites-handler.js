@@ -53,8 +53,8 @@ class FavoritesHandler {
                 icon.classList.toggle('active', isFavorite);
                 icon.setAttribute('aria-label',
                     isFavorite ?
-                        this.getTranslation('customer.favorites.remove', 'Remove from Favorites') :
-                        this.getTranslation('customer.favorites.add', 'Add to Favorites')
+                        this.getTranslation('favorites.remove', 'Remove from Favorites') :
+                        this.getTranslation('favorites.add', 'Add to Favorites')
                 );
             }
         });
@@ -378,8 +378,8 @@ class FavoritesHandler {
 
                 const visuallyHidden = bubble.querySelector('.visually-hidden');
                 if (visuallyHidden) {
-                    const translation = this.getTranslation('customer.favorites.count', '{{ count }} favorites');
-                    visuallyHidden.textContent = translation.replace('{{ count }}', count);
+                    const label = this.getTranslation('favorites.count_label', 'Favorites: __COUNT__');
+                    visuallyHidden.textContent = label.replace('__COUNT__', count);
                 }
             } else {
                 bubble.style.display = 'none';

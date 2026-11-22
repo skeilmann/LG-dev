@@ -627,11 +627,7 @@
   },
   "customer": {
     "favorites": {
-      "title": "Favorites",
-      "count": {
-        "one": "{{ count }} favorite",
-        "other": "{{ count }} favorites"
-      }
+      "title": "Favorites"
     },
     "loyalty": {
       "title": "Rewards",
@@ -855,7 +851,8 @@
     "remove": "Remove from Favorites",
     "login_message": "Log in to sync your favorites across devices",
     "added": "Added to Favorites",
-    "browse_products": "Browse Products"
+    "browse_products": "Browse Products",
+    "count_label": "Favorites: {{ count }}"
   },
   "stock": {
     "in_stock": "In stock",

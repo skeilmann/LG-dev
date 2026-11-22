@@ -570,7 +570,8 @@ class MobileBottomNav extends HTMLElement {
       
       if (countSpan) countSpan.textContent = favoritesCount;
       if (screenReaderSpan) {
-        screenReaderSpan.textContent = `Favorites: ${favoritesCount} items`;
+        const label = window.translations?.favorites?.count_label || 'Favorites: __COUNT__';
+        screenReaderSpan.textContent = label.replace('__COUNT__', favoritesCount);
       }
       
       badge.style.display = favoritesCount > 0 ? 'flex' : 'none';
