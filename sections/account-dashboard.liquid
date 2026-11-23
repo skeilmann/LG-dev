@@ -64,8 +64,12 @@
 {%- else -%}
   <div class="account-dashboard-guest section-{{ section.id }}-padding color-{{ section.settings.color_scheme }}">
     <div class="account-dashboard-guest__content">
-      <h1>{{ section.settings.heading | default: 'customer.account.title' | t }}</h1>
-      <p>{{ section.settings.login_message | default: 'customer.account.login_required' | t }}</p>
+      {%- liquid
+        assign default_guest_heading = 'customer.account.title' | t
+        assign default_login_message = 'customer.account.login_required' | t
+      -%}
+      <h1>{{ section.settings.heading | default: default_guest_heading }}</h1>
+      <p>{{ section.settings.login_message | default: default_login_message }}</p>
       <a href="{{ routes.account_login_url }}" class="button">
         {{ 'customer.account.login_button' | t }}
       </a>
@@ -81,8 +85,7 @@
     {
       "type": "text",
       "id": "heading",
-      "label": "t:sections.main-account.settings.heading.label",
-      "default": "My Account"
+      "label": "t:sections.main-account.settings.heading.label"
     },
     {
       "type": "checkbox",
@@ -93,8 +96,7 @@
     {
       "type": "text",
       "id": "login_message",
-      "label": "t:sections.account-dashboard.settings.login_message.label",
-      "default": "Please log in to view your account dashboard."
+      "label": "t:sections.account-dashboard.settings.login_message.label"
     },
     {
       "type": "color_scheme",
@@ -161,8 +163,7 @@
         {
           "type": "text",
           "id": "heading",
-          "label": "t:sections.account-dashboard.blocks.active_orders.settings.heading.label",
-          "default": "Active Orders"
+          "label": "t:sections.account-dashboard.blocks.active_orders.settings.heading.label"
         }
       ]
     },
@@ -174,8 +175,7 @@
         {
           "type": "text",
           "id": "heading",
-          "label": "t:sections.account-dashboard.blocks.store_credit.settings.heading.label",
-          "default": "Spending Summary"
+          "label": "t:sections.account-dashboard.blocks.store_credit.settings.heading.label"
         },
         {
           "type": "checkbox",
@@ -205,8 +205,7 @@
         {
           "type": "text",
           "id": "heading",
-          "label": "t:sections.main-account.blocks.loyalty_points.settings.heading.label",
-          "default": "My Rewards"
+          "label": "t:sections.main-account.blocks.loyalty_points.settings.heading.label"
         },
         {
           "type": "checkbox",
@@ -236,8 +235,7 @@
         {
           "type": "text",
           "id": "heading",
-          "label": "t:sections.main-account.blocks.order_history.settings.heading.label",
-          "default": "Order History"
+          "label": "t:sections.main-account.blocks.order_history.settings.heading.label"
         },
         {
           "type": "range",
@@ -264,8 +262,7 @@
         {
           "type": "text",
           "id": "heading",
-          "label": "t:sections.main-account.blocks.favorites.settings.heading.label",
-          "default": "My Favorites"
+          "label": "t:sections.main-account.blocks.favorites.settings.heading.label"
         },
         {
           "type": "range",
@@ -327,8 +324,7 @@
         {
           "type": "text",
           "id": "heading",
-          "label": "t:sections.account-dashboard.blocks.recently_viewed.settings.heading.label",
-          "default": "Recently Viewed"
+          "label": "t:sections.account-dashboard.blocks.recently_viewed.settings.heading.label"
         },
         {
           "type": "range",
@@ -358,8 +354,7 @@
         {
           "type": "text",
           "id": "heading",
-          "label": "t:sections.main-account.blocks.account_details.settings.heading.label",
-          "default": "Account Details"
+          "label": "t:sections.main-account.blocks.account_details.settings.heading.label"
         }
       ]
     }

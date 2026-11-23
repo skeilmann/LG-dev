@@ -10,7 +10,7 @@
         "loyalty_points_block": {
           "type": "loyalty_points",
           "settings": {
-            "heading": "My Rewards",
+            "heading": "",
             "show_tier_progress": true,
             "show_redeem_button": true,
             "rewards_page_url": "/pages/rewards"
@@ -19,14 +19,14 @@
         "order_history_block": {
           "type": "order_history",
           "settings": {
-            "heading": "Order History",
+            "heading": "",
             "orders_per_page": 20
           }
         },
         "favorites_block": {
           "type": "favorites",
           "settings": {
-            "heading": "My Favorites",
+            "heading": "",
             "max_products": 6,
             "columns_desktop": 3,
             "show_view_all": true,
@@ -37,7 +37,7 @@
         "account_details_block": {
           "type": "account_details",
           "settings": {
-            "heading": "Account Details"
+            "heading": ""
           }
         }
       },

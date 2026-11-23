@@ -41,12 +41,12 @@
     assign is_search = true
   endif
 
-  # Get custom labels or use defaults
-  assign home_label = section.settings.nav_home_label | default: 'sections.header.mobile_bottom_nav.home' | t
-  assign search_label = section.settings.nav_search_label | default: 'sections.header.mobile_bottom_nav.search' | t
-  assign catalog_label = section.settings.nav_catalog_label | default: 'sections.header.mobile_bottom_nav.catalog' | t
-  assign favorites_label = section.settings.nav_favorites_label | default: 'sections.header.mobile_bottom_nav.favorites' | t
-  assign cart_label = section.settings.nav_cart_label | default: 'sections.header.mobile_bottom_nav.cart' | t
+  # Translated button labels
+  assign home_label = 'sections.header.mobile_bottom_nav.home' | t
+  assign search_label = 'sections.header.mobile_bottom_nav.search' | t
+  assign catalog_label = 'sections.header.mobile_bottom_nav.catalog' | t
+  assign favorites_label = 'sections.header.mobile_bottom_nav.favorites' | t
+  assign cart_label = 'sections.header.mobile_bottom_nav.cart' | t
 
   # Get button order setting
   assign button_order = section.settings.nav_button_order | default: 'default'
