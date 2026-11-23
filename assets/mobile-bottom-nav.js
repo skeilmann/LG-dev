@@ -699,7 +699,7 @@ class MobileBottomNav extends HTMLElement {
 
     if (!collectionHandle) return;
 
-    fetch(`/collections/${collectionHandle}.js`)
+    fetch(`${(window.Shopify?.routes?.root || '/')}collections/${encodeURIComponent(collectionHandle)}.js`)
       .then((response) => (response.ok ? response.json() : null))
       .then((collection) => {
         if (collection && collection.image) {

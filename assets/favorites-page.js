@@ -234,7 +234,7 @@ class FavoritesPage extends HTMLElement {
         });
 
         const response = await fetch(
-          `/products/${handle}?${params.toString()}`,
+          `${(window.Shopify?.routes?.root || '/')}products/${encodeURIComponent(handle)}?${params.toString()}`,
           {
             method: 'GET',
             headers: {

@@ -267,8 +267,7 @@
                   {%- endif -%}
                 </div>
               {%- when 'description' -%}
-                {%- comment -%} Description rendered full-width below the 2-column grid {%- endcomment -%}
-                {%- assign render_description_below = true -%}
+                {%- comment -%} Rendered by the separate LG-product-description section {%- endcomment -%}
               {%- when 'sku' -%}
                 {%- if sku_rating_row and sku_rating_row_open == false -%}
                   <div class="product__sku-rating-row">

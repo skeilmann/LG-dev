@@ -213,7 +213,7 @@ class RecentlyViewedProducts extends HTMLElement {
   async fetchProductCard(handle, index) {
     try {
       const sectionId = 'card-product-standalone';
-      const response = await fetch(`/products/${handle}?section_id=${sectionId}`);
+      const response = await fetch(`${(window.Shopify?.routes?.root || '/')}products/${encodeURIComponent(handle)}?section_id=${sectionId}`);
 
       if (!response.ok) return null;
 

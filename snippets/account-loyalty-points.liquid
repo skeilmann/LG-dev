@@ -8,11 +8,26 @@
   Dependencies: loyalty-handler.js, component-loyalty.css
 {%- endcomment -%}
 
+{%- liquid
+  # The setting is a typed path, which Shopify does not localize:
+  # add the language prefix (/ro, /en) so the link stays in the visitor's language.
+  assign rewards_url = block.settings.rewards_page_url | default: '/pages/rewards'
+  if routes.root_url != '/' and rewards_url != routes.root_url
+    assign locale_prefix = routes.root_url | append: '/'
+    assign url_head = rewards_url | slice: 0, locale_prefix.size
+    assign url_first_two = rewards_url | slice: 0, 2
+    assign url_first_char = rewards_url | slice: 0
+    if url_first_char == '/' and url_first_two != '//' and url_head != locale_prefix
+      assign rewards_url = routes.root_url | append: rewards_url
+    endif
+  endif
+-%}
+
 <div
   class="account-block account-block--loyalty loyalty-account-section"
   data-show-tier-progress="{{ block.settings.show_tier_progress }}"
   data-show-redeem="{{ block.settings.show_redeem_button }}"
-  data-rewards-url="{{ block.settings.rewards_page_url | default: '/pages/rewards' }}"
+  data-rewards-url="{{ rewards_url | escape }}"
   {{ block.shopify_attributes }}
 >
   {%- if customer and settings.vev_api_url == blank -%}

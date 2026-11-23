@@ -496,7 +496,7 @@ class FavoritesHandler {
             }
 
             const response = await fetch(
-                `/products/${handle}?section_id=favorites-notification-product`,
+                `${(window.Shopify?.routes?.root || '/')}products/${encodeURIComponent(handle)}?section_id=favorites-notification-product`,
                 {
                     method: 'GET',
                     headers: {

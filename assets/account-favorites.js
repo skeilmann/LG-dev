@@ -130,7 +130,7 @@ class AccountFavorites extends HTMLElement {
         image_ratio: this.settings.imageRatio || 'adapt',
       });
 
-      const response = await fetch(`/products/${handle}?${params.toString()}`, {
+      const response = await fetch(`${(window.Shopify?.routes?.root || '/')}products/${encodeURIComponent(handle)}?${params.toString()}`, {
         method: 'GET',
         headers: { Accept: 'text/html' },
       });

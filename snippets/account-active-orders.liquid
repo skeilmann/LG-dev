@@ -8,7 +8,6 @@
   Dependencies: customer.css
 {%- endcomment -%}
 
-{%- assign active_orders = '' -%}
 {%- assign active_count = 0 -%}
 {%- for order in customer.orders -%}
   {%- unless order.fulfillment_status == 'fulfilled' or order.cancelled -%}

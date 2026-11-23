@@ -28,7 +28,6 @@
   assign current_page_type = request.page_type
   assign is_home = false
   assign is_collection = false
-  assign is_product = false
   assign is_cart = false
   assign is_search = false
 
@@ -36,8 +35,6 @@
     assign is_home = true
   elsif current_page_type == 'collection'
     assign is_collection = true
-  elsif current_page_type == 'product'
-    assign is_product = true
   elsif current_page_type == 'cart'
     assign is_cart = true
   elsif current_page_type == 'search'

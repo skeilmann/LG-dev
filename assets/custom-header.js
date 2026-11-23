@@ -959,7 +959,7 @@ class CustomHeader {
 
     if (!collectionHandle) return;
 
-    fetch(`/collections/${collectionHandle}.js`, { signal: this.fetchController.signal })
+    fetch(`${(window.Shopify?.routes?.root || '/')}collections/${encodeURIComponent(collectionHandle)}.js`, { signal: this.fetchController.signal })
       .then((response) => (response.ok ? response.json() : null))
       .then((collection) => {
         if (collection && collection.image) {

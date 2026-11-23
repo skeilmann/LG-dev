@@ -139,7 +139,7 @@ class LoyaltyHandler {
     const settings = {
       showTierProgress: section.dataset.showTierProgress !== 'false',
       showRedeem: section.dataset.showRedeem !== 'false',
-      rewardsUrl: section.dataset.rewardsUrl || '/pages/rewards',
+      rewardsUrl: section.dataset.rewardsUrl || `${(window.Shopify?.routes?.root || '/')}pages/rewards`,
     };
 
     section.innerHTML = this.renderAccountSection(settings);
