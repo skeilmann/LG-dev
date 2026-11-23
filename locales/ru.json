@@ -349,6 +349,9 @@
     "related_products": {
       "heading": "Вам также может понравиться"
     },
+    "recommended_products": {
+      "heading": "Рекомендуем для вас"
+    },
     "recently_viewed": {
       "name": "Недавно просмотренное",
       "heading": "Недавно просмотренное",

@@ -606,6 +606,9 @@
     "related_products": {
       "heading": "You may also like"
     },
+    "recommended_products": {
+      "heading": "Recommended for you"
+    },
     "recently_viewed": {
       "name": "Recently Viewed",
       "heading": "Recently Viewed",

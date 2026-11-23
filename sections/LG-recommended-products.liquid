@@ -24,11 +24,15 @@
 {%- if products.size > 0 -%}
   <div class="color-{{ section.settings.color_scheme }} gradient">
     <div class="recommended-products-section page-width section-{{ section.id }}-padding isolate{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
-      {%- if section.settings.heading != blank -%}
-        <h2 class="recommended-products__heading inline-richtext {{ section.settings.heading_size }}">
-          {{ section.settings.heading }}
-        </h2>
-      {%- endif -%}
+      {%- liquid
+        assign heading_text = section.settings.heading
+        if heading_text == blank
+          assign heading_text = 'sections.recommended_products.heading' | t
+        endif
+      -%}
+      <h2 class="recommended-products__heading inline-richtext {{ section.settings.heading_size }}">
+        {{ heading_text }}
+      </h2>
 
       {%- if enable_slider -%}
         <slider-component class="slider-mobile-gutter">
@@ -119,7 +123,6 @@
     {
       "type": "inline_richtext",
       "id": "heading",
-      "default": "Recommended for you",
       "label": "t:sections.related-products.settings.heading.label"
     },
     {
